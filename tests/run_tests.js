@@ -35,6 +35,7 @@ async function open(browser, { html = paragraphs(10), keywords = KW, url = null,
         const uiRoot = () => { const h = document.getElementById('slim-hl-panel'); return h && (h.shadowRoot || h); };
         window.__ui = sel => { const r = uiRoot(); return r && r.querySelector(sel); };
         window.__uiAll = sel => { const r = uiRoot(); return r ? r.querySelectorAll(sel) : []; };
+        window.__kw = () => (store.hl_profiles ? store.hl_profiles[store.hl_profile || Object.keys(store.hl_profiles)[0]] : store.hl_keywords);
         window.__uiActive = () => { const h = document.getElementById('slim-hl-panel'); return h && h.shadowRoot ? h.shadowRoot.activeElement : document.activeElement; };
         const orig = Document.prototype.createTreeWalker;
         Document.prototype.createTreeWalker = function (...a) { window.__walkers++; return orig.apply(this, a); };
@@ -286,9 +287,9 @@ const tests = {
     async save_only_writes_changed_values(browser) {
         const page = await open(browser, { panelOpen: true });
         await settled(page);
-        await page.evaluate(() => { window.__store.hl_keywords = [{ text: 'vom-anderen-tab', color: '#ff0' }]; window.__store.hl_blacklist = ['andere.tld']; });
+        await page.evaluate(() => { window.__store.hl_profiles = { Default: [{ text: 'vom-anderen-tab', color: '#ff0' }] }; window.__store.hl_blacklist = ['andere.tld']; });
         await page.click('#btn-min');
-        eq(await page.evaluate(() => window.__store.hl_keywords[0].text), 'vom-anderen-tab', 'Keywords aus anderem Tab überschrieben');
+        eq(await page.evaluate(() => window.__store.hl_profiles.Default[0].text), 'vom-anderen-tab', 'Keywords aus anderem Tab überschrieben');
         eq(await page.evaluate(() => window.__store.hl_blacklist[0]), 'andere.tld', 'Blacklist aus anderem Tab überschrieben');
         ok(await page.evaluate(() => window.__store.hl_panel_state.minimized === true), 'eigene Änderung wurde nicht gespeichert');
     },
@@ -314,7 +315,7 @@ const tests = {
         const page = await open(browser, { html: '<p id="t">geheim</p>', keywords: [], url: 'http://example.test/', store: { hl_blacklist: ['example.test'] } });
         await page.evaluate(() => { const r = document.createRange(); r.selectNodeContents(document.getElementById('t')); getSelection().removeAllRanges(); getSelection().addRange(r); });
         await page.keyboard.press('Alt+h');
-        eq(await page.evaluate(() => window.__store.hl_keywords.length), 0, 'Alt+H hat auf Blacklist-Seite ein Keyword gespeichert');
+        eq(await page.evaluate(() => window.__kw().length), 0, 'Alt+H hat auf Blacklist-Seite ein Keyword gespeichert');
     },
 
     async skipped_tags_are_respected_at_any_depth(browser) {
@@ -369,7 +370,7 @@ const tests = {
         await page.fill('.kw-item input[type=text]', 'abc');
         await page.locator('.kw-item input[type=text]').dispatchEvent('change');
         await page.waitForTimeout(500);
-        eq(await page.evaluate(() => window.__store.hl_keywords[0].regex), false, 'regex-Flag nach Umbenennen');
+        eq(await page.evaluate(() => window.__kw()[0].regex), false, 'regex-Flag nach Umbenennen');
         eq(await page.evaluate(() => document.querySelectorAll('#t .slim-hl').length), 2);
     },
 
@@ -446,6 +447,60 @@ const tests = {
         await page.focus('#new-kw');
         await page.keyboard.type('abc');
         eq(await page.evaluate(() => window.__keys), 0, 'Tastendrücke im Panel erreichen Seiten-Skripte');
+    },
+
+    async legacy_keywords_move_into_default_profile(browser) {
+        const page = await open(browser, { html: '<p>lorem</p>', panelOpen: true });
+        await settled(page);
+        eq(await page.locator('#profile-select').inputValue(), 'Default');
+        eq(await page.locator('#profile-select option').count(), 1);
+        eq(await hits(page), 1);
+    },
+
+    async switching_profile_changes_highlights(browser) {
+        const profiles = { A: [{ text: 'lorem', color: '#ff0' }], B: [{ text: 'ipsum', color: '#0ff' }] };
+        const page = await open(browser, { html: '<p>lorem ipsum</p>', panelOpen: true, store: { hl_profiles: profiles, hl_profile: 'A' } });
+        await settled(page);
+        const marks = () => page.evaluate(() => [...document.querySelectorAll('.slim-hl')].map(e => e.textContent).join(','));
+        eq(await marks(), 'lorem');
+        await page.selectOption('#profile-select', 'B');
+        await page.waitForFunction(() => [...document.querySelectorAll('.slim-hl')].map(e => e.textContent).join(',') === 'ipsum', null, { timeout: 3000 });
+        eq(await page.evaluate(() => window.__store.hl_profile), 'B', 'aktives Profil gespeichert');
+        eq(await page.locator('.kw-item input[type=text]').inputValue(), 'ipsum', 'Keyword-Liste des neuen Profils');
+    },
+
+    async create_use_and_delete_profile(browser) {
+        const page = await open(browser, { html: '<p>lorem ipsum</p>', panelOpen: true });
+        await settled(page);
+        page.on('dialog', d => d.accept(d.type() === 'prompt' ? 'Arbeit' : undefined));
+        await page.click('#profile-new');
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl').length === 0, null, { timeout: 3000 });
+        eq(await page.locator('#profile-select').inputValue(), 'Arbeit');
+        await page.fill('#new-kw', 'ipsum');
+        await page.click('#add-kw-btn');
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl').length === 1, null, { timeout: 3000 });
+        eq(await page.evaluate(() => window.__store.hl_profiles.Arbeit.map(k => k.text).join()), 'ipsum', 'Keyword im aktiven Profil');
+        eq(await page.evaluate(() => window.__store.hl_profiles.Default.map(k => k.text).join()), 'lorem,ipsum,dolor', 'anderes Profil unverändert');
+        await page.click('#profile-del');
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl').length === 2, null, { timeout: 3000 });
+        eq(await page.evaluate(() => Object.keys(window.__store.hl_profiles).join()), 'Default');
+        eq(await page.evaluate(() => window.__store.hl_profile), 'Default');
+    },
+
+    async last_profile_cannot_be_deleted(browser) {
+        const page = await open(browser, { html: '<p>lorem</p>', panelOpen: true });
+        await settled(page);
+        ok(await page.locator('#profile-del').isDisabled(), 'Löschen-Button beim letzten Profil sollte deaktiviert sein');
+    },
+
+    async alt_click_removes_keyword_from_active_profile_only(browser) {
+        const profiles = { A: [{ text: 'lorem', color: '#ff0' }], B: [{ text: 'lorem', color: '#0ff' }] };
+        const page = await open(browser, { html: '<p>lorem</p>', store: { hl_profiles: profiles, hl_profile: 'A' } });
+        await settled(page);
+        await page.click('.slim-hl', { modifiers: ['Alt'] });
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl').length === 0, null, { timeout: 3000 });
+        eq(await page.evaluate(() => window.__store.hl_profiles.A.length), 0);
+        eq(await page.evaluate(() => window.__store.hl_profiles.B.length), 1);
     },
 
     async match_list_is_capped(browser) {

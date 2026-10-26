@@ -23,7 +23,15 @@
 (function () {
     'use strict';
 
-    let keywords = GM_getValue('hl_keywords', []);
+    const DEFAULT_PROFILE = 'Default';
+    // Profile: benannte Keyword-Sätze. Vorhandene Keywords (hl_keywords) wandern ins Profil „Default“.
+    let profiles = GM_getValue('hl_profiles', null);
+    if (!profiles || typeof profiles !== 'object' || !Object.keys(profiles).length) {
+        profiles = { [DEFAULT_PROFILE]: GM_getValue('hl_keywords', []) };
+    }
+    let activeProfile = GM_getValue('hl_profile', null);
+    if (!profiles[activeProfile]) activeProfile = Object.keys(profiles)[0];
+    let keywords = profiles[activeProfile];
     let enabled = GM_getValue('hl_enabled', true);
     let autoSearch = GM_getValue('hl_auto_search', true);
     let panelPos = GM_getValue('hl_panel_pos', { x: 20, y: 80 });
@@ -43,6 +51,9 @@
             kwSearch: 'Search keywords…', kwPlaceholder: 'Keyword or /regex/',
             wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
             keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
+            profileNew: 'New profile', profileDelete: 'Delete profile', profileName: 'Name of the new profile:',
+            profileExists: 'A profile with this name already exists.',
+            profileConfirm: n => `Delete the profile “${n}” and all its keywords?`,
             enabled: 'Highlights enabled', autoSearch: 'Take over terms from search', posBar: 'Show position bar',
             engine: 'Search engine for right-click:', language: 'Language:', langAuto: 'Auto',
             noMatches: 'No matches on this page', noKwMatches: 'No keywords match your search', noKeywords: 'No keywords saved yet',
@@ -58,6 +69,9 @@
             kwSearch: 'Keywords suchen…', kwPlaceholder: 'Keyword oder /regex/',
             wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
             keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
+            profileNew: 'Neues Profil', profileDelete: 'Profil löschen', profileName: 'Name des neuen Profils:',
+            profileExists: 'Ein Profil mit diesem Namen gibt es schon.',
+            profileConfirm: n => `Profil „${n}“ mit allen Keywords löschen?`,
             enabled: 'Highlights aktiv', autoSearch: 'Automatisch von Suche übernehmen', posBar: 'Positionsanzeige anzeigen',
             engine: 'Suchmaschine für Rechtsklick:', language: 'Sprache:', langAuto: 'Automatisch',
             noMatches: 'Keine Treffer auf dieser Seite', noKwMatches: 'Keine Treffer für die Suche', noKeywords: 'Noch keine Keywords gespeichert',
@@ -206,11 +220,19 @@
     #match-list { max-height: 160px; overflow-y: auto; margin: 8px 0 12px; border-top: 1px solid #333; padding-top: 10px; }
     .empty { color: #888; font-size: 12.5px; padding: 8px 0; text-align: center; }
     .error { color: #ef5350; font-size: 12px; margin: 6px 0; white-space: pre-line; }
-    select#search-engine, select#ui-lang, input[type=text] {
+    select#search-engine, select#ui-lang, select#profile-select, input[type=text] {
         background: #222; color: #eee; border: 1px solid #444;
         border-radius: 6px; padding: 7px 9px; width: 100%; margin-top: 4px;
     }
     label { font-size: 13px; display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+    .profile-row { display: flex; gap: 6px; align-items: center; }
+    .profile-row select { flex: 1; margin-top: 0 !important; }
+    .profile-row button {
+        background: #2d2d2d; color: #fff; border: 1px solid #444; border-radius: 6px;
+        cursor: pointer; width: 32px; height: 32px; font-size: 16px; padding: 0;
+    }
+    .profile-row button:hover:not(:disabled) { background: #3a3a3a; }
+    .profile-row button:disabled { opacity: 0.4; cursor: default; }
     .section-title { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.6px; margin: 16px 0 8px; font-weight: 600; }
     #kw-search {
         width: 100%;
@@ -224,7 +246,8 @@
     `;
 
     const PERSISTED = {
-        hl_keywords: () => keywords,
+        hl_profiles: () => profiles,
+        hl_profile: () => activeProfile,
         hl_enabled: () => enabled,
         hl_auto_search: () => autoSearch,
         hl_panel_pos: () => panelPos,
@@ -247,6 +270,35 @@
             GM_setValue(key, value);
             lastSaved[key] = json;
         }
+    }
+
+    function setKeywords(list) {
+        profiles[activeProfile] = list;
+        keywords = list;
+    }
+
+    function switchProfile(name) {
+        if (!profiles[name]) return;
+        activeProfile = name;
+        keywords = profiles[name];
+        save();
+        renderProfiles();
+        renderKeywordList();
+        refreshHighlights();
+    }
+
+    function renderProfiles() {
+        const select = ui('profile-select');
+        if (!select) return;
+        select.replaceChildren(...Object.keys(profiles).map(name => {
+            const o = document.createElement('option');
+            o.value = name;
+            o.textContent = name;
+            o.selected = name === activeProfile;
+            return o;
+        }));
+        const del = ui('profile-del');
+        if (del) del.disabled = Object.keys(profiles).length < 2;
     }
 
     function isBlacklisted() {
@@ -692,6 +744,11 @@
                 </div>
                 <div id="match-list"></div>
                 <div class="section-title">${t('keywords')}</div>
+                <div class="profile-row">
+                    <select id="profile-select"></select>
+                    <button id="profile-new" title="${t('profileNew')}">+</button>
+                    <button id="profile-del" title="${t('profileDelete')}">×</button>
+                </div>
                 <input type="text" id="kw-search" placeholder="${t('kwSearch')}" value="${kwFilter}">
                 <div id="kw-list"></div>
                 <div id="regex-error" class="error"></div>
@@ -761,6 +818,19 @@
         root.querySelector('#btn-prev').onclick = () => goTo(-1);
         root.querySelector('#btn-next').onclick = () => goTo(1);
 
+        root.querySelector('#profile-select').onchange = e => switchProfile(e.target.value);
+        root.querySelector('#profile-new').onclick = () => {
+            const name = (prompt(t('profileName')) || '').trim();
+            if (!name) return;
+            if (profiles[name]) { alert(t('profileExists')); return; }
+            profiles[name] = [];
+            switchProfile(name);
+        };
+        root.querySelector('#profile-del').onclick = () => {
+            if (Object.keys(profiles).length < 2 || !confirm(t('profileConfirm', activeProfile))) return;
+            delete profiles[activeProfile];
+            switchProfile(Object.keys(profiles)[0]);
+        };
         root.querySelector('#kw-search').oninput = e => {
             kwFilter = e.target.value.trim().toLowerCase();
             renderKeywordList();
@@ -818,6 +888,7 @@
             refreshHighlights();
         };
 
+        renderProfiles();
         renderKeywordList();
         renderHistory();
         setTimeout(() => { updateCounterAndTitle(); renderMatchList(); updatePosBar(); }, 200);
@@ -921,7 +992,7 @@
             if (!hl || !e.altKey) return;
             e.preventDefault();
             const kw = hl.dataset.kw;
-            keywords = keywords.filter(k => k.text !== kw);
+            setKeywords(keywords.filter(k => k.text !== kw));
             save();
             refreshHighlights();
         });
