@@ -1,4 +1,4 @@
-# Slim Search Highlight
+# 🖍️ Slim Search Highlight
 
 Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben von Keywords auf Webseiten.
 
