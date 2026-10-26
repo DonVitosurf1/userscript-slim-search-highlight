@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.0.2
+
+### Fehlerbehebungen
+- Eine URL wie `#hl=100%` ließ das Skript dauerhaft hängen, weil das Dekodieren des Hashs einen Fehler warf. Außerdem wird der Parameter nur noch am Anfang oder nach `&` erkannt (`#foo&xhl=en` zählt nicht mehr).
+- Mehrere Tabs überschreiben sich nicht mehr gegenseitig: Es werden nur noch Werte gespeichert, die der eigene Tab geändert hat (vorher schrieb jede Panel-Aktion alle Einstellungen).
+- Alt + ←/→ und Alt + H sowie Klick- und Rechtsklick-Handler gibt es nur noch auf Seiten, auf denen das Skript aktiv ist. Alt + ← bleibt „Zurück“ im Browser, wenn es keine Treffer gibt oder die Seite auf der Blacklist steht.
+- Text in `<pre>`/`<code>` verschachtelt, in `<option>` und in bearbeitbaren Feldern (`contenteditable`) wird nicht mehr markiert. Neu hinzugefügter Text in `<style>`/`<script>` bleibt unangetastet.
+- Beim Aufteilen eines Textknotens entstehende Reste wurden erneut durchsucht und konnten falsche Treffer erzeugen (z. B. „fix“ in „prefix“). Auch die eigenen Änderungen eines Durchlaufs werden nicht mehr als Seitenänderung gewertet.
+
 ## 4.0.1
 
 ### Fehlerbehebungen
