@@ -201,6 +201,66 @@ const tests = {
         eq(await page.locator('#add-kw-btn').textContent(), 'Hinzufügen');
     },
 
+    async click_on_add_highlights_immediately(browser) {
+        const page = await open(browser, { html: '<p>hello world hello</p>', keywords: [], panelOpen: true });
+        await page.waitForTimeout(300);
+        await page.fill('#new-kw', 'hello');
+        await page.click('#add-kw-btn');
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl').length === 2, null, { timeout: 3000 });
+    },
+
+    async keyword_added_during_highlight_run_is_not_lost(browser) {
+        const page = await open(browser, { html: paragraphs(800), panelOpen: true });
+        await page.fill('#new-kw', 'eiusmod');
+        await page.click('#add-kw-btn');
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl[data-kw="eiusmod"]').length === 800, null, { timeout: 20000 });
+    },
+
+    async unicode_and_symbol_keywords_match(browser) {
+        const page = await open(browser, {
+            html: '<p id="t">Die Übung und C++ und über und #tag, aber Übungen nicht</p>',
+            keywords: ['Übung', 'C++', 'über', '#tag'].map(text => ({ text, color: '#ff0' })),
+        });
+        await settled(page);
+        eq(await page.evaluate(() => [...document.querySelectorAll('#t .slim-hl')].map(e => e.textContent).join('|')), 'Übung|C++|über|#tag');
+    },
+
+    async enabling_after_disabled_start_observes_new_content(browser) {
+        const page = await open(browser, { html: '<p>hello</p>', keywords: [{ text: 'hello', color: '#ff0' }], panelOpen: true, store: { hl_enabled: false } });
+        await page.waitForTimeout(300);
+        await page.click('#chk-enabled');
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl').length === 1, null, { timeout: 3000 });
+        await page.evaluate(() => document.body.insertAdjacentHTML('beforeend', '<p id="n">hello later</p>'));
+        await page.waitForFunction(() => document.querySelectorAll('#n .slim-hl').length === 1, null, { timeout: 3000 });
+    },
+
+    async previous_from_start_goes_to_last_match(browser) {
+        const page = await open(browser, { html: '<p>a1 x a1 y a1 z a1</p>', keywords: [{ text: 'a1', color: '#ff0' }], panelOpen: true });
+        await settled(page);
+        await page.keyboard.press('Alt+ArrowLeft');
+        eq(await page.textContent('#hl-counter'), '4 / 4');
+    },
+
+    async fast_navigation_leaves_no_stale_outlines(browser) {
+        const page = await open(browser, { html: '<p>a1 x a1 y a1 z a1</p>', keywords: [{ text: 'a1', color: '#ff0' }], panelOpen: true });
+        await settled(page);
+        for (let i = 0; i < 3; i++) await page.keyboard.press('Alt+ArrowRight');
+        await page.waitForTimeout(1000);
+        eq(await page.evaluate(() => [...document.querySelectorAll('.slim-hl')].filter(e => e.style.outline).length), 0, 'Elemente mit hängender Umrandung');
+    },
+
+    async panel_css_does_not_leak_into_page(browser) {
+        const page = await open(browser, { html: '<input type="text" id="x"><label id="l">L</label><button class="btn" id="b">B</button>', keywords: [], panelOpen: true });
+        await page.waitForTimeout(300);
+        const r = await page.evaluate(() => {
+            const cs = id => getComputedStyle(document.getElementById(id));
+            return { label: cs('l').display, bg: cs('x').backgroundColor, btn: cs('b').backgroundColor };
+        });
+        ok(r.label !== 'flex', `<label> der Seite wurde umgestylt (${r.label})`);
+        ok(r.bg !== 'rgb(34, 34, 34)', `Textfeld der Seite wurde umgestylt (${r.bg})`);
+        ok(r.btn !== 'rgb(45, 45, 45)', `.btn der Seite wurde umgestylt (${r.btn})`);
+    },
+
     async match_list_is_capped(browser) {
         const page = await open(browser, { html: paragraphs(800), panelOpen: true });
         await settled(page);

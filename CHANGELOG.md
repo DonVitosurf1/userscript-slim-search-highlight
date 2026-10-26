@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.0.1
+
+### Fehlerbehebungen
+- Änderungen im Panel (Keyword hinzufügen, löschen, Farbe ändern, Alt + Klick auf ein Highlight) wurden nicht sofort angewendet, weil der Klick als Textauswahl galt. Neuaufbau-Anfragen werden jetzt nachgeholt statt verworfen, auch wenn gerade ein Durchlauf läuft.
+- Ganze-Wörter-Suche versteht Umlaute und Sonderzeichen: „Übung“, „über“, „C++“ und „#tag“ werden jetzt gefunden.
+- Wurde das Skript deaktiviert gestartet und später eingeschaltet, wurden nachgeladene Inhalte nie markiert.
+- „Vorheriges“ übersprang beim ersten Klick den letzten Treffer; beim schnellen Blättern blieben Umrandungen hängen.
+- Das Panel-CSS wirkt nur noch innerhalb des Panels und verändert keine Textfelder, Labels oder Buttons der besuchten Seite mehr.
+
 ## 4.0
 
 ### Achtung beim Update
