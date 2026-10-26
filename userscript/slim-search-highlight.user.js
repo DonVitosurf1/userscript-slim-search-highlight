@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.0.2
+// @version      4.0.3
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -290,6 +290,8 @@
         }
     }
 
+    let manualTerms = [];
+
     function getCrossPageTerms() {
         const result = [];
         const m = location.hash.match(/[#&](?:sjhl|hl)=([^&]+)/i);
@@ -297,13 +299,16 @@
             try { decodeURIComponent(m[1]).split(/[,+]/).forEach(t => t.trim() && result.push(t.trim())); } catch {}
         }
 
-        const stored = GM_getValue('hl_cross_terms', null);
-        if (stored && stored.terms && (Date.now() - stored.timestamp) < CROSS_TTL) {
-            result.push(...stored.terms);
-        }
-        if (isSearchEngine(document.referrer)) {
-            const q = extractQuery(document.referrer);
-            if (q) q.split(/\s+/).forEach(w => w.length > 1 && !IGNORE_WORDS.has(w.toLowerCase()) && result.push(w));
+        result.push(...manualTerms);
+        if (autoSearch) {
+            const stored = GM_getValue('hl_cross_terms', null);
+            if (stored && stored.terms && (Date.now() - stored.timestamp) < CROSS_TTL) {
+                result.push(...stored.terms);
+            }
+            if (isSearchEngine(document.referrer)) {
+                const q = extractQuery(document.referrer);
+                if (q) q.split(/\s+/).forEach(w => w.length > 1 && !IGNORE_WORDS.has(w.toLowerCase()) && result.push(w));
+            }
         }
         return [...new Set(result)];
     }
@@ -323,13 +328,15 @@
         return list;
     }
 
+    function isRegexText(text) { return text.startsWith('/') && text.lastIndexOf('/') > 0; }
+
     function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
     function buildMatchers() {
         lastErrors = [];
         return getActiveKeywords().map(k => {
             let pattern, flags = 'gi';
-            if (k.regex || (k.text.startsWith('/') && k.text.lastIndexOf('/') > 0)) {
+            if (isRegexText(k.text)) {
                 const last = k.text.lastIndexOf('/');
                 pattern = k.text.slice(1, last);
                 flags = k.text.slice(last + 1) || 'gi';
@@ -420,12 +427,14 @@
                 const middle = textNode.splitText(m.start);
                 const after = middle.splitText(m.end - m.start);
                 if (!tail) tail = after;
+                ownNodes.add(textNode).add(middle).add(after);
                 const mark = document.createElement('span');
                 mark.className = 'slim-hl';
                 mark.style.backgroundColor = m.color;
                 mark.style.color = '#000';
                 mark.textContent = m.text;
                 mark.dataset.kw = m.kw;
+                ownNodes.add(mark);
                 middle.parentNode.replaceChild(mark, middle);
                 keywordCounts[m.kw] = (keywordCounts[m.kw] || 0) + 1;
             } catch {}
@@ -477,6 +486,7 @@
     const OWN_UI = '#slim-hl-panel, #slim-hl-toggle, #slim-pos-bar';
     const FRAME_BUDGET_MS = 10;
     let matchers = [];
+    let ownNodes = new WeakSet(); // Markierungen und Textstücke, die dieses Skript selbst erzeugt hat
     let refreshQueued = false;
     let refreshRetryTimer;
 
@@ -504,7 +514,7 @@
                     walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
                         acceptNode(n) {
                             const p = n.parentElement;
-                            if (!p || p.closest(SKIP_SELECTOR + ', .slim-hl, ' + OWN_UI)) return NodeFilter.FILTER_REJECT;
+                            if (!p || ownNodes.has(n) || p.closest(SKIP_SELECTOR + ', .slim-hl, ' + OWN_UI)) return NodeFilter.FILTER_REJECT;
                             return NodeFilter.FILTER_ACCEPT;
                         }
                     });
@@ -522,14 +532,15 @@
     function afterHighlight() {
         isHighlighting = false;
         updateCounterAndTitle();
-        if (document.getElementById('kw-list')) renderKeywordList();
+        if (document.getElementById('kw-list')) updateKeywordCounts();
         if (document.getElementById('match-list')) renderMatchList();
         updatePosBar();
-        if (observer) {
-            observer.takeRecords(); // eigene, noch nicht zugestellte Änderungen verwerfen
-            if (enabled) observer.observe(document.body, { childList: true, subtree: true });
+        if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
+        if (refreshQueued) { refreshQueued = false; refreshHighlights(); return; }
+        if (pendingNodes.size) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(highlightAdded, 280);
         }
-        if (refreshQueued) { refreshQueued = false; refreshHighlights(); }
     }
 
     /** Vollständiger Neuaufbau, nur nötig wenn sich Keywords oder Einstellungen ändern. */
@@ -544,12 +555,13 @@
         isHighlighting = true;
         keywordCounts = {};
         currentIdx = -1;
-        pendingNodes.clear();
-
-        if (observer) observer.disconnect();
+        ownNodes = new WeakSet();
 
         const savedRange = saveSelection();
         cleanupHighlights(document.body);
+        // Der Observer bleibt verbunden; nur die eigenen Änderungen des Aufräumens werden verworfen.
+        if (observer) observer.takeRecords();
+        pendingNodes.clear();
 
         try { matchers = buildMatchers(); } catch (e) { matchers = []; lastErrors = [String(e && e.message || e)]; }
         const errorEl = document.getElementById('regex-error');
@@ -574,16 +586,19 @@
         pendingNodes.clear();
         if (!roots.length || !matchers.length) return;
         isHighlighting = true;
-        if (observer) observer.disconnect();
         highlightRoots(roots, afterHighlight);
     }
+
+    let titlePrefix = '';
 
     function updateCounterAndTitle() {
         highlightCount = document.getElementsByClassName('slim-hl').length;
         const counter = document.getElementById('hl-counter');
         if (counter) counter.textContent = highlightCount ? `${Math.max(0, currentIdx) + 1} / ${highlightCount}` : '0 / 0';
-        const baseTitle = document.title.replace(/^\(\d+\)\s*/, '');
-        document.title = highlightCount ? `(${highlightCount}) ${baseTitle}` : baseTitle;
+        let baseTitle = document.title;
+        if (titlePrefix && baseTitle.startsWith(titlePrefix)) baseTitle = baseTitle.slice(titlePrefix.length);
+        titlePrefix = highlightCount ? `(${highlightCount}) ` : '';
+        if (document.title !== titlePrefix + baseTitle) document.title = titlePrefix + baseTitle;
     }
 
     let outlined = null;
@@ -749,7 +764,7 @@
             keywords.push({
                 text,
                 color: panel.querySelector('#new-color').value,
-                regex: text.startsWith('/') && text.lastIndexOf('/') > 0,
+                regex: isRegexText(text),
                 wholeWord: panel.querySelector('#new-whole').checked,
                 domains
             });
@@ -765,6 +780,7 @@
                 if (!observer) setupObserver();
                 refreshHighlights();
             } else {
+                pendingNodes.clear();
                 cleanupHighlights();
                 updateCounterAndTitle();
                 updatePosBar();
@@ -791,6 +807,16 @@
         renderKeywordList();
         renderHistory();
         setTimeout(() => { updateCounterAndTitle(); renderMatchList(); updatePosBar(); }, 200);
+    }
+
+    /** Aktualisiert nur die Trefferzahlen, damit ein gerade bearbeitetes Feld nicht neu aufgebaut wird. */
+    function updateKeywordCounts() {
+        const list = document.getElementById('kw-list');
+        if (!list) return;
+        const filtered = keywords.filter(k => !kwFilter || k.text.toLowerCase().includes(kwFilter));
+        const items = list.querySelectorAll('.kw-item');
+        if (!items.length || items.length !== filtered.length) { renderKeywordList(); return; }
+        items.forEach((el, i) => { el.querySelector('.kw-count').textContent = keywordCounts[filtered[i].text] || 0; });
     }
 
     function renderKeywordList() {
@@ -821,6 +847,7 @@
         });
         list.querySelectorAll('input[type=text]').forEach(el => el.onchange = () => {
             keywords[+el.dataset.i].text = el.value;
+            keywords[+el.dataset.i].regex = isRegexText(el.value);
             save();
             refreshHighlights();
         });
@@ -843,7 +870,8 @@
             btn.textContent = h.slice(0, 38) + (h.length > 38 ? '…' : '');
             btn.title = h;
             btn.onclick = () => {
-                GM_setValue('hl_cross_terms', { terms: h.split(/\s+/), timestamp: Date.now() });
+                manualTerms = h.split(/\s+/).filter(Boolean);
+                GM_setValue('hl_cross_terms', { terms: manualTerms, timestamp: Date.now() });
                 refreshHighlights();
             };
             container.appendChild(btn);
@@ -915,23 +943,21 @@
             if (e.altKey && e.key === 'ArrowLeft') { e.preventDefault(); goTo(-1); }
         });
 
-        let scrollTimer;
-        window.addEventListener('scroll', () => {
-            clearTimeout(scrollTimer);
-            scrollTimer = setTimeout(updatePosBar, 80);
-        }, { passive: true });
+
     }
 
     const pendingNodes = new Set();
     let debounceTimer;
     function setupObserver() {
         observer = new MutationObserver(records => {
-            if (isHighlighting || isBlacklisted()) return;
+            if (isBlacklisted()) return;
             for (const r of records) {
                 if (isOwnNode(r.target)) continue;
-                r.addedNodes.forEach(n => { if ((n.nodeType === 1 || n.nodeType === 3) && !isOwnNode(n)) pendingNodes.add(n); });
+                r.addedNodes.forEach(n => {
+                    if ((n.nodeType === 1 || n.nodeType === 3) && !ownNodes.has(n) && !isOwnNode(n)) pendingNodes.add(n);
+                });
             }
-            if (!pendingNodes.size) return;
+            if (!pendingNodes.size || isHighlighting) return; // läuft gerade ein Durchlauf, holt afterHighlight() das nach
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(highlightAdded, 280);
         });
@@ -941,6 +967,10 @@
     function init() {
         if (isBlacklisted()) return;
         bindGlobalHandlers();
+        if (window.ResizeObserver) {
+            let resizeTimer;
+            new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(updatePosBar, 200); }).observe(document.documentElement);
+        }
         updateCrossPageTerms();
         createToggle();
         if (panelState.open) createPanel();
