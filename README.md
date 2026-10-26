@@ -1,6 +1,6 @@
 <p align="center"><img src="assets/icon.svg" width="96" alt="Slim Search Highlight Logo"></p>
 
-# 🖍️ Slim Search Highlight
+# Slim Search Highlight
 
 Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben von Keywords auf Webseiten.
 
