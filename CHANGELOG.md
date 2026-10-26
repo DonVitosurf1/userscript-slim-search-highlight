@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.0.3
+
+### Fehlerbehebungen
+- Die Einstellung „Automatisch von Suche übernehmen“ wirkt jetzt. Ist sie aus, werden weder gespeicherte Suchbegriffe noch der Referrer der Suchmaschine übernommen. Die Verlaufs-Schaltflächen im Panel und `#hl=` in der URL funktionieren weiterhin.
+- Ein umbenanntes Keyword behielt das alte Regex-Kennzeichen und wurde dann falsch ausgewertet. Ob ein Keyword ein Regex ist, ergibt sich jetzt allein aus seinem Text (`/…/flags`).
+- Inhalte, die die Seite während eines laufenden Durchlaufs hinzufügt, gehen nicht mehr verloren. Der Beobachter bleibt dauerhaft verbunden; eigene Änderungen werden einzeln erkannt statt den Beobachter abzuschalten.
+- Ein „(3)“ am Anfang des Seitentitels, das die Seite selbst setzt, bleibt erhalten. Entfernt wird nur der eigene Trefferzähler.
+
+### Performance
+- Die Positionsleiste wird beim Scrollen nicht mehr neu aufgebaut (die Positionen ändern sich dabei nicht), sondern nur bei Größenänderungen der Seite.
+- Nach Highlight-Durchläufen werden nur noch die Trefferzahlen der Keyword-Liste aktualisiert. Ein gerade bearbeitetes Eingabefeld geht dabei nicht mehr verloren.
+
 ## 4.0.2
 
 ### Fehlerbehebungen
