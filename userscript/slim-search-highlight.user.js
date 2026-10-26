@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.0
+// @version      4.0.1
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -125,44 +125,44 @@
             font-size: 18px; width: 32px; height: 32px; border-radius: 6px;
         }
         #slim-hl-header button:hover { background: #333; color: #fff; }
-        .panel-body { padding: 14px; max-height: 580px; overflow-y: auto; }
-        .counter {
+        #slim-hl-panel .panel-body { padding: 14px; max-height: 580px; overflow-y: auto; }
+        #slim-hl-panel .counter {
             font-weight: 700; color: #ffca28; margin: 0 0 12px;
             font-size: 18px; letter-spacing: 0.4px;
         }
-        .nav-btns { display: flex; gap: 10px; margin-bottom: 12px; }
-        .nav-btns button, #add-kw-btn, .btn {
+        #slim-hl-panel .nav-btns { display: flex; gap: 10px; margin-bottom: 12px; }
+        #slim-hl-panel .nav-btns button, #slim-hl-panel #add-kw-btn, #slim-hl-panel .btn {
             background: #2d2d2d; color: #fff; border: 1px solid #444;
             padding: 8px 12px; border-radius: 7px; cursor: pointer;
             transition: all 0.15s ease; font-size: 13px;
         }
-        .nav-btns button:hover, #add-kw-btn:hover, .btn:hover {
+        #slim-hl-panel .nav-btns button:hover, #slim-hl-panel #add-kw-btn:hover, #slim-hl-panel .btn:hover {
             background: #3a3a3a; border-color: #555;
         }
-        .nav-btns button:focus, #add-kw-btn:focus, .btn:focus {
+        #slim-hl-panel .nav-btns button:focus, #slim-hl-panel #add-kw-btn:focus, #slim-hl-panel .btn:focus {
             outline: 2px solid #ffca28; outline-offset: 2px;
         }
-        .kw-item, .match-item {
+        #slim-hl-panel .kw-item, #slim-hl-panel .match-item {
             display: flex; align-items: center; gap: 8px;
             margin: 5px 0; padding: 4px 0; font-size: 13px;
         }
-        .kw-count { color: #aaa; font-size: 12px; min-width: 36px; text-align: right; }
-        .kw-item input[type=color] { width: 26px; height: 22px; border-radius: 5px; border: none; cursor: pointer; }
-        .kw-item input[type=text] {
+        #slim-hl-panel .kw-count { color: #aaa; font-size: 12px; min-width: 36px; text-align: right; }
+        #slim-hl-panel .kw-item input[type=color] { width: 26px; height: 22px; border-radius: 5px; border: none; cursor: pointer; }
+        #slim-hl-panel .kw-item input[type=text] {
             flex: 1; background: #222; border: 1px solid #444; color: #eee;
             padding: 5px 8px; border-radius: 6px;
         }
-        .kw-item button {
+        #slim-hl-panel .kw-item button {
             background: #333; color: #ddd; border: none; border-radius: 6px;
             cursor: pointer; padding: 4px 10px; font-size: 15px; min-width: 32px;
         }
-        .kw-item button:hover { background: #c62828; color: #fff; }
-        .match-item { cursor: pointer; padding: 5px 8px; border-radius: 6px; }
-        .match-item:hover { background: #252525; }
-        .match-item.active { background: #333; outline: 1px solid #ffca28; }
-        #match-list { max-height: 160px; overflow-y: auto; margin: 8px 0 12px; border-top: 1px solid #333; padding-top: 10px; }
-        .empty { color: #888; font-size: 12.5px; padding: 8px 0; text-align: center; }
-        .error { color: #ef5350; font-size: 12px; margin: 6px 0; white-space: pre-line; }
+        #slim-hl-panel .kw-item button:hover { background: #c62828; color: #fff; }
+        #slim-hl-panel .match-item { cursor: pointer; padding: 5px 8px; border-radius: 6px; }
+        #slim-hl-panel .match-item:hover { background: #252525; }
+        #slim-hl-panel .match-item.active { background: #333; outline: 1px solid #ffca28; }
+        #slim-hl-panel #match-list { max-height: 160px; overflow-y: auto; margin: 8px 0 12px; border-top: 1px solid #333; padding-top: 10px; }
+        #slim-hl-panel .empty { color: #888; font-size: 12.5px; padding: 8px 0; text-align: center; }
+        #slim-hl-panel .error { color: #ef5350; font-size: 12px; margin: 6px 0; white-space: pre-line; }
         #slim-hl-toggle {
             position: fixed; z-index: 2147483646; bottom: 20px; right: 20px;
             width: 48px; height: 48px; border-radius: 14px; padding: 0;
@@ -172,13 +172,13 @@
             transition: transform 0.15s;
         }
         #slim-hl-toggle:hover { transform: scale(1.1); }
-        select#search-engine, select#ui-lang, input[type=text] {
+        #slim-hl-panel select#search-engine, #slim-hl-panel select#ui-lang, #slim-hl-panel input[type=text] {
             background: #222; color: #eee; border: 1px solid #444;
             border-radius: 6px; padding: 7px 9px; width: 100%; margin-top: 4px;
         }
-        label { font-size: 13px; display: flex; align-items: center; gap: 8px; margin: 8px 0; }
-        .section-title { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.6px; margin: 16px 0 8px; font-weight: 600; }
-        #kw-search {
+        #slim-hl-panel label { font-size: 13px; display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+        #slim-hl-panel .section-title { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.6px; margin: 16px 0 8px; font-weight: 600; }
+        #slim-hl-panel #kw-search {
             width: 100%;
             margin-bottom: 8px;
             background: #222;
@@ -321,7 +321,13 @@
                 if (!flags.includes('g')) flags += 'g';
             } else {
                 const escaped = escapeRegExp(k.text);
-                pattern = (k.wholeWord !== false && !k.text.includes(' ')) ? '\\b' + escaped + '\\b' : escaped;
+                if (k.wholeWord !== false && !k.text.includes(' ')) {
+                    // \b kennt nur ASCII; Umlaute und Zeichen wie + oder # brauchen Unicode-Lookarounds.
+                    pattern = '(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])';
+                    flags = 'giu';
+                } else {
+                    pattern = escaped;
+                }
             }
             try {
                 return { re: new RegExp(pattern, flags), color: k.color || DEFAULT_COLOR, text: k.text };
@@ -453,6 +459,8 @@
     const OWN_UI = '#slim-hl-panel, #slim-hl-toggle, #slim-pos-bar';
     const FRAME_BUDGET_MS = 10;
     let matchers = [];
+    let refreshQueued = false;
+    let refreshRetryTimer;
 
     function isOwnNode(node) {
         const el = node.nodeType === 1 ? node : node.parentElement;
@@ -495,11 +503,18 @@
         if (document.getElementById('match-list')) renderMatchList();
         updatePosBar();
         if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
+        if (refreshQueued) { refreshQueued = false; refreshHighlights(); }
     }
 
     /** Vollständiger Neuaufbau, nur nötig wenn sich Keywords oder Einstellungen ändern. */
     function refreshHighlights() {
-        if (!enabled || isSelecting || isHighlighting || isBlacklisted()) return;
+        if (!enabled || isBlacklisted()) return;
+        if (isSelecting) {
+            clearTimeout(refreshRetryTimer);
+            refreshRetryTimer = setTimeout(refreshHighlights, 100);
+            return;
+        }
+        if (isHighlighting) { refreshQueued = true; return; }
         isHighlighting = true;
         keywordCounts = {};
         currentIdx = -1;
@@ -545,13 +560,21 @@
         document.title = highlightCount ? `(${highlightCount}) ${baseTitle}` : baseTitle;
     }
 
+    let outlined = null;
+    let outlineTimer;
+
     function goTo(delta) {
         const hls = document.getElementsByClassName('slim-hl');
         if (!hls.length) return;
+        if (currentIdx < 0 && delta < 0) currentIdx = 0;
         currentIdx = (currentIdx + delta + hls.length) % hls.length;
-        hls[currentIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        hls[currentIdx].style.outline = '2px solid #ffca28';
-        setTimeout(() => hls[currentIdx] && (hls[currentIdx].style.outline = ''), 700);
+        const target = hls[currentIdx];
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (outlined && outlined !== target) outlined.style.outline = '';
+        clearTimeout(outlineTimer);
+        outlined = target;
+        target.style.outline = '2px solid #ffca28';
+        outlineTimer = setTimeout(() => { target.style.outline = ''; outlined = null; }, 700);
         updateCounterAndTitle();
         const bar = document.getElementById('slim-pos-bar');
         if (bar) {
@@ -713,8 +736,8 @@
             enabled = e.target.checked;
             save();
             if (enabled) {
+                if (!observer) setupObserver();
                 refreshHighlights();
-                if (observer) observer.observe(document.body, { childList: true, subtree: true });
             } else {
                 cleanupHighlights();
                 updateCounterAndTitle();
@@ -820,7 +843,7 @@
         document.body.appendChild(btn);
     }
 
-    document.addEventListener('mousedown', () => { isSelecting = true; });
+    document.addEventListener('mousedown', e => { if (!isOwnNode(e.target)) isSelecting = true; });
     document.addEventListener('mouseup', () => { setTimeout(() => { isSelecting = false; }, 80); });
 
     document.addEventListener('click', e => {
