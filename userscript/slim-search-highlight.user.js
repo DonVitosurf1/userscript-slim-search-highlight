@@ -102,67 +102,7 @@
 
     GM_addStyle(`
         .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
-        #slim-hl-panel {
-            position: fixed; z-index: 2147483647;
-            background: #1a1a1a; color: #f0f0f0;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.08);
-            font: 13.5px/1.45 system-ui, -apple-system, sans-serif;
-            min-width: 320px; max-width: 440px;
-            user-select: none;
-        }
-        #slim-hl-panel.minimized .panel-body { display: none; }
-        #slim-hl-header {
-            padding: 12px 16px; background: #242424;
-            border-radius: 10px 10px 0 0; cursor: move;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #333;
-        }
-        #slim-hl-header span { font-weight: 650; letter-spacing: 0.2px; display: flex; align-items: center; gap: 8px; }
-        #slim-hl-header img { width: 20px; height: 20px; }
-        #slim-hl-header button {
-            background: none; border: none; color: #bbb; cursor: pointer;
-            font-size: 18px; width: 32px; height: 32px; border-radius: 6px;
-        }
-        #slim-hl-header button:hover { background: #333; color: #fff; }
-        #slim-hl-panel .panel-body { padding: 14px; max-height: 580px; overflow-y: auto; }
-        #slim-hl-panel .counter {
-            font-weight: 700; color: #ffca28; margin: 0 0 12px;
-            font-size: 18px; letter-spacing: 0.4px;
-        }
-        #slim-hl-panel .nav-btns { display: flex; gap: 10px; margin-bottom: 12px; }
-        #slim-hl-panel .nav-btns button, #slim-hl-panel #add-kw-btn, #slim-hl-panel .btn {
-            background: #2d2d2d; color: #fff; border: 1px solid #444;
-            padding: 8px 12px; border-radius: 7px; cursor: pointer;
-            transition: all 0.15s ease; font-size: 13px;
-        }
-        #slim-hl-panel .nav-btns button:hover, #slim-hl-panel #add-kw-btn:hover, #slim-hl-panel .btn:hover {
-            background: #3a3a3a; border-color: #555;
-        }
-        #slim-hl-panel .nav-btns button:focus, #slim-hl-panel #add-kw-btn:focus, #slim-hl-panel .btn:focus {
-            outline: 2px solid #ffca28; outline-offset: 2px;
-        }
-        #slim-hl-panel .kw-item, #slim-hl-panel .match-item {
-            display: flex; align-items: center; gap: 8px;
-            margin: 5px 0; padding: 4px 0; font-size: 13px;
-        }
-        #slim-hl-panel .kw-count { color: #aaa; font-size: 12px; min-width: 36px; text-align: right; }
-        #slim-hl-panel .kw-item input[type=color] { width: 26px; height: 22px; border-radius: 5px; border: none; cursor: pointer; }
-        #slim-hl-panel .kw-item input[type=text] {
-            flex: 1; background: #222; border: 1px solid #444; color: #eee;
-            padding: 5px 8px; border-radius: 6px;
-        }
-        #slim-hl-panel .kw-item button {
-            background: #333; color: #ddd; border: none; border-radius: 6px;
-            cursor: pointer; padding: 4px 10px; font-size: 15px; min-width: 32px;
-        }
-        #slim-hl-panel .kw-item button:hover { background: #c62828; color: #fff; }
-        #slim-hl-panel .match-item { cursor: pointer; padding: 5px 8px; border-radius: 6px; }
-        #slim-hl-panel .match-item:hover { background: #252525; }
-        #slim-hl-panel .match-item.active { background: #333; outline: 1px solid #ffca28; }
-        #slim-hl-panel #match-list { max-height: 160px; overflow-y: auto; margin: 8px 0 12px; border-top: 1px solid #333; padding-top: 10px; }
-        #slim-hl-panel .empty { color: #888; font-size: 12.5px; padding: 8px 0; text-align: center; }
-        #slim-hl-panel .error { color: #ef5350; font-size: 12px; margin: 6px 0; white-space: pre-line; }
+        #slim-hl-panel { all: initial; display: block; position: fixed; z-index: 2147483647; }
         #slim-hl-toggle {
             position: fixed; z-index: 2147483646; bottom: 20px; right: 20px;
             width: 48px; height: 48px; border-radius: 14px; padding: 0;
@@ -172,22 +112,6 @@
             transition: transform 0.15s;
         }
         #slim-hl-toggle:hover { transform: scale(1.1); }
-        #slim-hl-panel select#search-engine, #slim-hl-panel select#ui-lang, #slim-hl-panel input[type=text] {
-            background: #222; color: #eee; border: 1px solid #444;
-            border-radius: 6px; padding: 7px 9px; width: 100%; margin-top: 4px;
-        }
-        #slim-hl-panel label { font-size: 13px; display: flex; align-items: center; gap: 8px; margin: 8px 0; }
-        #slim-hl-panel .section-title { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.6px; margin: 16px 0 8px; font-weight: 600; }
-        #slim-hl-panel #kw-search {
-            width: 100%;
-            margin-bottom: 8px;
-            background: #222;
-            color: #eee;
-            border: 1px solid #444;
-            border-radius: 6px;
-            padding: 7px 9px;
-        }
-
         /* Positionsanzeige */
         #slim-pos-bar {
             position: fixed;
@@ -219,6 +143,85 @@
             box-shadow: 0 0 4px #ffca28;
         }
     `);
+
+    // Panel-Styles liegen im Shadow DOM und sind von der Seite getrennt.
+    const PANEL_CSS = `
+    .panel {
+        background: #1a1a1a; color: #f0f0f0;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.08);
+        font: 13.5px/1.45 system-ui, -apple-system, sans-serif;
+        min-width: 320px; max-width: 440px;
+        user-select: none;
+    }
+    :host(.minimized) .panel-body { display: none; }
+    #slim-hl-header {
+        padding: 12px 16px; background: #242424;
+        border-radius: 10px 10px 0 0; cursor: move;
+        display: flex; justify-content: space-between; align-items: center;
+        border-bottom: 1px solid #333;
+    }
+    #slim-hl-header span { font-weight: 650; letter-spacing: 0.2px; display: flex; align-items: center; gap: 8px; }
+    #slim-hl-header img { width: 20px; height: 20px; }
+    #slim-hl-header button {
+        background: none; border: none; color: #bbb; cursor: pointer;
+        font-size: 18px; width: 32px; height: 32px; border-radius: 6px;
+    }
+    #slim-hl-header button:hover { background: #333; color: #fff; }
+    .panel-body { padding: 14px; max-height: 580px; overflow-y: auto; }
+    .counter {
+        font-weight: 700; color: #ffca28; margin: 0 0 12px;
+        font-size: 18px; letter-spacing: 0.4px;
+    }
+    .nav-btns { display: flex; gap: 10px; margin-bottom: 12px; }
+    .nav-btns button, #add-kw-btn, .btn {
+        background: #2d2d2d; color: #fff; border: 1px solid #444;
+        padding: 8px 12px; border-radius: 7px; cursor: pointer;
+        transition: all 0.15s ease; font-size: 13px;
+    }
+    .nav-btns button:hover, #add-kw-btn:hover, .btn:hover {
+        background: #3a3a3a; border-color: #555;
+    }
+    .nav-btns button:focus, #add-kw-btn:focus, .btn:focus {
+        outline: 2px solid #ffca28; outline-offset: 2px;
+    }
+    .kw-item, .match-item {
+        display: flex; align-items: center; gap: 8px;
+        margin: 5px 0; padding: 4px 0; font-size: 13px;
+    }
+    .kw-count { color: #aaa; font-size: 12px; min-width: 36px; text-align: right; }
+    .kw-item input[type=color] { width: 26px; height: 22px; border-radius: 5px; border: none; cursor: pointer; }
+    .kw-item input[type=text] {
+        flex: 1; background: #222; border: 1px solid #444; color: #eee;
+        padding: 5px 8px; border-radius: 6px;
+    }
+    .kw-item button {
+        background: #333; color: #ddd; border: none; border-radius: 6px;
+        cursor: pointer; padding: 4px 10px; font-size: 15px; min-width: 32px;
+    }
+    .kw-item button:hover { background: #c62828; color: #fff; }
+    .match-item { cursor: pointer; padding: 5px 8px; border-radius: 6px; }
+    .match-item:hover { background: #252525; }
+    .match-item.active { background: #333; outline: 1px solid #ffca28; }
+    #match-list { max-height: 160px; overflow-y: auto; margin: 8px 0 12px; border-top: 1px solid #333; padding-top: 10px; }
+    .empty { color: #888; font-size: 12.5px; padding: 8px 0; text-align: center; }
+    .error { color: #ef5350; font-size: 12px; margin: 6px 0; white-space: pre-line; }
+    select#search-engine, select#ui-lang, input[type=text] {
+        background: #222; color: #eee; border: 1px solid #444;
+        border-radius: 6px; padding: 7px 9px; width: 100%; margin-top: 4px;
+    }
+    label { font-size: 13px; display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+    .section-title { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.6px; margin: 16px 0 8px; font-weight: 600; }
+    #kw-search {
+        width: 100%;
+        margin-bottom: 8px;
+        background: #222;
+        color: #eee;
+        border: 1px solid #444;
+        border-radius: 6px;
+        padding: 7px 9px;
+    }
+    `;
 
     const PERSISTED = {
         hl_keywords: () => keywords,
@@ -486,6 +489,8 @@
     const OWN_UI = '#slim-hl-panel, #slim-hl-toggle, #slim-pos-bar';
     const FRAME_BUDGET_MS = 10;
     let matchers = [];
+    let panelRoot = null; // ShadowRoot des Panels
+    const ui = id => (panelRoot ? panelRoot.getElementById(id) : null);
     let ownNodes = new WeakSet(); // Markierungen und Textstücke, die dieses Skript selbst erzeugt hat
     let refreshQueued = false;
     let refreshRetryTimer;
@@ -532,8 +537,8 @@
     function afterHighlight() {
         isHighlighting = false;
         updateCounterAndTitle();
-        if (document.getElementById('kw-list')) updateKeywordCounts();
-        if (document.getElementById('match-list')) renderMatchList();
+        if (ui('kw-list')) updateKeywordCounts();
+        if (ui('match-list')) renderMatchList();
         updatePosBar();
         if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
         if (refreshQueued) { refreshQueued = false; refreshHighlights(); return; }
@@ -564,7 +569,7 @@
         pendingNodes.clear();
 
         try { matchers = buildMatchers(); } catch (e) { matchers = []; lastErrors = [String(e && e.message || e)]; }
-        const errorEl = document.getElementById('regex-error');
+        const errorEl = ui('regex-error');
         if (errorEl) errorEl.textContent = lastErrors.join('\n');
 
         if (!matchers.length) {
@@ -593,7 +598,7 @@
 
     function updateCounterAndTitle() {
         highlightCount = document.getElementsByClassName('slim-hl').length;
-        const counter = document.getElementById('hl-counter');
+        const counter = ui('hl-counter');
         if (counter) counter.textContent = highlightCount ? `${Math.max(0, currentIdx) + 1} / ${highlightCount}` : '0 / 0';
         let baseTitle = document.title;
         if (titlePrefix && baseTitle.startsWith(titlePrefix)) baseTitle = baseTitle.slice(titlePrefix.length);
@@ -625,14 +630,14 @@
         } else {
             updatePosBar();
         }
-        const items = document.querySelectorAll('.match-item');
+        const items = panelRoot ? panelRoot.querySelectorAll('.match-item') : [];
         if (items.length) items.forEach((el, i) => el.classList.toggle('active', i === currentIdx));
     }
 
     const MATCH_LIST_MAX = 300;
 
     function renderMatchList() {
-        const list = document.getElementById('match-list');
+        const list = ui('match-list');
         if (!list) return;
         const hls = document.getElementsByClassName('slim-hl');
         if (!hls.length) {
@@ -667,7 +672,11 @@
         panel.style.left = panelPos.x + 'px';
         panel.style.top = panelPos.y + 'px';
         if (panelState.minimized) panel.classList.add('minimized');
-        panel.innerHTML = `
+        const root = panel.attachShadow({ mode: 'open' });
+        panelRoot = root;
+        root.innerHTML = `
+            <style>${PANEL_CSS}</style>
+            <div class="panel">
             <div id="slim-hl-header">
                 <span><img src="${LOGO}" alt="">Highlight</span>
                 <div>
@@ -711,7 +720,12 @@
                     <option value="de" ${lang==='de'?'selected':''}>Deutsch</option>
                     <option value="en" ${lang==='en'?'selected':''}>English</option>
                 </select>
+            </div>
             </div>`;
+        // Tastendrücke im Panel (ohne Alt/Strg/Cmd) sollen keine Tastenkürzel der Seite auslösen.
+        ['keydown', 'keyup', 'keypress'].forEach(type => panel.addEventListener(type, e => {
+            if (!e.altKey && !e.ctrlKey && !e.metaKey) e.stopPropagation();
+        }));
         document.body.appendChild(panel);
         if (panelState.open) panel.style.display = 'block';
 
@@ -726,7 +740,7 @@
             panelPos = { x: panel.offsetLeft, y: panel.offsetTop };
             save();
         };
-        panel.querySelector('#slim-hl-header').onmousedown = e => {
+        root.querySelector('#slim-hl-header').onmousedown = e => {
             if (e.target.tagName === 'BUTTON') return;
             dx = e.clientX - panel.offsetLeft;
             dy = e.clientY - panel.offsetTop;
@@ -734,46 +748,46 @@
             document.addEventListener('mouseup', onUp);
         };
 
-        panel.querySelector('#btn-min').onclick = () => {
+        root.querySelector('#btn-min').onclick = () => {
             panel.classList.toggle('minimized');
             panelState.minimized = panel.classList.contains('minimized');
             save();
         };
-        panel.querySelector('#btn-close').onclick = () => {
+        root.querySelector('#btn-close').onclick = () => {
             panel.style.display = 'none';
             panelState.open = false;
             save();
         };
-        panel.querySelector('#btn-prev').onclick = () => goTo(-1);
-        panel.querySelector('#btn-next').onclick = () => goTo(1);
+        root.querySelector('#btn-prev').onclick = () => goTo(-1);
+        root.querySelector('#btn-next').onclick = () => goTo(1);
 
-        panel.querySelector('#kw-search').oninput = e => {
+        root.querySelector('#kw-search').oninput = e => {
             kwFilter = e.target.value.trim().toLowerCase();
             renderKeywordList();
         };
 
-        panel.querySelector('#add-kw-btn').onclick = () => {
-            const text = panel.querySelector('#new-kw').value.trim();
+        root.querySelector('#add-kw-btn').onclick = () => {
+            const text = root.querySelector('#new-kw').value.trim();
             if (!text) return;
             if (keywords.some(k => k.text.toLowerCase() === text.toLowerCase())) {
                 alert(t('exists'));
                 return;
             }
-            const domainsRaw = panel.querySelector('#new-domains').value.trim();
+            const domainsRaw = root.querySelector('#new-domains').value.trim();
             const domains = domainsRaw ? domainsRaw.split(',').map(d => d.trim()).filter(Boolean) : [];
             keywords.push({
                 text,
-                color: panel.querySelector('#new-color').value,
+                color: root.querySelector('#new-color').value,
                 regex: isRegexText(text),
-                wholeWord: panel.querySelector('#new-whole').checked,
+                wholeWord: root.querySelector('#new-whole').checked,
                 domains
             });
             save();
-            panel.querySelector('#new-kw').value = '';
-            panel.querySelector('#new-domains').value = '';
+            root.querySelector('#new-kw').value = '';
+            root.querySelector('#new-domains').value = '';
             refreshHighlights();
         };
-        panel.querySelector('#chk-enabled').onchange = e => {
+        root.querySelector('#chk-enabled').onchange = e => {
             enabled = e.target.checked;
             save();
             if (enabled) {
@@ -787,14 +801,14 @@
                 if (observer) observer.disconnect();
             }
         };
-        panel.querySelector('#chk-auto').onchange = e => { autoSearch = e.target.checked; save(); refreshHighlights(); };
-        panel.querySelector('#chk-posbar').onchange = e => {
+        root.querySelector('#chk-auto').onchange = e => { autoSearch = e.target.checked; save(); refreshHighlights(); };
+        root.querySelector('#chk-posbar').onchange = e => {
             showPosBar = e.target.checked;
             save();
             updatePosBar();
         };
-        panel.querySelector('#search-engine').onchange = e => { searchEngine = e.target.value; save(); };
-        panel.querySelector('#ui-lang').onchange = e => {
+        root.querySelector('#search-engine').onchange = e => { searchEngine = e.target.value; save(); };
+        root.querySelector('#ui-lang').onchange = e => {
             lang = e.target.value;
             save();
             const toggle = document.getElementById('slim-hl-toggle');
@@ -811,7 +825,7 @@
 
     /** Aktualisiert nur die Trefferzahlen, damit ein gerade bearbeitetes Feld nicht neu aufgebaut wird. */
     function updateKeywordCounts() {
-        const list = document.getElementById('kw-list');
+        const list = ui('kw-list');
         if (!list) return;
         const filtered = keywords.filter(k => !kwFilter || k.text.toLowerCase().includes(kwFilter));
         const items = list.querySelectorAll('.kw-item');
@@ -820,7 +834,7 @@
     }
 
     function renderKeywordList() {
-        const list = document.getElementById('kw-list');
+        const list = ui('kw-list');
         if (!list) return;
         const filtered = keywords.filter(k => !kwFilter || k.text.toLowerCase().includes(kwFilter));
         if (!filtered.length) {
@@ -859,7 +873,7 @@
     }
 
     function renderHistory() {
-        const container = document.getElementById('history-container');
+        const container = ui('history-container');
         if (!container || !searchHistory.length) return;
         container.innerHTML = `<div class="section-title">${t('recent')}</div>`;
         searchHistory.forEach(h => {

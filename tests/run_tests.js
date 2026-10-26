@@ -32,6 +32,10 @@ async function open(browser, { html = paragraphs(10), keywords = KW, url = null,
         window.GM_setValue = (k, v) => { window.__sets++; store[k] = v; };
         window.GM_addStyle = css => { const s = document.createElement('style'); s.textContent = css; document.head.appendChild(s); };
         window.GM_registerMenuCommand = () => {};
+        const uiRoot = () => { const h = document.getElementById('slim-hl-panel'); return h && (h.shadowRoot || h); };
+        window.__ui = sel => { const r = uiRoot(); return r && r.querySelector(sel); };
+        window.__uiAll = sel => { const r = uiRoot(); return r ? r.querySelectorAll(sel) : []; };
+        window.__uiActive = () => { const h = document.getElementById('slim-hl-panel'); return h && h.shadowRoot ? h.shadowRoot.activeElement : document.activeElement; };
         const orig = Document.prototype.createTreeWalker;
         Document.prototype.createTreeWalker = function (...a) { window.__walkers++; return orig.apply(this, a); };
     }, [keywords, panelOpen, store]);
@@ -150,7 +154,7 @@ const tests = {
     async disabling_restores_text_nodes(browser) {
         const page = await open(browser, { html: '<p id="t">lorem ipsum dolor</p>', panelOpen: true });
         await settled(page);
-        await page.evaluate(() => { document.getElementById('chk-enabled').click(); });
+        await page.evaluate(() => { __ui('#chk-enabled').click(); });
         eq(await page.evaluate(() => document.getElementById('t').childNodes.length), 1, 'Textknoten nach Deaktivieren');
     },
 
@@ -384,11 +388,11 @@ const tests = {
     async own_page_title_counter_keeps_page_prefix(browser) {
         const page = await open(browser, { html: '<title>x</title><p>lorem</p>', panelOpen: true });
         await page.evaluate(() => { document.title = '(3) Inbox'; });
-        await page.evaluate(() => document.getElementById('chk-enabled').click());
-        await page.evaluate(() => document.getElementById('chk-enabled').click());
+        await page.evaluate(() => __ui('#chk-enabled').click());
+        await page.evaluate(() => __ui('#chk-enabled').click());
         await settled(page);
         eq(await page.evaluate(() => document.title), '(1) (3) Inbox', 'Titel mit Zähler');
-        await page.evaluate(() => document.getElementById('chk-enabled').click());
+        await page.evaluate(() => __ui('#chk-enabled').click());
         eq(await page.evaluate(() => document.title), '(3) Inbox', 'Titel nach Deaktivieren');
     },
 
@@ -409,7 +413,7 @@ const tests = {
         await page.keyboard.type('zusatz');
         await page.evaluate(() => { document.body.insertAdjacentHTML('beforeend', '<p>lorem noch mehr</p>'); });
         await page.waitForTimeout(800);
-        eq(await page.evaluate(() => document.activeElement && document.activeElement.value), 'loremzusatz', 'Eingabe im Keyword-Feld verloren');
+        eq(await page.evaluate(() => __uiActive() && __uiActive().value), 'loremzusatz', 'Eingabe im Keyword-Feld verloren');
     },
 
     async logo_is_compact_and_renders(browser) {
@@ -424,11 +428,31 @@ const tests = {
         ok(toggleBg.startsWith('url('), 'Logo am Toggle-Button fehlt');
     },
 
+    async panel_is_encapsulated_from_page_styles(browser) {
+        const hostile = '<style>button, input, label, select, div, span { display: none !important } * { color: rgb(255, 0, 0) !important; font-size: 40px !important }</style>';
+        const page = await open(browser, { html: hostile + '<p>lorem</p>', panelOpen: true });
+        await settled(page);
+        ok(await page.evaluate(() => !!document.getElementById('slim-hl-panel').shadowRoot), 'Panel hat kein Shadow DOM');
+        eq(await page.evaluate(() => document.querySelector('#add-kw-btn')), null, 'Panel-Elemente liegen im normalen DOM');
+        const r = await page.locator('#add-kw-btn').evaluate(e => ({ d: getComputedStyle(e).display, f: getComputedStyle(e).fontSize }));
+        ok(r.d !== 'none', 'Seiten-CSS blendet Panel-Button aus');
+        ok(r.f !== '40px', 'Seiten-CSS ändert Schriftgröße im Panel');
+    },
+
+    async typing_in_panel_does_not_reach_page_shortcuts(browser) {
+        const page = await open(browser, { panelOpen: true });
+        await page.evaluate(() => { window.__keys = 0; document.addEventListener('keydown', () => { window.__keys++; }); });
+        await page.waitForTimeout(300);
+        await page.focus('#new-kw');
+        await page.keyboard.type('abc');
+        eq(await page.evaluate(() => window.__keys), 0, 'Tastendrücke im Panel erreichen Seiten-Skripte');
+    },
+
     async match_list_is_capped(browser) {
         const page = await open(browser, { html: paragraphs(800), panelOpen: true });
         await settled(page);
         await page.waitForTimeout(500);
-        const n = await page.evaluate(() => document.querySelectorAll('#match-list > *').length);
+        const n = await page.evaluate(() => __uiAll('#match-list > *').length);
         ok(n <= 301, `Trefferliste hat ${n} Einträge (Limit 301)`);
     },
 };
