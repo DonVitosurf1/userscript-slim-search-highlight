@@ -1,15 +1,16 @@
 // ==UserScript==
-// @name         Slim Search Highlight Pro v3.10
+// @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      3.11
+// @version      4.0
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
 // @supportURL   https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues
 // @updateURL    https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
 // @downloadURL  https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
-// @description  Positionsanzeige + Keyword-Suchfeld
-// @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0iIzI2MzIzOCIvPgogIDwhLS0gSGlnaGxpZ2h0cyAtLT4KICA8cmVjdCB4PSIyMCIgeT0iMzAiIHdpZHRoPSI1MiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIzNCIgeT0iNTYiIHdpZHRoPSI0NCIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiM5MGNhZjkiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNhNWQ2YTciLz4KICA8IS0tIFRleHQgbGluZXMgLS0+CiAgPGcgZmlsbD0iI2VjZWZmMSIgb3BhY2l0eT0iLjkiPgogICAgPHJlY3QgeD0iMjQiIHk9IjM1IiB3aWR0aD0iNDQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMyNjMyMzgiLz4KICAgIDxyZWN0IHg9IjM4IiB5PSI2MSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMjYzMjM4Ii8+CiAgICA8cmVjdCB4PSIyNCIgeT0iODciIHdpZHRoPSIyOCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzI2MzIzOCIvPgogICAgPHJlY3QgeD0iNzgiIHk9IjM1IiB3aWR0aD0iMTYiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjIwIiB5PSI2MSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4MiIgeT0iNjEiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iNjIiIHk9Ijg3IiB3aWR0aD0iMzIiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPCEtLSBQb3NpdGlvbiBiYXIgLS0+CiAgPHJlY3QgeD0iMTA0IiB5PSIyMCIgd2lkdGg9IjYiIGhlaWdodD0iODgiIHJ4PSIzIiBmaWxsPSIjNDU1YTY0Ii8+CiAgPHJlY3QgeD0iMTA0IiB5PSIzMiIgd2lkdGg9IjYiIGhlaWdodD0iNSIgcng9IjIiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIxMDQiIHk9IjYwIiB3aWR0aD0iNiIgaGVpZ2h0PSI1IiByeD0iMiIgZmlsbD0iIzkwY2FmOSIvPgogIDxyZWN0IHg9IjEwNCIgeT0iODYiIHdpZHRoPSI2IiBoZWlnaHQ9IjUiIHJ4PSIyIiBmaWxsPSIjYTVkNmE3Ii8+Cjwvc3ZnPgo=
+// @description  Keyword highlighting with position bar, navigation and keyword search
+// @description:de  Keyword-Hervorhebung mit Positionsanzeige, Navigation und Keyword-Suche
+// @icon         https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/assets/icon.svg
 // @match        *://*/*
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -31,8 +32,52 @@
     let blacklist = GM_getValue('hl_blacklist', ['docs.google.com', 'youtube.com', 'netflix.com']);
     let searchEngine = GM_getValue('hl_search_engine', 'google');
     let showPosBar = GM_getValue('hl_show_posbar', true);
+    let lang = GM_getValue('hl_lang', 'auto');
 
     const LOGO = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0iIzI2MzIzOCIvPgogIDwhLS0gSGlnaGxpZ2h0cyAtLT4KICA8cmVjdCB4PSIyMCIgeT0iMzAiIHdpZHRoPSI1MiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIzNCIgeT0iNTYiIHdpZHRoPSI0NCIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiM5MGNhZjkiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNhNWQ2YTciLz4KICA8IS0tIFRleHQgbGluZXMgLS0+CiAgPGcgZmlsbD0iI2VjZWZmMSIgb3BhY2l0eT0iLjkiPgogICAgPHJlY3QgeD0iMjQiIHk9IjM1IiB3aWR0aD0iNDQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMyNjMyMzgiLz4KICAgIDxyZWN0IHg9IjM4IiB5PSI2MSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMjYzMjM4Ii8+CiAgICA8cmVjdCB4PSIyNCIgeT0iODciIHdpZHRoPSIyOCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzI2MzIzOCIvPgogICAgPHJlY3QgeD0iNzgiIHk9IjM1IiB3aWR0aD0iMTYiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjIwIiB5PSI2MSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4MiIgeT0iNjEiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iNjIiIHk9Ijg3IiB3aWR0aD0iMzIiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPCEtLSBQb3NpdGlvbiBiYXIgLS0+CiAgPHJlY3QgeD0iMTA0IiB5PSIyMCIgd2lkdGg9IjYiIGhlaWdodD0iODgiIHJ4PSIzIiBmaWxsPSIjNDU1YTY0Ii8+CiAgPHJlY3QgeD0iMTA0IiB5PSIzMiIgd2lkdGg9IjYiIGhlaWdodD0iNSIgcng9IjIiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIxMDQiIHk9IjYwIiB3aWR0aD0iNiIgaGVpZ2h0PSI1IiByeD0iMiIgZmlsbD0iIzkwY2FmOSIvPgogIDxyZWN0IHg9IjEwNCIgeT0iODYiIHdpZHRoPSI2IiBoZWlnaHQ9IjUiIHJ4PSIyIiBmaWxsPSIjYTVkNmE3Ii8+Cjwvc3ZnPgo=';
+
+    const I18N = {
+        en: {
+            openPanel: 'Open highlight panel', minimize: 'Minimize', close: 'Close',
+            prev: 'Previous highlight (Alt + ←)', next: 'Next highlight (Alt + →)',
+            kwSearch: 'Search keywords…', kwPlaceholder: 'Keyword or /regex/',
+            wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
+            keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
+            enabled: 'Highlights enabled', autoSearch: 'Take over terms from search', posBar: 'Show position bar',
+            engine: 'Search engine for right-click:', language: 'Language:', langAuto: 'Auto',
+            noMatches: 'No matches on this page', noKwMatches: 'No keywords match your search', noKeywords: 'No keywords saved yet',
+            more: n => `… and ${n} more (use Alt + → / ← to step through)`,
+            changeColor: 'Change color', countTitle: 'Matches on this page', remove: 'Delete',
+            invalidRegex: k => `Invalid regex in “${k}”`, exists: 'Keyword already exists.',
+            menuOpen: 'Open panel', menuBlacklist: 'Add current domain to blacklist',
+            blacklisted: h => `${h} added to the blacklist`
+        },
+        de: {
+            openPanel: 'Highlight-Panel öffnen', minimize: 'Minimieren', close: 'Schließen',
+            prev: 'Vorheriges Highlight (Alt + ←)', next: 'Nächstes Highlight (Alt + →)',
+            kwSearch: 'Keywords suchen…', kwPlaceholder: 'Keyword oder /regex/',
+            wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
+            keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
+            enabled: 'Highlights aktiv', autoSearch: 'Automatisch von Suche übernehmen', posBar: 'Positionsanzeige anzeigen',
+            engine: 'Suchmaschine für Rechtsklick:', language: 'Sprache:', langAuto: 'Automatisch',
+            noMatches: 'Keine Treffer auf dieser Seite', noKwMatches: 'Keine Treffer für die Suche', noKeywords: 'Noch keine Keywords gespeichert',
+            more: n => `… und ${n} weitere (Alt + → / ← zum Durchblättern)`,
+            changeColor: 'Farbe ändern', countTitle: 'Treffer auf dieser Seite', remove: 'Löschen',
+            invalidRegex: k => `Ungültiger Regex bei „${k}“`, exists: 'Keyword existiert bereits.',
+            menuOpen: 'Panel öffnen', menuBlacklist: 'Aktuelle Domain zur Blacklist',
+            blacklisted: h => `${h} zur Blacklist hinzugefügt`
+        }
+    };
+
+    function currentLang() {
+        if (lang === 'de' || lang === 'en') return lang;
+        return String(navigator.language || 'en').toLowerCase().startsWith('de') ? 'de' : 'en';
+    }
+
+    function t(key, ...args) {
+        const v = (I18N[currentLang()] || I18N.en)[key] ?? I18N.en[key] ?? key;
+        return typeof v === 'function' ? v(...args) : v;
+    }
     const DEFAULT_COLOR = '#ffe082';
     const AUTO_COLORS = ['#90caf9', '#a5d6a7', '#ef9a9a', '#ffcc80', '#ce93d8', '#80cbc4', '#fff176', '#b0bec5'];
     const SEARCH_ENGINES = ['google.', 'bing.', 'duckduckgo.', 'yahoo.', 'baidu.', 'yandex.', 'startpage.', 'ecosia.', 'qwant.'];
@@ -127,7 +172,7 @@
             transition: transform 0.15s;
         }
         #slim-hl-toggle:hover { transform: scale(1.1); }
-        select#search-engine, input[type=text] {
+        select#search-engine, select#ui-lang, input[type=text] {
             background: #222; color: #eee; border: 1px solid #444;
             border-radius: 6px; padding: 7px 9px; width: 100%; margin-top: 4px;
         }
@@ -185,6 +230,7 @@
         GM_setValue('hl_blacklist', blacklist);
         GM_setValue('hl_search_engine', searchEngine);
         GM_setValue('hl_show_posbar', showPosBar);
+        GM_setValue('hl_lang', lang);
     }
 
     function isBlacklisted() {
@@ -280,7 +326,7 @@
             try {
                 return { re: new RegExp(pattern, flags), color: k.color || DEFAULT_COLOR, text: k.text };
             } catch (e) {
-                lastErrors.push(`Ungültiger Regex bei „${k.text}“`);
+                lastErrors.push(t('invalidRegex', k.text));
                 return null;
             }
         }).filter(Boolean);
@@ -526,7 +572,7 @@
         if (!list) return;
         const hls = document.getElementsByClassName('slim-hl');
         if (!hls.length) {
-            list.innerHTML = '<div class="empty">Keine Treffer auf dieser Seite</div>';
+            list.innerHTML = `<div class="empty">${t('noMatches')}</div>`;
             return;
         }
         const frag = document.createDocumentFragment();
@@ -544,7 +590,7 @@
         if (hls.length > shown) {
             const more = document.createElement('div');
             more.className = 'empty';
-            more.textContent = `… und ${hls.length - shown} weitere (Alt + → / ← zum Durchblättern)`;
+            more.textContent = t('more', hls.length - shown);
             frag.appendChild(more);
         }
         list.replaceChildren(frag);
@@ -561,39 +607,45 @@
             <div id="slim-hl-header">
                 <span><img src="${LOGO}" alt="">Highlight</span>
                 <div>
-                    <button id="btn-min" title="Minimieren">−</button>
-                    <button id="btn-close" title="Schließen">×</button>
+                    <button id="btn-min" title="${t('minimize')}">−</button>
+                    <button id="btn-close" title="${t('close')}">×</button>
                 </div>
             </div>
             <div class="panel-body">
                 <div class="counter" id="hl-counter">0 / 0</div>
                 <div class="nav-btns">
-                    <button id="btn-prev" title="Vorheriges Highlight (Alt + ←)">◀</button>
-                    <button id="btn-next" title="Nächstes Highlight (Alt + →)">▶</button>
+                    <button id="btn-prev" title="${t('prev')}">◀</button>
+                    <button id="btn-next" title="${t('next')}">▶</button>
                 </div>
                 <div id="match-list"></div>
-                <div class="section-title">Keywords</div>
-                <input type="text" id="kw-search" placeholder="Keywords suchen…" value="${kwFilter}">
+                <div class="section-title">${t('keywords')}</div>
+                <input type="text" id="kw-search" placeholder="${t('kwSearch')}" value="${kwFilter}">
                 <div id="kw-list"></div>
                 <div id="regex-error" class="error"></div>
                 <div style="display:flex;gap:8px;margin-top:10px;">
-                    <input type="text" id="new-kw" placeholder="Keyword oder /regex/" style="flex:1;">
+                    <input type="text" id="new-kw" placeholder="${t('kwPlaceholder')}" style="flex:1;">
                     <input type="color" id="new-color" value="${DEFAULT_COLOR}">
                 </div>
-                <label style="margin-top:8px;"><input type="checkbox" id="new-whole" checked> Nur ganze Wörter</label>
-                <input type="text" id="new-domains" placeholder="Nur auf Domains (optional, kommagetrennt)">
-                <button id="add-kw-btn" style="margin-top:10px;width:100%;">Hinzufügen</button>
+                <label style="margin-top:8px;"><input type="checkbox" id="new-whole" checked> ${t('wholeWords')}</label>
+                <input type="text" id="new-domains" placeholder="${t('domains')}">
+                <button id="add-kw-btn" style="margin-top:10px;width:100%;">${t('add')}</button>
                 <div id="history-container"></div>
-                <div class="section-title">Einstellungen</div>
-                <label><input type="checkbox" id="chk-enabled" ${enabled?'checked':''}> Highlights aktiv</label>
-                <label><input type="checkbox" id="chk-auto" ${autoSearch?'checked':''}> Automatisch von Suche übernehmen</label>
-                <label><input type="checkbox" id="chk-posbar" ${showPosBar?'checked':''}> Positionsanzeige anzeigen</label>
-                <div style="margin-top:10px;font-size:12.5px;">Suchmaschine für Rechtsklick:</div>
+                <div class="section-title">${t('settings')}</div>
+                <label><input type="checkbox" id="chk-enabled" ${enabled?'checked':''}> ${t('enabled')}</label>
+                <label><input type="checkbox" id="chk-auto" ${autoSearch?'checked':''}> ${t('autoSearch')}</label>
+                <label><input type="checkbox" id="chk-posbar" ${showPosBar?'checked':''}> ${t('posBar')}</label>
+                <div style="margin-top:10px;font-size:12.5px;">${t('engine')}</div>
                 <select id="search-engine">
                     <option value="google" ${searchEngine==='google'?'selected':''}>Google</option>
                     <option value="ddg" ${searchEngine==='ddg'?'selected':''}>DuckDuckGo</option>
                     <option value="brave" ${searchEngine==='brave'?'selected':''}>Brave</option>
                     <option value="bing" ${searchEngine==='bing'?'selected':''}>Bing</option>
+                </select>
+                <div style="margin-top:10px;font-size:12.5px;">${t('language')}</div>
+                <select id="ui-lang">
+                    <option value="auto" ${lang==='auto'?'selected':''}>${t('langAuto')}</option>
+                    <option value="de" ${lang==='de'?'selected':''}>Deutsch</option>
+                    <option value="en" ${lang==='en'?'selected':''}>English</option>
                 </select>
             </div>`;
         document.body.appendChild(panel);
@@ -640,7 +692,7 @@
             const text = panel.querySelector('#new-kw').value.trim();
             if (!text) return;
             if (keywords.some(k => k.text.toLowerCase() === text.toLowerCase())) {
-                alert('Keyword existiert bereits.');
+                alert(t('exists'));
                 return;
             }
             const domainsRaw = panel.querySelector('#new-domains').value.trim();
@@ -677,6 +729,15 @@
             updatePosBar();
         };
         panel.querySelector('#search-engine').onchange = e => { searchEngine = e.target.value; save(); };
+        panel.querySelector('#ui-lang').onchange = e => {
+            lang = e.target.value;
+            save();
+            const toggle = document.getElementById('slim-hl-toggle');
+            if (toggle) toggle.title = t('openPanel');
+            panel.remove();
+            createPanel();
+            refreshHighlights();
+        };
 
         renderKeywordList();
         renderHistory();
@@ -688,7 +749,7 @@
         if (!list) return;
         const filtered = keywords.filter(k => !kwFilter || k.text.toLowerCase().includes(kwFilter));
         if (!filtered.length) {
-            list.innerHTML = `<div class="empty">${keywords.length ? 'Keine Treffer für die Suche' : 'Noch keine Keywords gespeichert'}</div>`;
+            list.innerHTML = `<div class="empty">${keywords.length ? t('noKwMatches') : t('noKeywords')}</div>`;
             return;
         }
         list.innerHTML = '';
@@ -698,10 +759,10 @@
             const div = document.createElement('div');
             div.className = 'kw-item';
             div.innerHTML = `
-                <input type="color" value="${k.color}" data-i="${originalIndex}" title="Farbe ändern">
+                <input type="color" value="${k.color}" data-i="${originalIndex}" title="${t('changeColor')}">
                 <input type="text" value="${k.text.replace(/"/g,'&quot;')}" data-i="${originalIndex}">
-                <span class="kw-count" title="Treffer auf dieser Seite">${count}</span>
-                <button data-i="${originalIndex}" title="Löschen">×</button>`;
+                <span class="kw-count" title="${t('countTitle')}">${count}</span>
+                <button data-i="${originalIndex}" title="${t('remove')}">×</button>`;
             list.appendChild(div);
         });
         list.querySelectorAll('input[type=color]').forEach(el => el.onchange = () => {
@@ -724,7 +785,7 @@
     function renderHistory() {
         const container = document.getElementById('history-container');
         if (!container || !searchHistory.length) return;
-        container.innerHTML = '<div class="section-title">Letzte Suchen</div>';
+        container.innerHTML = `<div class="section-title">${t('recent')}</div>`;
         searchHistory.forEach(h => {
             const btn = document.createElement('button');
             btn.className = 'btn';
@@ -744,7 +805,7 @@
         if (document.getElementById('slim-hl-toggle')) return;
         const btn = document.createElement('button');
         btn.id = 'slim-hl-toggle';
-        btn.title = 'Highlight Panel öffnen';
+        btn.title = t('openPanel');
         btn.onclick = () => {
             let p = document.getElementById('slim-hl-panel');
             if (!p) {
@@ -838,7 +899,7 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 
-    GM_registerMenuCommand('Panel öffnen', () => {
+    GM_registerMenuCommand(t('menuOpen'), () => {
         let p = document.getElementById('slim-hl-panel');
         if (!p) createPanel();
         else p.style.display = 'block';
@@ -846,12 +907,12 @@
         save();
     });
 
-    GM_registerMenuCommand('Aktuelle Domain zur Blacklist', () => {
+    GM_registerMenuCommand(t('menuBlacklist'), () => {
         const host = location.hostname;
         if (!blacklist.includes(host)) {
             blacklist.push(host);
             save();
-            alert(`${host} zur Blacklist hinzugefügt`);
+            alert(t('blacklisted', host));
             location.reload();
         }
     });

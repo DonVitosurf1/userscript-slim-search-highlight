@@ -26,7 +26,9 @@ A lightweight userscript for **Tampermonkey** / **Violentmonkey** that highlight
 2. Click [**install script**](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) and confirm in your userscript manager
 3. Reload the page
 
-Updates are delivered automatically by the userscript manager. The user interface is currently German only.
+Updates are delivered automatically by the userscript manager. The interface is available in English and German (follows the browser language by default, can be changed in the panel settings).
+
+> **Upgrading from 3.x to 4.0:** the script was renamed. Please delete the old script “Slim Search Highlight Pro v3.10”. Saved keywords and settings have to be re-entered once (see the [changelog](CHANGELOG.md)).
 
 ## Usage
 

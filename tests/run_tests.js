@@ -22,8 +22,8 @@ const KW = [
 const paragraphs = n => Array.from({ length: n }, (_, i) =>
     `<p>Lorem ipsum dolor sit amet <b>consectetur</b> adipiscing elit ${i} sed do eiusmod tempor lorem.</p>`).join('');
 
-async function open(browser, { html = paragraphs(10), keywords = KW, url = null, panelOpen = false, store = {} } = {}) {
-    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+async function open(browser, { html = paragraphs(10), keywords = KW, url = null, panelOpen = false, store = {}, locale = 'de-DE' } = {}) {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 }, locale });
     page.on('pageerror', e => { page.__errors = (page.__errors || []).concat(e.message); });
     await page.addInitScript(([kw, panelOpen, extra]) => {
         const store = Object.assign({ hl_keywords: kw, hl_panel_state: { open: panelOpen, minimized: false } }, extra);
@@ -67,6 +67,10 @@ const tests = {
         for (const key of ['@noframes', '@updateURL', '@downloadURL', '@author', '@license', '@homepageURL', '@supportURL']) {
             ok(header.includes(key), `Header ohne ${key}`);
         }
+        ok(/@name\s+Slim Search Highlight\s*\n/.test(header), '@name ohne Versionsnummer erwartet');
+        ok(!header.includes('data:'), '@icon darf kein Data-URI enthalten (Logo steht schon im Skript)');
+        ok(SRC.split('data:image/svg+xml').length - 1 === 1, 'Logo genau einmal im Skript erwartet');
+        ok(/@description:de /.test(header), 'Deutsche @description:de fehlt');
     },
 
     async perf_initial_highlight(browser) {
@@ -161,6 +165,40 @@ const tests = {
         const page = await open(browser, { html: '<p id="t">lorem ipsum</p>', keywords: [{ text: 'lorem ip', color: '#ff0', wholeWord: false }, { text: 'ipsum', color: '#0ff', wholeWord: false }] });
         await settled(page);
         eq(await page.evaluate(() => document.getElementById('t').textContent), 'lorem ipsum', 'Text nach Überlappung');
+    },
+
+    async language_auto_english(browser) {
+        const page = await open(browser, { panelOpen: true, locale: 'en-US' });
+        await settled(page);
+        eq(await page.locator('#add-kw-btn').textContent(), 'Add');
+        eq(await page.locator('#slim-hl-toggle').getAttribute('title'), 'Open highlight panel');
+    },
+
+    async language_auto_german(browser) {
+        const page = await open(browser, { panelOpen: true, locale: 'de-DE' });
+        await settled(page);
+        eq(await page.locator('#add-kw-btn').textContent(), 'Hinzufügen');
+    },
+
+    async language_other_locale_falls_back_to_english(browser) {
+        const page = await open(browser, { panelOpen: true, locale: 'fr-FR' });
+        await settled(page);
+        eq(await page.locator('#add-kw-btn').textContent(), 'Add');
+    },
+
+    async language_setting_switches_and_persists(browser) {
+        const page = await open(browser, { panelOpen: true, locale: 'en-US' });
+        await settled(page);
+        await page.selectOption('#ui-lang', 'de');
+        eq(await page.locator('#add-kw-btn').textContent(), 'Hinzufügen');
+        eq(await page.evaluate(() => window.__store.hl_lang), 'de', 'gespeicherte Sprache');
+        eq(await page.locator('#ui-lang').inputValue(), 'de');
+    },
+
+    async language_stored_choice_beats_browser_locale(browser) {
+        const page = await open(browser, { panelOpen: true, locale: 'en-US', store: { hl_lang: 'de' } });
+        await settled(page);
+        eq(await page.locator('#add-kw-btn').textContent(), 'Hinzufügen');
     },
 
     async match_list_is_capped(browser) {

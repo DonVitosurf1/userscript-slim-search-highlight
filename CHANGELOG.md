@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.0
+
+### Achtung beim Update
+- Das Skript heißt jetzt **Slim Search Highlight** (ohne „Pro“ und Versionsnummer im Namen). Userscript-Manager erkennen Skripte am Namen: Das alte Skript „Slim Search Highlight Pro v3.10“ bitte deaktivieren oder löschen. Gespeicherte Keywords und Einstellungen werden **nicht** übernommen und müssen einmalig neu angelegt werden. Danach bleibt der Name bei künftigen Updates stabil.
+
+### Neu
+- Oberfläche auf Deutsch und Englisch. Die Sprache folgt standardmäßig dem Browser (Deutsch, sonst Englisch) und lässt sich im Panel unter „Einstellungen“ umstellen.
+- Das Logo steckt nur noch einmal im Skript (`@icon` verweist auf die Datei im Repo).
+
 ## 3.11
 
 ### Performance

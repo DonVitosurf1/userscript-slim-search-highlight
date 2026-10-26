@@ -20,6 +20,7 @@ Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben v
 - Live-Updates ohne Reload
 - Alt+H zum Hinzufügen markierten Textes
 - Konfigurierbare Suchmaschine für Rechtsklick
+- Oberfläche auf Deutsch und Englisch (automatisch nach Browsersprache, umschaltbar im Panel)
 
 ## Installation
 
@@ -28,6 +29,8 @@ Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben v
 3. Seite neu laden
 
 Updates kommen automatisch über den Userscript-Manager.
+
+> **Update von 3.x auf 4.0:** Das Skript wurde umbenannt. Das alte Skript „Slim Search Highlight Pro v3.10“ bitte löschen. Gespeicherte Keywords und Einstellungen müssen einmalig neu angelegt werden (siehe [Changelog](CHANGELOG.md)).
 
 ## Verwendung
 
