@@ -412,6 +412,18 @@ const tests = {
         eq(await page.evaluate(() => document.activeElement && document.activeElement.value), 'loremzusatz', 'Eingabe im Keyword-Feld verloren');
     },
 
+    async logo_is_compact_and_renders(browser) {
+        const uri = (SRC.match(/data:image\/svg\+xml[^`'"\n]*/) || [''])[0];
+        ok(uri.length > 0 && uri.length < 1200, `Logo-Data-URI ist ${uri.length} Zeichen lang (Limit 1200)`);
+        ok(!uri.includes(';base64'), 'Logo soll URL-kodiert statt Base64 eingebettet sein');
+        ok(uri.includes("rx='28' fill='%23263238'"), 'Hintergrund des Logos fehlt');
+        const page = await open(browser, { panelOpen: true });
+        await page.waitForTimeout(300);
+        ok(await page.locator('#slim-hl-header img').evaluate(i => i.complete && i.naturalWidth > 0), 'Logo im Panel wird nicht angezeigt');
+        const toggleBg = await page.locator('#slim-hl-toggle').evaluate(e => getComputedStyle(e).backgroundImage);
+        ok(toggleBg.startsWith('url('), 'Logo am Toggle-Button fehlt');
+    },
+
     async match_list_is_capped(browser) {
         const page = await open(browser, { html: paragraphs(800), panelOpen: true });
         await settled(page);
