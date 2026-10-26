@@ -413,7 +413,7 @@ const tests = {
     },
 
     async logo_is_compact_and_renders(browser) {
-        const uri = (SRC.match(/data:image\/svg\+xml[^`'"\n]*/) || [''])[0];
+        const uri = (SRC.match(/data:image\/svg\+xml[^`\n]*/) || [''])[0];
         ok(uri.length > 0 && uri.length < 1200, `Logo-Data-URI ist ${uri.length} Zeichen lang (Limit 1200)`);
         ok(!uri.includes(';base64'), 'Logo soll URL-kodiert statt Base64 eingebettet sein');
         ok(uri.includes("rx='28' fill='%23263238'"), 'Hintergrund des Logos fehlt');
