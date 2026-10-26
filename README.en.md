@@ -4,6 +4,8 @@
 
 [Deutsche Version](README.md)
 
+[![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A lightweight userscript for **Tampermonkey** / **Violentmonkey** that highlights keywords on web pages.
 
 ![Screenshot](assets/screenshot.png)
@@ -43,6 +45,10 @@ Updates are delivered automatically by the userscript manager. The interface is 
 npm install && npx playwright install chromium
 npm test
 ```
+
+## Contributing
+
+Report bugs and ideas as an [issue](https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues/new/choose) and send changes as a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md), in German). Please report security problems as described in [SECURITY.md](SECURITY.md).
 
 ## License
 

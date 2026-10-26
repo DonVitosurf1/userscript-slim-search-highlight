@@ -4,6 +4,8 @@
 
 [English version](README.en.md)
 
+[![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-blue.svg)](LICENSE)
+
 Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben von Keywords auf Webseiten.
 
 ![Screenshot](assets/screenshot.png)
@@ -52,15 +54,23 @@ Die Tests laden das Skript in Chromium auf synthetischen Seiten (kein Netzwerk n
 ## Projektstruktur
 
 ```
+.github/                        ← CI (test.yml), Dependabot, Issue- und PR-Vorlagen
+assets/                         ← Logo (icon.svg) und Screenshot
+tests/run_tests.js              ← Browser-Tests
 userscript/
-  slim-search-highlight.user.js   ← Haupt-Skript
-tests/run_tests.js                ← Browser-Tests
-assets/icon.svg                   ← Logo
+  slim-search-highlight.user.js ← Haupt-Skript
 CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
+package.json
 README.md
 README.en.md
-LICENSE
+SECURITY.md
 ```
+
+## Mitwirken
+
+Fehler und Ideen gern als [Issue](https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues/new/choose) melden, Änderungen als Pull Request (siehe [CONTRIBUTING.md](CONTRIBUTING.md)). Sicherheitsprobleme bitte wie in [SECURITY.md](SECURITY.md) beschrieben melden.
 
 ## Lizenz
 
