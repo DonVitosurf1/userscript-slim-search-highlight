@@ -2,7 +2,11 @@
 
 # Slim Search Highlight
 
+[English version](README.en.md)
+
 Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben von Keywords auf Webseiten.
+
+![Screenshot](assets/screenshot.png)
 
 ## Features
 
@@ -20,9 +24,10 @@ Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben v
 ## Installation
 
 1. [Tampermonkey](https://www.tampermonkey.net/) oder [Violentmonkey](https://violentmonkey.github.io/) installieren
-2. Die Datei `userscript/slim-search-highlight.user.js` öffnen und den Inhalt kopieren
-3. Im Userscript-Manager ein neues Skript anlegen und den Code einfügen
-4. Speichern und Seite neu laden
+2. [**Skript installieren**](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) anklicken und im Userscript-Manager bestätigen
+3. Seite neu laden
+
+Updates kommen automatisch über den Userscript-Manager.
 
 ## Verwendung
 
@@ -32,13 +37,25 @@ Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben v
 - Rechtsklick auf ein Highlight → Suche in der konfigurierten Suchmaschine
 - Positionsanzeige rechts zeigt die Verteilung der Treffer
 
+## Tests
+
+```
+npm install && npx playwright install chromium
+npm test
+```
+
+Die Tests laden das Skript in Chromium auf synthetischen Seiten (kein Netzwerk nötig) und prüfen u. a. Performance, Treffer-Korrektheit und das Verhalten bei dynamischen Seiten.
+
 ## Projektstruktur
 
 ```
 userscript/
   slim-search-highlight.user.js   ← Haupt-Skript
-assets/icon.svg                  ← Logo
+tests/run_tests.js                ← Browser-Tests
+assets/icon.svg                   ← Logo
+CHANGELOG.md
 README.md
+README.en.md
 LICENSE
 ```
 

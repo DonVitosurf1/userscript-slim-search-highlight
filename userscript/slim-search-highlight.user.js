@@ -1,7 +1,13 @@
 // ==UserScript==
 // @name         Slim Search Highlight Pro v3.10
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      3.10
+// @version      3.11
+// @author       DonVitosurf1
+// @license      MIT
+// @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
+// @supportURL   https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues
+// @updateURL    https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
+// @downloadURL  https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
 // @description  Positionsanzeige + Keyword-Suchfeld
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0iIzI2MzIzOCIvPgogIDwhLS0gSGlnaGxpZ2h0cyAtLT4KICA8cmVjdCB4PSIyMCIgeT0iMzAiIHdpZHRoPSI1MiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIzNCIgeT0iNTYiIHdpZHRoPSI0NCIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiM5MGNhZjkiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNhNWQ2YTciLz4KICA8IS0tIFRleHQgbGluZXMgLS0+CiAgPGcgZmlsbD0iI2VjZWZmMSIgb3BhY2l0eT0iLjkiPgogICAgPHJlY3QgeD0iMjQiIHk9IjM1IiB3aWR0aD0iNDQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMyNjMyMzgiLz4KICAgIDxyZWN0IHg9IjM4IiB5PSI2MSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMjYzMjM4Ii8+CiAgICA8cmVjdCB4PSIyNCIgeT0iODciIHdpZHRoPSIyOCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzI2MzIzOCIvPgogICAgPHJlY3QgeD0iNzgiIHk9IjM1IiB3aWR0aD0iMTYiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjIwIiB5PSI2MSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4MiIgeT0iNjEiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iNjIiIHk9Ijg3IiB3aWR0aD0iMzIiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPCEtLSBQb3NpdGlvbiBiYXIgLS0+CiAgPHJlY3QgeD0iMTA0IiB5PSIyMCIgd2lkdGg9IjYiIGhlaWdodD0iODgiIHJ4PSIzIiBmaWxsPSIjNDU1YTY0Ii8+CiAgPHJlY3QgeD0iMTA0IiB5PSIzMiIgd2lkdGg9IjYiIGhlaWdodD0iNSIgcng9IjIiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIxMDQiIHk9IjYwIiB3aWR0aD0iNiIgaGVpZ2h0PSI1IiByeD0iMiIgZmlsbD0iIzkwY2FmOSIvPgogIDxyZWN0IHg9IjEwNCIgeT0iODYiIHdpZHRoPSI2IiBoZWlnaHQ9IjUiIHJ4PSIyIiBmaWxsPSIjYTVkNmE3Ii8+Cjwvc3ZnPgo=
 // @match        *://*/*
@@ -10,6 +16,7 @@
 // @grant        GM_addStyle
 // @grant        GM_registerMenuCommand
 // @run-at       document-end
+// @noframes
 // ==/UserScript==
 
 (function () {
@@ -185,8 +192,12 @@
         return blacklist.some(b => host.includes(b.toLowerCase()));
     }
 
-    function isSearchEngine(url) {
-        return url && SEARCH_ENGINES.some(s => url.toLowerCase().includes(s));
+    function isSearchEngine(urlStr) {
+        if (!urlStr) return false;
+        try {
+            const host = '.' + new URL(urlStr).hostname.toLowerCase() + '.';
+            return SEARCH_ENGINES.some(s => host.includes('.' + s));
+        } catch { return false; }
     }
 
     function extractQuery(urlStr) {
@@ -261,6 +272,7 @@
                 const last = k.text.lastIndexOf('/');
                 pattern = k.text.slice(1, last);
                 flags = k.text.slice(last + 1) || 'gi';
+                if (!flags.includes('g')) flags += 'g';
             } else {
                 const escaped = escapeRegExp(k.text);
                 pattern = (k.wholeWord !== false && !k.text.includes(' ')) ? '\\b' + escaped + '\\b' : escaped;
@@ -275,13 +287,15 @@
     }
 
     function cleanupHighlights(root = document.body) {
+        const parents = new Set();
         root.querySelectorAll('.slim-hl').forEach(span => {
             const parent = span.parentNode;
             if (!parent) return;
             while (span.firstChild) parent.insertBefore(span.firstChild, span);
             parent.removeChild(span);
-            parent.normalize();
+            parents.add(parent);
         });
+        parents.forEach(p => p.normalize());
         const bar = document.getElementById('slim-pos-bar');
         if (bar) bar.remove();
     }
@@ -311,6 +325,7 @@
             m.re.lastIndex = 0;
             let match;
             while ((match = m.re.exec(currentText)) !== null) {
+                if (match[0].length === 0) { m.re.lastIndex++; continue; }
                 matches.push({
                     start: match.index,
                     end: match.index + match[0].length,
@@ -318,19 +333,24 @@
                     color: m.color,
                     kw: m.text
                 });
-                if (!m.re.global) break;
             }
         }
         if (!matches.length) return;
 
-        matches.sort((a, b) => b.start - a.start);
-
-        let node = textNode;
+        // Überlappende Treffer verschiedener Keywords verwerfen, den längeren zuerst behalten.
+        matches.sort((a, b) => a.start - b.start || b.end - a.end);
+        const kept = [];
         for (const m of matches) {
+            if (!kept.length || m.start >= kept[kept.length - 1].end) kept.push(m);
+        }
+
+        // Von hinten nach vorne splitten: der Ausgangsknoten bleibt der vordere Rest,
+        // so bleiben die Offsets der weiter vorne liegenden Treffer gültig.
+        for (let i = kept.length - 1; i >= 0; i--) {
+            const m = kept[i];
             try {
-                if (m.start >= node.textContent.length) continue;
-                const middle = node.splitText(m.start);
-                const after = middle.splitText(m.end - m.start);
+                const middle = textNode.splitText(m.start);
+                middle.splitText(m.end - m.start);
                 const mark = document.createElement('span');
                 mark.className = 'slim-hl';
                 mark.style.backgroundColor = m.color;
@@ -339,7 +359,6 @@
                 mark.dataset.kw = m.kw;
                 middle.parentNode.replaceChild(mark, middle);
                 keywordCounts[m.kw] = (keywordCounts[m.kw] || 0) + 1;
-                node = after;
             } catch {}
         }
     }
@@ -353,94 +372,127 @@
         if (!bar) {
             bar = document.createElement('div');
             bar.id = 'slim-pos-bar';
+            bar.addEventListener('click', e => {
+                const i = e.target.dataset && e.target.dataset.i;
+                if (i === undefined) return;
+                e.stopPropagation();
+                currentIdx = +i;
+                goTo(0);
+            });
             document.body.appendChild(bar);
         }
-        bar.innerHTML = '';
 
-        const hls = [...document.querySelectorAll('.slim-hl')];
+        // Erst alle Positionen lesen, dann einmal schreiben: sonst erzwingt jedes
+        // getBoundingClientRect() nach einem appendChild() ein komplettes Layout.
+        const hls = document.getElementsByClassName('slim-hl');
         const docHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, 1);
+        const scrollY = window.scrollY;
+        const tops = new Array(hls.length);
+        for (let i = 0; i < hls.length; i++) tops[i] = hls[i].getBoundingClientRect().top + scrollY;
 
-        hls.forEach((el, i) => {
-            const rect = el.getBoundingClientRect();
-            const absTop = rect.top + window.scrollY;
-            const percent = Math.min(98, Math.max(0, (absTop / docHeight) * 100));
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < hls.length; i++) {
             const mark = document.createElement('div');
             mark.className = 'mark' + (i === currentIdx ? ' active' : '');
-            mark.style.top = percent + '%';
-            mark.style.backgroundColor = el.style.backgroundColor || DEFAULT_COLOR;
-            mark.title = el.textContent.slice(0, 40);
-            mark.onclick = (e) => {
-                e.stopPropagation();
-                currentIdx = i;
-                goTo(0);
-            };
-            bar.appendChild(mark);
-        });
+            mark.style.top = Math.min(98, Math.max(0, (tops[i] / docHeight) * 100)) + '%';
+            mark.style.backgroundColor = hls[i].style.backgroundColor || DEFAULT_COLOR;
+            mark.title = hls[i].textContent.slice(0, 40);
+            mark.dataset.i = i;
+            frag.appendChild(mark);
+        }
+        bar.replaceChildren(frag);
     }
 
+    const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT', 'NOSCRIPT', 'CODE', 'PRE', 'SELECT']);
+    const OWN_UI = '#slim-hl-panel, #slim-hl-toggle, #slim-pos-bar';
+    const FRAME_BUDGET_MS = 10;
+    let matchers = [];
+
+    function isOwnNode(node) {
+        const el = node.nodeType === 1 ? node : node.parentElement;
+        return !el || !!el.closest('.slim-hl, ' + OWN_UI);
+    }
+
+    /** Markiert alle Textknoten unterhalb der Wurzeln, in Zeitscheiben von ~10 ms pro Frame. */
+    function highlightRoots(roots, done) {
+        const queue = roots.slice();
+        let walker = null;
+        function step() {
+            const deadline = performance.now() + FRAME_BUDGET_MS;
+            while (performance.now() < deadline) {
+                if (!walker) {
+                    const root = queue.shift();
+                    if (!root) return done();
+                    if (!root.isConnected || isOwnNode(root)) continue;
+                    if (root.nodeType === 3) { highlightInTextNode(root, matchers); continue; }
+                    walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                        acceptNode(n) {
+                            const p = n.parentElement;
+                            if (!p || SKIP_TAGS.has(p.tagName) || p.closest('.slim-hl, ' + OWN_UI)) return NodeFilter.FILTER_REJECT;
+                            return NodeFilter.FILTER_ACCEPT;
+                        }
+                    });
+                }
+                const node = walker.nextNode();
+                if (!node) { walker = null; continue; }
+                highlightInTextNode(node, matchers);
+            }
+            requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+
+    function afterHighlight() {
+        isHighlighting = false;
+        updateCounterAndTitle();
+        if (document.getElementById('kw-list')) renderKeywordList();
+        if (document.getElementById('match-list')) renderMatchList();
+        updatePosBar();
+        if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    /** Vollständiger Neuaufbau, nur nötig wenn sich Keywords oder Einstellungen ändern. */
     function refreshHighlights() {
         if (!enabled || isSelecting || isHighlighting || isBlacklisted()) return;
         isHighlighting = true;
         keywordCounts = {};
         currentIdx = -1;
+        pendingNodes.clear();
 
         if (observer) observer.disconnect();
 
         const savedRange = saveSelection();
         cleanupHighlights(document.body);
 
-        const matchers = buildMatchers();
+        matchers = buildMatchers();
         const errorEl = document.getElementById('regex-error');
         if (errorEl) errorEl.textContent = lastErrors.join('\n');
 
         if (!matchers.length) {
-            isHighlighting = false;
             restoreSelection(savedRange);
-            updateCounterAndTitle();
-            if (document.getElementById('kw-list')) renderKeywordList();
-            if (document.getElementById('match-list')) renderMatchList();
-            updatePosBar();
-            if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
+            afterHighlight();
             return;
         }
-
-        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
-            acceptNode(n) {
-                const p = n.parentElement;
-                if (!p || ['SCRIPT','STYLE','TEXTAREA','INPUT','NOSCRIPT','CODE','PRE','SELECT'].includes(p.tagName)) return NodeFilter.FILTER_REJECT;
-                if (p.closest('.slim-hl') || p.closest('#slim-hl-panel') || p.closest('#slim-pos-bar')) return NodeFilter.FILTER_REJECT;
-                return NodeFilter.FILTER_ACCEPT;
-            }
+        highlightRoots([document.body], () => {
+            restoreSelection(savedRange);
+            afterHighlight();
         });
+    }
 
-        let processed = 0;
-        const chunkSize = 80;
-        function processChunk() {
-            let count = 0;
-            let node;
-            while (count < chunkSize && (node = walker.nextNode())) {
-                highlightInTextNode(node, matchers);
-                count++;
-                processed++;
-            }
-            if (node) {
-                requestAnimationFrame(processChunk);
-            } else {
-                restoreSelection(savedRange);
-                isHighlighting = false;
-                updateCounterAndTitle();
-                if (document.getElementById('kw-list')) renderKeywordList();
-                if (document.getElementById('match-list')) renderMatchList();
-                updatePosBar();
-                if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
-            }
-        }
-        requestAnimationFrame(processChunk);
+    /** Inkrementell: nur von der Seite neu hinzugefügte Knoten durchsuchen. */
+    function highlightAdded() {
+        if (!enabled || isHighlighting || isBlacklisted()) return;
+        if (isSelecting) { debounceTimer = setTimeout(highlightAdded, 280); return; }
+        const roots = [...pendingNodes];
+        pendingNodes.clear();
+        if (!roots.length || !matchers.length) return;
+        isHighlighting = true;
+        if (observer) observer.disconnect();
+        highlightRoots(roots, afterHighlight);
     }
 
     function updateCounterAndTitle() {
-        const hls = document.querySelectorAll('.slim-hl');
-        highlightCount = hls.length;
+        highlightCount = document.getElementsByClassName('slim-hl').length;
         const counter = document.getElementById('hl-counter');
         if (counter) counter.textContent = highlightCount ? `${Math.max(0, currentIdx) + 1} / ${highlightCount}` : '0 / 0';
         const baseTitle = document.title.replace(/^\(\d+\)\s*/, '');
@@ -448,35 +500,54 @@
     }
 
     function goTo(delta) {
-        const hls = [...document.querySelectorAll('.slim-hl')];
+        const hls = document.getElementsByClassName('slim-hl');
         if (!hls.length) return;
         currentIdx = (currentIdx + delta + hls.length) % hls.length;
         hls[currentIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
         hls[currentIdx].style.outline = '2px solid #ffca28';
         setTimeout(() => hls[currentIdx] && (hls[currentIdx].style.outline = ''), 700);
         updateCounterAndTitle();
-        updatePosBar();
-        document.querySelectorAll('.match-item').forEach((el, i) => {
-            el.classList.toggle('active', i === currentIdx);
-        });
+        const bar = document.getElementById('slim-pos-bar');
+        if (bar) {
+            const prev = bar.querySelector('.active');
+            if (prev) prev.classList.remove('active');
+            if (bar.children[currentIdx]) bar.children[currentIdx].classList.add('active');
+        } else {
+            updatePosBar();
+        }
+        const items = document.querySelectorAll('.match-item');
+        if (items.length) items.forEach((el, i) => el.classList.toggle('active', i === currentIdx));
     }
+
+    const MATCH_LIST_MAX = 300;
 
     function renderMatchList() {
         const list = document.getElementById('match-list');
         if (!list) return;
-        const hls = [...document.querySelectorAll('.slim-hl')];
+        const hls = document.getElementsByClassName('slim-hl');
         if (!hls.length) {
             list.innerHTML = '<div class="empty">Keine Treffer auf dieser Seite</div>';
             return;
         }
-        list.innerHTML = '';
-        hls.forEach((el, i) => {
+        const frag = document.createDocumentFragment();
+        const shown = Math.min(hls.length, MATCH_LIST_MAX);
+        for (let i = 0; i < shown; i++) {
+            const el = hls[i];
             const div = document.createElement('div');
             div.className = 'match-item' + (i === currentIdx ? ' active' : '');
-            div.innerHTML = `<span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:${el.style.backgroundColor};margin-right:8px;"></span>${el.textContent.slice(0, 44)}`;
+            const dot = document.createElement('span');
+            dot.style.cssText = `display:inline-block;width:16px;height:16px;border-radius:4px;background:${el.style.backgroundColor};margin-right:8px;`;
+            div.append(dot, el.textContent.slice(0, 44));
             div.onclick = () => { currentIdx = i; goTo(0); };
-            list.appendChild(div);
-        });
+            frag.appendChild(div);
+        }
+        if (hls.length > shown) {
+            const more = document.createElement('div');
+            more.className = 'empty';
+            more.textContent = `… und ${hls.length - shown} weitere (Alt + → / ← zum Durchblättern)`;
+            frag.appendChild(more);
+        }
+        list.replaceChildren(frag);
     }
 
     function createPanel() {
@@ -528,21 +599,24 @@
         document.body.appendChild(panel);
         if (panelState.open) panel.style.display = 'block';
 
-        let dragging = false, dx, dy;
-        panel.querySelector('#slim-hl-header').onmousedown = e => {
-            if (e.target.tagName === 'BUTTON') return;
-            dragging = true;
-            dx = e.clientX - panel.offsetLeft;
-            dy = e.clientY - panel.offsetTop;
-        };
-        document.onmousemove = e => {
-            if (!dragging) return;
+        let dx, dy;
+        const onMove = e => {
             panel.style.left = (e.clientX - dx) + 'px';
             panel.style.top = (e.clientY - dy) + 'px';
+        };
+        const onUp = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
             panelPos = { x: panel.offsetLeft, y: panel.offsetTop };
             save();
         };
-        document.onmouseup = () => dragging = false;
+        panel.querySelector('#slim-hl-header').onmousedown = e => {
+            if (e.target.tagName === 'BUTTON') return;
+            dx = e.clientX - panel.offsetLeft;
+            dy = e.clientY - panel.offsetTop;
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        };
 
         panel.querySelector('#btn-min').onclick = () => {
             panel.classList.toggle('minimized');
@@ -734,14 +808,18 @@
         scrollTimer = setTimeout(updatePosBar, 80);
     }, { passive: true });
 
+    const pendingNodes = new Set();
     let debounceTimer;
     function setupObserver() {
-        observer = new MutationObserver(() => {
-            if (isSelecting || isHighlighting || isBlacklisted()) return;
+        observer = new MutationObserver(records => {
+            if (isHighlighting || isBlacklisted()) return;
+            for (const r of records) {
+                if (isOwnNode(r.target)) continue;
+                r.addedNodes.forEach(n => { if ((n.nodeType === 1 || n.nodeType === 3) && !isOwnNode(n)) pendingNodes.add(n); });
+            }
+            if (!pendingNodes.size) return;
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                if (enabled && !isSelecting && !isHighlighting) refreshHighlights();
-            }, 280);
+            debounceTimer = setTimeout(highlightAdded, 280);
         });
         if (enabled) observer.observe(document.body, { childList: true, subtree: true });
     }
