@@ -336,6 +336,82 @@ const tests = {
         eq(await page.evaluate(() => [...document.querySelectorAll('#t .slim-hl')].map(e => e.textContent).join(',')), 'pre', 'Treffer in „prefix“');
     },
 
+    async auto_search_setting_is_respected(browser) {
+        const terms = { terms: ['hello'], timestamp: Date.now() };
+        const on = await open(browser, { html: '<p>hello</p>', keywords: [], store: { hl_cross_terms: terms, hl_auto_search: true } });
+        await settled(on);
+        eq(await hits(on), 1, 'Übernahme aus der Suche (an)');
+        const off = await open(browser, { html: '<p>hello</p>', keywords: [], store: { hl_cross_terms: terms, hl_auto_search: false } });
+        await off.waitForTimeout(700);
+        eq(await hits(off), 0, 'Übernahme aus der Suche (aus)');
+    },
+
+    async history_button_works_even_when_auto_search_is_off(browser) {
+        const page = await open(browser, { html: '<p>hello world</p>', keywords: [], panelOpen: true, store: { hl_auto_search: false, hl_search_history: ['hello'] } });
+        await page.waitForTimeout(400);
+        await page.click('#history-container .btn');
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl').length === 1, null, { timeout: 3000 });
+    },
+
+    async edited_keyword_loses_stale_regex_flag(browser) {
+        const page = await open(browser, { html: '<p id="t">abc</p>', keywords: [{ text: 'abc', color: '#ff0', regex: true }] });
+        await settled(page);
+        eq(await page.evaluate(() => document.querySelectorAll('#t .slim-hl').length), 1, 'Keyword mit altem regex-Flag');
+    },
+
+    async editing_keyword_text_updates_regex_flag(browser) {
+        const page = await open(browser, { html: '<p id="t">abc ABC</p>', keywords: [{ text: '/abc/i', color: '#ff0', regex: true }], panelOpen: true });
+        await settled(page);
+        await page.fill('.kw-item input[type=text]', 'abc');
+        await page.locator('.kw-item input[type=text]').dispatchEvent('change');
+        await page.waitForTimeout(500);
+        eq(await page.evaluate(() => window.__store.hl_keywords[0].regex), false, 'regex-Flag nach Umbenennen');
+        eq(await page.evaluate(() => document.querySelectorAll('#t .slim-hl').length), 2);
+    },
+
+    async content_added_during_a_run_is_not_lost(browser) {
+        const page = await open(browser, { html: paragraphs(2500), panelOpen: true });
+        await settled(page);
+        await page.fill('#new-kw', 'eiusmod');
+        await page.click('#add-kw-btn');
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl[data-kw="eiusmod"]').length > 0);
+        await page.evaluate(() => { document.body.insertAdjacentHTML('afterbegin', '<p id="late">lorem</p>'); });
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl[data-kw="eiusmod"]').length === 2500, null, { timeout: 20000 });
+        await page.waitForTimeout(800);
+        eq(await page.evaluate(() => document.querySelectorAll('#late .slim-hl').length), 1, 'während des Durchlaufs eingefügter Inhalt');
+    },
+
+    async own_page_title_counter_keeps_page_prefix(browser) {
+        const page = await open(browser, { html: '<title>x</title><p>lorem</p>', panelOpen: true });
+        await page.evaluate(() => { document.title = '(3) Inbox'; });
+        await page.evaluate(() => document.getElementById('chk-enabled').click());
+        await page.evaluate(() => document.getElementById('chk-enabled').click());
+        await settled(page);
+        eq(await page.evaluate(() => document.title), '(1) (3) Inbox', 'Titel mit Zähler');
+        await page.evaluate(() => document.getElementById('chk-enabled').click());
+        eq(await page.evaluate(() => document.title), '(3) Inbox', 'Titel nach Deaktivieren');
+    },
+
+    async scroll_does_not_rebuild_position_bar(browser) {
+        const page = await open(browser, { html: paragraphs(200) });
+        await settled(page);
+        await page.evaluate(() => { document.querySelector('#slim-pos-bar .mark').id = 'first-mark'; });
+        await page.mouse.wheel(0, 1500);
+        await page.waitForTimeout(400);
+        ok(await page.evaluate(() => !!document.getElementById('first-mark')), 'Positionsleiste wurde beim Scrollen neu aufgebaut');
+    },
+
+    async keyword_edit_survives_background_updates(browser) {
+        const page = await open(browser, { html: paragraphs(20), panelOpen: true });
+        await settled(page);
+        await page.focus('.kw-item input[type=text]');
+        await page.keyboard.press('End');
+        await page.keyboard.type('zusatz');
+        await page.evaluate(() => { document.body.insertAdjacentHTML('beforeend', '<p>lorem noch mehr</p>'); });
+        await page.waitForTimeout(800);
+        eq(await page.evaluate(() => document.activeElement && document.activeElement.value), 'loremzusatz', 'Eingabe im Keyword-Feld verloren');
+    },
+
     async match_list_is_capped(browser) {
         const page = await open(browser, { html: paragraphs(800), panelOpen: true });
         await settled(page);
