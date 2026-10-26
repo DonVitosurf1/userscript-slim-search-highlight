@@ -261,6 +261,81 @@ const tests = {
         ok(r.btn !== 'rgb(45, 45, 45)', `.btn der Seite wurde umgestylt (${r.btn})`);
     },
 
+    async malformed_hash_does_not_break_highlighting(browser) {
+        const page = await open(browser, { html: '<p id="t">hello en</p>', keywords: [{ text: 'hello', color: '#ff0' }], url: 'http://example.test/page#hl=100%' });
+        await settled(page);
+        eq(await page.evaluate(() => document.querySelectorAll('#t .slim-hl').length), 1, 'Treffer trotz kaputtem Hash');
+        ok(!(page.__errors || []).length, `Seitenfehler: ${(page.__errors || []).join(', ')}`);
+        await page.evaluate(() => { document.body.insertAdjacentHTML('beforeend', '<p id="n">hello later</p>'); });
+        await page.waitForFunction(() => document.querySelectorAll('#n .slim-hl').length === 1, null, { timeout: 4000 });
+    },
+
+    async hash_parameter_must_be_anchored(browser) {
+        const bad = await open(browser, { html: '<p id="t">en</p>', keywords: [], url: 'http://example.test/page#foo&xhl=en' });
+        await bad.waitForTimeout(600);
+        eq(await bad.evaluate(() => document.querySelectorAll('.slim-hl').length), 0, 'xhl= ist kein Suchparameter');
+        const good = await open(browser, { html: '<p id="t">en</p>', keywords: [], url: 'http://example.test/page#hl=en' });
+        await settled(good);
+        eq(await good.evaluate(() => document.querySelectorAll('.slim-hl').length), 1, '#hl=en');
+    },
+
+    async save_only_writes_changed_values(browser) {
+        const page = await open(browser, { panelOpen: true });
+        await settled(page);
+        await page.evaluate(() => { window.__store.hl_keywords = [{ text: 'vom-anderen-tab', color: '#ff0' }]; window.__store.hl_blacklist = ['andere.tld']; });
+        await page.click('#btn-min');
+        eq(await page.evaluate(() => window.__store.hl_keywords[0].text), 'vom-anderen-tab', 'Keywords aus anderem Tab überschrieben');
+        eq(await page.evaluate(() => window.__store.hl_blacklist[0]), 'andere.tld', 'Blacklist aus anderem Tab überschrieben');
+        ok(await page.evaluate(() => window.__store.hl_panel_state.minimized === true), 'eigene Änderung wurde nicht gespeichert');
+    },
+
+    async arrow_keys_untouched_without_matches_or_on_blacklist(browser) {
+        const probe = page => page.evaluate(() => {
+            const e = new KeyboardEvent('keydown', { key: 'ArrowLeft', altKey: true, cancelable: true, bubbles: true });
+            document.dispatchEvent(e);
+            return e.defaultPrevented;
+        });
+        const blacklisted = await open(browser, { html: '<p>hello</p>', keywords: [{ text: 'hello', color: '#ff0' }], url: 'http://example.test/', store: { hl_blacklist: ['example.test'] } });
+        await blacklisted.waitForTimeout(500);
+        eq(await probe(blacklisted), false, 'Alt+← auf Blacklist-Seite abgefangen');
+        const none = await open(browser, { html: '<p>nichts</p>', keywords: [{ text: 'hello', color: '#ff0' }] });
+        await none.waitForTimeout(500);
+        eq(await probe(none), false, 'Alt+← ohne Treffer abgefangen');
+        const some = await open(browser, { html: '<p>hello</p>', keywords: [{ text: 'hello', color: '#ff0' }] });
+        await settled(some);
+        eq(await probe(some), true, 'Alt+← mit Treffern wird nicht abgefangen');
+    },
+
+    async blacklisted_page_ignores_alt_h(browser) {
+        const page = await open(browser, { html: '<p id="t">geheim</p>', keywords: [], url: 'http://example.test/', store: { hl_blacklist: ['example.test'] } });
+        await page.evaluate(() => { const r = document.createRange(); r.selectNodeContents(document.getElementById('t')); getSelection().removeAllRanges(); getSelection().addRange(r); });
+        await page.keyboard.press('Alt+h');
+        eq(await page.evaluate(() => window.__store.hl_keywords.length), 0, 'Alt+H hat auf Blacklist-Seite ein Keyword gespeichert');
+    },
+
+    async skipped_tags_are_respected_at_any_depth(browser) {
+        const page = await open(browser, {
+            html: '<pre><span id="a">hello</span></pre><code><span id="b">hello</span></code><select><option id="c">hello</option></select>' +
+                  '<div contenteditable="true"><span id="e">hello</span></div><style id="s"></style><p id="d">hello</p>',
+            keywords: [{ text: 'hello', color: '#ff0' }],
+        });
+        await settled(page);
+        await page.evaluate(() => { document.getElementById('s').appendChild(document.createTextNode('.hello { color: red }')); });
+        await page.waitForTimeout(900);
+        const where = await page.evaluate(() => [...document.querySelectorAll('.slim-hl')].map(e => e.parentElement.id).join(','));
+        eq(where, 'd', 'markierte Elternelemente');
+        eq(await page.evaluate(() => document.getElementById('s').children.length), 0, '<style> wurde verändert');
+    },
+
+    async split_remainders_are_not_rescanned(browser) {
+        const page = await open(browser, {
+            html: '<p id="t">prefix</p>',
+            keywords: [{ text: 'pre', color: '#ff0', wholeWord: false }, { text: 'fix', color: '#0ff' }],
+        });
+        await settled(page);
+        eq(await page.evaluate(() => [...document.querySelectorAll('#t .slim-hl')].map(e => e.textContent).join(',')), 'pre', 'Treffer in „prefix“');
+    },
+
     async match_list_is_capped(browser) {
         const page = await open(browser, { html: paragraphs(800), panelOpen: true });
         await settled(page);

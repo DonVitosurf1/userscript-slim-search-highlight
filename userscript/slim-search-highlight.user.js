@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.0.1
+// @version      4.0.2
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -220,17 +220,30 @@
         }
     `);
 
+    const PERSISTED = {
+        hl_keywords: () => keywords,
+        hl_enabled: () => enabled,
+        hl_auto_search: () => autoSearch,
+        hl_panel_pos: () => panelPos,
+        hl_panel_state: () => panelState,
+        hl_search_history: () => searchHistory.slice(0, 8),
+        hl_blacklist: () => blacklist,
+        hl_search_engine: () => searchEngine,
+        hl_show_posbar: () => showPosBar,
+        hl_lang: () => lang
+    };
+    const lastSaved = {};
+    for (const key in PERSISTED) lastSaved[key] = JSON.stringify(PERSISTED[key]());
+
+    /** Schreibt nur Werte, die dieser Tab geändert hat; andere Tabs behalten ihre Änderungen. */
     function save() {
-        GM_setValue('hl_keywords', keywords);
-        GM_setValue('hl_enabled', enabled);
-        GM_setValue('hl_auto_search', autoSearch);
-        GM_setValue('hl_panel_pos', panelPos);
-        GM_setValue('hl_panel_state', panelState);
-        GM_setValue('hl_search_history', searchHistory.slice(0, 8));
-        GM_setValue('hl_blacklist', blacklist);
-        GM_setValue('hl_search_engine', searchEngine);
-        GM_setValue('hl_show_posbar', showPosBar);
-        GM_setValue('hl_lang', lang);
+        for (const key in PERSISTED) {
+            const value = PERSISTED[key]();
+            const json = JSON.stringify(value);
+            if (json === lastSaved[key]) continue;
+            GM_setValue(key, value);
+            lastSaved[key] = json;
+        }
     }
 
     function isBlacklisted() {
@@ -279,8 +292,10 @@
 
     function getCrossPageTerms() {
         const result = [];
-        const m = location.hash.match(/(?:sjhl|hl)=([^&]+)/i);
-        if (m) decodeURIComponent(m[1]).split(/[,+]/).forEach(t => t.trim() && result.push(t.trim()));
+        const m = location.hash.match(/[#&](?:sjhl|hl)=([^&]+)/i);
+        if (m) {
+            try { decodeURIComponent(m[1]).split(/[,+]/).forEach(t => t.trim() && result.push(t.trim())); } catch {}
+        }
 
         const stored = GM_getValue('hl_cross_terms', null);
         if (stored && stored.terms && (Date.now() - stored.timestamp) < CROSS_TTL) {
@@ -387,7 +402,7 @@
                 });
             }
         }
-        if (!matches.length) return;
+        if (!matches.length) return null;
 
         // Überlappende Treffer verschiedener Keywords verwerfen, den längeren zuerst behalten.
         matches.sort((a, b) => a.start - b.start || b.end - a.end);
@@ -398,11 +413,13 @@
 
         // Von hinten nach vorne splitten: der Ausgangsknoten bleibt der vordere Rest,
         // so bleiben die Offsets der weiter vorne liegenden Treffer gültig.
+        let tail = null;
         for (let i = kept.length - 1; i >= 0; i--) {
             const m = kept[i];
             try {
                 const middle = textNode.splitText(m.start);
-                middle.splitText(m.end - m.start);
+                const after = middle.splitText(m.end - m.start);
+                if (!tail) tail = after;
                 const mark = document.createElement('span');
                 mark.className = 'slim-hl';
                 mark.style.backgroundColor = m.color;
@@ -413,6 +430,7 @@
                 keywordCounts[m.kw] = (keywordCounts[m.kw] || 0) + 1;
             } catch {}
         }
+        return tail;
     }
 
     function updatePosBar() {
@@ -455,7 +473,7 @@
         bar.replaceChildren(frag);
     }
 
-    const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT', 'NOSCRIPT', 'CODE', 'PRE', 'SELECT']);
+    const SKIP_SELECTOR = 'script, style, textarea, input, noscript, code, pre, select, option, [contenteditable=""], [contenteditable="true"]';
     const OWN_UI = '#slim-hl-panel, #slim-hl-toggle, #slim-pos-bar';
     const FRAME_BUDGET_MS = 10;
     let matchers = [];
@@ -478,18 +496,23 @@
                     const root = queue.shift();
                     if (!root) return done();
                     if (!root.isConnected || isOwnNode(root)) continue;
-                    if (root.nodeType === 3) { highlightInTextNode(root, matchers); continue; }
+                    if (root.nodeType === 3) {
+                        if (!root.parentElement.closest(SKIP_SELECTOR)) highlightInTextNode(root, matchers);
+                        continue;
+                    }
+                    if (root.closest(SKIP_SELECTOR)) continue;
                     walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
                         acceptNode(n) {
                             const p = n.parentElement;
-                            if (!p || SKIP_TAGS.has(p.tagName) || p.closest('.slim-hl, ' + OWN_UI)) return NodeFilter.FILTER_REJECT;
+                            if (!p || p.closest(SKIP_SELECTOR + ', .slim-hl, ' + OWN_UI)) return NodeFilter.FILTER_REJECT;
                             return NodeFilter.FILTER_ACCEPT;
                         }
                     });
                 }
                 const node = walker.nextNode();
                 if (!node) { walker = null; continue; }
-                highlightInTextNode(node, matchers);
+                const tail = highlightInTextNode(node, matchers);
+                if (tail) walker.currentNode = tail;
             }
             requestAnimationFrame(step);
         }
@@ -502,7 +525,10 @@
         if (document.getElementById('kw-list')) renderKeywordList();
         if (document.getElementById('match-list')) renderMatchList();
         updatePosBar();
-        if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
+        if (observer) {
+            observer.takeRecords(); // eigene, noch nicht zugestellte Änderungen verwerfen
+            if (enabled) observer.observe(document.body, { childList: true, subtree: true });
+        }
         if (refreshQueued) { refreshQueued = false; refreshHighlights(); }
     }
 
@@ -525,7 +551,7 @@
         const savedRange = saveSelection();
         cleanupHighlights(document.body);
 
-        matchers = buildMatchers();
+        try { matchers = buildMatchers(); } catch (e) { matchers = []; lastErrors = [String(e && e.message || e)]; }
         const errorEl = document.getElementById('regex-error');
         if (errorEl) errorEl.textContent = lastErrors.join('\n');
 
@@ -843,54 +869,58 @@
         document.body.appendChild(btn);
     }
 
-    document.addEventListener('mousedown', e => { if (!isOwnNode(e.target)) isSelecting = true; });
-    document.addEventListener('mouseup', () => { setTimeout(() => { isSelecting = false; }, 80); });
+    /** Nur auf Seiten registrieren, auf denen das Skript aktiv ist (nicht auf der Blacklist). */
+    function bindGlobalHandlers() {
+        document.addEventListener('mousedown', e => { if (!isOwnNode(e.target)) isSelecting = true; });
+        document.addEventListener('mouseup', () => { setTimeout(() => { isSelecting = false; }, 80); });
 
-    document.addEventListener('click', e => {
-        const hl = e.target.closest('.slim-hl');
-        if (!hl || !e.altKey) return;
-        e.preventDefault();
-        const kw = hl.dataset.kw;
-        keywords = keywords.filter(k => k.text !== kw);
-        save();
-        refreshHighlights();
-    });
+        document.addEventListener('click', e => {
+            const hl = e.target.closest('.slim-hl');
+            if (!hl || !e.altKey) return;
+            e.preventDefault();
+            const kw = hl.dataset.kw;
+            keywords = keywords.filter(k => k.text !== kw);
+            save();
+            refreshHighlights();
+        });
 
-    document.addEventListener('dblclick', e => {
-        if (e.target.closest('.slim-hl')) goTo(1);
-    });
+        document.addEventListener('dblclick', e => {
+            if (e.target.closest('.slim-hl')) goTo(1);
+        });
 
-    document.addEventListener('contextmenu', e => {
-        const hl = e.target.closest('.slim-hl');
-        if (!hl) return;
-        e.preventDefault();
-        const term = hl.textContent.trim();
-        if (term) {
-            const url = SEARCH_URLS[searchEngine] || SEARCH_URLS.google;
-            window.open(url + encodeURIComponent(term), '_blank');
-        }
-    });
+        document.addEventListener('contextmenu', e => {
+            const hl = e.target.closest('.slim-hl');
+            if (!hl) return;
+            e.preventDefault();
+            const term = hl.textContent.trim();
+            if (term) {
+                const url = SEARCH_URLS[searchEngine] || SEARCH_URLS.google;
+                window.open(url + encodeURIComponent(term), '_blank');
+            }
+        });
 
-    document.addEventListener('keydown', e => {
-        if (e.altKey && e.key.toLowerCase() === 'h' && !e.repeat) {
-            const sel = window.getSelection().toString().trim();
-            if (sel && !IGNORE_WORDS.has(sel.toLowerCase())) {
-                if (!keywords.some(k => k.text.toLowerCase() === sel.toLowerCase())) {
-                    keywords.push({ text: sel, color: DEFAULT_COLOR, wholeWord: true });
-                    save();
-                    refreshHighlights();
+        document.addEventListener('keydown', e => {
+            if (e.altKey && e.key.toLowerCase() === 'h' && !e.repeat) {
+                const sel = window.getSelection().toString().trim();
+                if (sel && !IGNORE_WORDS.has(sel.toLowerCase())) {
+                    if (!keywords.some(k => k.text.toLowerCase() === sel.toLowerCase())) {
+                        keywords.push({ text: sel, color: DEFAULT_COLOR, wholeWord: true });
+                        save();
+                        refreshHighlights();
+                    }
                 }
             }
-        }
-        if (e.altKey && e.key === 'ArrowRight') { e.preventDefault(); goTo(1); }
-        if (e.altKey && e.key === 'ArrowLeft') { e.preventDefault(); goTo(-1); }
-    });
+            if (!document.getElementsByClassName('slim-hl').length) return;
+            if (e.altKey && e.key === 'ArrowRight') { e.preventDefault(); goTo(1); }
+            if (e.altKey && e.key === 'ArrowLeft') { e.preventDefault(); goTo(-1); }
+        });
 
-    let scrollTimer;
-    window.addEventListener('scroll', () => {
-        clearTimeout(scrollTimer);
-        scrollTimer = setTimeout(updatePosBar, 80);
-    }, { passive: true });
+        let scrollTimer;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(updatePosBar, 80);
+        }, { passive: true });
+    }
 
     const pendingNodes = new Set();
     let debounceTimer;
@@ -910,6 +940,7 @@
 
     function init() {
         if (isBlacklisted()) return;
+        bindGlobalHandlers();
         updateCrossPageTerms();
         createToggle();
         if (panelState.open) createPanel();
