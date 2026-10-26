@@ -1,15 +1,23 @@
 // ==UserScript==
-// @name         Slim Search Highlight Pro v3.10
+// @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      3.10
-// @description  Positionsanzeige + Keyword-Suchfeld
-// @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0iIzI2MzIzOCIvPgogIDwhLS0gSGlnaGxpZ2h0cyAtLT4KICA8cmVjdCB4PSIyMCIgeT0iMzAiIHdpZHRoPSI1MiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIzNCIgeT0iNTYiIHdpZHRoPSI0NCIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiM5MGNhZjkiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNhNWQ2YTciLz4KICA8IS0tIFRleHQgbGluZXMgLS0+CiAgPGcgZmlsbD0iI2VjZWZmMSIgb3BhY2l0eT0iLjkiPgogICAgPHJlY3QgeD0iMjQiIHk9IjM1IiB3aWR0aD0iNDQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMyNjMyMzgiLz4KICAgIDxyZWN0IHg9IjM4IiB5PSI2MSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMjYzMjM4Ii8+CiAgICA8cmVjdCB4PSIyNCIgeT0iODciIHdpZHRoPSIyOCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzI2MzIzOCIvPgogICAgPHJlY3QgeD0iNzgiIHk9IjM1IiB3aWR0aD0iMTYiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjIwIiB5PSI2MSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4MiIgeT0iNjEiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iNjIiIHk9Ijg3IiB3aWR0aD0iMzIiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPCEtLSBQb3NpdGlvbiBiYXIgLS0+CiAgPHJlY3QgeD0iMTA0IiB5PSIyMCIgd2lkdGg9IjYiIGhlaWdodD0iODgiIHJ4PSIzIiBmaWxsPSIjNDU1YTY0Ii8+CiAgPHJlY3QgeD0iMTA0IiB5PSIzMiIgd2lkdGg9IjYiIGhlaWdodD0iNSIgcng9IjIiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIxMDQiIHk9IjYwIiB3aWR0aD0iNiIgaGVpZ2h0PSI1IiByeD0iMiIgZmlsbD0iIzkwY2FmOSIvPgogIDxyZWN0IHg9IjEwNCIgeT0iODYiIHdpZHRoPSI2IiBoZWlnaHQ9IjUiIHJ4PSIyIiBmaWxsPSIjYTVkNmE3Ii8+Cjwvc3ZnPgo=
+// @version      4.0
+// @author       DonVitosurf1
+// @license      MIT
+// @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
+// @supportURL   https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues
+// @updateURL    https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
+// @downloadURL  https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
+// @description  Keyword highlighting with position bar, navigation and keyword search
+// @description:de  Keyword-Hervorhebung mit Positionsanzeige, Navigation und Keyword-Suche
+// @icon         https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/assets/icon.svg
 // @match        *://*/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_addStyle
 // @grant        GM_registerMenuCommand
 // @run-at       document-end
+// @noframes
 // ==/UserScript==
 
 (function () {
@@ -24,8 +32,52 @@
     let blacklist = GM_getValue('hl_blacklist', ['docs.google.com', 'youtube.com', 'netflix.com']);
     let searchEngine = GM_getValue('hl_search_engine', 'google');
     let showPosBar = GM_getValue('hl_show_posbar', true);
+    let lang = GM_getValue('hl_lang', 'auto');
 
     const LOGO = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0iIzI2MzIzOCIvPgogIDwhLS0gSGlnaGxpZ2h0cyAtLT4KICA8cmVjdCB4PSIyMCIgeT0iMzAiIHdpZHRoPSI1MiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIzNCIgeT0iNTYiIHdpZHRoPSI0NCIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiM5MGNhZjkiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNhNWQ2YTciLz4KICA8IS0tIFRleHQgbGluZXMgLS0+CiAgPGcgZmlsbD0iI2VjZWZmMSIgb3BhY2l0eT0iLjkiPgogICAgPHJlY3QgeD0iMjQiIHk9IjM1IiB3aWR0aD0iNDQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMyNjMyMzgiLz4KICAgIDxyZWN0IHg9IjM4IiB5PSI2MSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMjYzMjM4Ii8+CiAgICA8cmVjdCB4PSIyNCIgeT0iODciIHdpZHRoPSIyOCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzI2MzIzOCIvPgogICAgPHJlY3QgeD0iNzgiIHk9IjM1IiB3aWR0aD0iMTYiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjIwIiB5PSI2MSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4MiIgeT0iNjEiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iNjIiIHk9Ijg3IiB3aWR0aD0iMzIiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPCEtLSBQb3NpdGlvbiBiYXIgLS0+CiAgPHJlY3QgeD0iMTA0IiB5PSIyMCIgd2lkdGg9IjYiIGhlaWdodD0iODgiIHJ4PSIzIiBmaWxsPSIjNDU1YTY0Ii8+CiAgPHJlY3QgeD0iMTA0IiB5PSIzMiIgd2lkdGg9IjYiIGhlaWdodD0iNSIgcng9IjIiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIxMDQiIHk9IjYwIiB3aWR0aD0iNiIgaGVpZ2h0PSI1IiByeD0iMiIgZmlsbD0iIzkwY2FmOSIvPgogIDxyZWN0IHg9IjEwNCIgeT0iODYiIHdpZHRoPSI2IiBoZWlnaHQ9IjUiIHJ4PSIyIiBmaWxsPSIjYTVkNmE3Ii8+Cjwvc3ZnPgo=';
+
+    const I18N = {
+        en: {
+            openPanel: 'Open highlight panel', minimize: 'Minimize', close: 'Close',
+            prev: 'Previous highlight (Alt + ←)', next: 'Next highlight (Alt + →)',
+            kwSearch: 'Search keywords…', kwPlaceholder: 'Keyword or /regex/',
+            wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
+            keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
+            enabled: 'Highlights enabled', autoSearch: 'Take over terms from search', posBar: 'Show position bar',
+            engine: 'Search engine for right-click:', language: 'Language:', langAuto: 'Auto',
+            noMatches: 'No matches on this page', noKwMatches: 'No keywords match your search', noKeywords: 'No keywords saved yet',
+            more: n => `… and ${n} more (use Alt + → / ← to step through)`,
+            changeColor: 'Change color', countTitle: 'Matches on this page', remove: 'Delete',
+            invalidRegex: k => `Invalid regex in “${k}”`, exists: 'Keyword already exists.',
+            menuOpen: 'Open panel', menuBlacklist: 'Add current domain to blacklist',
+            blacklisted: h => `${h} added to the blacklist`
+        },
+        de: {
+            openPanel: 'Highlight-Panel öffnen', minimize: 'Minimieren', close: 'Schließen',
+            prev: 'Vorheriges Highlight (Alt + ←)', next: 'Nächstes Highlight (Alt + →)',
+            kwSearch: 'Keywords suchen…', kwPlaceholder: 'Keyword oder /regex/',
+            wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
+            keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
+            enabled: 'Highlights aktiv', autoSearch: 'Automatisch von Suche übernehmen', posBar: 'Positionsanzeige anzeigen',
+            engine: 'Suchmaschine für Rechtsklick:', language: 'Sprache:', langAuto: 'Automatisch',
+            noMatches: 'Keine Treffer auf dieser Seite', noKwMatches: 'Keine Treffer für die Suche', noKeywords: 'Noch keine Keywords gespeichert',
+            more: n => `… und ${n} weitere (Alt + → / ← zum Durchblättern)`,
+            changeColor: 'Farbe ändern', countTitle: 'Treffer auf dieser Seite', remove: 'Löschen',
+            invalidRegex: k => `Ungültiger Regex bei „${k}“`, exists: 'Keyword existiert bereits.',
+            menuOpen: 'Panel öffnen', menuBlacklist: 'Aktuelle Domain zur Blacklist',
+            blacklisted: h => `${h} zur Blacklist hinzugefügt`
+        }
+    };
+
+    function currentLang() {
+        if (lang === 'de' || lang === 'en') return lang;
+        return String(navigator.language || 'en').toLowerCase().startsWith('de') ? 'de' : 'en';
+    }
+
+    function t(key, ...args) {
+        const v = (I18N[currentLang()] || I18N.en)[key] ?? I18N.en[key] ?? key;
+        return typeof v === 'function' ? v(...args) : v;
+    }
     const DEFAULT_COLOR = '#ffe082';
     const AUTO_COLORS = ['#90caf9', '#a5d6a7', '#ef9a9a', '#ffcc80', '#ce93d8', '#80cbc4', '#fff176', '#b0bec5'];
     const SEARCH_ENGINES = ['google.', 'bing.', 'duckduckgo.', 'yahoo.', 'baidu.', 'yandex.', 'startpage.', 'ecosia.', 'qwant.'];
@@ -120,7 +172,7 @@
             transition: transform 0.15s;
         }
         #slim-hl-toggle:hover { transform: scale(1.1); }
-        select#search-engine, input[type=text] {
+        select#search-engine, select#ui-lang, input[type=text] {
             background: #222; color: #eee; border: 1px solid #444;
             border-radius: 6px; padding: 7px 9px; width: 100%; margin-top: 4px;
         }
@@ -178,6 +230,7 @@
         GM_setValue('hl_blacklist', blacklist);
         GM_setValue('hl_search_engine', searchEngine);
         GM_setValue('hl_show_posbar', showPosBar);
+        GM_setValue('hl_lang', lang);
     }
 
     function isBlacklisted() {
@@ -185,8 +238,12 @@
         return blacklist.some(b => host.includes(b.toLowerCase()));
     }
 
-    function isSearchEngine(url) {
-        return url && SEARCH_ENGINES.some(s => url.toLowerCase().includes(s));
+    function isSearchEngine(urlStr) {
+        if (!urlStr) return false;
+        try {
+            const host = '.' + new URL(urlStr).hostname.toLowerCase() + '.';
+            return SEARCH_ENGINES.some(s => host.includes('.' + s));
+        } catch { return false; }
     }
 
     function extractQuery(urlStr) {
@@ -261,6 +318,7 @@
                 const last = k.text.lastIndexOf('/');
                 pattern = k.text.slice(1, last);
                 flags = k.text.slice(last + 1) || 'gi';
+                if (!flags.includes('g')) flags += 'g';
             } else {
                 const escaped = escapeRegExp(k.text);
                 pattern = (k.wholeWord !== false && !k.text.includes(' ')) ? '\\b' + escaped + '\\b' : escaped;
@@ -268,20 +326,22 @@
             try {
                 return { re: new RegExp(pattern, flags), color: k.color || DEFAULT_COLOR, text: k.text };
             } catch (e) {
-                lastErrors.push(`Ungültiger Regex bei „${k.text}“`);
+                lastErrors.push(t('invalidRegex', k.text));
                 return null;
             }
         }).filter(Boolean);
     }
 
     function cleanupHighlights(root = document.body) {
+        const parents = new Set();
         root.querySelectorAll('.slim-hl').forEach(span => {
             const parent = span.parentNode;
             if (!parent) return;
             while (span.firstChild) parent.insertBefore(span.firstChild, span);
             parent.removeChild(span);
-            parent.normalize();
+            parents.add(parent);
         });
+        parents.forEach(p => p.normalize());
         const bar = document.getElementById('slim-pos-bar');
         if (bar) bar.remove();
     }
@@ -311,6 +371,7 @@
             m.re.lastIndex = 0;
             let match;
             while ((match = m.re.exec(currentText)) !== null) {
+                if (match[0].length === 0) { m.re.lastIndex++; continue; }
                 matches.push({
                     start: match.index,
                     end: match.index + match[0].length,
@@ -318,19 +379,24 @@
                     color: m.color,
                     kw: m.text
                 });
-                if (!m.re.global) break;
             }
         }
         if (!matches.length) return;
 
-        matches.sort((a, b) => b.start - a.start);
-
-        let node = textNode;
+        // Überlappende Treffer verschiedener Keywords verwerfen, den längeren zuerst behalten.
+        matches.sort((a, b) => a.start - b.start || b.end - a.end);
+        const kept = [];
         for (const m of matches) {
+            if (!kept.length || m.start >= kept[kept.length - 1].end) kept.push(m);
+        }
+
+        // Von hinten nach vorne splitten: der Ausgangsknoten bleibt der vordere Rest,
+        // so bleiben die Offsets der weiter vorne liegenden Treffer gültig.
+        for (let i = kept.length - 1; i >= 0; i--) {
+            const m = kept[i];
             try {
-                if (m.start >= node.textContent.length) continue;
-                const middle = node.splitText(m.start);
-                const after = middle.splitText(m.end - m.start);
+                const middle = textNode.splitText(m.start);
+                middle.splitText(m.end - m.start);
                 const mark = document.createElement('span');
                 mark.className = 'slim-hl';
                 mark.style.backgroundColor = m.color;
@@ -339,7 +405,6 @@
                 mark.dataset.kw = m.kw;
                 middle.parentNode.replaceChild(mark, middle);
                 keywordCounts[m.kw] = (keywordCounts[m.kw] || 0) + 1;
-                node = after;
             } catch {}
         }
     }
@@ -353,94 +418,127 @@
         if (!bar) {
             bar = document.createElement('div');
             bar.id = 'slim-pos-bar';
+            bar.addEventListener('click', e => {
+                const i = e.target.dataset && e.target.dataset.i;
+                if (i === undefined) return;
+                e.stopPropagation();
+                currentIdx = +i;
+                goTo(0);
+            });
             document.body.appendChild(bar);
         }
-        bar.innerHTML = '';
 
-        const hls = [...document.querySelectorAll('.slim-hl')];
+        // Erst alle Positionen lesen, dann einmal schreiben: sonst erzwingt jedes
+        // getBoundingClientRect() nach einem appendChild() ein komplettes Layout.
+        const hls = document.getElementsByClassName('slim-hl');
         const docHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, 1);
+        const scrollY = window.scrollY;
+        const tops = new Array(hls.length);
+        for (let i = 0; i < hls.length; i++) tops[i] = hls[i].getBoundingClientRect().top + scrollY;
 
-        hls.forEach((el, i) => {
-            const rect = el.getBoundingClientRect();
-            const absTop = rect.top + window.scrollY;
-            const percent = Math.min(98, Math.max(0, (absTop / docHeight) * 100));
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < hls.length; i++) {
             const mark = document.createElement('div');
             mark.className = 'mark' + (i === currentIdx ? ' active' : '');
-            mark.style.top = percent + '%';
-            mark.style.backgroundColor = el.style.backgroundColor || DEFAULT_COLOR;
-            mark.title = el.textContent.slice(0, 40);
-            mark.onclick = (e) => {
-                e.stopPropagation();
-                currentIdx = i;
-                goTo(0);
-            };
-            bar.appendChild(mark);
-        });
+            mark.style.top = Math.min(98, Math.max(0, (tops[i] / docHeight) * 100)) + '%';
+            mark.style.backgroundColor = hls[i].style.backgroundColor || DEFAULT_COLOR;
+            mark.title = hls[i].textContent.slice(0, 40);
+            mark.dataset.i = i;
+            frag.appendChild(mark);
+        }
+        bar.replaceChildren(frag);
     }
 
+    const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT', 'NOSCRIPT', 'CODE', 'PRE', 'SELECT']);
+    const OWN_UI = '#slim-hl-panel, #slim-hl-toggle, #slim-pos-bar';
+    const FRAME_BUDGET_MS = 10;
+    let matchers = [];
+
+    function isOwnNode(node) {
+        const el = node.nodeType === 1 ? node : node.parentElement;
+        return !el || !!el.closest('.slim-hl, ' + OWN_UI);
+    }
+
+    /** Markiert alle Textknoten unterhalb der Wurzeln, in Zeitscheiben von ~10 ms pro Frame. */
+    function highlightRoots(roots, done) {
+        const queue = roots.slice();
+        let walker = null;
+        function step() {
+            const deadline = performance.now() + FRAME_BUDGET_MS;
+            while (performance.now() < deadline) {
+                if (!walker) {
+                    const root = queue.shift();
+                    if (!root) return done();
+                    if (!root.isConnected || isOwnNode(root)) continue;
+                    if (root.nodeType === 3) { highlightInTextNode(root, matchers); continue; }
+                    walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                        acceptNode(n) {
+                            const p = n.parentElement;
+                            if (!p || SKIP_TAGS.has(p.tagName) || p.closest('.slim-hl, ' + OWN_UI)) return NodeFilter.FILTER_REJECT;
+                            return NodeFilter.FILTER_ACCEPT;
+                        }
+                    });
+                }
+                const node = walker.nextNode();
+                if (!node) { walker = null; continue; }
+                highlightInTextNode(node, matchers);
+            }
+            requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+
+    function afterHighlight() {
+        isHighlighting = false;
+        updateCounterAndTitle();
+        if (document.getElementById('kw-list')) renderKeywordList();
+        if (document.getElementById('match-list')) renderMatchList();
+        updatePosBar();
+        if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    /** Vollständiger Neuaufbau, nur nötig wenn sich Keywords oder Einstellungen ändern. */
     function refreshHighlights() {
         if (!enabled || isSelecting || isHighlighting || isBlacklisted()) return;
         isHighlighting = true;
         keywordCounts = {};
         currentIdx = -1;
+        pendingNodes.clear();
 
         if (observer) observer.disconnect();
 
         const savedRange = saveSelection();
         cleanupHighlights(document.body);
 
-        const matchers = buildMatchers();
+        matchers = buildMatchers();
         const errorEl = document.getElementById('regex-error');
         if (errorEl) errorEl.textContent = lastErrors.join('\n');
 
         if (!matchers.length) {
-            isHighlighting = false;
             restoreSelection(savedRange);
-            updateCounterAndTitle();
-            if (document.getElementById('kw-list')) renderKeywordList();
-            if (document.getElementById('match-list')) renderMatchList();
-            updatePosBar();
-            if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
+            afterHighlight();
             return;
         }
-
-        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
-            acceptNode(n) {
-                const p = n.parentElement;
-                if (!p || ['SCRIPT','STYLE','TEXTAREA','INPUT','NOSCRIPT','CODE','PRE','SELECT'].includes(p.tagName)) return NodeFilter.FILTER_REJECT;
-                if (p.closest('.slim-hl') || p.closest('#slim-hl-panel') || p.closest('#slim-pos-bar')) return NodeFilter.FILTER_REJECT;
-                return NodeFilter.FILTER_ACCEPT;
-            }
+        highlightRoots([document.body], () => {
+            restoreSelection(savedRange);
+            afterHighlight();
         });
+    }
 
-        let processed = 0;
-        const chunkSize = 80;
-        function processChunk() {
-            let count = 0;
-            let node;
-            while (count < chunkSize && (node = walker.nextNode())) {
-                highlightInTextNode(node, matchers);
-                count++;
-                processed++;
-            }
-            if (node) {
-                requestAnimationFrame(processChunk);
-            } else {
-                restoreSelection(savedRange);
-                isHighlighting = false;
-                updateCounterAndTitle();
-                if (document.getElementById('kw-list')) renderKeywordList();
-                if (document.getElementById('match-list')) renderMatchList();
-                updatePosBar();
-                if (observer && enabled) observer.observe(document.body, { childList: true, subtree: true });
-            }
-        }
-        requestAnimationFrame(processChunk);
+    /** Inkrementell: nur von der Seite neu hinzugefügte Knoten durchsuchen. */
+    function highlightAdded() {
+        if (!enabled || isHighlighting || isBlacklisted()) return;
+        if (isSelecting) { debounceTimer = setTimeout(highlightAdded, 280); return; }
+        const roots = [...pendingNodes];
+        pendingNodes.clear();
+        if (!roots.length || !matchers.length) return;
+        isHighlighting = true;
+        if (observer) observer.disconnect();
+        highlightRoots(roots, afterHighlight);
     }
 
     function updateCounterAndTitle() {
-        const hls = document.querySelectorAll('.slim-hl');
-        highlightCount = hls.length;
+        highlightCount = document.getElementsByClassName('slim-hl').length;
         const counter = document.getElementById('hl-counter');
         if (counter) counter.textContent = highlightCount ? `${Math.max(0, currentIdx) + 1} / ${highlightCount}` : '0 / 0';
         const baseTitle = document.title.replace(/^\(\d+\)\s*/, '');
@@ -448,35 +546,54 @@
     }
 
     function goTo(delta) {
-        const hls = [...document.querySelectorAll('.slim-hl')];
+        const hls = document.getElementsByClassName('slim-hl');
         if (!hls.length) return;
         currentIdx = (currentIdx + delta + hls.length) % hls.length;
         hls[currentIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
         hls[currentIdx].style.outline = '2px solid #ffca28';
         setTimeout(() => hls[currentIdx] && (hls[currentIdx].style.outline = ''), 700);
         updateCounterAndTitle();
-        updatePosBar();
-        document.querySelectorAll('.match-item').forEach((el, i) => {
-            el.classList.toggle('active', i === currentIdx);
-        });
+        const bar = document.getElementById('slim-pos-bar');
+        if (bar) {
+            const prev = bar.querySelector('.active');
+            if (prev) prev.classList.remove('active');
+            if (bar.children[currentIdx]) bar.children[currentIdx].classList.add('active');
+        } else {
+            updatePosBar();
+        }
+        const items = document.querySelectorAll('.match-item');
+        if (items.length) items.forEach((el, i) => el.classList.toggle('active', i === currentIdx));
     }
+
+    const MATCH_LIST_MAX = 300;
 
     function renderMatchList() {
         const list = document.getElementById('match-list');
         if (!list) return;
-        const hls = [...document.querySelectorAll('.slim-hl')];
+        const hls = document.getElementsByClassName('slim-hl');
         if (!hls.length) {
-            list.innerHTML = '<div class="empty">Keine Treffer auf dieser Seite</div>';
+            list.innerHTML = `<div class="empty">${t('noMatches')}</div>`;
             return;
         }
-        list.innerHTML = '';
-        hls.forEach((el, i) => {
+        const frag = document.createDocumentFragment();
+        const shown = Math.min(hls.length, MATCH_LIST_MAX);
+        for (let i = 0; i < shown; i++) {
+            const el = hls[i];
             const div = document.createElement('div');
             div.className = 'match-item' + (i === currentIdx ? ' active' : '');
-            div.innerHTML = `<span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:${el.style.backgroundColor};margin-right:8px;"></span>${el.textContent.slice(0, 44)}`;
+            const dot = document.createElement('span');
+            dot.style.cssText = `display:inline-block;width:16px;height:16px;border-radius:4px;background:${el.style.backgroundColor};margin-right:8px;`;
+            div.append(dot, el.textContent.slice(0, 44));
             div.onclick = () => { currentIdx = i; goTo(0); };
-            list.appendChild(div);
-        });
+            frag.appendChild(div);
+        }
+        if (hls.length > shown) {
+            const more = document.createElement('div');
+            more.className = 'empty';
+            more.textContent = t('more', hls.length - shown);
+            frag.appendChild(more);
+        }
+        list.replaceChildren(frag);
     }
 
     function createPanel() {
@@ -490,59 +607,68 @@
             <div id="slim-hl-header">
                 <span><img src="${LOGO}" alt="">Highlight</span>
                 <div>
-                    <button id="btn-min" title="Minimieren">−</button>
-                    <button id="btn-close" title="Schließen">×</button>
+                    <button id="btn-min" title="${t('minimize')}">−</button>
+                    <button id="btn-close" title="${t('close')}">×</button>
                 </div>
             </div>
             <div class="panel-body">
                 <div class="counter" id="hl-counter">0 / 0</div>
                 <div class="nav-btns">
-                    <button id="btn-prev" title="Vorheriges Highlight (Alt + ←)">◀</button>
-                    <button id="btn-next" title="Nächstes Highlight (Alt + →)">▶</button>
+                    <button id="btn-prev" title="${t('prev')}">◀</button>
+                    <button id="btn-next" title="${t('next')}">▶</button>
                 </div>
                 <div id="match-list"></div>
-                <div class="section-title">Keywords</div>
-                <input type="text" id="kw-search" placeholder="Keywords suchen…" value="${kwFilter}">
+                <div class="section-title">${t('keywords')}</div>
+                <input type="text" id="kw-search" placeholder="${t('kwSearch')}" value="${kwFilter}">
                 <div id="kw-list"></div>
                 <div id="regex-error" class="error"></div>
                 <div style="display:flex;gap:8px;margin-top:10px;">
-                    <input type="text" id="new-kw" placeholder="Keyword oder /regex/" style="flex:1;">
+                    <input type="text" id="new-kw" placeholder="${t('kwPlaceholder')}" style="flex:1;">
                     <input type="color" id="new-color" value="${DEFAULT_COLOR}">
                 </div>
-                <label style="margin-top:8px;"><input type="checkbox" id="new-whole" checked> Nur ganze Wörter</label>
-                <input type="text" id="new-domains" placeholder="Nur auf Domains (optional, kommagetrennt)">
-                <button id="add-kw-btn" style="margin-top:10px;width:100%;">Hinzufügen</button>
+                <label style="margin-top:8px;"><input type="checkbox" id="new-whole" checked> ${t('wholeWords')}</label>
+                <input type="text" id="new-domains" placeholder="${t('domains')}">
+                <button id="add-kw-btn" style="margin-top:10px;width:100%;">${t('add')}</button>
                 <div id="history-container"></div>
-                <div class="section-title">Einstellungen</div>
-                <label><input type="checkbox" id="chk-enabled" ${enabled?'checked':''}> Highlights aktiv</label>
-                <label><input type="checkbox" id="chk-auto" ${autoSearch?'checked':''}> Automatisch von Suche übernehmen</label>
-                <label><input type="checkbox" id="chk-posbar" ${showPosBar?'checked':''}> Positionsanzeige anzeigen</label>
-                <div style="margin-top:10px;font-size:12.5px;">Suchmaschine für Rechtsklick:</div>
+                <div class="section-title">${t('settings')}</div>
+                <label><input type="checkbox" id="chk-enabled" ${enabled?'checked':''}> ${t('enabled')}</label>
+                <label><input type="checkbox" id="chk-auto" ${autoSearch?'checked':''}> ${t('autoSearch')}</label>
+                <label><input type="checkbox" id="chk-posbar" ${showPosBar?'checked':''}> ${t('posBar')}</label>
+                <div style="margin-top:10px;font-size:12.5px;">${t('engine')}</div>
                 <select id="search-engine">
                     <option value="google" ${searchEngine==='google'?'selected':''}>Google</option>
                     <option value="ddg" ${searchEngine==='ddg'?'selected':''}>DuckDuckGo</option>
                     <option value="brave" ${searchEngine==='brave'?'selected':''}>Brave</option>
                     <option value="bing" ${searchEngine==='bing'?'selected':''}>Bing</option>
                 </select>
+                <div style="margin-top:10px;font-size:12.5px;">${t('language')}</div>
+                <select id="ui-lang">
+                    <option value="auto" ${lang==='auto'?'selected':''}>${t('langAuto')}</option>
+                    <option value="de" ${lang==='de'?'selected':''}>Deutsch</option>
+                    <option value="en" ${lang==='en'?'selected':''}>English</option>
+                </select>
             </div>`;
         document.body.appendChild(panel);
         if (panelState.open) panel.style.display = 'block';
 
-        let dragging = false, dx, dy;
-        panel.querySelector('#slim-hl-header').onmousedown = e => {
-            if (e.target.tagName === 'BUTTON') return;
-            dragging = true;
-            dx = e.clientX - panel.offsetLeft;
-            dy = e.clientY - panel.offsetTop;
-        };
-        document.onmousemove = e => {
-            if (!dragging) return;
+        let dx, dy;
+        const onMove = e => {
             panel.style.left = (e.clientX - dx) + 'px';
             panel.style.top = (e.clientY - dy) + 'px';
+        };
+        const onUp = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
             panelPos = { x: panel.offsetLeft, y: panel.offsetTop };
             save();
         };
-        document.onmouseup = () => dragging = false;
+        panel.querySelector('#slim-hl-header').onmousedown = e => {
+            if (e.target.tagName === 'BUTTON') return;
+            dx = e.clientX - panel.offsetLeft;
+            dy = e.clientY - panel.offsetTop;
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        };
 
         panel.querySelector('#btn-min').onclick = () => {
             panel.classList.toggle('minimized');
@@ -566,7 +692,7 @@
             const text = panel.querySelector('#new-kw').value.trim();
             if (!text) return;
             if (keywords.some(k => k.text.toLowerCase() === text.toLowerCase())) {
-                alert('Keyword existiert bereits.');
+                alert(t('exists'));
                 return;
             }
             const domainsRaw = panel.querySelector('#new-domains').value.trim();
@@ -603,6 +729,15 @@
             updatePosBar();
         };
         panel.querySelector('#search-engine').onchange = e => { searchEngine = e.target.value; save(); };
+        panel.querySelector('#ui-lang').onchange = e => {
+            lang = e.target.value;
+            save();
+            const toggle = document.getElementById('slim-hl-toggle');
+            if (toggle) toggle.title = t('openPanel');
+            panel.remove();
+            createPanel();
+            refreshHighlights();
+        };
 
         renderKeywordList();
         renderHistory();
@@ -614,7 +749,7 @@
         if (!list) return;
         const filtered = keywords.filter(k => !kwFilter || k.text.toLowerCase().includes(kwFilter));
         if (!filtered.length) {
-            list.innerHTML = `<div class="empty">${keywords.length ? 'Keine Treffer für die Suche' : 'Noch keine Keywords gespeichert'}</div>`;
+            list.innerHTML = `<div class="empty">${keywords.length ? t('noKwMatches') : t('noKeywords')}</div>`;
             return;
         }
         list.innerHTML = '';
@@ -624,10 +759,10 @@
             const div = document.createElement('div');
             div.className = 'kw-item';
             div.innerHTML = `
-                <input type="color" value="${k.color}" data-i="${originalIndex}" title="Farbe ändern">
+                <input type="color" value="${k.color}" data-i="${originalIndex}" title="${t('changeColor')}">
                 <input type="text" value="${k.text.replace(/"/g,'&quot;')}" data-i="${originalIndex}">
-                <span class="kw-count" title="Treffer auf dieser Seite">${count}</span>
-                <button data-i="${originalIndex}" title="Löschen">×</button>`;
+                <span class="kw-count" title="${t('countTitle')}">${count}</span>
+                <button data-i="${originalIndex}" title="${t('remove')}">×</button>`;
             list.appendChild(div);
         });
         list.querySelectorAll('input[type=color]').forEach(el => el.onchange = () => {
@@ -650,7 +785,7 @@
     function renderHistory() {
         const container = document.getElementById('history-container');
         if (!container || !searchHistory.length) return;
-        container.innerHTML = '<div class="section-title">Letzte Suchen</div>';
+        container.innerHTML = `<div class="section-title">${t('recent')}</div>`;
         searchHistory.forEach(h => {
             const btn = document.createElement('button');
             btn.className = 'btn';
@@ -670,7 +805,7 @@
         if (document.getElementById('slim-hl-toggle')) return;
         const btn = document.createElement('button');
         btn.id = 'slim-hl-toggle';
-        btn.title = 'Highlight Panel öffnen';
+        btn.title = t('openPanel');
         btn.onclick = () => {
             let p = document.getElementById('slim-hl-panel');
             if (!p) {
@@ -734,14 +869,18 @@
         scrollTimer = setTimeout(updatePosBar, 80);
     }, { passive: true });
 
+    const pendingNodes = new Set();
     let debounceTimer;
     function setupObserver() {
-        observer = new MutationObserver(() => {
-            if (isSelecting || isHighlighting || isBlacklisted()) return;
+        observer = new MutationObserver(records => {
+            if (isHighlighting || isBlacklisted()) return;
+            for (const r of records) {
+                if (isOwnNode(r.target)) continue;
+                r.addedNodes.forEach(n => { if ((n.nodeType === 1 || n.nodeType === 3) && !isOwnNode(n)) pendingNodes.add(n); });
+            }
+            if (!pendingNodes.size) return;
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                if (enabled && !isSelecting && !isHighlighting) refreshHighlights();
-            }, 280);
+            debounceTimer = setTimeout(highlightAdded, 280);
         });
         if (enabled) observer.observe(document.body, { childList: true, subtree: true });
     }
@@ -760,7 +899,7 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 
-    GM_registerMenuCommand('Panel öffnen', () => {
+    GM_registerMenuCommand(t('menuOpen'), () => {
         let p = document.getElementById('slim-hl-panel');
         if (!p) createPanel();
         else p.style.display = 'block';
@@ -768,12 +907,12 @@
         save();
     });
 
-    GM_registerMenuCommand('Aktuelle Domain zur Blacklist', () => {
+    GM_registerMenuCommand(t('menuBlacklist'), () => {
         const host = location.hostname;
         if (!blacklist.includes(host)) {
             blacklist.push(host);
             save();
-            alert(`${host} zur Blacklist hinzugefügt`);
+            alert(t('blacklisted', host));
             location.reload();
         }
     });
