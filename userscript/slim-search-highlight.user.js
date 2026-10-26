@@ -25,6 +25,7 @@
     let searchEngine = GM_getValue('hl_search_engine', 'google');
     let showPosBar = GM_getValue('hl_show_posbar', true);
 
+    const LOGO = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0iIzI2MzIzOCIvPgogIDwhLS0gSGlnaGxpZ2h0cyAtLT4KICA8cmVjdCB4PSIyMCIgeT0iMzAiIHdpZHRoPSI1MiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIzNCIgeT0iNTYiIHdpZHRoPSI0NCIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiM5MGNhZjkiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNhNWQ2YTciLz4KICA8IS0tIFRleHQgbGluZXMgLS0+CiAgPGcgZmlsbD0iI2VjZWZmMSIgb3BhY2l0eT0iLjkiPgogICAgPHJlY3QgeD0iMjQiIHk9IjM1IiB3aWR0aD0iNDQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMyNjMyMzgiLz4KICAgIDxyZWN0IHg9IjM4IiB5PSI2MSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMjYzMjM4Ii8+CiAgICA8cmVjdCB4PSIyNCIgeT0iODciIHdpZHRoPSIyOCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzI2MzIzOCIvPgogICAgPHJlY3QgeD0iNzgiIHk9IjM1IiB3aWR0aD0iMTYiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjIwIiB5PSI2MSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4MiIgeT0iNjEiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iNjIiIHk9Ijg3IiB3aWR0aD0iMzIiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPCEtLSBQb3NpdGlvbiBiYXIgLS0+CiAgPHJlY3QgeD0iMTA0IiB5PSIyMCIgd2lkdGg9IjYiIGhlaWdodD0iODgiIHJ4PSIzIiBmaWxsPSIjNDU1YTY0Ii8+CiAgPHJlY3QgeD0iMTA0IiB5PSIzMiIgd2lkdGg9IjYiIGhlaWdodD0iNSIgcng9IjIiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIxMDQiIHk9IjYwIiB3aWR0aD0iNiIgaGVpZ2h0PSI1IiByeD0iMiIgZmlsbD0iIzkwY2FmOSIvPgogIDxyZWN0IHg9IjEwNCIgeT0iODYiIHdpZHRoPSI2IiBoZWlnaHQ9IjUiIHJ4PSIyIiBmaWxsPSIjYTVkNmE3Ii8+Cjwvc3ZnPgo=';
     const DEFAULT_COLOR = '#ffe082';
     const AUTO_COLORS = ['#90caf9', '#a5d6a7', '#ef9a9a', '#ffcc80', '#ce93d8', '#80cbc4', '#fff176', '#b0bec5'];
     const SEARCH_ENGINES = ['google.', 'bing.', 'duckduckgo.', 'yahoo.', 'baidu.', 'yandex.', 'startpage.', 'ecosia.', 'qwant.'];
@@ -65,7 +66,8 @@
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid #333;
         }
-        #slim-hl-header span { font-weight: 650; letter-spacing: 0.2px; }
+        #slim-hl-header span { font-weight: 650; letter-spacing: 0.2px; display: flex; align-items: center; gap: 8px; }
+        #slim-hl-header img { width: 20px; height: 20px; }
         #slim-hl-header button {
             background: none; border: none; color: #bbb; cursor: pointer;
             font-size: 18px; width: 32px; height: 32px; border-radius: 6px;
@@ -111,8 +113,9 @@
         .error { color: #ef5350; font-size: 12px; margin: 6px 0; white-space: pre-line; }
         #slim-hl-toggle {
             position: fixed; z-index: 2147483646; bottom: 20px; right: 20px;
-            width: 48px; height: 48px; border-radius: 50%; background: #ffca28;
-            color: #000; border: none; font-size: 22px; cursor: pointer;
+            width: 48px; height: 48px; border-radius: 14px; padding: 0;
+            background: url("${LOGO}") center / cover no-repeat;
+            border: none; cursor: pointer;
             box-shadow: 0 4px 18px rgba(0,0,0,0.4);
             transition: transform 0.15s;
         }
@@ -485,7 +488,7 @@
         if (panelState.minimized) panel.classList.add('minimized');
         panel.innerHTML = `
             <div id="slim-hl-header">
-                <span>Highlight</span>
+                <span><img src="${LOGO}" alt="">Highlight</span>
                 <div>
                     <button id="btn-min" title="Minimieren">−</button>
                     <button id="btn-close" title="Schließen">×</button>
@@ -667,7 +670,6 @@
         if (document.getElementById('slim-hl-toggle')) return;
         const btn = document.createElement('button');
         btn.id = 'slim-hl-toggle';
-        btn.textContent = '✦';
         btn.title = 'Highlight Panel öffnen';
         btn.onclick = () => {
             let p = document.getElementById('slim-hl-panel');
