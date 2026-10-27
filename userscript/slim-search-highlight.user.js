@@ -41,13 +41,21 @@
     let searchEngine = GM_getValue('hl_search_engine', 'google');
     let showPosBar = GM_getValue('hl_show_posbar', true);
     let lang = GM_getValue('hl_lang', 'auto');
+    const DEFAULT_KEYS = { next: 'Alt+ArrowRight', prev: 'Alt+ArrowLeft', add: 'Alt+h' };
+    let keys = { ...DEFAULT_KEYS };
+    const storedKeys = GM_getValue('hl_keys', {});
+    for (const action in DEFAULT_KEYS) {
+        if (storedKeys && typeof storedKeys[action] === 'string' && storedKeys[action]) keys[action] = storedKeys[action];
+    }
 
     const LOGO = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%23263238'/%3E%3Crect x='20' y='30' width='52' height='16' rx='4' fill='%23ffe082'/%3E%3Crect x='34' y='56' width='44' height='16' rx='4' fill='%2390caf9'/%3E%3Crect x='20' y='82' width='36' height='16' rx='4' fill='%23a5d6a7'/%3E%3Cg fill='%23eceff1'%3E%3Crect x='24' y='35' width='44' height='6' rx='3' fill='%23263238'/%3E%3Crect x='38' y='61' width='36' height='6' rx='3' fill='%23263238'/%3E%3Crect x='24' y='87' width='28' height='6' rx='3' fill='%23263238'/%3E%3Crect x='78' y='35' width='16' height='6' rx='3'/%3E%3Crect x='20' y='61' width='10' height='6' rx='3'/%3E%3Crect x='82' y='61' width='12' height='6' rx='3'/%3E%3Crect x='62' y='87' width='32' height='6' rx='3'/%3E%3C/g%3E%3Crect x='104' y='20' width='6' height='88' rx='3' fill='%23455a64'/%3E%3Crect x='104' y='32' width='6' height='5' rx='2' fill='%23ffe082'/%3E%3Crect x='104' y='60' width='6' height='5' rx='2' fill='%2390caf9'/%3E%3Crect x='104' y='86' width='6' height='5' rx='2' fill='%23a5d6a7'/%3E%3C/svg%3E`;
 
     const I18N = {
         en: {
             openPanel: 'Open highlight panel', minimize: 'Minimize', close: 'Close',
-            prev: 'Previous highlight (Alt + ←)', next: 'Next highlight (Alt + →)',
+            prev: 'Previous highlight', next: 'Next highlight',
+            shortcuts: 'Shortcuts:', keyPrev: 'Previous', keyNext: 'Next', keyAdd: 'Add selected text',
+            keysHint: 'Click a field and press the new shortcut (with Alt, Ctrl or Cmd).', keysReset: 'Reset shortcuts',
             kwSearch: 'Search keywords…', kwPlaceholder: 'Keyword or /regex/',
             wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
             keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
@@ -60,7 +68,7 @@
             enabled: 'Highlights enabled', autoSearch: 'Take over terms from search', posBar: 'Show position bar',
             engine: 'Search engine for right-click:', language: 'Language:', langAuto: 'Auto',
             noMatches: 'No matches on this page', noKwMatches: 'No keywords match your search', noKeywords: 'No keywords saved yet',
-            more: n => `… and ${n} more (use Alt + → / ← to step through)`,
+            more: (n, hint) => `… and ${n} more (step through with ${hint})`,
             changeColor: 'Change color', countTitle: 'Matches on this page', remove: 'Delete',
             invalidRegex: k => `Invalid regex in “${k}”`, exists: 'Keyword already exists.',
             menuOpen: 'Open panel', menuBlacklist: 'Add current domain to blacklist',
@@ -68,7 +76,9 @@
         },
         de: {
             openPanel: 'Highlight-Panel öffnen', minimize: 'Minimieren', close: 'Schließen',
-            prev: 'Vorheriges Highlight (Alt + ←)', next: 'Nächstes Highlight (Alt + →)',
+            prev: 'Vorheriges Highlight', next: 'Nächstes Highlight',
+            shortcuts: 'Tastenkürzel:', keyPrev: 'Zurück', keyNext: 'Weiter', keyAdd: 'Markierten Text hinzufügen',
+            keysHint: 'Feld anklicken und das neue Kürzel drücken (mit Alt, Strg oder Cmd).', keysReset: 'Kürzel zurücksetzen',
             kwSearch: 'Keywords suchen…', kwPlaceholder: 'Keyword oder /regex/',
             wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
             keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
@@ -81,7 +91,7 @@
             enabled: 'Highlights aktiv', autoSearch: 'Automatisch von Suche übernehmen', posBar: 'Positionsanzeige anzeigen',
             engine: 'Suchmaschine für Rechtsklick:', language: 'Sprache:', langAuto: 'Automatisch',
             noMatches: 'Keine Treffer auf dieser Seite', noKwMatches: 'Keine Treffer für die Suche', noKeywords: 'Noch keine Keywords gespeichert',
-            more: n => `… und ${n} weitere (Alt + → / ← zum Durchblättern)`,
+            more: (n, hint) => `… und ${n} weitere (Durchblättern mit ${hint})`,
             changeColor: 'Farbe ändern', countTitle: 'Treffer auf dieser Seite', remove: 'Löschen',
             invalidRegex: k => `Ungültiger Regex bei „${k}“`, exists: 'Keyword existiert bereits.',
             menuOpen: 'Panel öffnen', menuBlacklist: 'Aktuelle Domain zur Blacklist',
@@ -239,6 +249,9 @@
     }
     .profile-row button:hover:not(:disabled) { background: #3a3a3a; }
     .profile-row button:disabled { opacity: 0.4; cursor: default; }
+    .key-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+    .key-row span { flex: 1; }
+    .key-row input[type=text] { width: 150px; margin-top: 0; text-align: center; cursor: pointer; }
     .backup-row { display: flex; gap: 8px; }
     .backup-row .btn { flex: 1; }
     .section-title { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.6px; margin: 16px 0 8px; font-weight: 600; }
@@ -264,7 +277,8 @@
         hl_blacklist: () => blacklist,
         hl_search_engine: () => searchEngine,
         hl_show_posbar: () => showPosBar,
-        hl_lang: () => lang
+        hl_lang: () => lang,
+        hl_keys: () => keys
     };
     const lastSaved = {};
     for (const key in PERSISTED) lastSaved[key] = JSON.stringify(PERSISTED[key]());
@@ -277,6 +291,29 @@
             if (json === lastSaved[key]) continue;
             GM_setValue(key, value);
             lastSaved[key] = json;
+        }
+    }
+
+    const KEY_NAMES = { ArrowRight: '→', ArrowLeft: '←', ArrowUp: '↑', ArrowDown: '↓', ' ': 'Space' };
+
+    /** Normalisierte Tastenkombination, z. B. „Alt+ArrowRight“ oder „Ctrl+Alt+h“; leer bei reinen Modifier-Tasten. */
+    function eventCombo(e) {
+        if (['Control', 'Alt', 'Shift', 'Meta'].includes(e.key)) return '';
+        const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        return [e.ctrlKey && 'Ctrl', e.altKey && 'Alt', e.shiftKey && 'Shift', e.metaKey && 'Meta', key].filter(Boolean).join('+');
+    }
+
+    function comboLabel(combo) {
+        return combo.split('+').map(p => KEY_NAMES[p] || (p.length === 1 ? p.toUpperCase() : p)).join(' + ');
+    }
+
+    function updateKeyLabels() {
+        const prev = ui('btn-prev'), next = ui('btn-next');
+        if (prev) prev.title = `${t('prev')} (${comboLabel(keys.prev)})`;
+        if (next) next.title = `${t('next')} (${comboLabel(keys.next)})`;
+        for (const action of ['prev', 'next', 'add']) {
+            const input = ui('key-' + action);
+            if (input) input.value = comboLabel(keys[action]);
         }
     }
 
@@ -786,7 +823,7 @@
         if (hls.length > shown) {
             const more = document.createElement('div');
             more.className = 'empty';
-            more.textContent = t('more', hls.length - shown);
+            more.textContent = t('more', hls.length - shown, `${comboLabel(keys.prev)} / ${comboLabel(keys.next)}`);
             frag.appendChild(more);
         }
         list.replaceChildren(frag);
@@ -814,8 +851,8 @@
             <div class="panel-body">
                 <div class="counter" id="hl-counter">0 / 0</div>
                 <div class="nav-btns">
-                    <button id="btn-prev" title="${t('prev')}">◀</button>
-                    <button id="btn-next" title="${t('next')}">▶</button>
+                    <button id="btn-prev">◀</button>
+                    <button id="btn-next">▶</button>
                 </div>
                 <div id="match-list"></div>
                 <div class="section-title">${t('keywords')}</div>
@@ -852,6 +889,12 @@
                     <option value="de" ${lang==='de'?'selected':''}>Deutsch</option>
                     <option value="en" ${lang==='en'?'selected':''}>English</option>
                 </select>
+                <div style="margin-top:10px;font-size:12.5px;">${t('shortcuts')}</div>
+                <div class="key-row"><span>${t('keyPrev')}</span><input type="text" id="key-prev" readonly></div>
+                <div class="key-row"><span>${t('keyNext')}</span><input type="text" id="key-next" readonly></div>
+                <div class="key-row"><span>${t('keyAdd')}</span><input type="text" id="key-add" readonly></div>
+                <div class="empty" style="text-align:left;padding:2px 0 6px;">${t('keysHint')}</div>
+                <button id="keys-reset" class="btn" style="width:100%;">${t('keysReset')}</button>
                 <div class="section-title">${t('backup')}</div>
                 <div class="backup-row">
                     <button id="export-btn" class="btn">${t('export')}</button>
@@ -960,6 +1003,26 @@
             updatePosBar();
         };
         root.querySelector('#search-engine').onchange = e => { searchEngine = e.target.value; save(); };
+        for (const action of ['prev', 'next', 'add']) {
+            root.querySelector('#key-' + action).onkeydown = e => {
+                if (e.key === 'Tab') return; // Fokus darf weiterwandern
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.key === 'Escape') { e.target.blur(); return; }
+                const combo = eventCombo(e);
+                const hasModifier = e.ctrlKey || e.altKey || e.metaKey;
+                const taken = Object.keys(keys).some(a => a !== action && keys[a] === combo);
+                if (!combo || !hasModifier || taken) return;
+                keys[action] = combo;
+                save();
+                updateKeyLabels();
+            };
+        }
+        root.querySelector('#keys-reset').onclick = () => {
+            keys = Object.assign({}, DEFAULT_KEYS);
+            save();
+            updateKeyLabels();
+        };
         const status = root.querySelector('#backup-status');
         const showStatus = (text, isError) => { status.textContent = text; status.className = isError ? 'error' : 'empty'; };
         root.querySelector('#export-btn').onclick = exportBackup;
@@ -990,6 +1053,7 @@
             refreshHighlights();
         };
 
+        updateKeyLabels();
         renderProfiles();
         renderKeywordList();
         renderHistory();
@@ -1115,7 +1179,8 @@
         });
 
         document.addEventListener('keydown', e => {
-            if (e.altKey && e.key.toLowerCase() === 'h' && !e.repeat) {
+            const combo = eventCombo(e);
+            if (combo && combo === keys.add && !e.repeat) {
                 const sel = window.getSelection().toString().trim();
                 if (sel && !IGNORE_WORDS.has(sel.toLowerCase())) {
                     if (!keywords.some(k => k.text.toLowerCase() === sel.toLowerCase())) {
@@ -1126,8 +1191,8 @@
                 }
             }
             if (!document.getElementsByClassName('slim-hl').length) return;
-            if (e.altKey && e.key === 'ArrowRight') { e.preventDefault(); goTo(1); }
-            if (e.altKey && e.key === 'ArrowLeft') { e.preventDefault(); goTo(-1); }
+            if (combo === keys.next) { e.preventDefault(); goTo(1); }
+            if (combo === keys.prev) { e.preventDefault(); goTo(-1); }
         });
 
 

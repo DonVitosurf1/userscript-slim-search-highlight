@@ -559,6 +559,78 @@ const tests = {
         eq(await page.evaluate(() => window.__kw().find(k => k.text === 'zzz').color), '#123456');
     },
 
+    async custom_shortcuts_from_storage_are_used(browser) {
+        const page = await open(browser, { html: '<p>a1 x a1 y a1 z a1</p>', keywords: [{ text: 'a1', color: '#ff0' }], panelOpen: true,
+            store: { hl_keys: { next: 'Alt+j', prev: 'Alt+k', add: 'Alt+h' } } });
+        await settled(page);
+        await page.keyboard.press('Alt+j');
+        await page.keyboard.press('Alt+j');
+        eq(await page.textContent('#hl-counter'), '2 / 4');
+        await page.keyboard.press('Alt+ArrowRight');
+        eq(await page.textContent('#hl-counter'), '2 / 4', 'Standard-Kürzel darf nicht mehr gelten');
+        await page.keyboard.press('Alt+k');
+        eq(await page.textContent('#hl-counter'), '1 / 4');
+    },
+
+    async set_shortcut_via_panel(browser) {
+        const page = await open(browser, { html: '<p>a1 x a1 y a1 z a1</p>', keywords: [{ text: 'a1', color: '#ff0' }], panelOpen: true });
+        await settled(page);
+        await page.focus('#key-next');
+        await page.keyboard.press('Alt+j');
+        eq(await page.evaluate(() => window.__store.hl_keys.next), 'Alt+j');
+        eq(await page.locator('#key-next').inputValue(), 'Alt + J');
+        ok((await page.locator('#btn-next').getAttribute('title')).includes('Alt + J'), 'Button-Titel zeigt das neue Kürzel');
+        await page.locator('#key-next').blur();
+        await page.keyboard.press('Alt+j');
+        await page.keyboard.press('Alt+j');
+        eq(await page.textContent('#hl-counter'), '2 / 4');
+    },
+
+    async shortcut_without_modifier_is_rejected(browser) {
+        const page = await open(browser, { panelOpen: true });
+        await settled(page);
+        await page.focus('#key-next');
+        await page.keyboard.press('j');
+        eq(await page.evaluate(() => (window.__store.hl_keys || {}).next || 'Alt+ArrowRight'), 'Alt+ArrowRight');
+        eq(await page.locator('#key-next').inputValue(), 'Alt + →');
+    },
+
+    async duplicate_shortcut_is_rejected(browser) {
+        const page = await open(browser, { panelOpen: true });
+        await settled(page);
+        await page.focus('#key-next');
+        await page.keyboard.press('Alt+h');
+        eq(await page.evaluate(() => (window.__store.hl_keys || {}).next || 'Alt+ArrowRight'), 'Alt+ArrowRight', 'Kürzel von „Hinzufügen“ darf nicht doppelt vergeben werden');
+    },
+
+    async shortcuts_can_be_reset(browser) {
+        const page = await open(browser, { panelOpen: true, store: { hl_keys: { next: 'Alt+j', prev: 'Alt+k', add: 'Alt+m' } } });
+        await settled(page);
+        eq(await page.locator('#key-add').inputValue(), 'Alt + M');
+        await page.click('#keys-reset');
+        eq(await page.evaluate(() => JSON.stringify(window.__store.hl_keys)), JSON.stringify({ next: 'Alt+ArrowRight', prev: 'Alt+ArrowLeft', add: 'Alt+h' }));
+        eq(await page.locator('#key-add').inputValue(), 'Alt + H');
+    },
+
+    async corrupt_stored_shortcuts_fall_back_to_defaults(browser) {
+        const page = await open(browser, { html: '<p>a1 x a1</p>', keywords: [{ text: 'a1', color: '#ff0' }], panelOpen: true, store: { hl_keys: { next: null, prev: 42 } } });
+        await settled(page);
+        eq(await page.locator('#key-next').inputValue(), 'Alt + →');
+        await page.keyboard.press('Alt+ArrowRight');
+        await page.keyboard.press('Alt+ArrowRight');
+        eq(await page.textContent('#hl-counter'), '2 / 2');
+    },
+
+    async custom_add_shortcut_adds_selection(browser) {
+        const page = await open(browser, { html: '<p id="t">wort</p>', keywords: [], store: { hl_keys: { next: 'Alt+ArrowRight', prev: 'Alt+ArrowLeft', add: 'Alt+m' } } });
+        await page.waitForTimeout(300);
+        await page.evaluate(() => { const r = document.createRange(); r.selectNodeContents(document.getElementById('t')); getSelection().removeAllRanges(); getSelection().addRange(r); });
+        await page.keyboard.press('Alt+h');
+        eq(await page.evaluate(() => window.__kw().length), 0, 'altes Kürzel darf nichts hinzufügen');
+        await page.keyboard.press('Alt+m');
+        await page.waitForFunction(() => window.__kw().some(k => k.text === 'wort'), null, { timeout: 3000 });
+    },
+
     async match_list_is_capped(browser) {
         const page = await open(browser, { html: paragraphs(800), panelOpen: true });
         await settled(page);
