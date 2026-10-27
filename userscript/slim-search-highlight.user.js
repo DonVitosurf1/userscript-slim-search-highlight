@@ -51,6 +51,9 @@
             kwSearch: 'Search keywords…', kwPlaceholder: 'Keyword or /regex/',
             wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
             keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
+            backup: 'Backup', export: 'Export', import: 'Import',
+            importOk: (k, p) => `Imported ${k} new keyword(s), ${p} profile(s) touched.`,
+            importError: 'Import failed: this is not a valid backup file.',
             profileNew: 'New profile', profileDelete: 'Delete profile', profileName: 'Name of the new profile:',
             profileExists: 'A profile with this name already exists.',
             profileConfirm: n => `Delete the profile “${n}” and all its keywords?`,
@@ -69,6 +72,9 @@
             kwSearch: 'Keywords suchen…', kwPlaceholder: 'Keyword oder /regex/',
             wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
             keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
+            backup: 'Datensicherung', export: 'Exportieren', import: 'Importieren',
+            importOk: (k, p) => `${k} neue(s) Keyword(s) importiert, ${p} Profil(e) betroffen.`,
+            importError: 'Import fehlgeschlagen: keine gültige Sicherungsdatei.',
             profileNew: 'Neues Profil', profileDelete: 'Profil löschen', profileName: 'Name des neuen Profils:',
             profileExists: 'Ein Profil mit diesem Namen gibt es schon.',
             profileConfirm: n => `Profil „${n}“ mit allen Keywords löschen?`,
@@ -233,6 +239,8 @@
     }
     .profile-row button:hover:not(:disabled) { background: #3a3a3a; }
     .profile-row button:disabled { opacity: 0.4; cursor: default; }
+    .backup-row { display: flex; gap: 8px; }
+    .backup-row .btn { flex: 1; }
     .section-title { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.6px; margin: 16px 0 8px; font-weight: 600; }
     #kw-search {
         width: 100%;
@@ -299,6 +307,73 @@
         }));
         const del = ui('profile-del');
         if (del) del.disabled = Object.keys(profiles).length < 2;
+    }
+
+    const MAX_IMPORT_BYTES = 1024 * 1024;
+    const MAX_IMPORT_KEYWORDS = 5000;
+
+    /** Prüft einen importierten Eintrag streng, bevor er gespeichert oder als HTML gerendert wird. */
+    function sanitizeKeyword(k) {
+        if (!k || typeof k.text !== 'string') return null;
+        const text = k.text.trim().slice(0, 200);
+        if (!text) return null;
+        return {
+            text,
+            color: typeof k.color === 'string' && /^#[0-9a-f]{6}$/i.test(k.color) ? k.color : DEFAULT_COLOR,
+            regex: isRegexText(text),
+            wholeWord: k.wholeWord !== false,
+            domains: Array.isArray(k.domains) ? k.domains.filter(d => typeof d === 'string' && d.trim()).map(d => d.trim().slice(0, 100)) : []
+        };
+    }
+
+    function buildExport() {
+        return { app: 'slim-search-highlight', version: 1, exported: new Date().toISOString(), profiles, blacklist };
+    }
+
+    function exportBackup() {
+        const blob = new Blob([JSON.stringify(buildExport(), null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `slim-search-highlight-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+
+    /** Führt importierte Daten mit den vorhandenen zusammen. Wirft bei ungültigem Format, ohne etwas zu ändern. */
+    function importBackup(data) {
+        const plain = o => o && typeof o === 'object' && !Array.isArray(o);
+        const incoming = Array.isArray(data) ? { [activeProfile]: data } : (plain(data) && plain(data.profiles) ? data.profiles : null);
+        if (!incoming) throw new Error('format');
+
+        let added = 0, total = 0;
+        const touched = new Set();
+        const prepared = [];
+        for (const rawName of Object.keys(incoming)) {
+            const name = rawName.trim().slice(0, 60);
+            if (!name || name === '__proto__' || !Array.isArray(incoming[rawName])) continue;
+            prepared.push([name, incoming[rawName].map(sanitizeKeyword).filter(Boolean)]);
+        }
+        if (!prepared.length) throw new Error('format');
+
+        for (const [name, list] of prepared) {
+            if (!Object.prototype.hasOwnProperty.call(profiles, name)) profiles[name] = [];
+            touched.add(name);
+            const known = new Set(profiles[name].map(k => k.text.toLowerCase()));
+            for (const k of list) {
+                if (known.has(k.text.toLowerCase()) || ++total > MAX_IMPORT_KEYWORDS) continue;
+                known.add(k.text.toLowerCase());
+                profiles[name].push(k);
+                added++;
+            }
+        }
+        if (plain(data) && Array.isArray(data.blacklist)) {
+            for (const host of data.blacklist) {
+                if (typeof host === 'string' && /^[a-z0-9.-]{1,253}$/i.test(host.trim()) && !blacklist.includes(host.trim())) blacklist.push(host.trim());
+            }
+        }
+        return { added, profiles: touched.size };
     }
 
     function isBlacklisted() {
@@ -777,6 +852,13 @@
                     <option value="de" ${lang==='de'?'selected':''}>Deutsch</option>
                     <option value="en" ${lang==='en'?'selected':''}>English</option>
                 </select>
+                <div class="section-title">${t('backup')}</div>
+                <div class="backup-row">
+                    <button id="export-btn" class="btn">${t('export')}</button>
+                    <button id="import-btn" class="btn">${t('import')}</button>
+                    <input type="file" id="import-file" accept="application/json,.json" hidden>
+                </div>
+                <div id="backup-status" class="empty"></div>
             </div>
             </div>`;
         // Tastendrücke im Panel (ohne Alt/Strg/Cmd) sollen keine Tastenkürzel der Seite auslösen.
@@ -878,6 +960,26 @@
             updatePosBar();
         };
         root.querySelector('#search-engine').onchange = e => { searchEngine = e.target.value; save(); };
+        const status = root.querySelector('#backup-status');
+        const showStatus = (text, isError) => { status.textContent = text; status.className = isError ? 'error' : 'empty'; };
+        root.querySelector('#export-btn').onclick = exportBackup;
+        root.querySelector('#import-btn').onclick = () => root.querySelector('#import-file').click();
+        root.querySelector('#import-file').onchange = async e => {
+            const file = e.target.files[0];
+            e.target.value = '';
+            if (!file) return;
+            try {
+                if (file.size > MAX_IMPORT_BYTES) throw new Error('size');
+                const result = importBackup(JSON.parse(await file.text()));
+                save();
+                renderProfiles();
+                renderKeywordList();
+                refreshHighlights();
+                showStatus(t('importOk', result.added, result.profiles), false);
+            } catch {
+                showStatus(t('importError'), true);
+            }
+        };
         root.querySelector('#ui-lang').onchange = e => {
             lang = e.target.value;
             save();

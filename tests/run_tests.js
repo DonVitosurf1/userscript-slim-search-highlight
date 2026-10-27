@@ -503,6 +503,62 @@ const tests = {
         eq(await page.evaluate(() => window.__store.hl_profiles.B.length), 1);
     },
 
+    async export_downloads_a_json_backup(browser) {
+        const page = await open(browser, { html: '<p>lorem</p>', panelOpen: true, store: { hl_blacklist: ['example.org'] } });
+        await settled(page);
+        const [download] = await Promise.all([page.waitForEvent('download'), page.click('#export-btn')]);
+        ok(/^slim-search-highlight-\d{4}-\d{2}-\d{2}\.json$/.test(download.suggestedFilename()), `Dateiname: ${download.suggestedFilename()}`);
+        const data = JSON.parse(fs.readFileSync(await download.path(), 'utf8'));
+        eq(data.app, 'slim-search-highlight');
+        eq(data.version, 1);
+        eq(data.profiles.Default.map(k => k.text).join(), 'lorem,ipsum,dolor');
+        eq(data.blacklist.join(), 'example.org');
+    },
+
+    async import_merges_profiles_and_skips_duplicates(browser) {
+        const page = await open(browser, { html: '<p>lorem neu</p>', panelOpen: true });
+        await settled(page);
+        const file = { app: 'slim-search-highlight', version: 1, blacklist: ['example.org', 'kein host!'],
+            profiles: { Default: [{ text: 'LOREM', color: '#ff0000' }, { text: 'neu', color: '#00ff00' }], Extra: [{ text: 'x', color: '#0000ff' }] } };
+        await page.setInputFiles('#import-file', { name: 'k.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(file)) });
+        await page.waitForFunction(() => window.__kw().some(k => k.text === 'neu'), null, { timeout: 3000 });
+        eq(await page.evaluate(() => window.__store.hl_profiles.Default.map(k => k.text).join()), 'lorem,ipsum,dolor,neu', 'Duplikat „LOREM“ darf nicht doppelt auftauchen');
+        eq(await page.evaluate(() => window.__store.hl_profiles.Extra.length), 1, 'neues Profil');
+        eq(await page.evaluate(() => window.__store.hl_blacklist.join()), 'docs.google.com,youtube.com,netflix.com,example.org', 'Blacklist (ungültige Hosts verwerfen)');
+        await page.waitForFunction(() => document.querySelectorAll('.slim-hl[data-kw="neu"]').length === 1, null, { timeout: 3000 });
+        ok((await page.locator('#backup-status').textContent()).trim().length > 0, 'Statusmeldung fehlt');
+    },
+
+    async import_rejects_invalid_file_without_changes(browser) {
+        const page = await open(browser, { html: '<p>lorem</p>', panelOpen: true });
+        await settled(page);
+        const before = await page.evaluate(() => JSON.stringify(window.__kw()));
+        await page.setInputFiles('#import-file', { name: 'x.json', mimeType: 'application/json', buffer: Buffer.from('das ist kein json') });
+        await page.waitForFunction(() => __ui('#backup-status').classList.contains('error'), null, { timeout: 3000 });
+        eq(await page.evaluate(() => JSON.stringify(window.__kw())), before, 'Keywords nach fehlgeschlagenem Import');
+    },
+
+    async import_sanitizes_values_and_blocks_prototype_pollution(browser) {
+        const page = await open(browser, { html: '<p>lorem</p>', panelOpen: true });
+        await settled(page);
+        const evil = '{"app":"slim-search-highlight","version":1,"profiles":{"__proto__":[{"text":"polluted","color":"#ff0000"}],"Neu":[{"text":"boese","color":"\\"><img src=x onerror=window.__pwned=1>"}]}}';
+        await page.setInputFiles('#import-file', { name: 'e.json', mimeType: 'application/json', buffer: Buffer.from(evil) });
+        await page.waitForFunction(() => 'Neu' in window.__store.hl_profiles, null, { timeout: 3000 });
+        eq(await page.evaluate(() => window.__store.hl_profiles.Neu[0].color), '#ffe082', 'Ungültige Farbe wird ersetzt');
+        eq(await page.evaluate(() => Object.keys(window.__store.hl_profiles).includes('__proto__') || ({}).polluted !== undefined), false, '__proto__ wurde übernommen');
+        await page.selectOption('#profile-select', 'Neu');
+        await page.waitForTimeout(300);
+        eq(await page.evaluate(() => [window.__pwned, __uiAll('#kw-list img').length].join()), ',0', 'eingeschleustes HTML');
+    },
+
+    async import_accepts_a_plain_keyword_list(browser) {
+        const page = await open(browser, { html: '<p>zzz</p>', keywords: [], panelOpen: true });
+        await page.waitForTimeout(300);
+        await page.setInputFiles('#import-file', { name: 'l.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify([{ text: 'zzz', color: '#123456' }])) });
+        await page.waitForFunction(() => window.__kw().some(k => k.text === 'zzz'), null, { timeout: 3000 });
+        eq(await page.evaluate(() => window.__kw().find(k => k.text === 'zzz').color), '#123456');
+    },
+
     async match_list_is_capped(browser) {
         const page = await open(browser, { html: paragraphs(800), panelOpen: true });
         await settled(page);
