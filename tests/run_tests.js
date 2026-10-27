@@ -22,7 +22,7 @@ const KW = [
 const paragraphs = n => Array.from({ length: n }, (_, i) =>
     `<p>Lorem ipsum dolor sit amet <b>consectetur</b> adipiscing elit ${i} sed do eiusmod tempor lorem.</p>`).join('');
 
-async function open(browser, { html = paragraphs(10), keywords = KW, url = null, panelOpen = false, store = {}, locale = 'de-DE' } = {}) {
+async function open(browser, { html = paragraphs(10), keywords = KW, url = null, panelOpen = false, store = {}, locale = 'de-DE', frameHtml = null } = {}) {
     const page = await browser.newPage({ viewport: { width: 1200, height: 800 }, locale });
     page.on('pageerror', e => { page.__errors = (page.__errors || []).concat(e.message); });
     await page.addInitScript(([kw, panelOpen, extra]) => {
@@ -41,13 +41,14 @@ async function open(browser, { html = paragraphs(10), keywords = KW, url = null,
         Document.prototype.createTreeWalker = function (...a) { window.__walkers++; return orig.apply(this, a); };
     }, [keywords, panelOpen, store]);
     if (url) {
-        await page.route('**/*', r => r.fulfill({ contentType: 'text/html', body: `<body>${html}</body>` }));
+        await page.route('**/*', r => r.fulfill({ contentType: 'text/html', body: r.request().url().endsWith('/frame.html') ? `<body>${frameHtml}</body>` : `<body>${html}</body>` }));
         await page.goto(url);
+        await page.waitForLoadState('load');
     } else {
         await page.goto('about:blank');
         await page.setContent(`<body>${html}</body>`);
     }
-    await page.addScriptTag({ content: SRC });
+    for (const frame of page.frames()) await frame.addScriptTag({ content: SRC });
     return page;
 }
 
@@ -69,9 +70,10 @@ function ok(c, msg) { if (!c) throw new Error(msg || 'assertion failed'); }
 const tests = {
     async header_metadata() {
         const header = SRC.slice(0, SRC.indexOf('==/UserScript=='));
-        for (const key of ['@noframes', '@updateURL', '@downloadURL', '@author', '@license', '@homepageURL', '@supportURL']) {
+        for (const key of ['@updateURL', '@downloadURL', '@author', '@license', '@homepageURL', '@supportURL']) {
             ok(header.includes(key), `Header ohne ${key}`);
         }
+        ok(!header.includes('@noframes'), '@noframes muss entfallen, damit die iframe-Option funktioniert');
         ok(/@name\s+Slim Search Highlight\s*\n/.test(header), '@name ohne Versionsnummer erwartet');
         ok(!header.includes('data:'), '@icon darf kein Data-URI enthalten (Logo steht schon im Skript)');
         ok(SRC.split('data:image/svg+xml').length - 1 === 1, 'Logo genau einmal im Skript erwartet');
@@ -629,6 +631,34 @@ const tests = {
         eq(await page.evaluate(() => window.__kw().length), 0, 'altes Kürzel darf nichts hinzufügen');
         await page.keyboard.press('Alt+m');
         await page.waitForFunction(() => window.__kw().some(k => k.text === 'wort'), null, { timeout: 3000 });
+    },
+
+    async iframes_are_skipped_by_default(browser) {
+        const page = await open(browser, { url: 'http://example.test/', html: '<p id="m">lorem</p><iframe src="/frame.html"></iframe>', frameHtml: '<p id="f">lorem</p>' });
+        await settled(page);
+        await page.waitForTimeout(500);
+        const frame = page.frames().find(f => f !== page.mainFrame());
+        eq(await frame.evaluate(() => document.querySelectorAll('.slim-hl').length), 0, 'Treffer im iframe trotz ausgeschalteter Option');
+        eq(await hits(page), 1, 'Treffer auf der Hauptseite');
+    },
+
+    async iframes_are_highlighted_when_enabled_without_extra_ui(browser) {
+        const page = await open(browser, { url: 'http://example.test/', html: '<title>Haupt</title><p id="m">lorem</p><iframe src="/frame.html"></iframe>',
+            frameHtml: '<title>Frame</title><p id="f">lorem ipsum</p>', store: { hl_frames: true }, panelOpen: true });
+        await settled(page);
+        const frame = page.frames().find(f => f !== page.mainFrame());
+        await frame.waitForFunction(() => document.querySelectorAll('.slim-hl').length === 2, null, { timeout: 5000 });
+        eq(await frame.evaluate(() => [!!document.getElementById('slim-hl-toggle'), !!document.getElementById('slim-hl-panel'), !!document.getElementById('slim-pos-bar')].join()), 'false,false,false', 'UI im iframe');
+        eq(await frame.evaluate(() => document.title), 'Frame', 'Titel des iframes verändert');
+        ok(await page.evaluate(() => !!document.getElementById('slim-hl-toggle')), 'Hauptseite braucht ihr Panel');
+    },
+
+    async frames_setting_can_be_toggled_in_panel(browser) {
+        const page = await open(browser, { panelOpen: true });
+        await settled(page);
+        eq(await page.locator('#chk-frames').isChecked(), false);
+        await page.click('#chk-frames');
+        eq(await page.evaluate(() => window.__store.hl_frames), true);
     },
 
     async match_list_is_capped(browser) {

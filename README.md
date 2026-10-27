@@ -20,6 +20,11 @@ Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben v
 - Live-Updates ohne Reload
 - Alt+H zum Hinzufügen markierten Textes
 - Konfigurierbare Suchmaschine für Rechtsklick
+- Profile: Keywords in benannten Sätzen verwalten und schnell wechseln
+- Export und Import (JSON) für Backup und Umzug
+- Konfigurierbare Tastenkürzel
+- Optional auch in iframes (Einstellung im Panel, standardmäßig aus)
+- Panel im Shadow DOM: Seiten-CSS stört es nicht
 - Oberfläche auf Deutsch und Englisch (automatisch nach Browsersprache, umschaltbar im Panel)
 
 ## Installation
@@ -36,7 +41,7 @@ Updates kommen automatisch über den Userscript-Manager.
 
 - Panel über den Button unten rechts öffnen (oder Menübefehl)
 - Keywords hinzufügen oder automatisch von Suchmaschinen übernehmen
-- Mit **Alt + →** / **Alt + ←** zwischen Highlights navigieren
+- Mit **Alt + →** / **Alt + ←** zwischen Highlights navigieren (anpassbar unter „Einstellungen“)
 - Rechtsklick auf ein Highlight → Suche in der konfigurierten Suchmaschine
 - Positionsanzeige rechts zeigt die Verteilung der Treffer
 

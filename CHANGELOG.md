@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.1.0
+
+### Neu
+- **Profile:** Keywords lassen sich in benannten Sätzen verwalten (z. B. „Arbeit“, „Recherche“). Auswahl, Anlegen und Löschen im Panel. Vorhandene Keywords landen automatisch im Profil „Default“.
+- **Export und Import:** Profile und Blacklist als JSON sichern und wieder einlesen. Der Import führt zusammen (Duplikate werden übersprungen), prüft Farben, Namen und Dateigröße streng und lehnt ungültige Dateien ab, ohne etwas zu ändern. Auch eine einfache Liste von Keywords wird akzeptiert.
+- **Tastenkürzel konfigurierbar:** Zurück, Weiter und „Markierten Text hinzufügen“ lassen sich in den Einstellungen ändern (mit Alt, Strg oder Cmd; doppelte Belegungen werden abgelehnt, es gibt eine Zurücksetzen-Schaltfläche).
+- **iframes (optional):** Mit der Einstellung „Auch in iframes hervorheben“ werden auch eingebettete Frames markiert. Standardmäßig aus; in Frames gibt es kein eigenes Panel.
+
+### Verbessert
+- Das Panel läuft in einem Shadow DOM: Seiten-CSS (z. B. `button { display: none }`) kann es nicht mehr verändern, und Tastendrücke im Panel lösen keine Tastenkürzel der Seite aus.
+- Das Logo ist als kompaktes, URL-kodiertes SVG eingebettet (rund ein Drittel kürzer als Base64).
+
+### Hinweis
+- Der Header enthält kein `@noframes` mehr, damit die iframe-Option funktionieren kann. In Frames beendet sich das Skript sofort, solange die Option aus ist.
+
 ## 4.0.3
 
 ### Fehlerbehebungen

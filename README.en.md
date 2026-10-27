@@ -17,6 +17,11 @@ A lightweight userscript for **Tampermonkey** / **Violentmonkey** that highlight
 - Cross-page persistence (terms are taken over from search engines)
 - Regex support, whole words or partial matches
 - Live updates without reloading, also for dynamically loaded content
+- Profiles: keep keywords in named sets and switch quickly
+- Export and import (JSON) for backups and moving to another browser
+- Configurable keyboard shortcuts
+- Optionally also inside iframes (setting in the panel, off by default)
+- The panel lives in a Shadow DOM, so page CSS cannot break it
 - Alt+H adds the selected text as a keyword
 - Configurable search engine for the right-click lookup
 
@@ -33,7 +38,7 @@ Updates are delivered automatically by the userscript manager. The interface is 
 ## Usage
 
 - Open the panel with the button at the bottom right (or the menu command)
-- **Alt + →** / **Alt + ←** jump between highlights
+- **Alt + →** / **Alt + ←** jump between highlights (configurable in the settings)
 - Right-click a highlight to search for it in the configured search engine
 - **Alt + click** on a highlight removes its keyword
 

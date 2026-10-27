@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.0.3
+// @version      4.1.0
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -17,11 +17,15 @@
 // @grant        GM_addStyle
 // @grant        GM_registerMenuCommand
 // @run-at       document-end
-// @noframes
 // ==/UserScript==
 
 (function () {
     'use strict';
+
+    // Ohne @noframes läuft das Skript in jedem Frame. Frames werden nur bearbeitet, wenn die Option an ist;
+    // sonst endet das Skript dort sofort (kostet nur dieses eine Lesen der Einstellung).
+    const IS_TOP = window.top === window;
+    if (!IS_TOP && !GM_getValue('hl_frames', false)) return;
 
     const DEFAULT_PROFILE = 'Default';
     // Profile: benannte Keyword-Sätze. Vorhandene Keywords (hl_keywords) wandern ins Profil „Default“.
@@ -41,6 +45,7 @@
     let searchEngine = GM_getValue('hl_search_engine', 'google');
     let showPosBar = GM_getValue('hl_show_posbar', true);
     let lang = GM_getValue('hl_lang', 'auto');
+    let framesEnabled = GM_getValue('hl_frames', false);
     const DEFAULT_KEYS = { next: 'Alt+ArrowRight', prev: 'Alt+ArrowLeft', add: 'Alt+h' };
     let keys = { ...DEFAULT_KEYS };
     const storedKeys = GM_getValue('hl_keys', {});
@@ -59,6 +64,7 @@
             kwSearch: 'Search keywords…', kwPlaceholder: 'Keyword or /regex/',
             wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
             keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
+            frames: 'Also highlight inside iframes (reload required)',
             backup: 'Backup', export: 'Export', import: 'Import',
             importOk: (k, p) => `Imported ${k} new keyword(s), ${p} profile(s) touched.`,
             importError: 'Import failed: this is not a valid backup file.',
@@ -82,6 +88,7 @@
             kwSearch: 'Keywords suchen…', kwPlaceholder: 'Keyword oder /regex/',
             wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
             keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
+            frames: 'Auch in iframes hervorheben (Neuladen nötig)',
             backup: 'Datensicherung', export: 'Exportieren', import: 'Importieren',
             importOk: (k, p) => `${k} neue(s) Keyword(s) importiert, ${p} Profil(e) betroffen.`,
             importError: 'Import fehlgeschlagen: keine gültige Sicherungsdatei.',
@@ -278,7 +285,8 @@
         hl_search_engine: () => searchEngine,
         hl_show_posbar: () => showPosBar,
         hl_lang: () => lang,
-        hl_keys: () => keys
+        hl_keys: () => keys,
+        hl_frames: () => framesEnabled
     };
     const lastSaved = {};
     for (const key in PERSISTED) lastSaved[key] = JSON.stringify(PERSISTED[key]());
@@ -610,6 +618,7 @@
     }
 
     function updatePosBar() {
+        if (!IS_TOP) return;
         let bar = document.getElementById('slim-pos-bar');
         if (!showPosBar || highlightCount === 0) {
             if (bar) bar.remove();
@@ -762,6 +771,7 @@
 
     function updateCounterAndTitle() {
         highlightCount = document.getElementsByClassName('slim-hl').length;
+        if (!IS_TOP) return; // iframes fassen weder Zähler noch Titel an
         const counter = ui('hl-counter');
         if (counter) counter.textContent = highlightCount ? `${Math.max(0, currentIdx) + 1} / ${highlightCount}` : '0 / 0';
         let baseTitle = document.title;
@@ -876,6 +886,7 @@
                 <label><input type="checkbox" id="chk-enabled" ${enabled?'checked':''}> ${t('enabled')}</label>
                 <label><input type="checkbox" id="chk-auto" ${autoSearch?'checked':''}> ${t('autoSearch')}</label>
                 <label><input type="checkbox" id="chk-posbar" ${showPosBar?'checked':''}> ${t('posBar')}</label>
+                <label><input type="checkbox" id="chk-frames" ${framesEnabled?'checked':''}> ${t('frames')}</label>
                 <div style="margin-top:10px;font-size:12.5px;">${t('engine')}</div>
                 <select id="search-engine">
                     <option value="google" ${searchEngine==='google'?'selected':''}>Google</option>
@@ -997,6 +1008,7 @@
             }
         };
         root.querySelector('#chk-auto').onchange = e => { autoSearch = e.target.checked; save(); refreshHighlights(); };
+        root.querySelector('#chk-frames').onchange = e => { framesEnabled = e.target.checked; save(); };
         root.querySelector('#chk-posbar').onchange = e => {
             showPosBar = e.target.checked;
             save();
@@ -1149,9 +1161,12 @@
     }
 
     /** Nur auf Seiten registrieren, auf denen das Skript aktiv ist (nicht auf der Blacklist). */
-    function bindGlobalHandlers() {
+    function bindSelectionTracking() {
         document.addEventListener('mousedown', e => { if (!isOwnNode(e.target)) isSelecting = true; });
         document.addEventListener('mouseup', () => { setTimeout(() => { isSelecting = false; }, 80); });
+    }
+
+    function bindGlobalHandlers() {
 
         document.addEventListener('click', e => {
             const hl = e.target.closest('.slim-hl');
@@ -1218,14 +1233,18 @@
 
     function init() {
         if (isBlacklisted()) return;
-        bindGlobalHandlers();
-        if (window.ResizeObserver) {
-            let resizeTimer;
-            new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(updatePosBar, 200); }).observe(document.documentElement);
+        bindSelectionTracking();
+        if (IS_TOP) {
+            // Bedienung (Panel, Tastenkürzel, Positionsleiste) gibt es nur im Hauptfenster; iframes werden nur markiert.
+            bindGlobalHandlers();
+            if (window.ResizeObserver) {
+                let resizeTimer;
+                new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(updatePosBar, 200); }).observe(document.documentElement);
+            }
+            updateCrossPageTerms();
+            createToggle();
+            if (panelState.open) createPanel();
         }
-        updateCrossPageTerms();
-        createToggle();
-        if (panelState.open) createPanel();
         if (enabled) {
             refreshHighlights();
             setupObserver();
@@ -1235,21 +1254,23 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 
-    GM_registerMenuCommand(t('menuOpen'), () => {
-        let p = document.getElementById('slim-hl-panel');
-        if (!p) createPanel();
-        else p.style.display = 'block';
-        panelState.open = true;
-        save();
-    });
-
-    GM_registerMenuCommand(t('menuBlacklist'), () => {
-        const host = location.hostname;
-        if (!blacklist.includes(host)) {
-            blacklist.push(host);
+    if (IS_TOP) {
+        GM_registerMenuCommand(t('menuOpen'), () => {
+            let p = document.getElementById('slim-hl-panel');
+            if (!p) createPanel();
+            else p.style.display = 'block';
+            panelState.open = true;
             save();
-            alert(t('blacklisted', host));
-            location.reload();
-        }
-    });
+        });
+
+        GM_registerMenuCommand(t('menuBlacklist'), () => {
+            const host = location.hostname;
+            if (!blacklist.includes(host)) {
+                blacklist.push(host);
+                save();
+                alert(t('blacklisted', host));
+                location.reload();
+            }
+        });
+    }
 })();
