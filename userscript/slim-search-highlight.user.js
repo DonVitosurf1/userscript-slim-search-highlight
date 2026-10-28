@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.4.1
+// @version      4.4.2
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -131,7 +131,11 @@
         deletePageTerm: text => `Remove page highlight “${text}”`,
         selectionActions: 'Actions for selected text', highlightSelection: 'Highlight all occurrences', highlightSelectionHint: 'Highlight the selected passage and all other occurrences on this page', webSearch: 'Search the web',
         highlightUnsupported: 'Page highlighting requires a browser with CSS Custom Highlights support.',
-        pageResults: 'Matches for page selections', allResults: 'Matches for saved and automatic keywords',
+        pageResults: 'Page highlights', allResults: 'Keywords',
+        pageHintShort: 'Select text → use the highlighter symbol.', clearPageShort: 'Clear all', undoShort: 'Undo',
+        pageOptionsShort: 'Search options', permanentKeywordsShort: 'Keywords', helpTitle: 'Help & shortcuts',
+        navigationHelp: 'Use the arrows to move between matches. Page highlights take priority over saved and automatic keywords.',
+        rememberShort: 'Remember', forgetShort: 'Forget', pageSavedShort: 'Saved',
         shortcutTitle: 'Highlight selection shortcut', shortcutOff: 'Disabled', shortcutHint: key => `Shortcut: ${key}. Page highlights are cleared on navigation or reload.`,
         recordShortcut: 'Change shortcut', recordingShortcut: 'Press a shortcut…', disableShortcut: 'Disable shortcut', resetShortcut: 'Reset shortcut',
         shortcutHelp: 'Use Alt, Ctrl or Meta plus a letter or digit; Shift is optional. Escape cancels. Browser or system shortcuts may conflict.',
@@ -144,7 +148,11 @@
         deletePageTerm: text => `Seitenmarkierung „${text}“ entfernen`,
         selectionActions: 'Aktionen für ausgewählten Text', highlightSelection: 'Alle Vorkommen markieren', highlightSelectionHint: 'Auswahl und alle weiteren Vorkommen auf dieser Seite hervorheben', webSearch: 'Im Web suchen',
         highlightUnsupported: 'Seitenmarkierungen benötigen einen Browser mit Unterstützung für CSS Custom Highlights.',
-        pageResults: 'Treffer der Seitenmarkierungen', allResults: 'Treffer gespeicherter und automatischer Keywords',
+        pageResults: 'Seitenmarkierungen', allResults: 'Suchwörter',
+        pageHintShort: 'Text auswählen → Textmarker-Symbol nutzen.', clearPageShort: 'Alle löschen', undoShort: 'Rückgängig',
+        pageOptionsShort: 'Suchoptionen', permanentKeywordsShort: 'Keywords', helpTitle: 'Hilfe & Shortcuts',
+        navigationHelp: 'Mit den Pfeilen zwischen Treffern wechseln. Seitenmarkierungen haben Vorrang vor gespeicherten und automatischen Suchwörtern.',
+        rememberShort: 'Merken', forgetShort: 'Vergessen', pageSavedShort: 'Gespeichert',
         shortcutTitle: 'Shortcut zum Hervorheben der Auswahl', shortcutOff: 'Deaktiviert', shortcutHint: key => `Shortcut: ${key}. Seitenmarkierungen werden bei Navigation oder Neuladen entfernt.`,
         recordShortcut: 'Shortcut ändern', recordingShortcut: 'Tastenkombination drücken…', disableShortcut: 'Shortcut deaktivieren', resetShortcut: 'Shortcut zurücksetzen',
         shortcutHelp: 'Alt, Strg oder Meta mit einem Buchstaben oder einer Ziffer; Shift ist optional. Escape bricht ab. Browser- oder Systemshortcuts können kollidieren.',
@@ -239,9 +247,10 @@
         #slim-selection-tools #selection-actions { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
         #slim-selection-tools #selection-actions button { white-space: normal; text-align: left; justify-content: start; }
         #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
-        #slim-hl-panel .page-item { display: block; margin: 12px 0; padding-bottom: 10px; border-bottom: 1px solid var(--hl-divider); }
+        #slim-hl-panel .page-item { display: block; margin: 8px 0; padding-bottom: 6px; border-bottom: 1px solid var(--hl-divider); }
         #slim-hl-panel .page-row { display: flex; align-items: center; gap: 8px; }
-        #slim-hl-panel .page-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        #slim-hl-panel .page-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+        #slim-hl-panel .page-meta .hint { margin: 0; }
         #slim-hl-panel .page-meta button { font-size: 12px; padding: 5px 8px; }
         #slim-hl-panel .page-actions { display: flex; flex-wrap: wrap; gap: 6px; }
         #slim-hl-panel textarea { resize: none; min-height: 120px; margin-bottom: 8px; }
@@ -250,10 +259,11 @@
         #slim-selection-tools details button { width: 100%; margin-top: 4px; }
         #slim-hl-panel .page-term { flex: 1; min-width: 0; overflow-wrap: anywhere; max-height: 5.8em; overflow: auto; }
         #slim-hl-panel #page-heading { margin-top: 0; }
-        #slim-hl-panel #clear-page { width: 100%; margin: 8px 0; }
+        #slim-hl-panel #clear-page { margin: 0; }
+        #slim-hl-panel .page-actions button { flex: 1; }
         #slim-hl-panel .shortcut-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
         #slim-hl-panel #shortcut-label { display: block; font-weight: 600; margin: 6px 0; }
-        #slim-hl-panel #navigation-scope { margin-bottom: 8px; }
+        #slim-hl-panel #navigation-scope { margin: 0; }
         .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
         #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle {
             --hl-bg: #1a1a1a; --hl-surface: #242424; --hl-field: #222;
@@ -262,7 +272,7 @@
             --hl-accent-text: #ffca28; --hl-focus: #ffca28; --hl-divider: #444;
             --hl-active: #484848; --hl-scroll-thumb: #777; --hl-scroll-hover: #aaa;
             --hl-shadow: rgba(0,0,0,.4); --hl-scheme: dark;
-            --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 14px;
+            --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 10px;
         }
         #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light] {
             --hl-bg: #fff; --hl-surface: #f1f4f7; --hl-field: #fff;
@@ -275,12 +285,15 @@
         #slim-hl-panel {
             all: initial;
             position: fixed; z-index: 2147483646; display: flex; flex-direction: column;
-            width: min(360px, calc(100vw - 24px)); min-width: 0;
-            max-height: calc(100dvh - 24px); box-sizing: border-box;
+            width: min(320px, calc(100vw - 24px)); min-width: 0;
+            max-height: var(--hl-panel-collapsed-height, min(560px, 80dvh)); box-sizing: border-box;
             background: var(--hl-bg); color: var(--hl-text); color-scheme: var(--hl-scheme);
             border: 1px solid var(--hl-divider); border-radius: 10px; box-shadow: 0 10px 32px var(--hl-shadow);
             font: 14px/1.45 system-ui, -apple-system, sans-serif; text-align: left;
             isolation: isolate; overflow: hidden;
+        }
+        #slim-hl-panel:has(.panel-tools > details[open]), #slim-hl-panel:has(#manual-copy-section:not([hidden])) {
+            max-height: var(--hl-panel-expanded-height, calc(100dvh - 24px));
         }
         #slim-hl-panel :where(:not(svg, svg *)), #slim-hl-panel :where(:not(svg, svg *))::before, #slim-hl-panel :where(:not(svg, svg *))::after {
             all: revert; box-sizing: border-box; font: inherit; color: inherit;
@@ -296,7 +309,7 @@
             outline: 2px solid var(--hl-focus); outline-offset: 2px;
         }
         #slim-hl-header {
-            padding: 10px 12px; background: var(--hl-surface); cursor: grab; touch-action: none;
+            padding: 8px 10px; background: var(--hl-surface); cursor: grab; touch-action: none;
             display: flex; align-items: center; justify-content: space-between; gap: var(--hl-gap); flex-shrink: 0;
         }
         #slim-hl-header:active { cursor: grabbing; }
@@ -320,10 +333,11 @@
             min-height: 0; scrollbar-gutter: stable; flex: 1 1 auto;
         }
         #slim-hl-panel.minimized .panel-body { display: none; }
-        #slim-hl-panel .navigation { display: flex; align-items: center; justify-content: space-between; gap: var(--hl-gap); margin-bottom: 16px; }
+        #slim-hl-panel .navigation { display: flex; align-items: center; justify-content: space-between; gap: var(--hl-gap); margin-bottom: 8px; }
+        #slim-hl-panel .counter-group { min-width: 0; }
         #slim-hl-panel .counter { font-size: 16px; font-weight: 650; color: var(--hl-accent-text); font-variant-numeric: tabular-nums; }
         #slim-hl-panel .nav-btns { display: flex; gap: 6px; }
-        #slim-hl-panel .section-title { display: block; font-size: 14px; font-weight: 650; margin: 18px 0 8px; }
+        #slim-hl-panel .section-title { display: block; font-size: 14px; font-weight: 650; margin: 12px 0 6px; }
         #slim-hl-panel label { display: block; margin: 0 0 6px; }
         #slim-hl-panel .check-label { display: flex; align-items: center; gap: var(--hl-gap); margin: 10px 0; min-height: 28px; }
         #slim-hl-panel input[type=range] { display: block; flex: 1; min-width: 0; width: 100%; min-height: 36px; margin: 0; accent-color: var(--hl-focus); cursor: pointer; }
@@ -346,6 +360,10 @@
         #slim-hl-panel details { display: block; margin-top: 14px; border-top: 1px solid var(--hl-divider); }
         #slim-hl-panel summary { display: list-item; cursor: pointer; padding: 10px 2px; font-weight: 600; }
         #slim-hl-panel details > .details-body { padding: 0 2px 8px; }
+        #slim-hl-panel .panel-tools { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 8px; margin-top: 8px; }
+        #slim-hl-panel .panel-tools > details { margin-top: 0; min-width: 0; }
+        #slim-hl-panel .panel-tools > details[open] { grid-column: 1 / -1; }
+        #slim-hl-panel .panel-tools > details > summary { min-height: 36px; padding: 6px 2px; font-size: 13px; }
         #slim-hl-panel .hint, #slim-hl-panel .empty { color: var(--hl-muted); font-size: 13px; margin: 6px 0; overflow-wrap: anywhere; }
         #slim-hl-panel .error { color: var(--hl-danger); font-size: 13px; margin: 6px 0; white-space: pre-line; }
         #slim-hl-panel [aria-invalid=true] { border-color: var(--hl-danger); }
@@ -359,6 +377,8 @@
         #slim-hl-panel .match-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
         #slim-hl-panel #match-list { display: block; max-height: 210px; overflow: auto; padding: 3px; }
         #slim-hl-panel .status-row { display: flex; align-items: center; gap: var(--hl-gap); flex-wrap: wrap; margin-top: 8px; }
+        #slim-hl-panel .status-row:has(#panel-status:empty):has(#undo-delete[hidden]) { margin-top: 0; }
+        #slim-hl-panel #page-search-status:empty, #slim-hl-panel #panel-status:empty { margin: 0; }
         #slim-hl-panel .btn { width: 100%; margin: 4px 0; }
         #slim-hl-toggle {
             all: initial; position: fixed; z-index: 2147483646;
@@ -375,11 +395,11 @@
         #slim-pos-bar .mark { position: absolute; left: 0; width: 8px; height: 4px; border-radius: 2px; pointer-events: auto; cursor: pointer; opacity: .75; }
         #slim-pos-bar .mark:hover, #slim-pos-bar .mark.active { opacity: 1; transform: scaleX(1.6); }
         @media (max-width: 480px) {
-            #slim-hl-panel { --hl-pad: 12px; }
             #slim-hl-panel input[type=text], #slim-hl-panel select, #slim-hl-panel textarea { font-size: 16px; }
             #slim-hl-panel button, #slim-hl-panel summary, #slim-selection-tools button, #slim-selection-tools summary { min-height: 44px; }
             #slim-hl-panel .icon-btn { width: 40px; }
             #slim-hl-panel input[type=range] { min-height: 44px; }
+            #slim-hl-panel .panel-tools > details > summary { min-height: 44px; }
         }
         @media (prefers-reduced-motion: reduce) { #slim-hl-panel button { transition: none; } }
         @media (forced-colors: active) {
@@ -748,7 +768,7 @@
         const focused = list.contains(document.activeElement);
         list.replaceChildren();
         if (!pageTerms.length) {
-            const empty = document.createElement('p'); empty.className = 'hint'; empty.textContent = t('pageHint'); list.append(empty);
+            const empty = document.createElement('p'); empty.className = 'hint'; empty.textContent = t('pageHintShort'); list.append(empty);
         }
         for (const term of pageTerms) {
             const item = document.createElement('div'); item.className = 'page-item';
@@ -764,9 +784,11 @@
             row.append(color, label, count, remove);
             const meta = document.createElement('div'); meta.className = 'page-meta';
             const state = document.createElement('span'); state.className = 'hint page-state';
-            state.textContent = term.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled ? t('savedMissing') : t(term.saved ? 'pageSaved' : 'pageTemporary');
+            state.textContent = term.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled ? t('savedMissing') : t(term.saved ? 'pageSavedShort' : 'pageTemporary');
             const save = document.createElement('button'); save.type = 'button'; save.className = 'page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
-            save.textContent = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
+            save.textContent = t(term.saved ? 'forgetShort' : 'rememberShort');
+            save.setAttribute('aria-label', t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm'));
+            save.title = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
             save.onclick = () => {
                 if (!readSavedPages()) { setPanelStatus('storageUnsupported'); return; }
                 if (!changePageTerm(term, () => { term.saved = !term.saved; })) return;
@@ -1537,8 +1559,9 @@
         const viewport = window.visualViewport;
         const width = viewport?.width || innerWidth, height = viewport?.height || innerHeight;
         const left = viewport?.offsetLeft || 0, top = viewport?.offsetTop || 0;
-        panel.style.width = Math.max(0, Math.min(360, width - 24)) + 'px';
-        panel.style.maxHeight = Math.max(0, height - 24) + 'px';
+        panel.style.width = Math.max(0, Math.min(320, width - 24)) + 'px';
+        panel.style.setProperty('--hl-panel-collapsed-height', Math.max(0, Math.min(560, height * .8, height - 24)) + 'px');
+        panel.style.setProperty('--hl-panel-expanded-height', Math.max(0, height - 24) + 'px');
         const box = panel.getBoundingClientRect();
         const x = Number.isFinite(panelPos?.x) ? panelPos.x : 20;
         const y = Number.isFinite(panelPos?.y) ? panelPos.y : 80;
@@ -1652,25 +1675,24 @@
             </header>
             <div class="panel-body" id="slim-panel-body">
                 <div class="navigation">
-                    <output class="counter" id="hl-counter" aria-live="polite" aria-atomic="true">0 / 0</output>
+                    <div class="counter-group"><output class="counter" id="hl-counter" aria-live="polite" aria-atomic="true" aria-describedby="navigation-scope">0 / 0</output><p id="navigation-scope" class="hint"></p></div>
                     <div class="nav-btns">
                         <button type="button" class="icon-btn" id="btn-prev" title="${t('prev')}" aria-label="${t('prev')}">${icon('prev')}</button>
                         <button type="button" class="icon-btn" id="btn-next" title="${t('next')}" aria-label="${t('next')}">${icon('next')}</button>
                     </div>
                 </div>
-                <p id="navigation-scope" class="hint"></p>
                 <h2 id="page-heading" class="section-title" tabindex="-1">${t('pageHeading')}</h2>
                 <div id="page-search-status" class="hint" role="status"></div>
                 <div id="page-list"></div>
-                <div class="page-actions"><button type="button" id="clear-page" hidden>${t('clearPage')}</button><button type="button" id="undo-page" hidden>${t('undoPage')}</button></div>
-                <details id="page-options"><summary>${t('pageOptions')}</summary><div class="details-body">
+                <div class="page-actions"><button type="button" id="clear-page" aria-label="${t('clearPageShort')} – ${t('pageHeading')}" title="${t('clearPage')}" hidden>${t('clearPageShort')}</button><button type="button" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${t('undoShort')}</button></div>
+                <div class="status-row"><span id="panel-status" class="hint" role="status"></span><button type="button" id="undo-delete" hidden>${t('undo')}</button></div>
+                <section id="manual-copy-section" hidden><label for="manual-copy">${t('manualCopy')}</label><p id="manual-copy-help" class="hint">${t('manualCopyHint')}</p><textarea id="manual-copy" readonly aria-describedby="manual-copy-help"></textarea><button type="button" id="close-manual-copy">${t('closeManualCopy')}</button></section>
+                <div class="panel-tools">
+                <details id="page-options"><summary title="${t('pageOptions')}" aria-label="${t('pageOptions')}">${t('pageOptionsShort')}</summary><div class="details-body">
                     <label class="check-label"><input type="checkbox" id="page-whole"> ${t('pageWhole')}</label>
                     <label for="page-scope">${t('pageScope')}</label><select id="page-scope"><option value="all">${t('scopeAll')}</option><option value="article">${t('scopeArticle')}</option></select>
                 </div></details>
-                <div class="status-row"><span id="panel-status" class="hint" role="status"></span><button type="button" id="undo-delete" hidden>${t('undo')}</button></div>
-                <section id="manual-copy-section" hidden><label for="manual-copy">${t('manualCopy')}</label><p id="manual-copy-help" class="hint">${t('manualCopyHint')}</p><textarea id="manual-copy" readonly aria-describedby="manual-copy-help"></textarea><button type="button" id="close-manual-copy">${t('closeManualCopy')}</button></section>
-                <p id="page-shortcut-hint" class="hint"></p>
-                <details id="permanent-keywords"><summary>${t('permanentKeywords')}</summary><div class="details-body">
+                <details id="permanent-keywords"><summary aria-label="${t('permanentKeywords')}" title="${t('permanentKeywords')}">${t('permanentKeywordsShort')}</summary><div class="details-body">
                 <form id="keyword-form" novalidate>
                     <div class="entry-row">
                         <div class="entry-main"><label for="new-kw">${t('addKeyword')}</label><input type="text" id="new-kw" placeholder="${t('kwPlaceholder')}" autocomplete="off"></div>
@@ -1721,6 +1743,8 @@
                     <label for="ui-lang">${t('language')}</label>
                     <select id="ui-lang"><option value="auto">${t('langAuto')}</option><option value="de">Deutsch</option><option value="en">English</option></select>
                 </div></details>
+                <details id="help-section"><summary>${t('helpTitle')}</summary><div class="details-body"><p class="hint">${t('pageHint')}</p><p class="hint">${t('navigationHelp')}</p><p id="page-shortcut-hint" class="hint"></p></div></details>
+                </div>
             </div>`;
         document.body.appendChild(panel);
         applyAppearance();

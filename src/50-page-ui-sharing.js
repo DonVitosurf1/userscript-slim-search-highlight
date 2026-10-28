@@ -34,7 +34,7 @@ function renderPageList() {
     const focused = list.contains(document.activeElement);
     list.replaceChildren();
     if (!pageTerms.length) {
-        const empty = document.createElement('p'); empty.className = 'hint'; empty.textContent = t('pageHint'); list.append(empty);
+        const empty = document.createElement('p'); empty.className = 'hint'; empty.textContent = t('pageHintShort'); list.append(empty);
     }
     for (const term of pageTerms) {
         const item = document.createElement('div'); item.className = 'page-item';
@@ -50,9 +50,11 @@ function renderPageList() {
         row.append(color, label, count, remove);
         const meta = document.createElement('div'); meta.className = 'page-meta';
         const state = document.createElement('span'); state.className = 'hint page-state';
-        state.textContent = term.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled ? t('savedMissing') : t(term.saved ? 'pageSaved' : 'pageTemporary');
+        state.textContent = term.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled ? t('savedMissing') : t(term.saved ? 'pageSavedShort' : 'pageTemporary');
         const save = document.createElement('button'); save.type = 'button'; save.className = 'page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
-        save.textContent = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
+        save.textContent = t(term.saved ? 'forgetShort' : 'rememberShort');
+        save.setAttribute('aria-label', t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm'));
+        save.title = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
         save.onclick = () => {
             if (!readSavedPages()) { setPanelStatus('storageUnsupported'); return; }
             if (!changePageTerm(term, () => { term.saved = !term.saved; })) return;

@@ -23,11 +23,12 @@ Page passages require a browser supporting **CSS Custom Highlights**. Unsupporte
 - Select text → open the highlighter symbol → **Highlight all occurrences**. Alternatively use **Alt+Shift+H**, configurable or disabled in Settings.
 - Move through results with Previous/Next or **Alt+Left / Right**. Native right-click and double-click remain intact.
 - Set a color for each page passage. Undo page changes, removals and clearing.
-- **Remember for this page** explicitly saves chosen passages locally for that URL. Otherwise they stay temporary. **Saved keywords** is a separate cross-page term list.
-- **Page search options** offers whole-word and article-only search. The default remains the entire selected passage across the full page.
+- **Remember** explicitly saves chosen passages locally for that URL. Otherwise they stay temporary. **Keywords** is a separate list of permanent cross-page terms.
+- **Search options** offers whole-word and article-only search. The default remains the entire selected passage across the full page.
 - **Copy / export** beside a selection offers quote+URL or a link to text. Web search runs only when **Search the web** is explicitly chosen.
 - Settings includes plain-text/Markdown quotes, Markdown export of the current page and JSON export of saved pages.
 - **Settings → Appearance:** light/dark theme, plus open-button size, screen corner and edge distance. Default size: 56 px.
+- The panel stays compact: additional tools use two columns of disclosures; guidance lives under **Help & shortcuts**.
 - **Take over terms from search:** highlight Google search words on opened result pages. Terms are captured fresh when opening a result; normal clicks, new tabs and the browser context menu remain native.
 
 Saved passages are searched again when revisiting a page. Missing text is shown as **Not found**. Clipboard failure provides a manual-copy field. See [Usage](docs/usage.en.md) and the [data format](docs/data-format.md) for behavior and limits.

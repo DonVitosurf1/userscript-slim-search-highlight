@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.4.2
+
+### Kompakteres Panel
+- Standardbreite 320 statt 360 px; das zugeklappte Panel bleibt höchstens 560 px bzw. 80 % des sichtbaren Viewports hoch. Geöffnete Bereiche und manuelles Kopieren können den verfügbaren Platz nutzen.
+- Navigation und Trefferbereich zusammengefasst, Merken/Vergessen sowie Löschen/Rückgängig kürzer beschriftet. Seitenaktionen stehen nebeneinander.
+- Suchoptionen, Keywords, Trefferdetails, Einstellungen und Hilfe bilden einen kompakten zweispaltigen Bereich. Geöffnete Abschnitte nutzen die volle Breite; Erklärungen und Shortcut-Hinweise stehen unter „Hilfe & Shortcuts“.
+- Unveränderte Schriftgrößen und mindestens 44 px hohe Bedienelemente auf schmalen Bildschirmen. Die neuen Layouts sind in beiden Farbschemata geprüft.
+
 ## 4.4.1
 
 ### Suchwörter auf Ergebnisseiten
