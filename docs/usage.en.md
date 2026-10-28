@@ -8,6 +8,16 @@ Select a word, sentence or paragraph. Hover or click the small highlighter symbo
 
 Search is literal, case-insensitive and whitespace-normalized, including line breaks and inline formatting. Invisible text does not invent visible word boundaries. Overlapping matches count once; a longer passage wins at the same start. Code, editing fields and owned controls are excluded. Frames and Shadow DOM content are not searched.
 
+## Google search → result page
+
+Enable **Settings → Take over terms from search** to highlight search words on opened results. The userscript must be allowed to run on both Google and the destination; excluded domains remain excluded.
+
+Search on Google and open a result normally, with Ctrl/Cmd, with the middle button, or through the browser's native context menu. The submitted query is captured at activation time, including after a dynamic search change or a long stay on the results page. Individual search words are then highlighted on the destination.
+
+Transfer does not require query parameters in the referrer and does not append words to result URLs. Local handoffs associate terms with up to twelve clicked destination URLs for ten minutes; URL fragments are ignored for this match. Redirects to a different address and special links can prevent an exact match; a search-engine referrer provides a fallback.
+
+An unfinished search-field draft does not replace a submitted URL query. The search field is a fallback when the URL has no query. Short words and common stopwords are filtered; this is not a complete Google-operator parser. Automatic search terms do not create permanent keywords or saved page passages. Turning the option off stops new automatic capture and application; explicit `#hl`/`#sjhl` links and manually chosen history entries remain independent.
+
 ## Color, removal and undo
 
 Each page passage has a color and count. Remove one passage or clear all page highlights. **Undo page change** restores text/color/saved state, retaining the latest 20 page states in memory. Navigation/reload ends that undo history.

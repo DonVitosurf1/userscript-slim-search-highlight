@@ -28,6 +28,7 @@ Page passages require a browser supporting **CSS Custom Highlights**. Unsupporte
 - **Copy / export** beside a selection offers quote+URL or a link to text. Web search runs only when **Search the web** is explicitly chosen.
 - Settings includes plain-text/Markdown quotes, Markdown export of the current page and JSON export of saved pages.
 - **Settings → Appearance:** light/dark theme, plus open-button size, screen corner and edge distance. Default size: 56 px.
+- **Take over terms from search:** highlight Google search words on opened result pages. Terms are captured fresh when opening a result; normal clicks, new tabs and the browser context menu remain native.
 
 Saved passages are searched again when revisiting a page. Missing text is shown as **Not found**. Clipboard failure provides a manual-copy field. See [Usage](docs/usage.en.md) and the [data format](docs/data-format.md) for behavior and limits.
 
@@ -42,7 +43,7 @@ npm run build
 npm test
 ```
 
-Edit `src/`; a deterministic build still produces **one** installable file under `userscript/`. `npm run check` detects stale generated output. Browser tests use synthetic pages without network requests.
+Edit `src/`; a deterministic build still produces **one** installable file under `userscript/`. `npm run check` detects stale generated output. Browser tests use synthetic pages without external network requests.
 
 ```text
 src/          ordered source sections and userscript metadata

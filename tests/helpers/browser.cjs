@@ -12,7 +12,7 @@ const KW = [
 const paragraphs = n => Array.from({ length: n }, (_, i) =>
     `<p>Lorem ipsum dolor sit amet <b>consectetur</b> adipiscing elit ${i} sed do eiusmod tempor lorem.</p>`).join('');
 
-async function open(browser, { html = paragraphs(10), keywords = KW, url = null, panelOpen = false, store = {}, locale = 'de-DE', viewport = { width: 1200, height: 800 }, permanentOpen = true } = {}) {
+async function open(browser, { html = paragraphs(10), keywords = KW, url = null, referrer = null, panelOpen = false, store = {}, locale = 'de-DE', viewport = { width: 1200, height: 800 }, permanentOpen = true } = {}) {
     const page = await browser.newPage({ viewport, locale });
     page.on('pageerror', e => { page.__errors = (page.__errors || []).concat(e.message); });
     await page.addInitScript(([kw, panelOpen, extra]) => {
@@ -28,7 +28,7 @@ async function open(browser, { html = paragraphs(10), keywords = KW, url = null,
     }, [keywords, panelOpen, store]);
     if (url) {
         await page.route('**/*', r => r.fulfill({ contentType: 'text/html; charset=utf-8', body: `<body>${html}</body>` }));
-        await page.goto(url);
+        await page.goto(url, referrer ? { referer: referrer } : {});
     } else {
         await page.goto('about:blank');
         await page.setContent(`<body>${html}</body>`);

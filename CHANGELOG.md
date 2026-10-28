@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.4.1
+
+### Suchwörter auf Ergebnisseiten
+- Google-/Suchmaschinen-Suchwörter werden beim Öffnen eines Ergebnisses frisch erfasst, statt nur beim Laden der Suchseite. Das behebt veraltete Begriffe nach dynamischen Suchwechseln und einen während des Lesens abgelaufenen Zwischenspeicher.
+- Normale, Strg-/Cmd-, Mittel- und Kontextmenü-Klicks bleiben nativ. Tief verschachtelte Ergebnislinks und Google-`/url`-Weiterleitungen werden erkannt; kein Suchtext wird an Ergebnis-URLs angehängt.
+- Zielbezogene Übergaben funktionieren auch ohne vollständigen Referrer. Bis zu zwölf Ziel-URLs bleiben zehn Minuten gültig; verschiedene Such-Tabs überschreiben nicht mehr pauschal alle Zielseiten.
+- „Automatisch von Suche übernehmen“ unterbindet nun auch das automatische Speichern neuer Suchkontexte. Leere Suchen übernehmen keine alten Wörter; Speicherfehler brechen weder Navigation noch Anwendungsstart ab.
+- Umsetzung nach Vergleich mit SearchJumpers Originalquellen; Grenzen und Unterschiede sind unter `docs/research/` dokumentiert.
+
 ## 4.4.0
 
 ### Darstellung

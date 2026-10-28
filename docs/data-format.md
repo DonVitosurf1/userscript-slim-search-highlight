@@ -45,6 +45,12 @@ These independent local preferences apply across pages. They are separate from p
 
 Unknown theme/position values use the default; numeric sizes/insets are rounded and bounded, and invalid types use the default. Failed writes restore the last saved appearance. Size reset affects only `hl_launcher_size`.
 
+## Search-result context (separate from saved pages)
+
+With automatic search transfer enabled, `hl_cross_terms` contains `{terms, timestamp, source}` where `source` is the search origin. `hl_search_handoffs` contains `{version: 1, entries: [{target, source, terms, timestamp}]}`. Targets are normalized HTTP(S) URLs without fragments. At most twelve destination entries are retained; expired entries are pruned on the next capture.
+
+These records are valid for ten minutes; expiry stops their use, rather than guaranteeing immediate deletion from userscript storage. Automatic capture is disabled by the search-transfer option. Unknown handoff versions are not overwritten. The same destination uses its latest captured context; cross-tab writes are not transactional. Search caches are separate from `hl_keywords` and `hl_page_annotations`, and are not included in saved-page JSON export. No query words are appended to result links or sent to a service by the script.
+
 ## Exports
 
 Markdown export contains the current page passages with source URLs. “Quote + URL” copies the current selection in plain text or Markdown. Text-fragment copying falls back to the page URL when unsupported. Exported quotes and full URLs can contain personal information; export/copy is always an explicit action, with no background upload.

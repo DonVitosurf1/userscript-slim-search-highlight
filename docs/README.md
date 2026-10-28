@@ -23,6 +23,7 @@ Die technischen Leitfäden sind auf Englisch; die Bedienungsanleitung ist zweisp
 | [Saved data format](data-format.md) | URL identity, storage schema and export limits |
 | [Design system](../DESIGN.md) | UI tokens, accessibility and interaction contracts |
 | [Release checklist](releasing.md) | Automated checks, manual browser checks and integration |
+| [SearchJumper comparison](research/searchjumper-search-handoff.md) | Primary-source research behind search-result term transfer |
 
 ## Repository layout
 
@@ -31,6 +32,7 @@ Die technischen Leitfäden sind auf Englisch; die Bedienungsanleitung ist zweisp
 assets/        Public icon and README screenshot
 docs/          Current guides and this index
   archive/     Historical reviews, evidence, plans and specifications
+  research/    Current technical research with primary-source citations
 scripts/       Build, benchmark and current screenshot capture
 src/           Ordered source sections and userscript metadata
 tests/         Browser runner, shared fixtures and named suites
