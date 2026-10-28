@@ -2,7 +2,7 @@
 
 # Slim Search Highlight
 
-[English](README.en.md) · [Bedienung](docs/usage.de.md) · [Entwicklung](docs/development.md) · [Architektur](docs/architecture.md)
+[English](README.en.md) · [Dokumentation](docs/README.md) · [Bedienung](docs/usage.de.md) · [Entwicklung](docs/development.md)
 
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-blue.svg)](LICENSE)
 
@@ -27,6 +27,7 @@ Seitenmarkierungen benötigen einen Browser mit **CSS Custom Highlights**. Ohne 
 - **Suchoptionen für diese Seite** bietet ganze Wörter und den Artikelbereich. Standard bleibt die ganze ausgewählte Passage auf der gesamten Seite.
 - **Kopieren / Export** an der Auswahl bietet Zitat+URL oder einen Link zur Textstelle. Websuche startet ausschließlich über **Im Web suchen**.
 - In den Einstellungen: Klartext/Markdown für Zitate, Markdown-Export der aktuellen Seite und JSON-Export gespeicherter Seiten.
+- **Einstellungen → Darstellung:** helles/dunkles Farbschema sowie Größe, Bildschirmecke und Randabstand des Öffnen-Buttons. Standardgröße: 56 px.
 
 Gespeicherte Passagen werden bei Wiederbesuch erneut gesucht. Fehlender Text wird als **Nicht gefunden** gemeldet. Ohne Zwischenablagenzugriff steht ein Feld zum manuellen Kopieren bereit. Vollständige Details und Grenzen: [Bedienung](docs/usage.de.md), [Datenformat](docs/data-format.md).
 
@@ -45,14 +46,15 @@ Die Entwicklung findet unter `src/` statt. Der deterministische Build erzeugt we
 
 ```text
 src/          geordnete Quellabschnitte und Userscript-Metadaten
-scripts/      Build und überprüfbarer Benchmark
+scripts/      Build, Benchmark und Screenshot-Aufnahmen
 tests/        Browser-Fixtures, benannte Suites und Test-Runner
 userscript/   generiertes installierbares Userscript
-docs/         Bedienung, Entwicklung, Architektur und Datenformat
+docs/         Aktuelle Leitfäden und historisches Entwicklungsarchiv
 assets/       Logo und Screenshot
+artifacts/    Lokal erzeugte Screenshots; nicht versioniert
 ```
 
-[Entwicklungsanleitung](docs/development.md) · [Mitwirken](CONTRIBUTING.md) · [Änderungen](CHANGELOG.md) · [Sicherheit](SECURITY.md)
+[Dokumentationsübersicht](docs/README.md) · [Mitwirken](CONTRIBUTING.md) · [Release-Prüfung](docs/releasing.md) · [Änderungen](CHANGELOG.md) · [Sicherheit](SECURITY.md)
 
 Für Updates von 3.x: Das alte „Slim Search Highlight Pro v3.10“ entfernen; Einstellungen müssen beim Wechsel auf den stabilen Skriptnamen einmal neu angelegt werden.
 

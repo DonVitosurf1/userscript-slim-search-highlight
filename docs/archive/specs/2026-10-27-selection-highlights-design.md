@@ -1,5 +1,7 @@
 # Selection-first highlighting
 
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
 Approved brief: selecting text shows a small floating symbol; expanding it offers “Highlight and find on this page” (one action, always every occurrence) and an explicitly chosen web search. Right-click ALWAYS remains native. The default shortcut is Alt+Shift+H, configurable or disabled. The user corrected the earlier context-menu proposal; do not implement a custom right-click menu.
 
 Page selections are literal case-insensitive passages, whitespace-normalized, including paragraphs and inline formatting. They are transient, never written into saved keywords or cross-page search history. Navigation prioritizes page results while page selections exist; otherwise existing saved-keyword navigation remains. Changing page URL or reloading clears transient selections. Overlapping occurrences across selected passages are consolidated, favoring the longer passage at the same starting point, otherwise the earlier occurrence.

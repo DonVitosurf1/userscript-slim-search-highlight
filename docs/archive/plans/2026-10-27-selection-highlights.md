@@ -1,11 +1,13 @@
 # Selection Highlights Implementation Plan
 
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
 > Execute inline using superpowers:executing-plans and test-driven-development, then independent code review.
 
 **Goal:** Implement the approved selection-toolbar workflow, always finding all same-page occurrences.
 **Architecture:** CSS Custom Highlights/Ranges for ephemeral selections, existing DOM engine for persistent keywords, shared result/navigation adapters.
 **Tech stack:** Vanilla JS/CSS, Playwright.
-**Spec:** docs/superpowers/specs/2026-10-27-selection-highlights-design.md
+**Spec:** docs/archive/specs/2026-10-27-selection-highlights-design.md
 
 ## Constraints / review focus
 - Preserve all current workspace changes and existing 63 regressions; no dependencies or worktree.

@@ -1,5 +1,7 @@
 # Umsetzung 4.3.0
 
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../../README.md).
+
 Stand: 27.10.2026. Die Empfehlungen aus [dem Review](../code-review-report.md) und die vier dort vorgeschlagenen Erweiterungsgruppen wurden umgesetzt. Der bestehende Arbeitsstand blieb erhalten; historische Review-Berichte wurden nicht überschrieben.
 
 ## Verhalten und Korrekturen
@@ -23,7 +25,7 @@ Entwicklung unter `src/`, explizite Reihenfolge in `src/manifest.json`, determin
 
 Die Browser-Fixtures und fünf Testsuites liegen getrennt unter `tests/`; der bisherige Test-Einstiegspunkt bleibt bestehen. Der Lockfile wird versioniert; CI verwendet `npm ci` und prüft den generierten Stand.
 
-Neu geordnet: [README](../../README.md), [englischer Einstieg](../../README.en.md), [Bedienung DE](../../docs/usage.de.md)/[EN](../../docs/usage.en.md), [Architektur](../../docs/architecture.md), [Entwicklung](../../docs/development.md), [Datenformat](../../docs/data-format.md), Mitwirkungsanleitung, DESIGN und Changelog. Der öffentliche Screenshot zeigt die neue Oberfläche.
+Neu geordnet: [README](../../../../README.md), [englischer Einstieg](../../../../README.en.md), [Bedienung DE](../../../usage.de.md)/[EN](../../../usage.en.md), [Architektur](../../../architecture.md), [Entwicklung](../../../development.md), [Datenformat](../../../data-format.md), Mitwirkungsanleitung, DESIGN und Changelog. Der öffentliche Screenshot zeigt die neue Oberfläche.
 
 ## Nachweise
 
@@ -52,4 +54,6 @@ Automatisiert geprüft wurde Chromium mit simulierten GM-Bindings. Echte Tamperm
 
 Textfragment-Links verwenden die ausgewählte Passage; bei wiederholtem Text kann der Browser das erste Vorkommen wählen. Geänderte Seiten und blockübergreifende Auswahlen können die Auflösung verhindern. JSON ist ein Exportformat; eine Datei-Importoberfläche gehört nicht zu dieser Version. Gleichzeitige Änderungen derselben URL verwenden den letzten Schreibstand. Schatten-DOM, Frames und Cloud-Synchronisierung wurden nicht ergänzt.
 
-Alle Änderungen liegen lokal im Arbeitsverzeichnis. Kein Commit, Push oder Release wurde veröffentlicht.
+Zum Zeitpunkt dieses Berichts lagen die Änderungen lokal im Arbeitsverzeichnis.
+
+**Integrationsnachtrag vom 28.10.2026:** Alle Änderungen wurden mit Commit [`31cca1d`](https://github.com/DonVitosurf1/userscript-slim-search-highlight/commit/31cca1d7fd6f8cc4ae8c1d03751a1b161ab889ba) committet, gepusht und per Fast-Forward nach `main` übernommen. Vor der Integration bestanden erneut alle 115 Tests. Eine gesonderte GitHub-Release-Veröffentlichung und die oben genannten manuellen Browserprüfungen sind dadurch nicht belegt. Dieser Bericht ist ein archivierter Nachweis; die [aktuelle Dokumentation](../../../README.md) beschreibt den heutigen Projektaufbau.

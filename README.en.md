@@ -2,7 +2,7 @@
 
 # Slim Search Highlight
 
-[Deutsch](README.md) · [Usage](docs/usage.en.md) · [Development](docs/development.md) · [Architecture](docs/architecture.md)
+[Deutsch](README.md) · [Documentation](docs/README.md) · [Usage](docs/usage.en.md) · [Development](docs/development.md)
 
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -27,6 +27,7 @@ Page passages require a browser supporting **CSS Custom Highlights**. Unsupporte
 - **Page search options** offers whole-word and article-only search. The default remains the entire selected passage across the full page.
 - **Copy / export** beside a selection offers quote+URL or a link to text. Web search runs only when **Search the web** is explicitly chosen.
 - Settings includes plain-text/Markdown quotes, Markdown export of the current page and JSON export of saved pages.
+- **Settings → Appearance:** light/dark theme, plus open-button size, screen corner and edge distance. Default size: 56 px.
 
 Saved passages are searched again when revisiting a page. Missing text is shown as **Not found**. Clipboard failure provides a manual-copy field. See [Usage](docs/usage.en.md) and the [data format](docs/data-format.md) for behavior and limits.
 
@@ -45,14 +46,15 @@ Edit `src/`; a deterministic build still produces **one** installable file under
 
 ```text
 src/          ordered source sections and userscript metadata
-scripts/      build and verified benchmark
+scripts/      build, benchmark and screenshot capture
 tests/        browser fixtures, named suites and runner
 userscript/   generated installable userscript
-docs/         usage, development, architecture and data format
+docs/         current guides and historical development archive
 assets/       logo and screenshot
+artifacts/    local generated screenshots; not tracked
 ```
 
-[Development guide](docs/development.md) · [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [Security](SECURITY.md)
+[Documentation index](docs/README.md) · [Contributing](CONTRIBUTING.md) · [Release checklist](docs/releasing.md) · [Changelog](CHANGELOG.md) · [Security](SECURITY.md)
 
 When upgrading from 3.x, remove “Slim Search Highlight Pro v3.10”; settings need to be recreated once when switching to the stable script name.
 

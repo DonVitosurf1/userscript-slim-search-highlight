@@ -1,3 +1,43 @@
+function applyAppearance() {
+    for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle']) {
+        const el = document.getElementById(id);
+        if (el) el.dataset.theme = uiTheme;
+    }
+    const toggle = document.getElementById('slim-hl-toggle');
+    if (toggle) {
+        toggle.dataset.position = launcherPosition;
+        toggle.style.setProperty('--hl-launcher-size', launcherSize + 'px');
+        toggle.style.setProperty('--hl-launcher-inset', launcherInset + 'px');
+    }
+    const panel = document.getElementById('slim-hl-panel');
+    const theme = panel?.querySelector('#ui-theme');
+    if (theme) theme.value = uiTheme;
+    const size = panel?.querySelector('#launcher-size');
+    if (size) { size.value = launcherSize; size.setAttribute('aria-valuetext', launcherSize + ' px'); }
+    const output = panel?.querySelector('#launcher-size-value');
+    if (output) output.value = launcherSize + ' px';
+    const position = panel?.querySelector('#launcher-position');
+    if (position) position.value = launcherPosition;
+    const inset = panel?.querySelector('#launcher-inset');
+    if (inset) { inset.value = launcherInset; inset.setAttribute('aria-valuetext', launcherInset + ' px'); }
+    const insetOutput = panel?.querySelector('#launcher-inset-value');
+    if (insetOutput) insetOutput.value = launcherInset + ' px';
+}
+
+function saveAppearance() {
+    try {
+        save();
+        if (panelStatus?.key === 'appearanceSaveFailed') setPanelStatus(null);
+    }
+    catch {
+        uiTheme = JSON.parse(lastSaved.hl_ui_theme);
+        launcherSize = normalizeLauncherSize(JSON.parse(lastSaved.hl_launcher_size));
+        launcherPosition = JSON.parse(lastSaved.hl_launcher_position);
+        launcherInset = normalizeLauncherInset(JSON.parse(lastSaved.hl_launcher_inset));
+        applyAppearance(); setPanelStatus('appearanceSaveFailed');
+    }
+}
+
 function clampPanelPosition(panel, persist = false) {
     if (!panel || panel.style.display === 'none') return;
     const viewport = window.visualViewport;
@@ -161,6 +201,17 @@ function createPanel(snapshot = null) {
             <details id="match-details"><summary>${t('matchDetails')}</summary><div id="match-list"></div></details>
             <details id="history-details" ${searchHistory.length ? '' : 'hidden'}><summary>${t('recent')}</summary><div id="history-container" class="details-body"></div></details>
             <details id="settings-section"><summary>${t('settings')}</summary><div class="details-body">
+                <h3 class="section-title">${t('appearance')}</h3>
+                <label for="ui-theme">${t('colorTheme')}</label>
+                <select id="ui-theme"><option value="dark">${t('themeDark')}</option><option value="light">${t('themeLight')}</option></select>
+                <label for="launcher-size" class="section-title">${t('launcherSize')}</label>
+                <div class="launcher-size-row"><input type="range" id="launcher-size" min="44" max="80" step="4" aria-describedby="launcher-size-hint"><output id="launcher-size-value" for="launcher-size"></output></div>
+                <p class="hint" id="launcher-size-hint">${t('launcherSizeHint')}</p>
+                <button type="button" id="reset-launcher-size">${t('resetLauncherSize')}</button>
+                <label for="launcher-position" class="section-title">${t('launcherPosition')}</label>
+                <select id="launcher-position"><option value="bottom-right">${t('bottomRight')}</option><option value="bottom-left">${t('bottomLeft')}</option><option value="top-right">${t('topRight')}</option><option value="top-left">${t('topLeft')}</option></select>
+                <label for="launcher-inset" class="section-title">${t('launcherInset')}</label>
+                <div class="launcher-size-row"><input type="range" id="launcher-inset" min="8" max="80" step="4"><output id="launcher-inset-value" for="launcher-inset"></output></div>
                 <label class="check-label"><input type="checkbox" id="chk-enabled" ${enabled ? 'checked' : ''}> ${t('enabled')}</label>
                 <label class="check-label"><input type="checkbox" id="chk-auto" ${autoSearch ? 'checked' : ''}> ${t('autoSearch')}</label>
                 <label class="check-label"><input type="checkbox" id="chk-posbar" ${showPosBar ? 'checked' : ''}> ${t('posBar')}</label>
@@ -178,6 +229,7 @@ function createPanel(snapshot = null) {
             </div></details>
         </div>`;
     document.body.appendChild(panel);
+    applyAppearance();
     panel.querySelector('#kw-search').value = kwFilter;
     panel.querySelector('#search-engine').value = searchEngine;
     panel.querySelector('#ui-lang').value = lang;
@@ -259,6 +311,13 @@ function createPanel(snapshot = null) {
             renderPageList(); updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); hideSelectionTools(); observer?.disconnect();
         }
     };
+    panel.querySelector('#ui-theme').onchange = e => { uiTheme = e.target.value === 'light' ? 'light' : 'dark'; applyAppearance(); saveAppearance(); };
+    panel.querySelector('#launcher-size').oninput = e => { launcherSize = normalizeLauncherSize(+e.target.value); applyAppearance(); };
+    panel.querySelector('#launcher-size').onchange = saveAppearance;
+    panel.querySelector('#reset-launcher-size').onclick = () => { launcherSize = DEFAULT_LAUNCHER_SIZE; applyAppearance(); saveAppearance(); };
+    panel.querySelector('#launcher-position').onchange = e => { launcherPosition = e.target.value; applyAppearance(); saveAppearance(); };
+    panel.querySelector('#launcher-inset').oninput = e => { launcherInset = normalizeLauncherInset(+e.target.value); applyAppearance(); };
+    panel.querySelector('#launcher-inset').onchange = saveAppearance;
     panel.querySelector('#chk-auto').onchange = e => { autoSearch = e.target.checked; save(); refreshHighlights(); };
     panel.querySelector('#chk-posbar').onchange = e => { showPosBar = e.target.checked; save(); updatePosBar(); };
     panel.querySelector('#search-engine').onchange = e => { searchEngine = e.target.value; save(); };
@@ -409,6 +468,7 @@ function createToggle() {
     btn.setAttribute('aria-expanded', String(panelState.open));
     btn.onclick = () => setPanelOpen(!panelState.open);
     document.body.appendChild(btn);
+    applyAppearance();
 }
 
 /** Nur auf Seiten registrieren, auf denen das Skript aktiv ist (nicht auf der Blacklist). */

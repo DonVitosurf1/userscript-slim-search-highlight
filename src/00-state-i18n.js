@@ -8,6 +8,20 @@ let blacklist = GM_getValue('hl_blacklist', ['docs.google.com', 'youtube.com', '
 let searchEngine = GM_getValue('hl_search_engine', 'google');
 let showPosBar = GM_getValue('hl_show_posbar', true);
 let lang = GM_getValue('hl_lang', 'auto');
+const DEFAULT_LAUNCHER_SIZE = 56;
+function normalizeLauncherSize(value) {
+    return typeof value === 'number' && Number.isFinite(value)
+        ? Math.max(44, Math.min(80, Math.round(value / 4) * 4)) : DEFAULT_LAUNCHER_SIZE;
+}
+let uiTheme = GM_getValue('hl_ui_theme', 'dark') === 'light' ? 'light' : 'dark';
+let launcherSize = normalizeLauncherSize(GM_getValue('hl_launcher_size', DEFAULT_LAUNCHER_SIZE));
+const LAUNCHER_POSITIONS = ['bottom-right', 'bottom-left', 'top-right', 'top-left'];
+const savedLauncherPosition = GM_getValue('hl_launcher_position', 'bottom-right');
+let launcherPosition = LAUNCHER_POSITIONS.includes(savedLauncherPosition) ? savedLauncherPosition : 'bottom-right';
+function normalizeLauncherInset(value) {
+    return typeof value === 'number' && Number.isFinite(value) ? Math.max(8, Math.min(80, Math.round(value / 4) * 4)) : 20;
+}
+let launcherInset = normalizeLauncherInset(GM_getValue('hl_launcher_inset', 20));
 
 const LOGO = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0iIzI2MzIzOCIvPgogIDwhLS0gSGlnaGxpZ2h0cyAtLT4KICA8cmVjdCB4PSIyMCIgeT0iMzAiIHdpZHRoPSI1MiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIzNCIgeT0iNTYiIHdpZHRoPSI0NCIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiM5MGNhZjkiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiNhNWQ2YTciLz4KICA8IS0tIFRleHQgbGluZXMgLS0+CiAgPGcgZmlsbD0iI2VjZWZmMSIgb3BhY2l0eT0iLjkiPgogICAgPHJlY3QgeD0iMjQiIHk9IjM1IiB3aWR0aD0iNDQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMyNjMyMzgiLz4KICAgIDxyZWN0IHg9IjM4IiB5PSI2MSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMjYzMjM4Ii8+CiAgICA8cmVjdCB4PSIyNCIgeT0iODciIHdpZHRoPSIyOCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzI2MzIzOCIvPgogICAgPHJlY3QgeD0iNzgiIHk9IjM1IiB3aWR0aD0iMTYiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjIwIiB5PSI2MSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4MiIgeT0iNjEiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iNjIiIHk9Ijg3IiB3aWR0aD0iMzIiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPCEtLSBQb3NpdGlvbiBiYXIgLS0+CiAgPHJlY3QgeD0iMTA0IiB5PSIyMCIgd2lkdGg9IjYiIGhlaWdodD0iODgiIHJ4PSIzIiBmaWxsPSIjNDU1YTY0Ii8+CiAgPHJlY3QgeD0iMTA0IiB5PSIzMiIgd2lkdGg9IjYiIGhlaWdodD0iNSIgcng9IjIiIGZpbGw9IiNmZmUwODIiLz4KICA8cmVjdCB4PSIxMDQiIHk9IjYwIiB3aWR0aD0iNiIgaGVpZ2h0PSI1IiByeD0iMiIgZmlsbD0iIzkwY2FmOSIvPgogIDxyZWN0IHg9IjEwNCIgeT0iODYiIHdpZHRoPSI2IiBoZWlnaHQ9IjUiIHJ4PSIyIiBmaWxsPSIjYTVkNmE3Ii8+Cjwvc3ZnPgo=';
 
@@ -18,6 +32,10 @@ const I18N = {
         kwSearch: 'Search keywords…', kwPlaceholder: 'Keyword or /regex/',
         wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
         keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
+        appearance: 'Appearance', colorTheme: 'Color theme', themeLight: 'Light', themeDark: 'Dark',
+        launcherSize: 'Open button size', launcherSizeHint: 'Size of the floating open button (44–80 px).', resetLauncherSize: 'Reset size',
+        launcherPosition: 'Open button position', launcherInset: 'Distance from edge', bottomRight: 'Bottom right', bottomLeft: 'Bottom left', topRight: 'Top right', topLeft: 'Top left',
+        appearanceSaveFailed: 'Could not save the appearance. The previous setting was restored.',
         enabled: 'Highlights enabled', autoSearch: 'Take over terms from search', posBar: 'Show position bar',
         engine: 'Search engine for right-click:', language: 'Language:', langAuto: 'Auto',
         noMatches: 'No matches on this page', noKwMatches: 'No keywords match your search', noKeywords: 'No keywords saved yet',
@@ -33,6 +51,10 @@ const I18N = {
         kwSearch: 'Keywords suchen…', kwPlaceholder: 'Keyword oder /regex/',
         wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
         keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
+        appearance: 'Darstellung', colorTheme: 'Farbschema', themeLight: 'Hell', themeDark: 'Dunkel',
+        launcherSize: 'Größe des Öffnen-Buttons', launcherSizeHint: 'Größe des schwebenden Öffnen-Buttons (44–80 px).', resetLauncherSize: 'Größe zurücksetzen',
+        launcherPosition: 'Position des Öffnen-Buttons', launcherInset: 'Abstand zum Rand', bottomRight: 'Unten rechts', bottomLeft: 'Unten links', topRight: 'Oben rechts', topLeft: 'Oben links',
+        appearanceSaveFailed: 'Darstellung konnte nicht gespeichert werden. Die vorherige Einstellung wurde wiederhergestellt.',
         enabled: 'Highlights aktiv', autoSearch: 'Automatisch von Suche übernehmen', posBar: 'Positionsanzeige anzeigen',
         engine: 'Suchmaschine für Rechtsklick:', language: 'Sprache:', langAuto: 'Automatisch',
         noMatches: 'Keine Treffer auf dieser Seite', noKwMatches: 'Keine Treffer für die Suche', noKeywords: 'Noch keine Keywords gespeichert',

@@ -1,5 +1,7 @@
 # Umsetzung des Reviews — Version 4.1.0
 
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
 Der Nutzer hat die vollständige Umsetzung des Reviews beauftragt. Die zehn Befunde sind im bestehenden einzelnen Userscript bearbeitet; keine neue Laufzeitabhängigkeit, kein Framework und keine Änderung bestehender GM-Storage-Schlüssel.
 
 ## Änderungen und Nachweise
@@ -21,7 +23,7 @@ Zusätzlich: Letzte Keyword-Löschung ist rückgängig zu machen. Abschalten und
 
 ## Superpowers-Ablauf
 
-- Review als konkret bestätigte Vorgabe; Design/Plan und Entscheidungen unter docs/superpowers/.
+- Review als konkret bestätigte Vorgabe; Design/Plan und Entscheidungen unter docs/archive/.
 - Zuerst 16 neue Tests: alle am erwarteten Verhalten fehlgeschlagen, danach bestanden.
 - Unabhängige Codeprüfung bestätigte drei zusätzliche Probleme: SVG-Reset, ausstehende Highlight-Frames und Panelwachstum. Tests reproduzierten diese, anschließend Korrektur und Nachprüfung.
 - Die visuelle Abnahme zeigte, dass SVG-Paint allein nicht reicht: Geometrie und Header-/Control-Layout sind nun ebenfalls durch Regressionen geschützt. Der Reset nutzt `:where()` und nimmt SVG samt Nachfahren aus.
@@ -34,7 +36,7 @@ Zusätzlich: Letzte Keyword-Löschung ist rückgängig zu machen. Abschalten und
 
 Browserdurchlauf erfolgreich: Desktop, 320/390px, leere Liste, Inline-Fehler, Tastaturnavigation mit Kontext, englische Einstellungen/nativer Select, fremdes CSS und aufgeklappte Bereiche nach Wiederherstellen einer externen Position. Screenshots, Browserprotokoll und reproduzierbarer Capture-Helfer liegen in `implementation-evidence/`.
 
-Bestehender Review samt ursprünglichen Nachweisen unter `.design/evidence/` bleibt erhalten. README in beiden Sprachen, Changelog und DESIGN.md sind aktualisiert. Keine Veröffentlichung, kein Push oder Merge; Änderungen liegen prüfbar im Workspace.
+Bestehender Review samt ursprünglichen Nachweisen unter `docs/archive/reviews/evidence/` bleibt erhalten. README in beiden Sprachen, Changelog und DESIGN.md sind aktualisiert. Keine Veröffentlichung, kein Push oder Merge; Änderungen liegen prüfbar im Workspace.
 
 ## Grenzen
 

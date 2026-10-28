@@ -1,7 +1,7 @@
 'use strict';
 const { chromium } = require('playwright');
 const fixtures = require('./helpers/browser.cjs');
-const suites = ['keywords', 'panel', 'selection', 'regressions', 'page-features'];
+const suites = ['keywords', 'panel', 'selection', 'regressions', 'page-features', 'appearance'];
 const tests = {};
 for (const suite of suites) {
   for (const [name, run] of Object.entries(require(`./suites/${suite}.cjs`)(fixtures))) {

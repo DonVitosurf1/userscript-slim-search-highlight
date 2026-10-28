@@ -1,4 +1,6 @@
-# Execution ledger — plan: docs/superpowers/plans/2026-10-27-review-and-features.md
+# Execution ledger — plan: docs/archive/plans/2026-10-27-review-and-features.md
+
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
 
 Authorization: user requested all recommendations and extensions plus docs/project structure; prior review is concrete approved input.
 Ruling: keep a single installed userscript but generate it from ordered source sections, no dependencies. Existing lexical scope is documented rather than pretending these are isolated ES modules.
@@ -14,11 +16,11 @@ Pre-flight: matching, UI, storage and tests share page record identities; implem
 
 ## Final evidence
 
-- `CHROMIUM_PATH=/usr/bin/chromium npm test`: **115 passed, 0 failed, 115 executed**; complete output in `.design/release-4.3/tests.log`.
+- `CHROMIUM_PATH=/usr/bin/chromium npm test`: **115 passed, 0 failed, 115 executed**; complete output in `docs/archive/reviews/release-4.3/tests.log`.
 - `npm ci --cache /workspace/.npm-cache --no-audit --no-fund`: successful frozen installation.
 - `npm run check` and `git diff --check`: successful. Repeated build is byte-identical; a disposable stale-artifact probe fails without rewriting the artifact.
-- Desktop 1280×900 and narrow 390×844 browser captures: panel within viewport, both occurrences found, no browser errors. Screenshots and measurements in `.design/release-4.3/`.
+- Desktop 1280×900 and narrow 390×844 browser captures: panel within viewport, both occurrences found, no browser errors. Screenshots and measurements in `docs/archive/reviews/release-4.3/`.
 - Same-machine benchmark, 2,001 matches in one long node: synchronous action **884.1 → 52.0 ms**, all ranges ready **1,061.7 → 319.5 ms**. Individual measurements, not cross-browser guarantees.
 - Maintained Markdown local links checked. Text-fragment ambiguity/browser limits and actual userscript-manager release checks are documented.
 
-Detailed completion report: `.design/release-4.3/implementation-report.md`. No commit, push or publication performed.
+Detailed completion report: `docs/archive/reviews/release-4.3/implementation-report.md`. No commit, push or publication performed.

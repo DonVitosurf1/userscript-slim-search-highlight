@@ -1,5 +1,7 @@
 # Usage
 
+[Documentation index](README.md) · [Deutsch](usage.de.md)
+
 ## Select and find
 
 Select a word, sentence or paragraph. Hover or click the small highlighter symbol to reveal **Highlight all occurrences** and **Search the web**. Highlighting always finds the full selected passage and its other occurrences on this page. Web search and sharing require an explicit action.
@@ -35,6 +37,16 @@ Expand **Copy / export** beside a selection:
 - **Copy link to text** creates a `#:~:text=` link for supported HTTP(S) pages. Otherwise it copies a normal page link and explains why. Repeated text can resolve to the first matching occurrence. Changed text, selections crossing block boundaries and browser support can affect link resolution.
 
 If clipboard access fails, a labeled manual-copy field appears. Settings also exports current page passages as Markdown and all saved pages as versioned JSON. These explicit local exports contain selected text and full URLs; nothing is uploaded automatically.
+
+## Appearance and open button
+
+Under **Settings → Appearance**, choose **Light** or **Dark**. The panel, selection actions and native form fields switch together immediately. Dark remains the default; webpage colors and chosen highlight colors stay unchanged.
+
+The open button defaults to **56 px**. **Open button size** offers 44–80 px; **Reset size** restores 56 px. **Open button position** selects one of the four screen corners. **Distance from edge** offers 8–80 px for both adjacent edges. Device safe-area insets take precedence when needed.
+
+Sliders show their pixel value and support arrow keys in 4-px steps. Changes apply immediately and are saved locally for future visits. A failed storage write restores the previous setting. Resetting size does not change position or theme.
+
+![Light theme with page highlights](../assets/screenshot-light.png)
 
 ## Keyboard and panel
 

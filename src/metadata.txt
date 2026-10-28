@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.3.0
+// @version      4.4.0
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
 // @supportURL   https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues
 // @updateURL    https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
 // @downloadURL  https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
-// @description  Keyword highlighting with position bar, navigation and keyword search
-// @description:de  Keyword-Hervorhebung mit Positionsanzeige, Navigation und Keyword-Suche
+// @description  Highlight selected passages and all page occurrences, with local page saving and keyword search
+// @description:de  Ausgewählte Passagen und alle Seitenvorkommen markieren, lokal merken und Keywords suchen
 // @icon         https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/assets/icon.svg
 // @match        *://*/*
 // @grant        GM_getValue

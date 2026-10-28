@@ -1,6 +1,8 @@
 # Panel improvements design
 
-The user explicitly authorized implementing all recommendations in `.design/review-report.md`. That report is the approved product brief: R1–R10, including undo, context snippets, keyboard navigation and local style isolation. No additional product decision or rebrand is needed.
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
+The user explicitly authorized implementing all recommendations in `docs/archive/reviews/review-report.md`. That report is the approved product brief: R1–R10, including undo, context snippets, keyboard navigation and local style isolation. No additional product decision or rebrand is needed.
 
 Keep a single installable userscript, German/English copy, existing GM storage keys, dark palette, system fonts, incremental highlighting and 300-row match limit. No runtime dependencies. Retain the current isolated cloud checkout (branch `work`); no worktree or publication.
 

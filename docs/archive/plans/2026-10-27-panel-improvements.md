@@ -1,11 +1,13 @@
 # Panel Improvements Implementation Plan
 
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
 > **For agentic workers:** Use superpowers:executing-plans, task by task, with RED→GREEN and a final independent review.
 
 **Goal:** Implement R1–R10 from the reviewed and user-approved improvement report.
 **Architecture:** Keep the single-file userscript and GM storage contract. Introduce scoped UI tokens/helpers and semantic controls, preserving the incremental engine.
 **Tech Stack:** Vanilla JavaScript/CSS, Playwright/Chromium.
-**Spec:** docs/superpowers/specs/2026-10-27-panel-improvements-design.md
+**Spec:** docs/archive/specs/2026-10-27-panel-improvements-design.md
 
 ## Global constraints
 - No runtime dependencies or new services; keep German and English.
@@ -36,7 +38,7 @@ Interfaces: setPanelOpen(open, focus=true), keywordError(text,index), submitKeyw
 - [x] Run focused tests to green.
 
 ### Task 3: State resilience and completion (R7 and follow-through)
-Files: userscript/slim-search-highlight.user.js, tests/panel_tests.js, README.md, README.en.md, CHANGELOG.md, .design/implementation-report.md.
+Files: userscript/slim-search-highlight.user.js, tests/panel_tests.js, README.md, README.en.md, CHANGELOG.md, docs/archive/reviews/implementation-report.md.
 Interfaces: language-change transient snapshot, undo state, stable keyword count updates.
 - [x] Add failing locale draft/focus, search clear, undo and disabled-state tests.
 - [x] Preserve transient state, provide undo and clear-search, update version and user documentation.
