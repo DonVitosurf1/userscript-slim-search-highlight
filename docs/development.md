@@ -43,6 +43,8 @@ The `-k` filter matches names; zero selected tests is an error. `tests/run_tests
 
 ## Performance checks
 
+`node tests/run_tests.js -k compact_panel_` checks the compact overview in both themes, narrow touch targets, and expansion/help/locale behavior. Opening a tool section may increase the panel's height within the viewport; the closed overview has its own smaller height cap.
+
 The benchmark measures a single long text node and the same number of occurrences split across paragraphs. It reports synchronous handler time **and** time until all expected ranges are ready. For a comparison against an older local artifact:
 
 ```sh

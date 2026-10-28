@@ -43,8 +43,9 @@ function clampPanelPosition(panel, persist = false) {
     const viewport = window.visualViewport;
     const width = viewport?.width || innerWidth, height = viewport?.height || innerHeight;
     const left = viewport?.offsetLeft || 0, top = viewport?.offsetTop || 0;
-    panel.style.width = Math.max(0, Math.min(360, width - 24)) + 'px';
-    panel.style.maxHeight = Math.max(0, height - 24) + 'px';
+    panel.style.width = Math.max(0, Math.min(320, width - 24)) + 'px';
+    panel.style.setProperty('--hl-panel-collapsed-height', Math.max(0, Math.min(560, height * .8, height - 24)) + 'px');
+    panel.style.setProperty('--hl-panel-expanded-height', Math.max(0, height - 24) + 'px');
     const box = panel.getBoundingClientRect();
     const x = Number.isFinite(panelPos?.x) ? panelPos.x : 20;
     const y = Number.isFinite(panelPos?.y) ? panelPos.y : 80;
@@ -158,25 +159,24 @@ function createPanel(snapshot = null) {
         </header>
         <div class="panel-body" id="slim-panel-body">
             <div class="navigation">
-                <output class="counter" id="hl-counter" aria-live="polite" aria-atomic="true">0 / 0</output>
+                <div class="counter-group"><output class="counter" id="hl-counter" aria-live="polite" aria-atomic="true" aria-describedby="navigation-scope">0 / 0</output><p id="navigation-scope" class="hint"></p></div>
                 <div class="nav-btns">
                     <button type="button" class="icon-btn" id="btn-prev" title="${t('prev')}" aria-label="${t('prev')}">${icon('prev')}</button>
                     <button type="button" class="icon-btn" id="btn-next" title="${t('next')}" aria-label="${t('next')}">${icon('next')}</button>
                 </div>
             </div>
-            <p id="navigation-scope" class="hint"></p>
             <h2 id="page-heading" class="section-title" tabindex="-1">${t('pageHeading')}</h2>
             <div id="page-search-status" class="hint" role="status"></div>
             <div id="page-list"></div>
-            <div class="page-actions"><button type="button" id="clear-page" hidden>${t('clearPage')}</button><button type="button" id="undo-page" hidden>${t('undoPage')}</button></div>
-            <details id="page-options"><summary>${t('pageOptions')}</summary><div class="details-body">
+            <div class="page-actions"><button type="button" id="clear-page" aria-label="${t('clearPageShort')} – ${t('pageHeading')}" title="${t('clearPage')}" hidden>${t('clearPageShort')}</button><button type="button" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${t('undoShort')}</button></div>
+            <div class="status-row"><span id="panel-status" class="hint" role="status"></span><button type="button" id="undo-delete" hidden>${t('undo')}</button></div>
+            <section id="manual-copy-section" hidden><label for="manual-copy">${t('manualCopy')}</label><p id="manual-copy-help" class="hint">${t('manualCopyHint')}</p><textarea id="manual-copy" readonly aria-describedby="manual-copy-help"></textarea><button type="button" id="close-manual-copy">${t('closeManualCopy')}</button></section>
+            <div class="panel-tools">
+            <details id="page-options"><summary title="${t('pageOptions')}" aria-label="${t('pageOptions')}">${t('pageOptionsShort')}</summary><div class="details-body">
                 <label class="check-label"><input type="checkbox" id="page-whole"> ${t('pageWhole')}</label>
                 <label for="page-scope">${t('pageScope')}</label><select id="page-scope"><option value="all">${t('scopeAll')}</option><option value="article">${t('scopeArticle')}</option></select>
             </div></details>
-            <div class="status-row"><span id="panel-status" class="hint" role="status"></span><button type="button" id="undo-delete" hidden>${t('undo')}</button></div>
-            <section id="manual-copy-section" hidden><label for="manual-copy">${t('manualCopy')}</label><p id="manual-copy-help" class="hint">${t('manualCopyHint')}</p><textarea id="manual-copy" readonly aria-describedby="manual-copy-help"></textarea><button type="button" id="close-manual-copy">${t('closeManualCopy')}</button></section>
-            <p id="page-shortcut-hint" class="hint"></p>
-            <details id="permanent-keywords"><summary>${t('permanentKeywords')}</summary><div class="details-body">
+            <details id="permanent-keywords"><summary aria-label="${t('permanentKeywords')}" title="${t('permanentKeywords')}">${t('permanentKeywordsShort')}</summary><div class="details-body">
             <form id="keyword-form" novalidate>
                 <div class="entry-row">
                     <div class="entry-main"><label for="new-kw">${t('addKeyword')}</label><input type="text" id="new-kw" placeholder="${t('kwPlaceholder')}" autocomplete="off"></div>
@@ -227,6 +227,8 @@ function createPanel(snapshot = null) {
                 <label for="ui-lang">${t('language')}</label>
                 <select id="ui-lang"><option value="auto">${t('langAuto')}</option><option value="de">Deutsch</option><option value="en">English</option></select>
             </div></details>
+            <details id="help-section"><summary>${t('helpTitle')}</summary><div class="details-body"><p class="hint">${t('pageHint')}</p><p class="hint">${t('navigationHelp')}</p><p id="page-shortcut-hint" class="hint"></p></div></details>
+            </div>
         </div>`;
     document.body.appendChild(panel);
     applyAppearance();

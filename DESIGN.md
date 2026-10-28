@@ -19,14 +19,14 @@ rounded:
   panel: '10px'
 spacing:
   control-gap: '8px'
-  panel-padding: '14px'
+  panel-padding: '10px'
 components:
   button:
     minHeight: '36px'
   input:
     minHeight: '38px'
   panel:
-    maxWidth: '360px'
+    maxWidth: '320px'
 ---
 
 # Slim Search Highlight Design System
@@ -79,7 +79,7 @@ Settings uses the existing native select pattern for theme and corner selection;
 14px/1.45 system UI for controls and content, 16px for counts and narrow-screen text fields/selects, 12–13px for supporting copy. Use tabular numerals for counts. No remote fonts. Keep wording direct and task-specific.
 
 ## Layout
-360px maximum panel width, 12px viewport margins, viewport-bounded height and one main panel scroll owner. Inner padding 14px, 12px below 480px; typical control gap 8px. Header and status precede the primary page-selection list and instructions. Saved keyword creation/management lives in its own disclosure, followed by optional match/history details and settings. The primary action is a compact floating symbol at the text selection; it expands on hover or click into “Highlight all occurrences” and explicit “Search the web”. The page-selection list remains the primary panel surface. Disclosure groups can grow naturally inside the main scroller; the capped match list owns its bounded overflow. visualViewport resize/scroll adjusts geometry for available screen space.
+320px maximum panel width, 12px viewport margins and one main panel scroll owner. The collapsed palette is capped at 560px or 80% of the visual viewport, whichever is smaller. Open tool sections and manual copying may use the viewport height minus 24px. Inner padding 10px; typical control gap 8px. Navigation groups count and scope above the primary page-selection list and status. Search options, saved keywords, match/history details, settings and help form a compact two-column disclosure grid; an open section spans the full width. Long guidance and shortcut instructions live in Help & shortcuts. Page clear/undo actions share a row, and short visible captions retain descriptive accessible labels and tooltips. The primary action is a compact floating symbol at the text selection; it expands on hover or click into “Highlight all occurrences” and explicit “Search the web”. The page-selection list remains the primary panel surface. Disclosure groups can grow naturally inside the main scroller; the capped match list owns its bounded overflow. visualViewport resize/scroll adjusts geometry for available screen space.
 
 ## Elevation & Depth
 One soft panel shadow (0 10px 32px, black at 40% for dark or slate at 18% for light); surface tones identify header and controls. Avoid repeated nested-card shadows. Panel has no backdrop and never traps page focus.

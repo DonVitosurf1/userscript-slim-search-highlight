@@ -22,15 +22,15 @@ Ein begonnenes, noch nicht abgeschicktes Suchfeld ersetzt die bereits bestätigt
 
 ## Farben, Löschen und Rückgängig
 
-Unter **Auf dieser Seite** hat jede Passage eine Farbe und Trefferzahl. Entfernen löscht die Passage und alle zugehörigen Markierungen; **Seitenmarkierungen löschen** leert die Liste. **Seitenänderung rückgängig** stellt den vorherigen Zustand einschließlich Farbe und Speicherstatus wieder her. Die letzten 20 Seitenzustände bleiben während der Sitzung erhalten; Navigation oder Neuladen beendet diesen Verlauf.
+Unter **Auf dieser Seite** hat jede Passage eine Farbe und Trefferzahl. Entfernen löscht die Passage und alle zugehörigen Markierungen; **Alle löschen** leert die Liste. **Rückgängig** stellt den vorherigen Zustand einschließlich Farbe und Speicherstatus wieder her. Die letzten 20 Seitenzustände bleiben während der Sitzung erhalten; Navigation oder Neuladen beendet diesen Verlauf.
 
 Solange Seitenpassagen existieren, steuern Vor/Zurück und **Alt+← / →** deren Treffer. Andernfalls werden die gespeicherten/automatischen Keyword-Treffer navigiert. Die Positionsleiste bündelt bei vielen Treffern bis zu 500 Markierungen; die Trefferdetails zeigen bis zu 300 Einträge. Alle tatsächlichen Treffer bleiben über die Navigation erreichbar.
 
 ## Für diese Seite merken
 
-Markierungen sind zunächst temporär. **Für diese Seite merken** speichert die jeweilige Passage mit Farbe und Textkontext lokal im Userscript-Manager. Bei einem Wiederbesuch wird genau dieser Text erneut gesucht. Wenn er fehlt, steht **Nicht gefunden** an der Passage; es wird kein ähnlicher Text automatisch eingesetzt.
+Markierungen sind zunächst temporär. **Merken** speichert die jeweilige Passage mit Farbe und Textkontext lokal im Userscript-Manager. Bei einem Wiederbesuch wird genau dieser Text erneut gesucht. Wenn er fehlt, steht **Nicht gefunden** an der Passage; es wird kein ähnlicher Text automatisch eingesetzt.
 
-**Gespeicherte Passage vergessen** entfernt den gespeicherten Eintrag, lässt die aktuelle temporäre Markierung aber stehen. Entfernen/Leeren aktualisiert ebenfalls gespeicherte Einträge; Rückgängig kann das in derselben Sitzung zurücknehmen. Speicherung erfolgt pro vollständiger URL einschließlich Query und Fragment. Zwei Tabs mit derselben URL verwenden beim Speichern den zuletzt geschriebenen Zustand.
+**Vergessen** entfernt den gespeicherten Eintrag, lässt die aktuelle temporäre Markierung aber stehen. Entfernen/Leeren aktualisiert ebenfalls gespeicherte Einträge; Rückgängig kann das in derselben Sitzung zurücknehmen. Speicherung erfolgt pro vollständiger URL einschließlich Query und Fragment. Zwei Tabs mit derselben URL verwenden beim Speichern den zuletzt geschriebenen Zustand.
 
 Bei einem Speicherfehler bleibt der vorherige Zustand erhalten und die Anwendung meldet den Fehler. Unbekannte Datenversionen werden nicht überschrieben. **Gespeicherte Seiten exportieren (JSON)** erhält die Daten lokal; ein Datei-Import wird aktuell nicht angeboten.
 
@@ -62,6 +62,8 @@ Die Regler zeigen den aktuellen Pixelwert und lassen sich mit den Pfeiltasten in
 
 ## Tastatur und Panel
 
+Das Panel ist höchstens 320 px breit und in der zugeklappten Grundansicht auf 560 px bzw. 80 % des sichtbaren Bildschirms begrenzt. Zusätzliche Werkzeuge stehen in zwei Spalten; geöffnete Bereiche nutzen die volle Breite und bei Bedarf mehr Höhe. Hinweise und die aktuelle Tastenkombination stehen unter **Hilfe & Shortcuts**. Schriftgrößen bleiben erhalten; auf schmalen Bildschirmen sind Buttons und Abschnittsüberschriften mindestens 44 px hoch.
+
 **Alt+Shift+H** führt direkt „Alle Vorkommen markieren“ aus. Unter Einstellungen ist der Shortcut aufzeichenbar, abschaltbar und zurücksetzbar. Alt, Strg oder Meta plus Buchstabe/Ziffer; Shift ist optional. Escape bricht die Aufzeichnung ab. Betriebssystem-/Browserkonflikte sind nicht grundsätzlich vermeidbar.
 
 In Eingabefeldern, bei IME und Tastenwiederholung greift der Auswahl-Shortcut nicht. Rechtsklick und Doppelklick bleiben nativ; Alt+H speichert keine Keywords mehr.
@@ -70,6 +72,6 @@ Escape schließt Auswahlaktionen oder Panel und gibt den Fokus zurück. Der Pane
 
 ## Dauerhafte Keywords und Grenzen
 
-**Dauerhafte Keywords** bleibt ein eigener aufklappbarer Bereich für seitenübergreifende Begriffe, Regex, Farben und Domain-Einschränkungen. Neue Begriffe mit Enter oder Hinzufügen speichern. Fehler stehen am Feld; die Eingabe bleibt erhalten. Das Ausschließen einer Domain über das Userscript-Menü deaktiviert dort Highlights.
+**Keywords** bleibt ein eigener aufklappbarer Bereich für dauerhafte, seitenübergreifende Begriffe, Regex, Farben und Domain-Einschränkungen. Neue Begriffe mit Enter oder Hinzufügen speichern. Fehler stehen am Feld; die Eingabe bleibt erhalten. Das Ausschließen einer Domain über das Userscript-Menü deaktiviert dort Highlights.
 
 Seitenmarkierungen brauchen CSS Custom Highlights. Browser-/Manager-Tests auf echten Geräten, Screenreader und mobile Bildschirmtastaturen ergänzen die automatisierte Chromium-Prüfung; es wird keine vollständige WCAG-Zertifizierung behauptet.

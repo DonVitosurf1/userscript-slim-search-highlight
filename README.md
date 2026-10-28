@@ -23,11 +23,12 @@ Seitenmarkierungen benötigen einen Browser mit **CSS Custom Highlights**. Ohne 
 - Text auswählen → Textmarker-Symbol öffnen → **Alle Vorkommen markieren**. Alternativ **Alt+Shift+H** verwenden; die Kombination ist in den Einstellungen änderbar und abschaltbar.
 - Mit Vor/Zurück oder **Alt+← / →** durch die Treffer navigieren. Rechtsklick und Doppelklick bleiben beim Browser.
 - Jede Seitenpassage hat eine eigene Farbe. Entfernen, Leeren und weitere Seitenänderungen lassen sich rückgängig machen.
-- **Für diese Seite merken** speichert nur ausdrücklich gewählte Passagen lokal für diese URL. Sonst bleiben Markierungen temporär. **Dauerhafte Keywords** sind ein eigener Bereich für seitenübergreifende Begriffe.
-- **Suchoptionen für diese Seite** bietet ganze Wörter und den Artikelbereich. Standard bleibt die ganze ausgewählte Passage auf der gesamten Seite.
+- **Merken** speichert nur ausdrücklich gewählte Passagen lokal für diese URL. Sonst bleiben Markierungen temporär. **Keywords** ist ein eigener Bereich für dauerhafte, seitenübergreifende Begriffe.
+- **Suchoptionen** bietet ganze Wörter und den Artikelbereich. Standard bleibt die ganze ausgewählte Passage auf der gesamten Seite.
 - **Kopieren / Export** an der Auswahl bietet Zitat+URL oder einen Link zur Textstelle. Websuche startet ausschließlich über **Im Web suchen**.
 - In den Einstellungen: Klartext/Markdown für Zitate, Markdown-Export der aktuellen Seite und JSON-Export gespeicherter Seiten.
 - **Einstellungen → Darstellung:** helles/dunkles Farbschema sowie Größe, Bildschirmecke und Randabstand des Öffnen-Buttons. Standardgröße: 56 px.
+- Das Panel bleibt kompakt: zusätzliche Bereiche sind zweispaltig aufklappbar; Erklärungen stehen unter **Hilfe & Shortcuts**.
 - **Automatisch von Suche übernehmen:** Google-Suchwörter auch auf geöffneten Ergebnisseiten markieren. Die Begriffe werden beim Öffnen des Ergebnisses frisch übernommen; normale Klicks, neue Tabs und das Browser-Kontextmenü bleiben erhalten.
 
 Gespeicherte Passagen werden bei Wiederbesuch erneut gesucht. Fehlender Text wird als **Nicht gefunden** gemeldet. Ohne Zwischenablagenzugriff steht ein Feld zum manuellen Kopieren bereit. Vollständige Details und Grenzen: [Bedienung](docs/usage.de.md), [Datenformat](docs/data-format.md).

@@ -22,9 +22,10 @@ GM_addStyle(`
     #slim-selection-tools #selection-actions { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
     #slim-selection-tools #selection-actions button { white-space: normal; text-align: left; justify-content: start; }
     #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
-    #slim-hl-panel .page-item { display: block; margin: 12px 0; padding-bottom: 10px; border-bottom: 1px solid var(--hl-divider); }
+    #slim-hl-panel .page-item { display: block; margin: 8px 0; padding-bottom: 6px; border-bottom: 1px solid var(--hl-divider); }
     #slim-hl-panel .page-row { display: flex; align-items: center; gap: 8px; }
-    #slim-hl-panel .page-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    #slim-hl-panel .page-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    #slim-hl-panel .page-meta .hint { margin: 0; }
     #slim-hl-panel .page-meta button { font-size: 12px; padding: 5px 8px; }
     #slim-hl-panel .page-actions { display: flex; flex-wrap: wrap; gap: 6px; }
     #slim-hl-panel textarea { resize: none; min-height: 120px; margin-bottom: 8px; }
@@ -33,10 +34,11 @@ GM_addStyle(`
     #slim-selection-tools details button { width: 100%; margin-top: 4px; }
     #slim-hl-panel .page-term { flex: 1; min-width: 0; overflow-wrap: anywhere; max-height: 5.8em; overflow: auto; }
     #slim-hl-panel #page-heading { margin-top: 0; }
-    #slim-hl-panel #clear-page { width: 100%; margin: 8px 0; }
+    #slim-hl-panel #clear-page { margin: 0; }
+    #slim-hl-panel .page-actions button { flex: 1; }
     #slim-hl-panel .shortcut-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     #slim-hl-panel #shortcut-label { display: block; font-weight: 600; margin: 6px 0; }
-    #slim-hl-panel #navigation-scope { margin-bottom: 8px; }
+    #slim-hl-panel #navigation-scope { margin: 0; }
     .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
     #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle {
         --hl-bg: #1a1a1a; --hl-surface: #242424; --hl-field: #222;
@@ -45,7 +47,7 @@ GM_addStyle(`
         --hl-accent-text: #ffca28; --hl-focus: #ffca28; --hl-divider: #444;
         --hl-active: #484848; --hl-scroll-thumb: #777; --hl-scroll-hover: #aaa;
         --hl-shadow: rgba(0,0,0,.4); --hl-scheme: dark;
-        --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 14px;
+        --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 10px;
     }
     #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light] {
         --hl-bg: #fff; --hl-surface: #f1f4f7; --hl-field: #fff;
@@ -58,12 +60,15 @@ GM_addStyle(`
     #slim-hl-panel {
         all: initial;
         position: fixed; z-index: 2147483646; display: flex; flex-direction: column;
-        width: min(360px, calc(100vw - 24px)); min-width: 0;
-        max-height: calc(100dvh - 24px); box-sizing: border-box;
+        width: min(320px, calc(100vw - 24px)); min-width: 0;
+        max-height: var(--hl-panel-collapsed-height, min(560px, 80dvh)); box-sizing: border-box;
         background: var(--hl-bg); color: var(--hl-text); color-scheme: var(--hl-scheme);
         border: 1px solid var(--hl-divider); border-radius: 10px; box-shadow: 0 10px 32px var(--hl-shadow);
         font: 14px/1.45 system-ui, -apple-system, sans-serif; text-align: left;
         isolation: isolate; overflow: hidden;
+    }
+    #slim-hl-panel:has(.panel-tools > details[open]), #slim-hl-panel:has(#manual-copy-section:not([hidden])) {
+        max-height: var(--hl-panel-expanded-height, calc(100dvh - 24px));
     }
     #slim-hl-panel :where(:not(svg, svg *)), #slim-hl-panel :where(:not(svg, svg *))::before, #slim-hl-panel :where(:not(svg, svg *))::after {
         all: revert; box-sizing: border-box; font: inherit; color: inherit;
@@ -79,7 +84,7 @@ GM_addStyle(`
         outline: 2px solid var(--hl-focus); outline-offset: 2px;
     }
     #slim-hl-header {
-        padding: 10px 12px; background: var(--hl-surface); cursor: grab; touch-action: none;
+        padding: 8px 10px; background: var(--hl-surface); cursor: grab; touch-action: none;
         display: flex; align-items: center; justify-content: space-between; gap: var(--hl-gap); flex-shrink: 0;
     }
     #slim-hl-header:active { cursor: grabbing; }
@@ -103,10 +108,11 @@ GM_addStyle(`
         min-height: 0; scrollbar-gutter: stable; flex: 1 1 auto;
     }
     #slim-hl-panel.minimized .panel-body { display: none; }
-    #slim-hl-panel .navigation { display: flex; align-items: center; justify-content: space-between; gap: var(--hl-gap); margin-bottom: 16px; }
+    #slim-hl-panel .navigation { display: flex; align-items: center; justify-content: space-between; gap: var(--hl-gap); margin-bottom: 8px; }
+    #slim-hl-panel .counter-group { min-width: 0; }
     #slim-hl-panel .counter { font-size: 16px; font-weight: 650; color: var(--hl-accent-text); font-variant-numeric: tabular-nums; }
     #slim-hl-panel .nav-btns { display: flex; gap: 6px; }
-    #slim-hl-panel .section-title { display: block; font-size: 14px; font-weight: 650; margin: 18px 0 8px; }
+    #slim-hl-panel .section-title { display: block; font-size: 14px; font-weight: 650; margin: 12px 0 6px; }
     #slim-hl-panel label { display: block; margin: 0 0 6px; }
     #slim-hl-panel .check-label { display: flex; align-items: center; gap: var(--hl-gap); margin: 10px 0; min-height: 28px; }
     #slim-hl-panel input[type=range] { display: block; flex: 1; min-width: 0; width: 100%; min-height: 36px; margin: 0; accent-color: var(--hl-focus); cursor: pointer; }
@@ -129,6 +135,10 @@ GM_addStyle(`
     #slim-hl-panel details { display: block; margin-top: 14px; border-top: 1px solid var(--hl-divider); }
     #slim-hl-panel summary { display: list-item; cursor: pointer; padding: 10px 2px; font-weight: 600; }
     #slim-hl-panel details > .details-body { padding: 0 2px 8px; }
+    #slim-hl-panel .panel-tools { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 8px; margin-top: 8px; }
+    #slim-hl-panel .panel-tools > details { margin-top: 0; min-width: 0; }
+    #slim-hl-panel .panel-tools > details[open] { grid-column: 1 / -1; }
+    #slim-hl-panel .panel-tools > details > summary { min-height: 36px; padding: 6px 2px; font-size: 13px; }
     #slim-hl-panel .hint, #slim-hl-panel .empty { color: var(--hl-muted); font-size: 13px; margin: 6px 0; overflow-wrap: anywhere; }
     #slim-hl-panel .error { color: var(--hl-danger); font-size: 13px; margin: 6px 0; white-space: pre-line; }
     #slim-hl-panel [aria-invalid=true] { border-color: var(--hl-danger); }
@@ -142,6 +152,8 @@ GM_addStyle(`
     #slim-hl-panel .match-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
     #slim-hl-panel #match-list { display: block; max-height: 210px; overflow: auto; padding: 3px; }
     #slim-hl-panel .status-row { display: flex; align-items: center; gap: var(--hl-gap); flex-wrap: wrap; margin-top: 8px; }
+    #slim-hl-panel .status-row:has(#panel-status:empty):has(#undo-delete[hidden]) { margin-top: 0; }
+    #slim-hl-panel #page-search-status:empty, #slim-hl-panel #panel-status:empty { margin: 0; }
     #slim-hl-panel .btn { width: 100%; margin: 4px 0; }
     #slim-hl-toggle {
         all: initial; position: fixed; z-index: 2147483646;
@@ -158,11 +170,11 @@ GM_addStyle(`
     #slim-pos-bar .mark { position: absolute; left: 0; width: 8px; height: 4px; border-radius: 2px; pointer-events: auto; cursor: pointer; opacity: .75; }
     #slim-pos-bar .mark:hover, #slim-pos-bar .mark.active { opacity: 1; transform: scaleX(1.6); }
     @media (max-width: 480px) {
-        #slim-hl-panel { --hl-pad: 12px; }
         #slim-hl-panel input[type=text], #slim-hl-panel select, #slim-hl-panel textarea { font-size: 16px; }
         #slim-hl-panel button, #slim-hl-panel summary, #slim-selection-tools button, #slim-selection-tools summary { min-height: 44px; }
         #slim-hl-panel .icon-btn { width: 40px; }
         #slim-hl-panel input[type=range] { min-height: 44px; }
+        #slim-hl-panel .panel-tools > details > summary { min-height: 44px; }
     }
     @media (prefers-reduced-motion: reduce) { #slim-hl-panel button { transition: none; } }
     @media (forced-colors: active) {
