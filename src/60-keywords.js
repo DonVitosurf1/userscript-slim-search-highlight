@@ -54,24 +54,92 @@ function extractQuery(urlStr) {
     return '';
 }
 
-function getSearchTerms() {
-    const q = extractQuery(location.href);
-    if (!q) return [];
+function splitSearchTerms(q) {
     return q.split(/\s+/).filter(w => w.length > 1 && !IGNORE_WORDS.has(w.toLowerCase()));
 }
 
+function getSearchTerms() {
+    const url = new URL(location.href);
+    // A submitted URL query wins over an unfinished edit in the search box.
+    const hasQuery = ['q', 'query', 'p', 'wd', 'text', 'search'].some(key => url.searchParams.has(key));
+    const q = hasQuery ? extractQuery(url.href) : document.querySelector('textarea[name="q"], input[name="q"], input[name="query"]')?.value || '';
+    return splitSearchTerms(q);
+}
+
 function updateCrossPageTerms() {
-    if (!isSearchEngine(location.href)) return;
+    if (!autoSearch || !isSearchEngine(location.href)) return [];
     const terms = getSearchTerms();
-    if (terms.length) {
-        GM_setValue('hl_cross_terms', { terms, timestamp: Date.now() });
+    try {
+        GM_setValue('hl_cross_terms', { terms, timestamp: Date.now(), source: location.origin });
         const joined = terms.join(' ');
         if (joined && !searchHistory.includes(joined)) {
             searchHistory.unshift(joined);
             searchHistory = searchHistory.slice(0, 8);
             save();
         }
+    } catch { setPanelStatus('searchTransferFailed'); }
+    return terms;
+}
+
+function searchDestination(value) {
+    try {
+        const url = new URL(value, location.href);
+        if (!['http:', 'https:'].includes(url.protocol)) return '';
+        url.hash = '';
+        return url.href;
+    } catch { return ''; }
+}
+
+function freshSearchRecord(record) {
+    const age = Date.now() - record?.timestamp;
+    return Number.isFinite(record?.timestamp) && age >= 0 && age < CROSS_TTL
+        && Array.isArray(record.terms) && record.terms.every(term => typeof term === 'string');
+}
+
+function readSearchHandoffs() {
+    const data = GM_getValue('hl_search_handoffs', null);
+    return data?.version === 1 && Array.isArray(data.entries)
+        ? data.entries.filter(entry => freshSearchRecord(entry) && typeof entry.target === 'string') : [];
+}
+
+function captureSearchNavigation(event) {
+    if (!autoSearch || !isSearchEngine(location.href)) return;
+    if (event.type === 'auxclick' && event.button !== 1) return;
+    if (event.type === 'click' && event.button !== 0) return;
+    const link = event.target.closest?.('a[href]');
+    if (!link || link.closest(OWN_UI)) return;
+    let target = searchDestination(link.href);
+    if (!target) return;
+    // Google's /url wrapper may carry the actual destination in either parameter.
+    const wrapped = new URL(target);
+    if (isSearchEngine(target) && wrapped.pathname === '/url') {
+        target = searchDestination(wrapped.searchParams.get('url') || wrapped.searchParams.get('q') || '');
     }
+    if (!target || isSearchEngine(target)) return;
+    const terms = updateCrossPageTerms();
+    try {
+        const data = GM_getValue('hl_search_handoffs', null);
+        if (data != null && (data.version !== 1 || !Array.isArray(data.entries))) throw Error('Unknown handoff format');
+        const entries = readSearchHandoffs().filter(entry => entry.target !== target);
+        if (terms.length) entries.unshift({ target, source: location.origin, terms, timestamp: Date.now() });
+        GM_setValue('hl_search_handoffs', { version: 1, entries: entries.slice(0, 12) });
+    } catch { setPanelStatus('searchTransferFailed'); }
+}
+
+function automaticSearchTerms() {
+    if (isSearchEngine(location.href)) return getSearchTerms();
+    try {
+        const handoff = readSearchHandoffs().find(entry => entry.target === searchDestination(location.href));
+        if (handoff) return handoff.terms;
+        const fromSearch = isSearchEngine(document.referrer);
+        if (fromSearch) {
+            const query = extractQuery(document.referrer);
+            if (query) return splitSearchTerms(query);
+        }
+        const stored = GM_getValue('hl_cross_terms', null);
+        if (freshSearchRecord(stored) && (!stored.source || (fromSearch && new URL(document.referrer).origin === stored.source))) return stored.terms;
+    } catch { /* Storage may be unavailable; permanent keywords must still work. */ }
+    return [];
 }
 
 let manualTerms = [];
@@ -84,16 +152,7 @@ function getCrossPageTerms() {
     }
 
     result.push(...manualTerms);
-    if (autoSearch) {
-        const stored = GM_getValue('hl_cross_terms', null);
-        if (stored && stored.terms && (Date.now() - stored.timestamp) < CROSS_TTL) {
-            result.push(...stored.terms);
-        }
-        if (isSearchEngine(document.referrer)) {
-            const q = extractQuery(document.referrer);
-            if (q) q.split(/\s+/).forEach(w => w.length > 1 && !IGNORE_WORDS.has(w.toLowerCase()) && result.push(w));
-        }
-    }
+    if (autoSearch) result.push(...automaticSearchTerms());
     return [...new Set(result)];
 }
 

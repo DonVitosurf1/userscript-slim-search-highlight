@@ -8,6 +8,18 @@ Wort, Satz oder Absatz auf der Webseite auswählen. Das kleine Textmarker-Symbol
 
 Die Suche ist wörtlich, ohne Beachtung der Groß-/Kleinschreibung, mit vereinheitlichten Leerzeichen und Zeilenumbrüchen. Inline-Formatierung unterbricht sie nicht. Unsichtbarer Text zählt nicht als sichtbarer Wortabstand. Überlappende Fundstellen zählen einmal; bei gleichem Beginn gewinnt die längere Passage. Code, Eingabefelder und eigene Bedienelemente werden ausgelassen. Frames und Shadow-DOM-Inhalte werden nicht durchsucht.
 
+## Google-Suche → Ergebnisseite
+
+Wenn **Einstellungen → Automatisch von Suche übernehmen** aktiv ist, werden die Suchwörter auf geöffneten Ergebnisseiten automatisch hervorgehoben. Das Userscript muss sowohl auf Google als auch auf der Zielseite laufen dürfen; ausgeschlossene Domains bleiben ausgeschlossen.
+
+1. Auf Google suchen und einen Ergebnislink öffnen.
+2. Die bestätigte Suchanfrage wird direkt beim Öffnen übernommen – auch nach einer dynamischen Änderung der Google-Suche oder längerer Verweildauer auf der Suchseite.
+3. Auf der Zielseite werden die einzelnen Suchwörter markiert. Normale Klicks, Strg-/Cmd-Klicks, Mittelklick und „In neuem Tab öffnen“ aus dem normalen Kontextmenü bleiben verfügbar.
+
+Die Übergabe hängt nicht von Suchparametern im Referrer ab. Es werden keine Suchwörter an Ergebnis-URLs angehängt. Ein lokaler Zwischenspeicher ordnet die Begriffe der angeklickten Ziel-URL zu; bis zu zwölf Zieladressen bleiben zehn Minuten gültig. Der URL-Fragmentteil wird für diese Zuordnung ignoriert. Weiterleitungen auf andere Adressen oder Speziallinks können die Zuordnung verhindern; ein vorhandener Suchmaschinen-Referrer dient als Fallback.
+
+Ein begonnenes, noch nicht abgeschicktes Suchfeld ersetzt die bereits bestätigte URL-Suchanfrage nicht. Fehlt die Anfrage in der URL, wird das Suchfeld als Fallback gelesen. Die Wortsuche filtert kurze Wörter und gängige Stoppwörter; sie ist kein vollständiger Parser für Google-Suchoperatoren. Die automatische Übernahme erzeugt keine dauerhaften Keywords und keine gespeicherten Seitenpassagen. Sie lässt sich jederzeit abschalten; vorhandene explizite `#hl`-/`#sjhl`-Links und manuell gewählte Verlaufseinträge sind davon unabhängig.
+
 ## Farben, Löschen und Rückgängig
 
 Unter **Auf dieser Seite** hat jede Passage eine Farbe und Trefferzahl. Entfernen löscht die Passage und alle zugehörigen Markierungen; **Seitenmarkierungen löschen** leert die Liste. **Seitenänderung rückgängig** stellt den vorherigen Zustand einschließlich Farbe und Speicherstatus wieder her. Die letzten 20 Seitenzustände bleiben während der Sitzung erhalten; Navigation oder Neuladen beendet diesen Verlauf.

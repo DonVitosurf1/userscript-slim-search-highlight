@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.4.0
+// @version      4.4.1
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -64,6 +64,7 @@
             launcherSize: 'Open button size', launcherSizeHint: 'Size of the floating open button (44–80 px).', resetLauncherSize: 'Reset size',
             launcherPosition: 'Open button position', launcherInset: 'Distance from edge', bottomRight: 'Bottom right', bottomLeft: 'Bottom left', topRight: 'Top right', topLeft: 'Top left',
             appearanceSaveFailed: 'Could not save the appearance. The previous setting was restored.',
+            searchTransferFailed: 'Could not store the search words for the result page. Navigation remains available.',
             enabled: 'Highlights enabled', autoSearch: 'Take over terms from search', posBar: 'Show position bar',
             engine: 'Search engine for right-click:', language: 'Language:', langAuto: 'Auto',
             noMatches: 'No matches on this page', noKwMatches: 'No keywords match your search', noKeywords: 'No keywords saved yet',
@@ -83,6 +84,7 @@
             launcherSize: 'Größe des Öffnen-Buttons', launcherSizeHint: 'Größe des schwebenden Öffnen-Buttons (44–80 px).', resetLauncherSize: 'Größe zurücksetzen',
             launcherPosition: 'Position des Öffnen-Buttons', launcherInset: 'Abstand zum Rand', bottomRight: 'Unten rechts', bottomLeft: 'Unten links', topRight: 'Oben rechts', topLeft: 'Oben links',
             appearanceSaveFailed: 'Darstellung konnte nicht gespeichert werden. Die vorherige Einstellung wurde wiederhergestellt.',
+            searchTransferFailed: 'Suchwörter konnten nicht für die Ergebnisseite gespeichert werden. Der Link lässt sich weiterhin öffnen.',
             enabled: 'Highlights aktiv', autoSearch: 'Automatisch von Suche übernehmen', posBar: 'Positionsanzeige anzeigen',
             engine: 'Suchmaschine für Rechtsklick:', language: 'Sprache:', langAuto: 'Automatisch',
             noMatches: 'Keine Treffer auf dieser Seite', noKwMatches: 'Keine Treffer für die Suche', noKeywords: 'Noch keine Keywords gespeichert',
@@ -981,24 +983,92 @@
         return '';
     }
 
-    function getSearchTerms() {
-        const q = extractQuery(location.href);
-        if (!q) return [];
+    function splitSearchTerms(q) {
         return q.split(/\s+/).filter(w => w.length > 1 && !IGNORE_WORDS.has(w.toLowerCase()));
     }
 
+    function getSearchTerms() {
+        const url = new URL(location.href);
+        // A submitted URL query wins over an unfinished edit in the search box.
+        const hasQuery = ['q', 'query', 'p', 'wd', 'text', 'search'].some(key => url.searchParams.has(key));
+        const q = hasQuery ? extractQuery(url.href) : document.querySelector('textarea[name="q"], input[name="q"], input[name="query"]')?.value || '';
+        return splitSearchTerms(q);
+    }
+
     function updateCrossPageTerms() {
-        if (!isSearchEngine(location.href)) return;
+        if (!autoSearch || !isSearchEngine(location.href)) return [];
         const terms = getSearchTerms();
-        if (terms.length) {
-            GM_setValue('hl_cross_terms', { terms, timestamp: Date.now() });
+        try {
+            GM_setValue('hl_cross_terms', { terms, timestamp: Date.now(), source: location.origin });
             const joined = terms.join(' ');
             if (joined && !searchHistory.includes(joined)) {
                 searchHistory.unshift(joined);
                 searchHistory = searchHistory.slice(0, 8);
                 save();
             }
+        } catch { setPanelStatus('searchTransferFailed'); }
+        return terms;
+    }
+
+    function searchDestination(value) {
+        try {
+            const url = new URL(value, location.href);
+            if (!['http:', 'https:'].includes(url.protocol)) return '';
+            url.hash = '';
+            return url.href;
+        } catch { return ''; }
+    }
+
+    function freshSearchRecord(record) {
+        const age = Date.now() - record?.timestamp;
+        return Number.isFinite(record?.timestamp) && age >= 0 && age < CROSS_TTL
+            && Array.isArray(record.terms) && record.terms.every(term => typeof term === 'string');
+    }
+
+    function readSearchHandoffs() {
+        const data = GM_getValue('hl_search_handoffs', null);
+        return data?.version === 1 && Array.isArray(data.entries)
+            ? data.entries.filter(entry => freshSearchRecord(entry) && typeof entry.target === 'string') : [];
+    }
+
+    function captureSearchNavigation(event) {
+        if (!autoSearch || !isSearchEngine(location.href)) return;
+        if (event.type === 'auxclick' && event.button !== 1) return;
+        if (event.type === 'click' && event.button !== 0) return;
+        const link = event.target.closest?.('a[href]');
+        if (!link || link.closest(OWN_UI)) return;
+        let target = searchDestination(link.href);
+        if (!target) return;
+        // Google's /url wrapper may carry the actual destination in either parameter.
+        const wrapped = new URL(target);
+        if (isSearchEngine(target) && wrapped.pathname === '/url') {
+            target = searchDestination(wrapped.searchParams.get('url') || wrapped.searchParams.get('q') || '');
         }
+        if (!target || isSearchEngine(target)) return;
+        const terms = updateCrossPageTerms();
+        try {
+            const data = GM_getValue('hl_search_handoffs', null);
+            if (data != null && (data.version !== 1 || !Array.isArray(data.entries))) throw Error('Unknown handoff format');
+            const entries = readSearchHandoffs().filter(entry => entry.target !== target);
+            if (terms.length) entries.unshift({ target, source: location.origin, terms, timestamp: Date.now() });
+            GM_setValue('hl_search_handoffs', { version: 1, entries: entries.slice(0, 12) });
+        } catch { setPanelStatus('searchTransferFailed'); }
+    }
+
+    function automaticSearchTerms() {
+        if (isSearchEngine(location.href)) return getSearchTerms();
+        try {
+            const handoff = readSearchHandoffs().find(entry => entry.target === searchDestination(location.href));
+            if (handoff) return handoff.terms;
+            const fromSearch = isSearchEngine(document.referrer);
+            if (fromSearch) {
+                const query = extractQuery(document.referrer);
+                if (query) return splitSearchTerms(query);
+            }
+            const stored = GM_getValue('hl_cross_terms', null);
+            if (freshSearchRecord(stored) && (!stored.source || (fromSearch && new URL(document.referrer).origin === stored.source))) return stored.terms;
+        } catch { /* Storage may be unavailable; permanent keywords must still work. */ }
+        return [];
     }
 
     let manualTerms = [];
@@ -1011,16 +1081,7 @@
         }
 
         result.push(...manualTerms);
-        if (autoSearch) {
-            const stored = GM_getValue('hl_cross_terms', null);
-            if (stored && stored.terms && (Date.now() - stored.timestamp) < CROSS_TTL) {
-                result.push(...stored.terms);
-            }
-            if (isSearchEngine(document.referrer)) {
-                const q = extractQuery(document.referrer);
-                if (q) q.split(/\s+/).forEach(w => w.length > 1 && !IGNORE_WORDS.has(w.toLowerCase()) && result.push(w));
-            }
-        }
+        if (autoSearch) result.push(...automaticSearchTerms());
         return [...new Set(result)];
     }
 
@@ -1908,6 +1969,8 @@
 
     // Source: src/90-lifecycle.js
     function bindGlobalHandlers() {
+        // Refresh the query at native link activation, not just once at page load.
+        for (const type of ['click', 'auxclick', 'contextmenu']) document.addEventListener(type, captureSearchNavigation, true);
         document.addEventListener('selectionchange', () => {
             clearTimeout(selectionTimer); selectionTimer = setTimeout(updateSelectionTools, 80);
         });

@@ -28,6 +28,7 @@ Seitenmarkierungen benötigen einen Browser mit **CSS Custom Highlights**. Ohne 
 - **Kopieren / Export** an der Auswahl bietet Zitat+URL oder einen Link zur Textstelle. Websuche startet ausschließlich über **Im Web suchen**.
 - In den Einstellungen: Klartext/Markdown für Zitate, Markdown-Export der aktuellen Seite und JSON-Export gespeicherter Seiten.
 - **Einstellungen → Darstellung:** helles/dunkles Farbschema sowie Größe, Bildschirmecke und Randabstand des Öffnen-Buttons. Standardgröße: 56 px.
+- **Automatisch von Suche übernehmen:** Google-Suchwörter auch auf geöffneten Ergebnisseiten markieren. Die Begriffe werden beim Öffnen des Ergebnisses frisch übernommen; normale Klicks, neue Tabs und das Browser-Kontextmenü bleiben erhalten.
 
 Gespeicherte Passagen werden bei Wiederbesuch erneut gesucht. Fehlender Text wird als **Nicht gefunden** gemeldet. Ohne Zwischenablagenzugriff steht ein Feld zum manuellen Kopieren bereit. Vollständige Details und Grenzen: [Bedienung](docs/usage.de.md), [Datenformat](docs/data-format.md).
 
@@ -42,7 +43,7 @@ npm run build
 npm test
 ```
 
-Die Entwicklung findet unter `src/` statt. Der deterministische Build erzeugt weiterhin **eine** installierbare Datei unter `userscript/`. `npm run check` erkennt veraltete generierte Dateien. Tests laufen auf synthetischen Seiten ohne Netzwerk.
+Die Entwicklung findet unter `src/` statt. Der deterministische Build erzeugt weiterhin **eine** installierbare Datei unter `userscript/`. `npm run check` erkennt veraltete generierte Dateien. Tests laufen auf synthetischen Seiten ohne externe Netzwerkzugriffe.
 
 ```text
 src/          geordnete Quellabschnitte und Userscript-Metadaten

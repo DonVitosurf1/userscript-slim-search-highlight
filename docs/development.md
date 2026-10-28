@@ -17,7 +17,7 @@ The cloud environment also provides `/usr/bin/chromium`. To use it instead of a 
 CHROMIUM_PATH=/usr/bin/chromium npm test
 ```
 
-No credentials, environment file, database or server is needed. Browser tests use synthetic pages and GM-function adapters, with no live webpage traffic.
+No credentials, environment file, database or separate server setup is needed. Browser tests use synthetic pages and GM-function adapters, with no live webpage traffic. The native search-navigation tests start and stop their own ephemeral HTTP server on two `.localhost` origins so normal and middle-click navigation are exercised without contacting Google or another external service.
 
 ## Daily workflow
 
@@ -39,7 +39,7 @@ No credentials, environment file, database or server is needed. Browser tests us
 | `npm run benchmark` | Verify actual match counts while measuring handler and completion times |
 | `npm run screenshots` | Capture desktop/narrow selection actions, panel, options and manual copying |
 
-The `-k` filter matches names; zero selected tests is an error. `tests/run_tests.js` remains the stable entry point. Fixtures live in `tests/helpers/browser.cjs`; suites cover permanent keywords, panel interaction, selections, review regressions, page features and appearance preferences. Each test closes its own browser contexts. Use `node tests/run_tests.js -k appearance_` for theme, launcher geometry, persistence and preference-error recovery.
+The `-k` filter matches names; zero selected tests is an error. `tests/run_tests.js` remains the stable entry point. Fixtures live in `tests/helpers/browser.cjs`; suites cover permanent keywords, panel interaction, selections, review regressions, page features, appearance preferences and search-result handoff. Each test closes its own browser contexts. Use `node tests/run_tests.js -k appearance_` for theme/launcher preferences, or `node tests/run_tests.js -k search_handoff_` for current queries, native link activation, concurrent destinations, referrers, expiry and storage-error recovery.
 
 ## Performance checks
 

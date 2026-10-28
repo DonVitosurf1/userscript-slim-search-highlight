@@ -1,4 +1,6 @@
 function bindGlobalHandlers() {
+    // Refresh the query at native link activation, not just once at page load.
+    for (const type of ['click', 'auxclick', 'contextmenu']) document.addEventListener(type, captureSearchNavigation, true);
     document.addEventListener('selectionchange', () => {
         clearTimeout(selectionTimer); selectionTimer = setTimeout(updateSelectionTools, 80);
     });
