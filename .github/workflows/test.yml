@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-      - run: node --check userscript/slim-search-highlight.user.js
-      - run: npm install
+      - run: npm run check
+      - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm test

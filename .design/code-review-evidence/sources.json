@@ -1,0 +1,79 @@
+[
+  {
+    "name": "markjs",
+    "url": "https://markjs.io/",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "name": "highlightthis",
+    "url": "https://highlightthis.net/",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "name": "hypothesis",
+    "url": "https://web.hypothes.is/help/how-to-highlight/",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "name": "web-highlighter",
+    "url": "https://raw.githubusercontent.com/alienzhou/web-highlighter/master/README.md",
+    "final_url": "https://raw.githubusercontent.com/alienzhou/web-highlighter/master/README.md",
+    "chars": 17023,
+    "status": "ok"
+  },
+  {
+    "name": "css-highlights",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "name": "fragments",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Fragment/Text_fragments",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "name": "markjs-readme",
+    "url": "https://raw.githubusercontent.com/julmot/mark.js/master/README.md",
+    "chars": 960,
+    "status": "ok"
+  },
+  {
+    "name": "markjs-docs",
+    "url": "https://raw.githubusercontent.com/julmot/mark.js/master/src/jquery.mark.js",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "name": "markjs-index",
+    "url": "https://raw.githubusercontent.com/julmot/mark.js/master/index.html",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "name": "hypothesis-readme",
+    "url": "https://raw.githubusercontent.com/hypothesis/client/main/README.md",
+    "chars": 2232,
+    "status": "ok"
+  },
+  {
+    "name": "hypothesis-anchoring",
+    "url": "https://raw.githubusercontent.com/hypothesis/client/main/src/annotator/anchoring/html.ts",
+    "chars": 3395,
+    "status": "ok"
+  },
+  {
+    "name": "mdn-highlights",
+    "url": "https://raw.githubusercontent.com/mdn/content/main/files/en-us/web/api/css_custom_highlight_api/index.md",
+    "chars": 9045,
+    "status": "ok"
+  },
+  {
+    "name": "mdn-fragments",
+    "url": "https://raw.githubusercontent.com/mdn/content/main/files/en-us/web/uri/reference/fragment/text_fragments/index.md",
+    "chars": 12178,
+    "status": "ok"
+  },
+  {
+    "name": "markjs-source",
+    "url": "https://raw.githubusercontent.com/julmot/mark.js/master/src/lib/mark.js",
+    "status": "ok"
+  }
+]

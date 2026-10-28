@@ -1,0 +1,34 @@
+{
+  "highlight": {
+    "color": "rgb(0, 0, 0)",
+    "background": "rgb(0, 0, 0)"
+  },
+  "duplicateDialog": {
+    "type": "alert",
+    "message": "Keyword existiert bereits."
+  },
+  "regex": {
+    "message": "Ungültiger Regex bei „/[invalid/“",
+    "saved": true,
+    "input": ""
+  },
+  "noResults": "Keine Treffer für die Suche",
+  "clearButtons": [
+    "−",
+    "×",
+    "◀",
+    "▶",
+    "Hinzufügen"
+  ],
+  "reducedMotionScroll": [
+    {
+      "behavior": "smooth",
+      "block": "center"
+    }
+  ],
+  "closeFocus": {
+    "active": "btn-close",
+    "panel": "none"
+  },
+  "openFocus": "slim-hl-toggle"
+}

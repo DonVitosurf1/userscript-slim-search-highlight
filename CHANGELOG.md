@@ -1,5 +1,45 @@
 # Changelog
 
+## 4.3.0
+
+### Korrekturen und Performance
+- Versteckte Inline-Inhalte und Inline-Blocks erzeugen keine erfundenen Textgrenzen mehr. Fremde Änderungen innerhalb bestehender Keyword-Highlights aktualisieren die Seiten-Ranges; veraltete Auswahl-Snapshots werden auch bei fokussierter Toolbar verworfen.
+- Statusmeldungen werden nach einem Sprachwechsel neu übersetzt; schmale Toolbar-Controls sind mindestens 44px hoch.
+- Normalisierte Text-Offsets werden einmalig abgebildet und schwach gecacht. Größere Suchen laufen in abbrechbaren Schritten; Trefferzahlen verwenden einen Index und die Positionsleiste höchstens 500 gebündelte Ticks.
+
+### Seitenfunktionen
+- Eigene Farbe pro Passage und Rückgängig für die letzten 20 Seitenänderungen.
+- Ausdrückliches Merken für die aktuelle vollständige URL, getrennt von globalen Keywords. Fehlende gespeicherte Texte werden gemeldet; Vergessen/Entfernen/Leeren aktualisiert lokale Daten. Speicherfehler rollen Änderungen zurück, unbekannte Datenversionen bleiben erhalten.
+- Zitat+URL in Klartext/Markdown, Textfragment-Link mit Fallback, manuelles Kopieren bei Zwischenablagenfehlern sowie lokale Markdown-/JSON-Exporte.
+- Ganze Wörter und Artikelbereich als optionale Seiten-Suchmodi.
+
+### Projekt
+- Geordnete Quellen unter src/, deterministischer dependency-freier Build und unveränderte installierbare Userscript-URL. Generierte Dateien werden auf Aktualität geprüft.
+- Browser-Fixtures und benannte Testsuites getrennt; Lockfile wird eingecheckt und CI verwendet npm ci. Neue Bedienungs-, Entwicklungs-, Architektur- und Datenformat-Dokumentation.
+
+## 4.2.0
+
+### Auswahl zuerst
+- Text auswählen: Ein schwebendes Textmarker-Symbol bietet **Alle Vorkommen markieren** und eine getrennte, ausdrücklich gewählte Websuche. Kein Abfangen von Rechtsklick oder Doppelklick mehr.
+- Seitenmarkierungen sind temporär und von dauerhaften Keywords getrennt. Alle Vorkommen derselben Passage werden auch über Inline-Formatierung und Zeilenumbrüche gefunden. Navigation priorisiert diese Treffer; überlappende Fundstellen werden konsolidiert.
+- Standardshortcut **Alt+Shift+H**, in den Einstellungen änderbar, deaktivierbar und zurücksetzbar. Alt+H legt keine dauerhaften Keywords mehr an. Eingabefelder, IME und Tastenwiederholung bleiben geschützt.
+- CSS Custom Highlights erhalten die Seitenstruktur. Änderungen an Inhalt und Sichtbarkeit aktualisieren Treffer; URL-Wechsel und Neuladen entfernen die temporäre Auswahl. Aktuelle Browser mit dieser API sind Voraussetzung.
+- Dauerhafte Keywords bleiben in einem eigenen aufklappbaren Bereich erhalten. Deutsche und englische Beschriftungen sowie neue Browser-Regressionstests.
+
+## 4.1.0
+
+### Bedienung und Barrierefreiheit
+- Suchbegriffe lassen sich direkt oben im Panel mit Enter oder Klick hinzufügen. Erweiterte Optionen, Trefferdetails, Verlauf und Einstellungen sind aufklappbar.
+- Benannte Formularfelder, lokalisierte Symbolaktionen, sichtbarer Fokus, Statusmeldungen und tastaturbedienbare Treffer mit Satzkontext. Escape schließt das Panel und setzt den Fokus auf den Öffnen-Button zurück.
+- Panel passt in den verfügbaren Viewport, auch nach Größenänderungen und beim Aufklappen. Verschieben per Maus/Touch oder Pfeiltasten im fokussierten Header; Pos1 bzw. Reset-Button stellt die Position zurück.
+- Ungültige Regex und doppelte Begriffe werden vor dem Speichern geprüft, mit Hinweisen direkt am Feld. Texteingabe mit IME löst keine vorzeitige Übernahme aus.
+- Gelöschte Keywords können rückgängig gemacht und Suchfilter mit einem Button geleert werden. Sprachwechsel erhält Entwürfe, Fokus, Scrollposition und aufgeklappte Bereiche.
+
+### Robustheit
+- Highlight-Textfarbe passt sich der gewählten Hintergrundfarbe an. Lokale Design-Tokens und ein begrenzter CSS-Reset schützen das Panel gegen übliche Webseiten-Stile.
+- Reduzierte Bewegung wird beim Navigieren berücksichtigt. Abschalten und Domain-Ausschluss stoppen auch bereits geplante Highlight-Durchläufe; die Ausschlussmeldung erscheint ohne Browserdialog im Panel.
+- Regressionstests für diese Abläufe ergänzen die vorhandenen Funktions- und Performance-Tests.
+
 ## 4.0.3
 
 ### Fehlerbehebungen

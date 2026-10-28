@@ -1,0 +1,15 @@
+{
+  "header": "metadata.txt",
+  "parts": [
+    "00-state-i18n.js",
+    "10-styles.js",
+    "20-utils.js",
+    "30-page-state.js",
+    "40-page-search.js",
+    "50-page-ui-sharing.js",
+    "60-keywords.js",
+    "70-engine-navigation.js",
+    "80-panel.js",
+    "90-lifecycle.js"
+  ]
+}

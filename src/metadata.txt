@@ -1,0 +1,22 @@
+// ==UserScript==
+// @name         Slim Search Highlight
+// @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
+// @version      4.3.0
+// @author       DonVitosurf1
+// @license      MIT
+// @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
+// @supportURL   https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues
+// @updateURL    https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
+// @downloadURL  https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js
+// @description  Keyword highlighting with position bar, navigation and keyword search
+// @description:de  Keyword-Hervorhebung mit Positionsanzeige, Navigation und Keyword-Suche
+// @icon         https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/assets/icon.svg
+// @match        *://*/*
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_addStyle
+// @grant        GM_setClipboard
+// @grant        GM_registerMenuCommand
+// @run-at       document-end
+// @noframes
+// ==/UserScript==
