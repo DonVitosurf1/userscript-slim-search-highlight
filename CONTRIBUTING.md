@@ -1,18 +1,28 @@
-# Mitwirken
+# Mitwirken / Contributing
 
-Fehler und Ideen gern als [Issue](https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues/new/choose) melden.
+Issues und Pull Requests sind willkommen. Sicherheitsprobleme bitte gemäß [SECURITY.md](SECURITY.md) privat melden.
 
-## Änderungen vorschlagen
+## Setup
 
-1. Repo forken und einen Branch anlegen
-2. Das Skript in `userscript/` ändern und die Tests laufen lassen:
+Node.js 22+ und der eingecheckte Lockfile:
 
-```
-npm install && npx playwright install chromium
+```sh
+npm ci
+npx playwright install --with-deps chromium
+npm run build
 npm test
 ```
 
-3. `@version` im Skript erhöhen und `CHANGELOG.md` ergänzen, wenn sich das Verhalten ändert
-4. Pull Request erstellen. Die GitHub-Action prüft Syntax und Tests automatisch.
+Für das vorhandene System-Chromium: `CHROMIUM_PATH=/usr/bin/chromium npm test`.
 
-Das Skript besteht bewusst aus einer einzigen Datei, damit es sich mit einem Klick installieren lässt.
+## Quellen und Änderungen
+
+- Die wartbaren Quellabschnitte liegen unter `src/`; Reihenfolge und Metadaten stehen in `src/manifest.json`.
+- `userscript/slim-search-highlight.user.js` ist das **generierte** installierbare Ergebnis. Nach Quelländerungen `npm run build` ausführen und Quelle plus Artefakt zusammen einreichen.
+- Die Auslieferung bleibt bewusst eine Datei, ohne Framework oder Laufzeitabhängigkeiten. Die Quellabschnitte teilen einen privaten lexikalischen Scope; keine Initialisierung vor dem Lifecycle-Abschnitt starten.
+- Verhalten mit einem zunächst fehlschlagenden Test in der passenden `tests/suites/`-Datei absichern. Fixtures nicht pro Suite duplizieren.
+- Bei Verhaltensänderungen `src/metadata.txt`-Version, CHANGELOG und deutsche/englische Bedienungsdokumentation aktualisieren.
+- `npm run check`, die volle Testsuite und für Suchänderungen der Benchmark gehören zur Prüfung. Null ausgewählte Tests sind kein Erfolg.
+- Neue Speicherformate versionieren; temporäre Auswahltexte nie ungefragt speichern oder übertragen. Native Browserinteraktionen erhalten.
+
+Details: [Entwicklung](docs/development.md), [Architektur](docs/architecture.md), [Datenformat](docs/data-format.md).

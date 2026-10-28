@@ -2,76 +2,60 @@
 
 # Slim Search Highlight
 
-[English version](README.en.md)
+[English](README.en.md) · [Bedienung](docs/usage.de.md) · [Entwicklung](docs/development.md) · [Architektur](docs/architecture.md)
 
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-blue.svg)](LICENSE)
 
-Schlankes Userscript für **Tampermonkey** / **Violentmonkey** zum Hervorheben von Keywords auf Webseiten.
+Wörter, Sätze oder Absätze auf Webseiten auswählen und alle Vorkommen derselben Passage markieren. Ein lokales Userscript für Tampermonkey und Violentmonkey, ohne Konto, Server oder Laufzeitabhängigkeiten.
 
-![Screenshot](assets/screenshot.png)
-
-## Features
-
-- Mehrere Keywords mit eigenen Farben
-- Floating Panel mit Navigation (Nächstes/Vorheriges)
-- Positionsanzeige (rechte Leiste mit klickbaren Markierungen)
-- Keyword-Suchfeld im Panel
-- Cross-Page Persistenz (von Suchmaschinen)
-- Regex-Unterstützung
-- Ganze Wörter / Teilwörter
-- Live-Updates ohne Reload
-- Alt+H zum Hinzufügen markierten Textes
-- Konfigurierbare Suchmaschine für Rechtsklick
-- Oberfläche auf Deutsch und Englisch (automatisch nach Browsersprache, umschaltbar im Panel)
+![Panel und Seitenmarkierungen](assets/screenshot.png)
 
 ## Installation
 
-1. [Tampermonkey](https://www.tampermonkey.net/) oder [Violentmonkey](https://violentmonkey.github.io/) installieren
-2. [**Skript installieren**](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) anklicken und im Userscript-Manager bestätigen
-3. Seite neu laden
+1. [Tampermonkey](https://www.tampermonkey.net/) oder [Violentmonkey](https://violentmonkey.github.io/) installieren.
+2. [Skript installieren](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) und im Manager bestätigen.
+3. Webseite neu laden. Updates erfolgen über den Userscript-Manager.
 
-Updates kommen automatisch über den Userscript-Manager.
+Seitenmarkierungen benötigen einen Browser mit **CSS Custom Highlights**. Ohne diese API wird die Aktion mit Erklärung deaktiviert. Dauerhafte Keywords und ausdrückliche Websuche bleiben verfügbar.
 
-> **Update von 3.x auf 4.0:** Das Skript wurde umbenannt. Das alte Skript „Slim Search Highlight Pro v3.10“ bitte löschen. Gespeicherte Keywords und Einstellungen müssen einmalig neu angelegt werden (siehe [Changelog](CHANGELOG.md)).
+## Schnellstart
 
-## Verwendung
+- Text auswählen → Textmarker-Symbol öffnen → **Alle Vorkommen markieren**. Alternativ **Alt+Shift+H** verwenden; die Kombination ist in den Einstellungen änderbar und abschaltbar.
+- Mit Vor/Zurück oder **Alt+← / →** durch die Treffer navigieren. Rechtsklick und Doppelklick bleiben beim Browser.
+- Jede Seitenpassage hat eine eigene Farbe. Entfernen, Leeren und weitere Seitenänderungen lassen sich rückgängig machen.
+- **Für diese Seite merken** speichert nur ausdrücklich gewählte Passagen lokal für diese URL. Sonst bleiben Markierungen temporär. **Dauerhafte Keywords** sind ein eigener Bereich für seitenübergreifende Begriffe.
+- **Suchoptionen für diese Seite** bietet ganze Wörter und den Artikelbereich. Standard bleibt die ganze ausgewählte Passage auf der gesamten Seite.
+- **Kopieren / Export** an der Auswahl bietet Zitat+URL oder einen Link zur Textstelle. Websuche startet ausschließlich über **Im Web suchen**.
+- In den Einstellungen: Klartext/Markdown für Zitate, Markdown-Export der aktuellen Seite und JSON-Export gespeicherter Seiten.
 
-- Panel über den Button unten rechts öffnen (oder Menübefehl)
-- Keywords hinzufügen oder automatisch von Suchmaschinen übernehmen
-- Mit **Alt + →** / **Alt + ←** zwischen Highlights navigieren
-- Rechtsklick auf ein Highlight → Suche in der konfigurierten Suchmaschine
-- Positionsanzeige rechts zeigt die Verteilung der Treffer
+Gespeicherte Passagen werden bei Wiederbesuch erneut gesucht. Fehlender Text wird als **Nicht gefunden** gemeldet. Ohne Zwischenablagenzugriff steht ein Feld zum manuellen Kopieren bereit. Vollständige Details und Grenzen: [Bedienung](docs/usage.de.md), [Datenformat](docs/data-format.md).
 
-## Tests
+## Entwicklung
 
-```
-npm install && npx playwright install chromium
+Node.js 22 oder neuer:
+
+```sh
+npm ci
+npx playwright install --with-deps chromium
+npm run build
 npm test
 ```
 
-Die Tests laden das Skript in Chromium auf synthetischen Seiten (kein Netzwerk nötig) und prüfen u. a. Performance, Treffer-Korrektheit und das Verhalten bei dynamischen Seiten.
+Die Entwicklung findet unter `src/` statt. Der deterministische Build erzeugt weiterhin **eine** installierbare Datei unter `userscript/`. `npm run check` erkennt veraltete generierte Dateien. Tests laufen auf synthetischen Seiten ohne Netzwerk.
 
-## Projektstruktur
-
-```
-.github/                        ← CI (test.yml), Dependabot, Issue- und PR-Vorlagen
-assets/                         ← Logo (icon.svg) und Screenshot
-tests/run_tests.js              ← Browser-Tests
-userscript/
-  slim-search-highlight.user.js ← Haupt-Skript
-CHANGELOG.md
-CONTRIBUTING.md
-LICENSE
-package.json
-README.md
-README.en.md
-SECURITY.md
+```text
+src/          geordnete Quellabschnitte und Userscript-Metadaten
+scripts/      Build und überprüfbarer Benchmark
+tests/        Browser-Fixtures, benannte Suites und Test-Runner
+userscript/   generiertes installierbares Userscript
+docs/         Bedienung, Entwicklung, Architektur und Datenformat
+assets/       Logo und Screenshot
 ```
 
-## Mitwirken
+[Entwicklungsanleitung](docs/development.md) · [Mitwirken](CONTRIBUTING.md) · [Änderungen](CHANGELOG.md) · [Sicherheit](SECURITY.md)
 
-Fehler und Ideen gern als [Issue](https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues/new/choose) melden, Änderungen als Pull Request (siehe [CONTRIBUTING.md](CONTRIBUTING.md)). Sicherheitsprobleme bitte wie in [SECURITY.md](SECURITY.md) beschrieben melden.
+Für Updates von 3.x: Das alte „Slim Search Highlight Pro v3.10“ entfernen; Einstellungen müssen beim Wechsel auf den stabilen Skriptnamen einmal neu angelegt werden.
 
 ## Lizenz
 
-MIT
+[MIT](LICENSE)

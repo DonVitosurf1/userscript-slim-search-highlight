@@ -1,0 +1,1558 @@
+{
+  "desktop": {
+    "viewport": {
+      "w": 1280,
+      "h": 900
+    },
+    "panel": {
+      "x": 20,
+      "y": 80,
+      "w": 341,
+      "h": 665,
+      "right": 361,
+      "bottom": 745
+    },
+    "body": {
+      "x": 20,
+      "y": 137,
+      "w": 341,
+      "h": 608,
+      "right": 361,
+      "bottom": 745
+    },
+    "inputs": [
+      {
+        "id": "kw-search",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keywords suchen…",
+        "box": {
+          "x": 34,
+          "y": 449.03125,
+          "w": 313,
+          "h": 31,
+          "right": 347,
+          "bottom": 480.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 501.53125,
+          "w": 26,
+          "h": 22,
+          "right": 60,
+          "bottom": 523.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 68,
+          "y": 501.03125,
+          "w": 195,
+          "h": 27,
+          "right": 263,
+          "bottom": 528.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 545.53125,
+          "w": 26,
+          "h": 22,
+          "right": 60,
+          "bottom": 567.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 68,
+          "y": 545.03125,
+          "w": 195,
+          "h": 27,
+          "right": 263,
+          "bottom": 572.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 589.53125,
+          "w": 26,
+          "h": 22,
+          "right": 60,
+          "bottom": 611.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 68,
+          "y": 589.03125,
+          "w": 195,
+          "h": 27,
+          "right": 263,
+          "bottom": 616.03125
+        }
+      },
+      {
+        "id": "new-kw",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keyword oder /regex/",
+        "box": {
+          "x": 34,
+          "y": 634.03125,
+          "w": 255,
+          "h": 31,
+          "right": 289,
+          "bottom": 665.03125
+        }
+      },
+      {
+        "id": "new-color",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 297,
+          "y": 630.03125,
+          "w": 50,
+          "h": 27,
+          "right": 347,
+          "bottom": 657.03125
+        }
+      },
+      {
+        "id": "new-whole",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 676.03125,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 689.03125
+        }
+      },
+      {
+        "id": "new-domains",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Nur auf Domains (optional, kommagetrennt)",
+        "box": {
+          "x": 34,
+          "y": 704.03125,
+          "w": 313,
+          "h": 31,
+          "right": 347,
+          "bottom": 735.03125
+        }
+      },
+      {
+        "id": "chk-enabled",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 820.96875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 833.96875
+        }
+      },
+      {
+        "id": "chk-auto",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 847.96875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 860.96875
+        }
+      },
+      {
+        "id": "chk-posbar",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 874.96875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 887.96875
+        }
+      },
+      {
+        "id": "search-engine",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 923.09375,
+          "w": 313,
+          "h": 33,
+          "right": 347,
+          "bottom": 956.09375
+        }
+      },
+      {
+        "id": "ui-lang",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 988.21875,
+          "w": 313,
+          "h": 33,
+          "right": 347,
+          "bottom": 1021.21875
+        }
+      }
+    ],
+    "match": {
+      "tag": "DIV",
+      "tabIndex": -1
+    },
+    "counter": {
+      "text": "1 / 75",
+      "live": null
+    },
+    "errors": {
+      "live": null,
+      "role": null
+    },
+    "aria": "- text: Highlight\n- button \"−\"\n- button \"×\"\n- text: 1 / 75\n- button \"◀\"\n- button \"▶\"\n- text: Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Energiewende Solarenergie Windkraft Keywords\n- textbox \"Keywords suchen…\"\n- textbox \"Farbe ändern\": \"#ffe082\"\n- textbox: Energiewende\n- text: \"25\"\n- button \"×\"\n- textbox \"Farbe ändern\": \"#90caf9\"\n- textbox: Solarenergie\n- text: \"25\"\n- button \"×\"\n- textbox \"Farbe ändern\": \"#a5d6a7\"\n- textbox: Windkraft\n- text: \"25\"\n- button \"×\"\n- textbox \"Keyword oder /regex/\"\n- textbox: \"#ffe082\"\n- checkbox \"Nur ganze Wörter\" [checked]\n- text: Nur ganze Wörter\n- textbox \"Nur auf Domains (optional, kommagetrennt)\"\n- button \"Hinzufügen\"\n- text: Einstellungen\n- checkbox \"Highlights aktiv\" [checked]\n- text: Highlights aktiv\n- checkbox \"Automatisch von Suche übernehmen\" [checked]\n- text: Automatisch von Suche übernehmen\n- checkbox \"Positionsanzeige anzeigen\" [checked]\n- text: \"Positionsanzeige anzeigen Suchmaschine für Rechtsklick:\"\n- combobox:\n  - option \"Google\" [selected]\n  - option \"DuckDuckGo\"\n  - option \"Brave\"\n  - option \"Bing\"\n- text: \"Sprache:\"\n- combobox:\n  - option \"Automatisch\" [selected]\n  - option \"Deutsch\"\n  - option \"English\""
+  },
+  "enterAdded": false,
+  "clickAdded": true,
+  "draftAfterLocale": "",
+  "focusAfterLocale": "BODY",
+  "empty": {
+    "viewport": {
+      "w": 1280,
+      "h": 900
+    },
+    "panel": {
+      "x": 20,
+      "y": 80,
+      "w": 320.296875,
+      "h": 665,
+      "right": 340.296875,
+      "bottom": 745
+    },
+    "body": {
+      "x": 20,
+      "y": 137,
+      "w": 320.296875,
+      "h": 608,
+      "right": 340.296875,
+      "bottom": 745
+    },
+    "inputs": [
+      {
+        "id": "kw-search",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keywords suchen…",
+        "box": {
+          "x": 34,
+          "y": 323.15625,
+          "w": 292.296875,
+          "h": 31,
+          "right": 326.296875,
+          "bottom": 354.15625
+        }
+      },
+      {
+        "id": "new-kw",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keyword oder /regex/",
+        "box": {
+          "x": 34,
+          "y": 410.28125,
+          "w": 234.296875,
+          "h": 31,
+          "right": 268.296875,
+          "bottom": 441.28125
+        }
+      },
+      {
+        "id": "new-color",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 276.296875,
+          "y": 406.28125,
+          "w": 50,
+          "h": 27,
+          "right": 326.296875,
+          "bottom": 433.28125
+        }
+      },
+      {
+        "id": "new-whole",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 452.28125,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 465.28125
+        }
+      },
+      {
+        "id": "new-domains",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Nur auf Domains (optional, kommagetrennt)",
+        "box": {
+          "x": 34,
+          "y": 480.28125,
+          "w": 292.296875,
+          "h": 31,
+          "right": 326.296875,
+          "bottom": 511.28125
+        }
+      },
+      {
+        "id": "chk-enabled",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 597.21875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 610.21875
+        }
+      },
+      {
+        "id": "chk-auto",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 624.21875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 637.21875
+        }
+      },
+      {
+        "id": "chk-posbar",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 651.21875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 664.21875
+        }
+      },
+      {
+        "id": "search-engine",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 699.34375,
+          "w": 292.296875,
+          "h": 33,
+          "right": 326.296875,
+          "bottom": 732.34375
+        }
+      },
+      {
+        "id": "ui-lang",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 764.46875,
+          "w": 292.296875,
+          "h": 33,
+          "right": 326.296875,
+          "bottom": 797.46875
+        }
+      }
+    ],
+    "match": {},
+    "counter": {
+      "text": "0 / 0",
+      "live": null
+    },
+    "errors": {
+      "live": null,
+      "role": null
+    }
+  },
+  "mobile": {
+    "viewport": {
+      "w": 390,
+      "h": 844
+    },
+    "panel": {
+      "x": 20,
+      "y": 80,
+      "w": 341,
+      "h": 665,
+      "right": 361,
+      "bottom": 745
+    },
+    "body": {
+      "x": 20,
+      "y": 137,
+      "w": 341,
+      "h": 608,
+      "right": 361,
+      "bottom": 745
+    },
+    "inputs": [
+      {
+        "id": "kw-search",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keywords suchen…",
+        "box": {
+          "x": 34,
+          "y": 449.03125,
+          "w": 313,
+          "h": 31,
+          "right": 347,
+          "bottom": 480.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 501.53125,
+          "w": 26,
+          "h": 22,
+          "right": 60,
+          "bottom": 523.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 68,
+          "y": 501.03125,
+          "w": 195,
+          "h": 27,
+          "right": 263,
+          "bottom": 528.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 545.53125,
+          "w": 26,
+          "h": 22,
+          "right": 60,
+          "bottom": 567.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 68,
+          "y": 545.03125,
+          "w": 195,
+          "h": 27,
+          "right": 263,
+          "bottom": 572.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 589.53125,
+          "w": 26,
+          "h": 22,
+          "right": 60,
+          "bottom": 611.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 68,
+          "y": 589.03125,
+          "w": 195,
+          "h": 27,
+          "right": 263,
+          "bottom": 616.03125
+        }
+      },
+      {
+        "id": "new-kw",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keyword oder /regex/",
+        "box": {
+          "x": 34,
+          "y": 634.03125,
+          "w": 255,
+          "h": 31,
+          "right": 289,
+          "bottom": 665.03125
+        }
+      },
+      {
+        "id": "new-color",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 297,
+          "y": 630.03125,
+          "w": 50,
+          "h": 27,
+          "right": 347,
+          "bottom": 657.03125
+        }
+      },
+      {
+        "id": "new-whole",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 676.03125,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 689.03125
+        }
+      },
+      {
+        "id": "new-domains",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Nur auf Domains (optional, kommagetrennt)",
+        "box": {
+          "x": 34,
+          "y": 704.03125,
+          "w": 313,
+          "h": 31,
+          "right": 347,
+          "bottom": 735.03125
+        }
+      },
+      {
+        "id": "chk-enabled",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 820.96875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 833.96875
+        }
+      },
+      {
+        "id": "chk-auto",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 847.96875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 860.96875
+        }
+      },
+      {
+        "id": "chk-posbar",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 874.96875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 887.96875
+        }
+      },
+      {
+        "id": "search-engine",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 923.09375,
+          "w": 313,
+          "h": 33,
+          "right": 347,
+          "bottom": 956.09375
+        }
+      },
+      {
+        "id": "ui-lang",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 988.21875,
+          "w": 313,
+          "h": 33,
+          "right": 347,
+          "bottom": 1021.21875
+        }
+      }
+    ],
+    "match": {
+      "tag": "DIV",
+      "tabIndex": -1
+    },
+    "counter": {
+      "text": "1 / 75",
+      "live": null
+    },
+    "errors": {
+      "live": null,
+      "role": null
+    }
+  },
+  "small": {
+    "viewport": {
+      "w": 320,
+      "h": 568
+    },
+    "panel": {
+      "x": 20,
+      "y": 80,
+      "w": 320,
+      "h": 665,
+      "right": 340,
+      "bottom": 745
+    },
+    "body": {
+      "x": 20,
+      "y": 137,
+      "w": 320,
+      "h": 608,
+      "right": 340,
+      "bottom": 745
+    },
+    "inputs": [
+      {
+        "id": "kw-search",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keywords suchen…",
+        "box": {
+          "x": 34,
+          "y": 449.03125,
+          "w": 292,
+          "h": 31,
+          "right": 326,
+          "bottom": 480.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 501.53125,
+          "w": 26,
+          "h": 22,
+          "right": 60,
+          "bottom": 523.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 68,
+          "y": 501.03125,
+          "w": 174,
+          "h": 27,
+          "right": 242,
+          "bottom": 528.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 545.53125,
+          "w": 26,
+          "h": 22,
+          "right": 60,
+          "bottom": 567.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 68,
+          "y": 545.03125,
+          "w": 174,
+          "h": 27,
+          "right": 242,
+          "bottom": 572.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 589.53125,
+          "w": 26,
+          "h": 22,
+          "right": 60,
+          "bottom": 611.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 68,
+          "y": 589.03125,
+          "w": 174,
+          "h": 27,
+          "right": 242,
+          "bottom": 616.03125
+        }
+      },
+      {
+        "id": "new-kw",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keyword oder /regex/",
+        "box": {
+          "x": 34,
+          "y": 634.03125,
+          "w": 234,
+          "h": 31,
+          "right": 268,
+          "bottom": 665.03125
+        }
+      },
+      {
+        "id": "new-color",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 276,
+          "y": 630.03125,
+          "w": 50,
+          "h": 27,
+          "right": 326,
+          "bottom": 657.03125
+        }
+      },
+      {
+        "id": "new-whole",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 676.03125,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 689.03125
+        }
+      },
+      {
+        "id": "new-domains",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Nur auf Domains (optional, kommagetrennt)",
+        "box": {
+          "x": 34,
+          "y": 704.03125,
+          "w": 292,
+          "h": 31,
+          "right": 326,
+          "bottom": 735.03125
+        }
+      },
+      {
+        "id": "chk-enabled",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 820.96875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 833.96875
+        }
+      },
+      {
+        "id": "chk-auto",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 847.96875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 860.96875
+        }
+      },
+      {
+        "id": "chk-posbar",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 874.96875,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 887.96875
+        }
+      },
+      {
+        "id": "search-engine",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 923.09375,
+          "w": 292,
+          "h": 33,
+          "right": 326,
+          "bottom": 956.09375
+        }
+      },
+      {
+        "id": "ui-lang",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 988.21875,
+          "w": 292,
+          "h": 33,
+          "right": 326,
+          "bottom": 1021.21875
+        }
+      }
+    ],
+    "match": {
+      "tag": "DIV",
+      "tabIndex": -1
+    },
+    "counter": {
+      "text": "1 / 75",
+      "live": null
+    },
+    "errors": {
+      "live": null,
+      "role": null
+    }
+  },
+  "host": {
+    "viewport": {
+      "w": 1280,
+      "h": 900
+    },
+    "panel": {
+      "x": 20,
+      "y": 80,
+      "w": 440,
+      "h": 674.5625,
+      "right": 460,
+      "bottom": 754.5625
+    },
+    "body": {
+      "x": 20,
+      "y": 146.5625,
+      "w": 440,
+      "h": 608,
+      "right": 460,
+      "bottom": 754.5625
+    },
+    "inputs": [
+      {
+        "id": "kw-search",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keywords suchen…",
+        "box": {
+          "x": 34,
+          "y": 459.59375,
+          "w": 412,
+          "h": 43,
+          "right": 446,
+          "bottom": 502.59375
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 521.09375,
+          "w": 40,
+          "h": 40,
+          "right": 74,
+          "bottom": 561.09375
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 82,
+          "y": 523.59375,
+          "w": 280,
+          "h": 39,
+          "right": 362,
+          "bottom": 562.59375
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 577.09375,
+          "w": 40,
+          "h": 40,
+          "right": 74,
+          "bottom": 617.09375
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 82,
+          "y": 579.59375,
+          "w": 280,
+          "h": 39,
+          "right": 362,
+          "bottom": 618.59375
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 34,
+          "y": 633.09375,
+          "w": 40,
+          "h": 40,
+          "right": 74,
+          "bottom": 673.09375
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 82,
+          "y": 635.59375,
+          "w": 280,
+          "h": 39,
+          "right": 362,
+          "bottom": 674.59375
+        }
+      },
+      {
+        "id": "new-kw",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keyword oder /regex/",
+        "box": {
+          "x": 34,
+          "y": 692.59375,
+          "w": 354,
+          "h": 43,
+          "right": 388,
+          "bottom": 735.59375
+        }
+      },
+      {
+        "id": "new-color",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 396,
+          "y": 688.59375,
+          "w": 50,
+          "h": 42,
+          "right": 446,
+          "bottom": 730.59375
+        }
+      },
+      {
+        "id": "new-whole",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 746.59375,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 759.59375
+        }
+      },
+      {
+        "id": "new-domains",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Nur auf Domains (optional, kommagetrennt)",
+        "box": {
+          "x": 34,
+          "y": 774.59375,
+          "w": 412,
+          "h": 43,
+          "right": 446,
+          "bottom": 817.59375
+        }
+      },
+      {
+        "id": "chk-enabled",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 904.53125,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 917.53125
+        }
+      },
+      {
+        "id": "chk-auto",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 931.53125,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 944.53125
+        }
+      },
+      {
+        "id": "chk-posbar",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 38,
+          "y": 958.53125,
+          "w": 13,
+          "h": 13,
+          "right": 51,
+          "bottom": 971.53125
+        }
+      },
+      {
+        "id": "search-engine",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 1006.65625,
+          "w": 412,
+          "h": 33,
+          "right": 446,
+          "bottom": 1039.65625
+        }
+      },
+      {
+        "id": "ui-lang",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 34,
+          "y": 1071.78125,
+          "w": 412,
+          "h": 33,
+          "right": 446,
+          "bottom": 1104.78125
+        }
+      }
+    ],
+    "match": {
+      "tag": "DIV",
+      "tabIndex": -1
+    },
+    "counter": {
+      "text": "1 / 75",
+      "live": null
+    },
+    "errors": {
+      "live": null,
+      "role": null
+    }
+  },
+  "savedOffscreen": {
+    "viewport": {
+      "w": 390,
+      "h": 844
+    },
+    "panel": {
+      "x": 900,
+      "y": 650,
+      "w": 320,
+      "h": 665,
+      "right": 1220,
+      "bottom": 1315
+    },
+    "body": {
+      "x": 900,
+      "y": 707,
+      "w": 320,
+      "h": 608,
+      "right": 1220,
+      "bottom": 1315
+    },
+    "inputs": [
+      {
+        "id": "kw-search",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keywords suchen…",
+        "box": {
+          "x": 914,
+          "y": 1019.03125,
+          "w": 292,
+          "h": 31,
+          "right": 1206,
+          "bottom": 1050.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 914,
+          "y": 1071.53125,
+          "w": 26,
+          "h": 22,
+          "right": 940,
+          "bottom": 1093.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 948,
+          "y": 1071.03125,
+          "w": 174,
+          "h": 27,
+          "right": 1122,
+          "bottom": 1098.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 914,
+          "y": 1115.53125,
+          "w": 26,
+          "h": 22,
+          "right": 940,
+          "bottom": 1137.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 948,
+          "y": 1115.03125,
+          "w": 174,
+          "h": 27,
+          "right": 1122,
+          "bottom": 1142.03125
+        }
+      },
+      {
+        "id": "",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 914,
+          "y": 1159.53125,
+          "w": 26,
+          "h": 22,
+          "right": 940,
+          "bottom": 1181.53125
+        }
+      },
+      {
+        "id": "",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 948,
+          "y": 1159.03125,
+          "w": 174,
+          "h": 27,
+          "right": 1122,
+          "bottom": 1186.03125
+        }
+      },
+      {
+        "id": "new-kw",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Keyword oder /regex/",
+        "box": {
+          "x": 914,
+          "y": 1204.03125,
+          "w": 234,
+          "h": 31,
+          "right": 1148,
+          "bottom": 1235.03125
+        }
+      },
+      {
+        "id": "new-color",
+        "type": "color",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 1156,
+          "y": 1200.03125,
+          "w": 50,
+          "h": 27,
+          "right": 1206,
+          "bottom": 1227.03125
+        }
+      },
+      {
+        "id": "new-whole",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 918,
+          "y": 1246.03125,
+          "w": 13,
+          "h": 13,
+          "right": 931,
+          "bottom": 1259.03125
+        }
+      },
+      {
+        "id": "new-domains",
+        "type": "text",
+        "labels": 0,
+        "aria": null,
+        "placeholder": "Nur auf Domains (optional, kommagetrennt)",
+        "box": {
+          "x": 914,
+          "y": 1274.03125,
+          "w": 292,
+          "h": 31,
+          "right": 1206,
+          "bottom": 1305.03125
+        }
+      },
+      {
+        "id": "chk-enabled",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 918,
+          "y": 1390.96875,
+          "w": 13,
+          "h": 13,
+          "right": 931,
+          "bottom": 1403.96875
+        }
+      },
+      {
+        "id": "chk-auto",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 918,
+          "y": 1417.96875,
+          "w": 13,
+          "h": 13,
+          "right": 931,
+          "bottom": 1430.96875
+        }
+      },
+      {
+        "id": "chk-posbar",
+        "type": "checkbox",
+        "labels": 1,
+        "aria": null,
+        "placeholder": "",
+        "box": {
+          "x": 918,
+          "y": 1444.96875,
+          "w": 13,
+          "h": 13,
+          "right": 931,
+          "bottom": 1457.96875
+        }
+      },
+      {
+        "id": "search-engine",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 914,
+          "y": 1493.09375,
+          "w": 292,
+          "h": 33,
+          "right": 1206,
+          "bottom": 1526.09375
+        }
+      },
+      {
+        "id": "ui-lang",
+        "type": "select-one",
+        "labels": 0,
+        "aria": null,
+        "box": {
+          "x": 914,
+          "y": 1558.21875,
+          "w": 292,
+          "h": 33,
+          "right": 1206,
+          "bottom": 1591.21875
+        }
+      }
+    ],
+    "match": {
+      "tag": "DIV",
+      "tabIndex": -1
+    },
+    "counter": {
+      "text": "1 / 75",
+      "live": null
+    },
+    "errors": {
+      "live": null,
+      "role": null
+    }
+  }
+}

@@ -2,54 +2,60 @@
 
 # Slim Search Highlight
 
-[Deutsche Version](README.md)
+[Deutsch](README.md) · [Usage](docs/usage.en.md) · [Development](docs/development.md) · [Architecture](docs/architecture.md)
 
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A lightweight userscript for **Tampermonkey** / **Violentmonkey** that highlights keywords on web pages.
+Select words, sentences or paragraphs and highlight every occurrence of the same passage. A local Tampermonkey/Violentmonkey userscript with no account, server or runtime dependencies.
 
-![Screenshot](assets/screenshot.png)
-
-## Features
-
-- Multiple keywords with individual colors
-- Floating panel with next/previous navigation
-- Position bar on the right with clickable markers
-- Keyword filter field in the panel
-- Cross-page persistence (terms are taken over from search engines)
-- Regex support, whole words or partial matches
-- Live updates without reloading, also for dynamically loaded content
-- Alt+H adds the selected text as a keyword
-- Configurable search engine for the right-click lookup
+![Panel and page highlights](assets/screenshot.png)
 
 ## Installation
 
-1. Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
-2. Click [**install script**](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) and confirm in your userscript manager
-3. Reload the page
+1. Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/).
+2. [Install the script](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) and confirm in the manager.
+3. Reload the webpage. The userscript manager handles updates.
 
-Updates are delivered automatically by the userscript manager. The interface is available in English and German (follows the browser language by default, can be changed in the panel settings).
+Page passages require a browser supporting **CSS Custom Highlights**. Unsupported browsers disable that action with an explanation; persistent keywords and explicit web search remain available.
 
-> **Upgrading from 3.x to 4.0:** the script was renamed. Please delete the old script “Slim Search Highlight Pro v3.10”. Saved keywords and settings have to be re-entered once (see the [changelog](CHANGELOG.md)).
+## Quick start
 
-## Usage
+- Select text → open the highlighter symbol → **Highlight all occurrences**. Alternatively use **Alt+Shift+H**, configurable or disabled in Settings.
+- Move through results with Previous/Next or **Alt+Left / Right**. Native right-click and double-click remain intact.
+- Set a color for each page passage. Undo page changes, removals and clearing.
+- **Remember for this page** explicitly saves chosen passages locally for that URL. Otherwise they stay temporary. **Saved keywords** is a separate cross-page term list.
+- **Page search options** offers whole-word and article-only search. The default remains the entire selected passage across the full page.
+- **Copy / export** beside a selection offers quote+URL or a link to text. Web search runs only when **Search the web** is explicitly chosen.
+- Settings includes plain-text/Markdown quotes, Markdown export of the current page and JSON export of saved pages.
 
-- Open the panel with the button at the bottom right (or the menu command)
-- **Alt + →** / **Alt + ←** jump between highlights
-- Right-click a highlight to search for it in the configured search engine
-- **Alt + click** on a highlight removes its keyword
+Saved passages are searched again when revisiting a page. Missing text is shown as **Not found**. Clipboard failure provides a manual-copy field. See [Usage](docs/usage.en.md) and the [data format](docs/data-format.md) for behavior and limits.
 
-## Tests
+## Development
 
-```
-npm install && npx playwright install chromium
+Node.js 22 or newer:
+
+```sh
+npm ci
+npx playwright install --with-deps chromium
+npm run build
 npm test
 ```
 
-## Contributing
+Edit `src/`; a deterministic build still produces **one** installable file under `userscript/`. `npm run check` detects stale generated output. Browser tests use synthetic pages without network requests.
 
-Report bugs and ideas as an [issue](https://github.com/DonVitosurf1/userscript-slim-search-highlight/issues/new/choose) and send changes as a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md), in German). Please report security problems as described in [SECURITY.md](SECURITY.md).
+```text
+src/          ordered source sections and userscript metadata
+scripts/      build and verified benchmark
+tests/        browser fixtures, named suites and runner
+userscript/   generated installable userscript
+docs/         usage, development, architecture and data format
+assets/       logo and screenshot
+```
+
+[Development guide](docs/development.md) · [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [Security](SECURITY.md)
+
+When upgrading from 3.x, remove “Slim Search Highlight Pro v3.10”; settings need to be recreated once when switching to the stable script name.
 
 ## License
 
-MIT
+[MIT](LICENSE)
