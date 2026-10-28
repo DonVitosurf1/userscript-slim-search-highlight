@@ -1,6 +1,8 @@
 # Review corrections, page features and project structure
 
-The user explicitly authorized all corrections, optimizations and four useful extension groups from `.design/code-review-report.md`, plus documentation and project structure. This is the approved brief; retain the existing selection-first workflow and all prior uncommitted work.
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
+The user explicitly authorized all corrections, optimizations and four useful extension groups from `docs/archive/reviews/code-review-report.md`, plus documentation and project structure. This is the approved brief; retain the existing selection-first workflow and all prior uncommitted work.
 
 ## Product contract
 - Fix ST1/ST2/SP1–SP3/PF1: localized status state, >=44px narrow toolbar targets, rendered-text equivalence (hidden inline/inline-block), external edits inside owned spans, stale selection dismissal and linear offset lookup.

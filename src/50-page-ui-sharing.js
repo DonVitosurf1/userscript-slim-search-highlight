@@ -193,6 +193,7 @@ function createSelectionTools() {
     tools.querySelector('#selection-quote').onclick = () => selectedShare('quote');
     tools.querySelector('#selection-link').onclick = () => selectedShare('link');
     document.body.append(tools);
+    applyAppearance();
     return tools;
 }
 

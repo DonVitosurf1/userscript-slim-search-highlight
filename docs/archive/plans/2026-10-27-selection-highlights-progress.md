@@ -1,4 +1,6 @@
-# Execution ledger — plan: docs/superpowers/plans/2026-10-27-selection-highlights.md
+# Execution ledger — plan: docs/archive/plans/2026-10-27-selection-highlights.md
+
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
 
 Brief approved in conversation; latest correction replaces right-click UI with a floating selection symbol. Keep native contextmenu fully untouched. Execute inline in the existing isolated checkout, retaining prior uncommitted changes.
 Pre-flight: new ranges must share navigation without entering permanent matcher/storage. Legacy tests exercise permanent controls through an explicitly expanded disclosure. CSS Highlight support verified by browser regressions; unsupported browsers get an honest message.

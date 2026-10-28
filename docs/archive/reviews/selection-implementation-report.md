@@ -1,5 +1,7 @@
 # Auswahl zuerst — 4.2.0
 
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
 Die zuletzt bestätigte Vorgabe ist umgesetzt: Text auswählen, schwebendes Textmarker-Symbol öffnen, **Alle Vorkommen markieren** oder **Im Web suchen** wählen. Der erste Button führt immer die kombinierte Aktion aus: ausgewählte Passage und alle weiteren gleichen Vorkommen auf derselben Seite hervorheben. Der Tooltip erklärt den Seitenbezug ausführlicher. Rechtsklick und Doppelklick bleiben beim Browser.
 
 ## Verhalten

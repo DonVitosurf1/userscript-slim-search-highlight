@@ -1,5 +1,7 @@
 # Development and verification
 
+[Documentation index](README.md) · [Architecture](architecture.md) · [Release checklist](releasing.md)
+
 Use Node.js 22 or newer (CI uses 22) and the checked-in lockfile:
 
 ```sh
@@ -35,8 +37,9 @@ No credentials, environment file, database or server is needed. Browser tests us
 | `node tests/run_tests.js -k correction_` | Review defect and long-node regressions |
 | `node tests/run_tests.js --list` | List test names without launching a browser |
 | `npm run benchmark` | Verify actual match counts while measuring handler and completion times |
+| `npm run screenshots` | Capture desktop/narrow selection actions, panel, options and manual copying |
 
-The `-k` filter matches names; zero selected tests is an error. `tests/run_tests.js` remains the stable entry point. Fixtures live in `tests/helpers/browser.cjs`; suites cover permanent keywords, panel interaction, selections, review regressions and page features. Each test closes its own browser contexts.
+The `-k` filter matches names; zero selected tests is an error. `tests/run_tests.js` remains the stable entry point. Fixtures live in `tests/helpers/browser.cjs`; suites cover permanent keywords, panel interaction, selections, review regressions, page features and appearance preferences. Each test closes its own browser contexts. Use `node tests/run_tests.js -k appearance_` for theme, launcher geometry, persistence and preference-error recovery.
 
 ## Performance checks
 
@@ -48,8 +51,18 @@ CHROMIUM_PATH=/usr/bin/chromium node scripts/benchmark.cjs --script /path/to/old
 
 Treat timings as machine-specific evidence, not universal guarantees. Performance tests should preserve actual match counts and test cancellation as well as speed.
 
-## Manual release checks
+## Screenshots and local output
 
-Automated coverage is Chromium with simulated GM bindings. Before publishing, exercise the real script in Tampermonkey/Violentmonkey and supported browser engines, plus keyboard/screen-reader, mobile touch/keyboard, zoom and OS-shortcut conflicts. Verify clipboard denial/manual copy, local downloads and saving on the actual userscript manager. CSS Custom Highlights support is required for page passages; unsupported browsers show a disabled-action explanation.
+```sh
+CHROMIUM_PATH=/usr/bin/chromium npm run screenshots
+```
+
+Omit `CHROMIUM_PATH` to use the installed Playwright Chromium, as with tests. The maintained capture script lives in `scripts/screenshots.cjs`. It uses a synthetic page and simulated GM bindings, creates PNGs for light/dark desktop and narrow layouts plus `browser.json` in `artifacts/screenshots/`, and checks panel bounds, both expected matches and page errors. Inspect the captures visually; geometry checks alone do not establish usability.
+
+`artifacts/` is ignored by Git and safe to regenerate. Copy a deliberately chosen public screenshot to `assets/screenshot.png` when updating the README. Commit only evidence needed for a specific review; do not keep appending routine captures to the documentation. Older reports and evidence live in the [archive](archive/README.md); their scripts are historical snapshots.
+
+## Release checks
+
+Follow the [release checklist](releasing.md) for real userscript-manager/browser tests, accessibility and integration checks. Automated Chromium coverage is not a substitute for those manual checks.
 
 CI runs the deterministic check, frozen installation and the full browser suite. Do not disable TLS/checksums or weaken assertions to make environment failures pass.

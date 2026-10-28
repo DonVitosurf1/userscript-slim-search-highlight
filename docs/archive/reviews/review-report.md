@@ -1,12 +1,14 @@
 # Review: Slim Search Highlight 4.0.3
 
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
 Datum: 27.10.2026. Gegenstand: `userscript/slim-search-highlight.user.js`, schwebendes Panel, Keyword-Verwaltung und Navigation. Bericht ohne Änderungen am Produktcode.
 
 ## Methode und Grenzen
 
 Design Partner Review, Impeccable Technical Audit und Frontend Design Premium als Prüfraster. Kein formaler Impeccable-`critique`-Lauf mit unabhängigen Assessments. Prüfung in Chromium 154 über Playwright 1.64.1; synthetische deutsche Leseseite mit nachgebildeten GM-Funktionen entsprechend dem vorhandenen Testansatz. Viewports: 1280×900, 390×844, 320×568. Zusätzlich leere Liste, kein Suchergebnis, ungültiger Regex, Duplikat, Sprachwechsel, gespeicherte Position außerhalb des Viewports, kollidierende Host-CSS und reduzierte Bewegung.
 
-Screenshots und Messungen unter [evidence](evidence/). Quellreferenzen gelten für den unveränderten Stand dieses Reviews. Kein neues DESIGN.md: rein prüfender Auftrag; kein neues Gestaltungssystem beschlossen.
+Screenshots und Messungen unter [evidence](evidence). Quellreferenzen gelten für den unveränderten Stand dieses Reviews. Kein neues DESIGN.md: rein prüfender Auftrag; kein neues Gestaltungssystem beschlossen.
 
 ## Einschätzung
 

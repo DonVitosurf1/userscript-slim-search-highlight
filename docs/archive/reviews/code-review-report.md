@@ -1,10 +1,12 @@
 # Code-Review 4.2.0 und Vergleich mit ähnlichen Werkzeugen
 
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
 27.10.2026. Review mit `mattpocock-skills:code-review`: Standards und Spec wurden von zwei unabhängigen Reviewern getrennt untersucht. Der Hauptagent ergänzte eine Laufzeitmessung und den Vergleich mit Primärquellen im Internet. Produktcode, Tests und Abhängigkeiten blieben unverändert.
 
 ## Umfang und Verifikation
 
-Basis: ursprüngliches `HEAD` `750e9e8f34f9384910ea667c42bc89560abfe1be`; Ziel: aktueller uncommitteter Arbeitsstand einschließlich neuer Tests, Specs und DESIGN.md. Ein `HEAD...HEAD` wäre leer, daher wurde ausdrücklich `git diff HEAD -- <Produkt-/Test-/Dokumentationsdateien>` plus die neuen Dateien geprüft. Keine neuen Commits seit der Basis. Die Anforderungen stehen in den beiden lokalen Specs unter docs/superpowers/specs; kein Issue-Tracker musste eingerichtet werden.
+Basis: ursprüngliches `HEAD` `750e9e8f34f9384910ea667c42bc89560abfe1be`; Ziel: aktueller uncommitteter Arbeitsstand einschließlich neuer Tests, Specs und DESIGN.md. Ein `HEAD...HEAD` wäre leer, daher wurde ausdrücklich `git diff HEAD -- <Produkt-/Test-/Dokumentationsdateien>` plus die neuen Dateien geprüft. Keine neuen Commits seit der Basis. Die Anforderungen stehen in den beiden lokalen Specs unter docs/archive/specs; kein Issue-Tracker musste eingerichtet werden.
 
 Erneuter vollständiger Testlauf: **85 PASS, 0 FAIL, Exit 0** über `CHROMIUM_PATH=/usr/bin/chromium npm test`. Syntax- und Diff-Prüfung erfolgreich. Die unten beschriebenen zusätzlichen Probe-Fälle sind in der vorhandenen Suite nicht abgedeckt. Kleine Chromium-Proben bestätigten die Befunde; es wurden keine Korrekturen am Produkt vorgenommen.
 
@@ -34,7 +36,7 @@ Kein eigener handlungsrelevanter Fowler-Smell-Befund. Eine einzelne installierba
 
 ## Spec
 
-Maßgeblich: `docs/superpowers/specs/2026-10-27-selection-highlights-design.md`.
+Maßgeblich: `docs/archive/specs/2026-10-27-selection-highlights-design.md`.
 
 ### SP1 — P2: Die ausgewählte Fundstelle kann selbst fehlen
 

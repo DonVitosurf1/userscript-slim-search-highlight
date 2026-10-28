@@ -10,7 +10,11 @@ const PERSISTED = {
     hl_show_posbar: () => showPosBar,
     hl_lang: () => lang,
     hl_selection_shortcut: () => selectionShortcut,
-    hl_copy_format: () => copyFormat
+    hl_copy_format: () => copyFormat,
+    hl_ui_theme: () => uiTheme,
+    hl_launcher_size: () => launcherSize,
+    hl_launcher_position: () => launcherPosition,
+    hl_launcher_inset: () => launcherInset
 };
 const lastSaved = {};
 for (const key in PERSISTED) lastSaved[key] = JSON.stringify(PERSISTED[key]());

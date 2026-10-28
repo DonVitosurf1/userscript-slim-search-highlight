@@ -1,4 +1,6 @@
-# Execution ledger — plan: docs/superpowers/plans/2026-10-27-panel-improvements.md
+# Execution ledger — plan: docs/archive/plans/2026-10-27-panel-improvements.md
+
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
 
 Ruling: the user approved all recommendations in the review and explicitly requested execution; reuse that concrete design rather than reopening product selection.
 Ruling: inline execution in the already isolated cloud checkout on branch work; no new worktree. Keep all pre-existing .design artifacts.

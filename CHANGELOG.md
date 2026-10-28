@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.4.0
+
+### Darstellung
+- Helles und dunkles Farbschema in den Einstellungen. Panel, Auswahlaktionen und native Formularfelder wechseln gemeinsam; Fokus, Hinweistexte und Fehlerfarben bleiben kontrastreich. Dunkel bleibt die Voreinstellung.
+- Größerer Öffnen-Button: standardmäßig 56 statt 48 px, per Tastatur und Regler von 44 bis 80 px einstellbar und zurücksetzbar.
+- Position in allen vier Bildschirmecken und Randabstand von 8 bis 80 px einstellbar. Sichere Geräte-Ränder werden berücksichtigt.
+- Darstellungsoptionen werden lokal gespeichert, gelten sofort und bleiben beim Sprachwechsel erhalten. Fehler beim Speichern setzen die betreffende Änderung zurück.
+
+### Dokumentation und Projektpflege
+- Zentraler Dokumentationsindex, Release-Checkliste und aktualisierte deutsche/englische Bedienung. Veraltete Aussagen zu Speicherung, Build und Integration korrigiert.
+- Historische Reviews, Nachweise, Spezifikationen und Pläne unter `docs/archive/` gebündelt. Das aktuelle Screenshot-Werkzeug liegt unter `scripts/`; neue Aufnahmen landen in nicht versioniertem `artifacts/`.
+
 ## 4.3.0
 
 ### Korrekturen und Performance

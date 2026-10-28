@@ -4,6 +4,9 @@
 
 ## Prüfung
 
-- [ ] `node --check` auf das Skript ist erfolgreich
-- [ ] Tests laufen durch (siehe README, Abschnitt Tests)
-- [ ] `CHANGELOG.md` und `@version` im Skript sind angepasst, falls sich das Verhalten ändert
+- [ ] `npm run check` bestätigt aktuelle generierte Dateien und gültige Syntax
+- [ ] Passende Tests laufen durch (siehe [Entwicklung](../docs/development.md))
+- [ ] Bei Verhaltensänderungen: `src/metadata.txt`, CHANGELOG und Bedienungsdokumentation aktualisiert
+- [ ] Bei UI-Änderungen: Desktop-/schmale Ansicht und Tastatur geprüft
+
+<!-- Ausgeführte Prüfungen und noch offene manuelle Checks hier nennen. Bei reinen Dokumentationsänderungen nicht anwendbare Punkte kennzeichnen. -->

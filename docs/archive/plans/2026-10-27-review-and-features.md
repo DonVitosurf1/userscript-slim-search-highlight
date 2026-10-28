@@ -1,9 +1,11 @@
 # Review Corrections and Page Features Implementation Plan
 
+> Historischer Stand vom 27.10.2026. Aussagen zu Tests, Dateipfaden und Veröffentlichungen beziehen sich auf den damaligen Arbeitsstand. [Archivhinweise](../README.md).
+
 > Execute inline with Superpowers TDD and final independent review.
 
 **Goal:** Implement the approved review corrections, page features and project organization.
-**Spec:** docs/superpowers/specs/2026-10-27-review-and-features-design.md
+**Spec:** docs/archive/specs/2026-10-27-review-and-features-design.md
 **Stack:** Existing vanilla JS/CSS userscript, Node deterministic assembler, Playwright.
 
 ## Constraints / review focus

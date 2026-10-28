@@ -38,15 +38,42 @@ A text-marker case beside the page: dark neutral tools, yellow navigation emphas
 
 ### Product context and register
 - Audience/job: people reading and researching across webpages; add terms and move between occurrences.
-- Evidence: README, .design/review-report.md, existing script and browser tests. No specific geographic market or user-research claims.
+- Evidence: README, docs/archive/reviews/review-report.md, existing script and browser tests. No specific geographic market or user-research claims.
 - Locales: German and English, auto follows browser language with English fallback. All owned labels, errors and accessible names use the active locale.
 - Register: product utility; a nonmodal floating panel with underlying webpage remaining interactive.
 - Signature: keyword colors link saved terms, in-page marks and the position bar.
 - Restraint: system fonts, familiar native fields/selects; no marketing layout, external fonts, gradients or runtime framework.
-- Token ownership/runtime mapping: runtime source of truth is the GM_addStyle block in src/10-styles.js (assembled into userscript/slim-search-highlight.user.js). This file mirrors the --hl-* variables; update both for durable palette changes. No generated adapter or build step.
+- Token ownership/runtime mapping: runtime source of truth is the GM_addStyle block in src/10-styles.js (assembled into userscript/slim-search-highlight.user.js). This file mirrors the --hl-* variables; update both for durable palette changes. The deterministic assembler copies the styles; no separate token adapter is involved.
 
 ## Colors
-Runtime --hl-bg, --hl-surface, --hl-field, --hl-text, --hl-muted, --hl-border, --hl-accent and --hl-danger map to the correspondingly named frontmatter colors (accent = primary). Use accent for the add button, focus and navigation state. All custom highlight backgrounds get automatically selected black or white text using sRGB relative luminance. The panel remains dark on light or dark hosts; forced-colors restores system scrollbar colors and visible outlines.
+Runtime --hl-bg, --hl-surface, --hl-field, --hl-text, --hl-muted, --hl-border, --hl-accent and --hl-danger map to the correspondingly named frontmatter colors (accent = primary). Use accent for the add button, focus and navigation state. All custom highlight backgrounds get automatically selected black or white text using sRGB relative luminance. The selected panel scheme is independent of the host webpage; forced-colors restores system scrollbar colors and visible outlines.
+
+## Appearance tokens and launcher (4.4.0)
+
+Runtime token ownership remains **Model B**: `src/10-styles.js` is canonical; this document mirrors the accepted values and explains their roles. The deterministic build copies these values into the installable userscript. The existing dark scheme remains the default. Light is an additional user-selected scheme, not inferred from or applied to the host webpage.
+
+| Token | Dark | Light | Consumers |
+|---|---|---|---|
+| `--hl-bg` | `#1a1a1a` | `#ffffff` | Panel |
+| `--hl-surface` | `#242424` | `#f1f4f7` | Header, buttons, selection toolbar |
+| `--hl-field` | `#222222` | `#ffffff` | Inputs, selects, scrollbar track |
+| `--hl-text` | `#f0f0f0` | `#1e2933` | Owned text and icon strokes |
+| `--hl-muted` | `#b5b5b5` | `#52606d` | Hints, counts, placeholders |
+| `--hl-border` | `#666666` | `#778391` | Form/button boundaries |
+| `--hl-accent` | `#ffca28` | `#ffca28` | Primary action/selection background |
+| `--hl-accent-text`, `--hl-focus` | `#ffca28` | `#805500` | Counter, focus and active-result border |
+| `--hl-danger` | `#ff918e` | `#b42318` | Inline errors and destructive hover |
+| `--hl-hover`, `--hl-active` | `#343434`, `#484848` | `#e5eaf0`, `#d7dfe8` | Button feedback |
+| `--hl-divider` | `#444444` | `#d9dee3` | Panel boundary and section dividers |
+| `--hl-scroll-thumb`, `--hl-scroll-hover` | `#777777`, `#aaaaaa` | `#7a8694`, `#5b6673` | Owned scrollbars |
+| `--hl-shadow` | `rgba(0,0,0,.4)` | `rgba(20,35,50,.18)` | Panel, toolbar and launcher shadows |
+| `--hl-scheme` | `dark` | `light` | Native control color-scheme |
+
+The same `data-theme` variant owns panel, selection toolbar and launcher tokens. Yellow remains the highlighter signature; amber text/focus in the light scheme provides contrast rather than reusing pale yellow as text. No second per-component palette is introduced.
+
+Settings uses the existing native select pattern for theme and corner selection; platform-owned popups are intentional. Labeled native ranges control launcher size (44–80px, default 56) and edge distance (8–80px, default 20), both in 4px steps, with visible associated outputs. All four screen corners are supported, respecting device safe-area insets. Size reset changes only size. The recognizable dark-backed logo scales as one image and retains its identity in either scheme.
+
+`applyAppearance` in `src/80-panel.js` updates existing surfaces in place; changing appearance must not discard drafts, collapse groups, move focus or invalidate page highlights. The shared local preference registry owns persistence. A failed write restores the last saved appearance and uses the semantic status region; a successful retry clears that error. Language changes recreate translated controls with the same saved appearance. Verification lives in `tests/suites/appearance.cjs`, including contrast, keyboard, narrow geometry and failure recovery.
 
 ## Typography
 14px/1.45 system UI for controls and content, 16px for counts and narrow-screen text fields/selects, 12–13px for supporting copy. Use tabular numerals for counts. No remote fonts. Keep wording direct and task-specific.
@@ -55,10 +82,10 @@ Runtime --hl-bg, --hl-surface, --hl-field, --hl-text, --hl-muted, --hl-border, -
 360px maximum panel width, 12px viewport margins, viewport-bounded height and one main panel scroll owner. Inner padding 14px, 12px below 480px; typical control gap 8px. Header and status precede the primary page-selection list and instructions. Saved keyword creation/management lives in its own disclosure, followed by optional match/history details and settings. The primary action is a compact floating symbol at the text selection; it expands on hover or click into “Highlight all occurrences” and explicit “Search the web”. The page-selection list remains the primary panel surface. Disclosure groups can grow naturally inside the main scroller; the capped match list owns its bounded overflow. visualViewport resize/scroll adjusts geometry for available screen space.
 
 ## Elevation & Depth
-One soft panel shadow (0 10px 32px, black at 40%); surface tones identify header and controls. Avoid repeated nested-card shadows. Panel has no backdrop and never traps page focus.
+One soft panel shadow (0 10px 32px, black at 40% for dark or slate at 18% for light); surface tones identify header and controls. Avoid repeated nested-card shadows. Panel has no backdrop and never traps page focus.
 
 ## Shapes
-6px field/button radii, 10px panel radius, 14px launcher radius. Colored marks and swatches use compact corners, not pill-shaped tags.
+6px field/button radii, 10px panel radius, Launcher radius proportional to its size (29%, about 16px at the 56px default). Colored marks and swatches use compact corners, not pill-shaped tags.
 
 ## Components
 
@@ -89,9 +116,9 @@ German/English plain verbs, contextual snippets for repeated matches, useful reg
 - Don't introduce a modal focus trap, external font or framework for this palette.
 - Don't save invalid input or discard drafts when switching languages.
 
-## Selection-first contract (4.2.0)
+## Selection-first contract
 
-The toolbar shares --hl-* tokens with the panel; its root and descendants use their own scoped reset, with SVG excluded and zero-specificity :where(). No selected text is inserted as HTML. Native CSS highlight names slim-page/slim-page-current paint ephemeral DOM Ranges without wrapping page markup. The runtime normalizes whitespace/line breaks while retaining raw node endpoints. Page terms are literal, case-insensitive and not stored in GM values; only the shortcut preference is persisted.
+The toolbar shares --hl-* tokens with the panel; its root and descendants use their own scoped reset, with SVG excluded and zero-specificity :where(). No selected text is inserted as HTML. Native CSS highlight names slim-page/slim-page-current paint DOM Ranges without wrapping page markup. The runtime normalizes whitespace/line breaks while retaining raw node endpoints. Page terms are literal and case-insensitive. They remain temporary unless explicitly saved for the current URL; global keywords and shortcut preferences are stored separately.
 
 “Alle Vorkommen markieren” / “Highlight all occurrences” is the combined same-page action. A full tooltip explains the current-page scope. Web search is an explicit second action and never runs on selection, right-click or shortcut alone. Alt+Shift+H is configurable and can be disabled. Recording requires Alt/Ctrl/Meta plus a letter/digit, with optional Shift; IME, repeats and editable targets are protected.
 
