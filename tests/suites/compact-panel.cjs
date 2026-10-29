@@ -18,7 +18,9 @@ module.exports = ({ open, eq, ok }) => {
                 await mark(page);
                 const box = await page.locator('#slim-hl-panel').boundingBox();
                 ok(box.width <= 320, 'Kompakte Breite: ' + JSON.stringify(box));
-                ok(box.height <= 560, 'Kompakte Höhe: ' + JSON.stringify(box));
+                ok(box.height <= 390, 'Übersicht mit einer gespeicherten Passage bleibt kompakt: ' + JSON.stringify(box));
+                ok((await page.locator('.page-item').boundingBox()).height <= 54, 'Farbe, Status und Aktionen brauchen nur eine kompakte Zeile');
+                eq(await page.locator('.page-save').getAttribute('aria-pressed'), 'true', 'Speicherzustand bleibt zugänglich');
                 eq(await page.locator('#help-section').getAttribute('open'), null, 'Lange Hilfe standardmäßig zugeklappt');
                 eq(await page.locator('#clear-page').isVisible(), true);
                 eq(await page.locator('#undo-page').isVisible(), true);

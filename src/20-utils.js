@@ -1,5 +1,8 @@
 const ICONS = {
     save: '<path d="m5 12 4 4L19 6"/>',
+    bookmark: '<path d="M6 3h12v18l-6-4-6 4V3Z"/>',
+    bookmarked: '<path d="M6 3h12v18l-6-4-6 4V3Z" fill="currentColor"/>',
+    trash: '<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',
     close: '<path d="m6 6 12 12M18 6 6 18"/>',
     minus: '<path d="M5 12h14"/>',
     expand: '<path d="M5 8h14v10H5zM5 5h14"/>',

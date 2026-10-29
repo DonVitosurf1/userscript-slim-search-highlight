@@ -47,12 +47,11 @@ function renderPageList() {
         const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'icon-btn page-remove'; remove.innerHTML = icon('close'); remove.title = t('remove');
         remove.setAttribute('aria-label', t('deletePageTerm', term.text));
         remove.onclick = () => { changePageTerm(term, () => { pageTerms = pageTerms.filter(item => item.id !== term.id); }); uiById('undo-page')?.focus({ preventScroll: true }); };
-        row.append(color, label, count, remove);
-        const meta = document.createElement('div'); meta.className = 'page-meta';
+        const content = document.createElement('div'); content.className = 'page-label';
         const state = document.createElement('span'); state.className = 'hint page-state';
         state.textContent = term.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled ? t('savedMissing') : t(term.saved ? 'pageSavedShort' : 'pageTemporary');
-        const save = document.createElement('button'); save.type = 'button'; save.className = 'page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
-        save.textContent = t(term.saved ? 'forgetShort' : 'rememberShort');
+        const save = document.createElement('button'); save.type = 'button'; save.className = 'icon-btn page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
+        save.innerHTML = icon(term.saved ? 'bookmarked' : 'bookmark');
         save.setAttribute('aria-label', t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm'));
         save.title = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
         save.onclick = () => {
@@ -60,7 +59,7 @@ function renderPageList() {
             if (!changePageTerm(term, () => { term.saved = !term.saved; })) return;
             setPanelStatus(term.saved ? 'pageRemembered' : 'pageForgotten');
         };
-        meta.append(state, save); item.append(row, meta); list.append(item);
+        content.append(label, state); row.append(color, content, count, save, remove); item.append(row); list.append(item);
     }
     const clear = uiById('clear-page'); if (clear) clear.hidden = !pageTerms.length;
     const undo = uiById('undo-page'); if (undo) undo.hidden = !pageUndo.length;

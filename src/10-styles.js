@@ -24,20 +24,21 @@ const UI_CSS = `
     #slim-selection-tools #selection-actions button { gap: 8px; white-space: normal; text-align: left; justify-content: start; }
     #slim-selection-tools #selection-actions button > span { min-width: 0; overflow-wrap: anywhere; }
     #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
-    #slim-hl-panel .page-item { display: block; margin: 8px 0; padding-bottom: 6px; border-bottom: 1px solid var(--hl-divider); }
-    #slim-hl-panel .page-row { display: flex; align-items: center; gap: 8px; }
-    #slim-hl-panel .page-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
-    #slim-hl-panel .page-meta .hint { margin: 0; }
-    #slim-hl-panel .page-meta button { font-size: 12px; padding: 5px 8px; }
-    #slim-hl-panel .page-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+    #slim-hl-panel .page-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    #slim-hl-panel .page-heading-row .section-title { margin: 0; }
+    #slim-hl-panel .page-item { display: block; margin: 6px 0; padding-bottom: 4px; border-bottom: 1px solid var(--hl-divider); }
+    #slim-hl-panel .page-row { display: flex; align-items: center; gap: 6px; }
+    #slim-hl-panel .page-label { flex: 1; min-width: 0; }
+    #slim-hl-panel .page-label .page-state { display: block; margin: 0; font-size: 12px; line-height: 1.3; }
+    #slim-hl-panel .page-save[aria-pressed=true] { color: var(--hl-accent-text); }
+    #slim-hl-panel .page-actions { display: flex; flex-shrink: 0; gap: 4px; }
     #slim-hl-panel textarea { resize: none; min-height: 120px; margin-bottom: 8px; }
     #slim-selection-tools details { display: block; }
     #slim-selection-tools summary { display: list-item; cursor: pointer; min-height: 36px; padding: 8px; }
     #slim-selection-tools details button { width: 100%; margin-top: 4px; }
-    #slim-hl-panel .page-term { flex: 1; min-width: 0; overflow-wrap: anywhere; max-height: 5.8em; overflow: auto; }
+    #slim-hl-panel .page-term { display: block; overflow-wrap: anywhere; max-height: 5.8em; overflow: auto; }
     #slim-hl-panel #page-heading { margin-top: 0; }
     #slim-hl-panel #clear-page { margin: 0; }
-    #slim-hl-panel .page-actions button { flex: 1; }
     #slim-hl-panel .shortcut-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     #slim-hl-panel #shortcut-label { display: block; font-weight: 600; margin: 6px 0; }
     #slim-hl-panel #navigation-scope { margin: 0; }

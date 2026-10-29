@@ -43,7 +43,8 @@ Farbe trägt Bedeutung: Markierungsfarben verbinden Text, Farbfeld und Trefferle
 
 - Systemschrift, 14 px für Bedienelemente, 12–13 px für unterstützende Hinweise; Eingabefelder auf schmalen Bildschirmen mindestens 16 px. Keine externen Schriftarten.
 - Kleine Radien: 6 px an Bedienelementen, 8–10 px an Werkzeugflächen. Das Logo hat eine eigene abgerundete Außenform.
-- Das Panel bleibt kompakt. Hauptablauf: Text auswählen → Markierungen anlegen → Treffer durchgehen. Weitere Werkzeuge bleiben aufklappbar.
+- Das Panel bleibt kompakt: Seitenpassagen haben eine Zeile mit Farbe, Begriff, kleinem Speicherstatus, Trefferzahl, Lesezeichen und Entfernen. Papierkorb und Rückgängig stehen neben der Abschnittsüberschrift; ihre Bedeutung bleibt per Tooltip und zugänglichem Namen erkennbar.
+- Ohne gespeicherte Position öffnet das Panel rechts mittig. Positionsreset und Pos1/Home stellen diese automatische Platzierung wieder her. Weitere Werkzeuge bleiben aufklappbar.
 - Symbole dürfen nicht schrumpfen, wenn eine Beschriftung umbricht. Schmale Bildschirme erhalten mindestens 44 px hohe Buttons.
 - Tastaturfokus, Hover, gedrückter und deaktivierter Zustand müssen erkennbar bleiben. Ein Symbol allein darf nicht das einzige Feedback sein.
 - Hervorheben und Websuche bleiben getrennte, ausdrückliche Aktionen. Rechtsklick bleibt beim Browser; das Auswahl-Symbol öffnet die Aktionen auch ohne Hover per Klick oder Tastatur.

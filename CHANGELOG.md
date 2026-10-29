@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.5
+
+- „Auf dieser Seite“ ist kompakter: Farbe, Begriff, Trefferzahl, Lesezeichen und Entfernen stehen in einer Zeile; der Speicherstatus steht klein direkt unter dem Begriff. Alle löschen und Rückgängig sitzen als zugängliche Symbol-Buttons neben der Überschrift.
+- Neue Standardposition rechts, vertikal mittig. Die automatische Position passt sich der Panelhöhe und dem sichtbaren Bildschirm an. Manuell gespeicherte Positionen bleiben verwendbar; Positionsreset und Pos1/Home stellen die neue Standardposition wieder her.
+
 ## 4.5.4
 
 - Unter Einstellungen → Darstellung lässt sich die Transparenz von Panel, Auswahlmenü und Öffnen-Button einschließlich Logo von 0 bis 80 % in 5-%-Schritten einstellen. Standard bleibt vollständig deckend; Seitenmarkierungen bleiben kräftig.
