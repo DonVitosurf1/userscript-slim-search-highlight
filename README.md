@@ -41,7 +41,7 @@ Die Hover-Hinweise zeigen die verfügbaren Shortcuts. Ist Alt+Shift+P bereits al
 
 ## Weitere Funktionen
 
-- **Websuche und Zitate:** Im Auswahlmenü ausdrücklich im Web suchen, ein Zitat mit Quelle oder einen Link zur Textstelle kopieren. Passagen lassen sich als Markdown, gespeicherte Seiten als JSON exportieren.
+- **Websuche und Zitate:** „Im Web suchen“ öffnet links einen neuen Tab im selben Browserfenster, das Pfeil-Symbol rechts ein separates Fenster. Außerdem Zitate mit Quelle oder Links zur Textstelle kopieren; Passagen als Markdown und gespeicherte Seiten als JSON exportieren.
 - **Google-Suchwörter übernehmen:** Bei aktivierter automatischer Übernahme werden die Suchwörter nach dem Öffnen eines Ergebnisses auf der Zielseite hervorgehoben.
 - **Darstellung anpassen:** Unter **Einstellungen → Darstellung** Hell/Dunkel, Transparenz sowie Größe und Lage des Panel-Öffners wählen. Die Einstellungen bleiben lokal gespeichert.
 
