@@ -45,12 +45,14 @@ Options belong to current page terms and are retained with passages explicitly s
 
 ## Copy and export
 
-Expand **Copy / export** beside a selection:
+Expand **Copy** beside a selection:
 
-- **Copy quote + URL** uses the plain-text or Markdown format chosen in Settings.
+- **Copy quote with source** copies the selection with the page URL using the plain-text or Markdown format chosen in Settings.
 - **Copy link to text** creates a `#:~:text=` link for supported HTTP(S) pages. Otherwise it copies a normal page link and explains why. Repeated text can resolve to the first matching occurrence. Changed text, selections crossing block boundaries and browser support can affect link resolution.
 
-If clipboard access fails, a labeled manual-copy field appears. Settings also exports current page passages as Markdown and all saved pages as versioned JSON. These explicit local exports contain selected text and full URLs; nothing is uploaded automatically. Downloads use the manager’s `GM_download` API and require its download permission. If this path is unavailable, the script reports the limitation.
+Successful copying shows a brief confirmation beside the selection tools without opening the main panel. The menu opens below or above its symbol according to available space. Its action area scrolls on short viewports.
+
+If clipboard access fails, the panel opens with a labeled manual-copy field. Settings also exports current page passages as Markdown and all saved pages as versioned JSON. These explicit local exports contain selected text and full URLs; nothing is uploaded automatically. Downloads use the manager’s `GM_download` API and require its download permission. If this path is unavailable, the script reports the limitation.
 
 ## Appearance and open button
 

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.5
+// @version      4.5.6
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -209,7 +209,7 @@
         pageOptions: 'Page search options', pageWhole: 'Match whole words', pageScope: 'Search area', scopeAll: 'Entire page', scopeArticle: 'Article only',
         articleMissing: 'No article area found. Choose Entire page to search elsewhere.',
         pageSaveFailed: 'Could not save this change. The previous state was kept.', storageUnsupported: 'Saved-page data has an unsupported format. Export it before changing it.',
-        shareActions: 'Copy / export', copyQuote: 'Copy quote + URL', copyLink: 'Copy link to text', sourceLabel: 'Source',
+        shareActions: 'Copy', copyQuote: 'Copy quote with source', copyLink: 'Copy link to text', sourceLabel: 'Source',
         copyFormat: 'Quote format', plainFormat: 'Plain text', markdownFormat: 'Markdown', copied: 'Copied to clipboard.',
         plainLinkCopied: 'Page link copied; text-fragment links are not supported here.',
         manualCopyReady: 'Text is ready to copy manually.', manualCopy: 'Copy manually', manualCopyHint: 'Clipboard access failed. Select and copy the text below.', closeManualCopy: 'Close manual copy',
@@ -224,7 +224,7 @@
         pageOptions: 'Suchoptionen für diese Seite', pageWhole: 'Nur ganze Wörter suchen', pageScope: 'Suchbereich', scopeAll: 'Gesamte Seite', scopeArticle: 'Nur Artikel',
         articleMissing: 'Kein Artikelbereich gefunden. Wähle Gesamte Seite, um außerhalb zu suchen.',
         pageSaveFailed: 'Die Änderung ließ sich nicht speichern. Der bisherige Zustand bleibt erhalten.', storageUnsupported: 'Gespeicherte Seitendaten haben ein unbekanntes Format. Exportiere sie vor Änderungen.',
-        shareActions: 'Kopieren / Export', copyQuote: 'Zitat + URL kopieren', copyLink: 'Link zur Textstelle kopieren', sourceLabel: 'Quelle',
+        shareActions: 'Kopieren', copyQuote: 'Zitat mit Quelle kopieren', copyLink: 'Link zur Textstelle kopieren', sourceLabel: 'Quelle',
         copyFormat: 'Zitatformat', plainFormat: 'Klartext', markdownFormat: 'Markdown', copied: 'In die Zwischenablage kopiert.',
         plainLinkCopied: 'Seitenlink kopiert; Links zu Textstellen werden hier nicht unterstützt.',
         manualCopyReady: 'Text zum manuellen Kopieren bereit.', manualCopy: 'Manuell kopieren', manualCopyHint: 'Zugriff auf die Zwischenablage fehlgeschlagen. Den Text unten auswählen und kopieren.', closeManualCopy: 'Manuelles Kopieren schließen',
@@ -269,25 +269,26 @@
         ::highlight(slim-page) { background-color: #ffe082; color: #000; }
         ::highlight(slim-page-current) { background-color: #ffca28; color: #000; text-decoration: underline; }
         #slim-selection-tools {
-            all: initial; position: fixed; z-index: 2147483647; display: flex; align-items: start; gap: 6px;
-            width: max-content; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; box-sizing: border-box;
-            background: var(--hl-surface); color: var(--hl-text); border-radius: 8px; padding: 4px;
-            box-shadow: 0 4px 18px var(--hl-shadow); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme);
+            all: initial; position: fixed; z-index: 2147483647; display: flex; flex-direction: column; align-items: start; gap: 4px;
+            width: max-content; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); box-sizing: border-box;
+            color: var(--hl-text); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme);
         }
+        #slim-selection-tools[data-placement=above] { flex-direction: column-reverse; }
         #slim-selection-tools :where(:not(svg, svg *)) { all: revert; font: inherit; color: inherit; box-sizing: border-box; }
         #slim-selection-tools[hidden], #slim-selection-tools [hidden] { display: none !important; }
         #slim-selection-tools button {
-            display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 10px;
-            border: 1px solid var(--hl-border); border-radius: var(--hl-radius); cursor: pointer; background: var(--hl-field); color: var(--hl-text);
+            display: flex; align-items: center; justify-content: center; min-height: 36px; padding: 6px 8px;
+            border: 1px solid transparent; border-radius: var(--hl-radius); cursor: pointer; background: transparent; color: var(--hl-text);
         }
-        #slim-selection-tools #selection-trigger { width: 40px; padding: 6px; }
+        #slim-selection-tools #selection-trigger { width: 40px; min-height: 40px; padding: 6px; background: var(--hl-field); border-color: var(--hl-border); box-shadow: 0 2px 8px var(--hl-shadow); flex-shrink: 0; }
         #slim-selection-tools #selection-trigger img { display: block; width: 26px; height: 26px; }
-        #slim-selection-tools button:hover { background: var(--hl-hover); }
-        #slim-selection-tools button:active { background: var(--hl-active); }
+        #slim-selection-tools button:not(:disabled):hover, #slim-selection-tools summary:hover { background: var(--hl-hover); }
+        #slim-selection-tools button:not(:disabled):active, #slim-selection-tools summary:active { background: var(--hl-active); }
         #slim-selection-tools button:disabled { opacity: .5; cursor: default; }
         #slim-selection-tools :focus-visible { outline: 2px solid var(--hl-focus); outline-offset: -2px; }
         #slim-selection-tools svg { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-        #slim-selection-tools #selection-actions { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        #slim-selection-tools #selection-actions { display: flex; flex-direction: column; gap: 2px; min-width: 0; width: 100%; max-height: var(--hl-selection-menu-height, calc(100dvh - 64px)); overflow: auto; padding: 4px; background: var(--hl-surface); border: 1px solid var(--hl-divider); border-radius: 8px; box-shadow: 0 4px 18px var(--hl-shadow); }
+        #slim-selection-tools #selection-highlight { font-weight: 600; background: var(--hl-field); }
         #slim-selection-tools #selection-actions button { gap: 8px; white-space: normal; text-align: left; justify-content: start; }
         #slim-selection-tools #selection-actions button > span { min-width: 0; overflow-wrap: anywhere; }
         #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
@@ -300,9 +301,11 @@
         #slim-hl-panel .page-save[aria-pressed=true] { color: var(--hl-accent-text); }
         #slim-hl-panel .page-actions { display: flex; flex-shrink: 0; gap: 4px; }
         #slim-hl-panel textarea { resize: none; min-height: 120px; margin-bottom: 8px; }
-        #slim-selection-tools details { display: block; }
-        #slim-selection-tools summary { display: list-item; cursor: pointer; min-height: 36px; padding: 8px; }
-        #slim-selection-tools details button { width: 100%; margin-top: 4px; }
+        #slim-selection-tools details { display: block; border-top: 1px solid var(--hl-divider); margin-top: 2px; padding-top: 2px; }
+        #slim-selection-tools summary { display: list-item; cursor: pointer; min-height: 36px; padding: 6px 8px; border-radius: var(--hl-radius); }
+        #slim-selection-tools details button { width: 100%; margin-top: 2px; }
+        #slim-hl-feedback { all: initial; position: fixed; z-index: 2147483647; pointer-events: none; box-sizing: border-box; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 8px 10px; border: 1px solid var(--hl-divider); border-radius: var(--hl-radius); background: var(--hl-surface); color: var(--hl-text); box-shadow: 0 4px 18px var(--hl-shadow); font: 14px/1.45 system-ui, sans-serif; overflow-wrap: anywhere; }
+        #slim-hl-feedback[hidden] { display: none !important; }
         #slim-hl-panel .page-term { display: block; overflow-wrap: anywhere; max-height: 5.8em; overflow: auto; }
         #slim-hl-panel #page-heading { margin-top: 0; }
         #slim-hl-panel #clear-page { margin: 0; }
@@ -310,7 +313,7 @@
         #slim-hl-panel #shortcut-label { display: block; font-weight: 600; margin: 6px 0; }
         #slim-hl-panel #navigation-scope { margin: 0; }
         .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
-        #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle {
+        #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle, #slim-hl-feedback {
             --hl-brand-logo: url("${LOGOS.dark}");
             --hl-bg: #1a1a1a; --hl-surface: #242424; --hl-field: #222;
             --hl-text: #f0f0f0; --hl-muted: #b5b5b5; --hl-border: #666;
@@ -320,7 +323,7 @@
             --hl-shadow: rgba(0,0,0,.4); --hl-scheme: dark;
             --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 10px;
         }
-        #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light] {
+        #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light], #slim-hl-feedback[data-theme=light] {
             --hl-brand-logo: url("${LOGOS.light}");
             --hl-bg: #fff; --hl-surface: #f1f4f7; --hl-field: #fff;
             --hl-text: #1e2933; --hl-muted: #52606d; --hl-border: #778391;
@@ -346,7 +349,7 @@
             all: revert; box-sizing: border-box; font: inherit; color: inherit;
         }
         #slim-hl-panel [hidden] { display: none !important; }
-        #slim-hl-panel, #slim-hl-panel *, #slim-selection-tools, #slim-selection-tools * { scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
+        #slim-hl-panel, #slim-hl-panel *, #slim-selection-tools, #slim-selection-tools *, #slim-hl-feedback { scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
         #slim-hl-panel ::-webkit-scrollbar { width: 10px; height: 10px; }
         #slim-hl-panel ::-webkit-scrollbar-track { background: var(--hl-field); }
         #slim-hl-panel ::-webkit-scrollbar-thumb { background: var(--hl-scroll-thumb); border: 2px solid var(--hl-field); border-radius: 6px; }
@@ -443,6 +446,7 @@
         #slim-pos-bar .mark { position: absolute; left: 0; width: 8px; height: 4px; border-radius: 2px; pointer-events: auto; cursor: pointer; opacity: .75; }
         #slim-pos-bar .mark:hover, #slim-pos-bar .mark.active { opacity: 1; transform: scaleX(1.6); }
         @media (max-width: 480px) {
+            #slim-selection-tools #selection-trigger { min-height: 44px; }
             #slim-hl-panel input[type=text], #slim-hl-panel select, #slim-hl-panel textarea { font-size: 16px; }
             #slim-hl-panel button, #slim-hl-panel summary, #slim-selection-tools button, #slim-selection-tools summary { min-height: 44px; }
             #slim-hl-panel .icon-btn { width: 40px; }
@@ -914,13 +918,40 @@
         const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         return `> ${escaped}\n\n[${t('sourceLabel')}](${url.replace(/[()]/g, c => encodeURIComponent(c))})`;
     }
+    let copyFeedbackTimer;
+    function ensureCopyFeedback() {
+        let feedback = uiById('slim-hl-feedback');
+        if (!feedback) {
+            feedback = document.createElement('div'); feedback.id = 'slim-hl-feedback'; feedback.hidden = true;
+            feedback.setAttribute('role', 'status'); feedback.setAttribute('aria-atomic', 'true');
+            ensureUIRoot().append(feedback);
+        }
+        return feedback;
+    }
+    function showCopyFeedback(key, anchor) {
+        const feedback = ensureCopyFeedback();
+        clearTimeout(copyFeedbackTimer);
+        feedback.dataset.message = key; feedback.lang = currentLang(); feedback.hidden = false;
+        applyAppearance();
+        const box = feedback.getBoundingClientRect(), viewport = window.visualViewport;
+        const left = viewport?.offsetLeft || 0, top = viewport?.offsetTop || 0;
+        const width = viewport?.width || innerWidth, height = viewport?.height || innerHeight;
+        feedback.style.left = Math.max(left + 8, Math.min(anchor?.x ?? left + width - box.width - 20, left + width - box.width - 8)) + 'px';
+        feedback.style.top = Math.max(top + 8, Math.min(anchor?.y ?? top + height - box.height - 20, top + height - box.height - 8)) + 'px';
+        copyFeedbackTimer = setTimeout(() => { feedback.hidden = true; feedback.textContent = ''; }, 6000);
+    }
     async function copyText(text, status = 'copied') {
-        hideSelectionTools(true);
+        const anchor = uiById('slim-selection-tools')?.getBoundingClientRect();
+        const focused = uiById('slim-selection-tools')?.contains(uiActiveElement());
+        const origin = selectionSnapshot?.focusTarget;
+        if (focused) uiActiveElement()?.blur();
+        hideSelectionTools();
+        if (focused && origin?.isConnected) origin.focus({ preventScroll: true });
         try {
             if (typeof GM_setClipboard === 'function') await GM_setClipboard(text, 'text');
             else if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
             else throw new Error('Clipboard unavailable');
-            setPanelOpen(true, false); setPanelStatus(status);
+            showCopyFeedback(status, anchor);
         } catch {
             setPanelOpen(true, false);
             const field = uiById('manual-copy'); field.value = text;
@@ -986,7 +1017,7 @@
         if (!parent || parent.closest(SKIP_SELECTOR + ', ' + OWN_UI)) return null;
         if ([sel.anchorNode, sel.focusNode].some(node => node && (node.nodeType === 1 ? node : node.parentElement)?.closest(SKIP_SELECTOR + ', ' + OWN_UI))) return null;
         const text = normalizePassage(sel.toString());
-        return text ? { text, rawText: range.toString(), url: location.href, range: range.cloneRange() } : null;
+        return text ? { text, rawText: range.toString(), url: location.href, range: range.cloneRange(), focusTarget: uiActiveElement() } : null;
     }
 
     function validSelectionSnapshot() {
@@ -1008,10 +1039,17 @@
         const rects = [...selectionSnapshot.range.getClientRects()];
         const rect = rects.filter(r => r.bottom > 0 && r.top < innerHeight).at(-1);
         if (!rect) { hideSelectionTools(); return; }
+        const viewport = window.visualViewport;
+        const left = viewport?.offsetLeft || 0, top = viewport?.offsetTop || 0;
+        const width = viewport?.width || innerWidth, height = viewport?.height || innerHeight;
+        tools.style.maxWidth = Math.max(0, width - 16) + 'px'; tools.style.maxHeight = Math.max(0, height - 16) + 'px';
+        tools.style.setProperty('--hl-selection-menu-height', Math.max(0, height - 20 - tools.querySelector('#selection-trigger').getBoundingClientRect().height) + 'px');
         const box = tools.getBoundingClientRect();
-        tools.style.left = Math.max(8, Math.min(rect.right, innerWidth - box.width - 8)) + 'px';
-        const y = rect.bottom + 8 + box.height < innerHeight ? rect.bottom + 8 : rect.top - box.height - 8;
-        tools.style.top = Math.max(8, Math.min(y, innerHeight - box.height - 8)) + 'px';
+        const above = rect.bottom + 8 + box.height > top + height && rect.top - top > top + height - rect.bottom;
+        tools.dataset.placement = above ? 'above' : 'below';
+        tools.style.left = Math.max(left + 8, Math.min(rect.right, left + width - box.width - 8)) + 'px';
+        const y = above ? rect.top - box.height - 8 : rect.bottom + 8;
+        tools.style.top = Math.max(top + 8, Math.min(y, top + height - box.height - 8)) + 'px';
     }
 
     function createSelectionTools() {
@@ -1025,6 +1063,7 @@
             if (actions.hidden) expand(); else { actions.hidden = true; tools.querySelector('#selection-trigger').setAttribute('aria-expanded', 'false'); positionSelectionTools(); }
         };
         tools.querySelector('#selection-trigger').onpointerenter = expand;
+        tools.querySelector('#selection-share').addEventListener('toggle', positionSelectionTools);
         tools.onpointerdown = e => { if (e.button === 0) e.preventDefault(); };
         tools.querySelector('#selection-highlight').onclick = () => { if (validSelectionSnapshot()) addPageSelection(selectionSnapshot.text); else hideSelectionTools(true); };
         tools.querySelector('#selection-web').onclick = () => {
@@ -1035,6 +1074,7 @@
         tools.querySelector('#selection-quote').onclick = () => selectedShare('quote');
         tools.querySelector('#selection-link').onclick = () => selectedShare('link');
         ensureUIRoot().append(tools);
+        ensureCopyFeedback();
         applyAppearance();
         return tools;
     }
@@ -1528,7 +1568,7 @@
     }
 
     const SKIP_SELECTOR = 'script, style, textarea, input, noscript, code, pre, select, option, [contenteditable=""], [contenteditable="true"], [contenteditable="plaintext-only"]';
-    const OWN_UI = '#slim-hl-ui, #slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-download';
+    const OWN_UI = '#slim-hl-ui, #slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-hl-feedback, #slim-download';
     const FRAME_BUDGET_MS = 10;
     let matchers = [];
     let ownNodes = new WeakSet(); // Markierungen und Textstücke, die dieses Skript selbst erzeugt hat
@@ -1753,12 +1793,13 @@
 
     // Source: src/80-panel.js
     function applyAppearance() {
-        for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle']) {
+        for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle', 'slim-hl-feedback']) {
             const el = uiById(id);
             if (el) {
                 el.dataset.theme = uiTheme;
                 el.style.opacity = String((100 - uiTransparency) / 100);
                 el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = LOGOS[uiTheme]; });
+                if (id === 'slim-hl-feedback') { el.textContent = el.hidden ? '' : t(el.dataset.message); el.lang = currentLang(); }
             }
         }
         const toggle = uiById('slim-hl-toggle');

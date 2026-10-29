@@ -84,12 +84,51 @@ module.exports=({open,eq,ok,selectionShortcutTime})=>{
     async feature_successful_copy_exposes_confirmation(b){
       const p=await pageWith(b,{panelOpen:false});await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{}}}));
       await tools(p);await p.locator('#selection-share > summary').click();await p.click('#selection-quote');
-      await p.locator('#panel-status').waitFor({state:'visible',timeout:3000});eq(await p.textContent('#panel-status'),'In die Zwischenablage kopiert.');
+      eq(await p.locator('#slim-hl-panel').isVisible(),false,'Copy success does not open the main panel');
+      const feedback=p.locator('#slim-hl-feedback');await feedback.waitFor({state:'visible',timeout:3000});
+      eq(await feedback.textContent(),'In die Zwischenablage kopiert.');eq(await feedback.getAttribute('role'),'status');
+      eq(await p.evaluate(()=>window.__store.hl_panel_state.open),false,'Closed panel preference preserved');
+      eq(await p.locator('#slim-selection-tools').isVisible(),false,'Actions dismissed after copying');
+    },
+    async feature_copy_preserves_page_focus_and_pending_selection(b){
+      const p=await pageWith(b,{panelOpen:false,html:'<a id="source" href="#">Quelle</a><p id="choose">Solarenergie</p><p id="next">Windkraft</p>'});
+      p.setDefaultTimeout(3000);
+      await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:()=>new Promise(resolve=>window.__finishCopy=resolve)}}));
+      await p.focus('#source');
+      await p.evaluate(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('choose'));getSelection().removeAllRanges();getSelection().addRange(r);});
+      await p.locator('#selection-trigger').waitFor({state:'visible'});await p.locator('#selection-trigger').hover();await p.locator('#selection-share > summary').click();await p.click('#selection-quote');
+      eq(await p.evaluate(()=>document.activeElement.id),'source','Pointer copy keeps page focus');
+      await p.evaluate(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('next'));getSelection().removeAllRanges();getSelection().addRange(r);});
+      await p.locator('#selection-trigger').waitFor({state:'visible'});await p.locator('#selection-trigger').hover();
+      await p.evaluate(()=>window.__finishCopy());await p.locator('#slim-hl-feedback').waitFor({state:'visible'});
+      eq(await p.locator('#selection-actions').isVisible(),true,'Late clipboard completion preserves new actions');
+      await p.click('#selection-highlight');eq(await count(p),1);ok((await p.locator('.page-term').textContent()).includes('Windkraft'),'New selection remains actionable');
     },
     async feature_copy_failure_offers_manual_copy(b){
-      const p=await pageWith(b);await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw Error('denied')}}}));
+      const p=await pageWith(b,{panelOpen:false});await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw Error('denied')}}}));
       await tools(p);ok(await p.locator('#selection-share').count(),'Share disclosure');await p.locator('#selection-share > summary').click();await p.click('#selection-quote');
       await p.locator('#manual-copy').waitFor({state:'visible'});ok((await p.inputValue('#manual-copy')).includes('Solarenergie'));eq(await p.evaluate(()=>document.activeElement.id),'manual-copy');
+    },
+    async feature_copy_keyboard_returns_to_page_without_opening_panel(b){
+      const p=await pageWith(b,{panelOpen:false,html:'<a id="source" href="#">Quelle</a><p id="choose">Solarenergie</p>'});
+      await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{}}}));
+      await p.focus('#source');await p.evaluate(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('choose'));getSelection().removeAllRanges();getSelection().addRange(r);});
+      await p.locator('#selection-trigger').waitFor({state:'visible'});await p.focus('#selection-trigger');await p.keyboard.press('Enter');
+      await p.focus('#selection-share > summary');await p.keyboard.press('Enter');await p.focus('#selection-quote');await p.keyboard.press('Enter');
+      await p.locator('#slim-hl-feedback').waitFor({state:'visible'});eq(await p.evaluate(()=>document.activeElement.id),'source','Keyboard copy restores the page focus');
+      eq(await p.locator('#slim-hl-panel').isVisible(),false);
+    },
+    async feature_copy_plain_link_notice_fits_narrow_and_follows_appearance(b){
+      const p=await pageWith(b,{url:null,panelOpen:false,viewport:{width:320,height:500},store:{hl_lang:'en',hl_ui_theme:'light',hl_ui_transparency:35}});
+      await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{}}}));
+      await tools(p);await p.locator('#selection-share > summary').click();await p.click('#selection-link');
+      const notice=p.locator('#slim-hl-feedback');await notice.waitFor({state:'visible'});
+      ok((await notice.textContent()).includes('Page link copied;'),'Unsupported text link has an honest localized explanation');
+      const box=await notice.boundingBox();ok(box.x>=8&&box.y>=8&&box.x+box.width<=313&&box.y+box.height<=493,'Long status stays visible');
+      eq(await notice.evaluate(el=>getComputedStyle(el).opacity),'0.65');eq(await notice.getAttribute('data-theme'),'light');
+      eq(await p.locator('#slim-hl-panel').isVisible(),false);await p.click('#slim-hl-toggle');await p.locator('#settings-section > summary').click();await p.selectOption('#ui-theme','dark');
+      eq(await notice.getAttribute('data-theme'),'dark');await p.selectOption('#ui-lang','de');ok((await notice.textContent()).includes('Seitenlink kopiert;'),'Existing confirmation follows language changes');
+      await notice.waitFor({state:'hidden',timeout:8000});
     },
     async feature_text_fragment_link_is_encoded(b){
       const p=await pageWith(b);await p.evaluate(()=>{window.__copied=[];Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async s=>window.__copied.push(s)}})});

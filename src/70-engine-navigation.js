@@ -41,7 +41,7 @@ function updatePosBar() {
 }
 
 const SKIP_SELECTOR = 'script, style, textarea, input, noscript, code, pre, select, option, [contenteditable=""], [contenteditable="true"], [contenteditable="plaintext-only"]';
-const OWN_UI = '#slim-hl-ui, #slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-download';
+const OWN_UI = '#slim-hl-ui, #slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-hl-feedback, #slim-download';
 const FRAME_BUDGET_MS = 10;
 let matchers = [];
 let ownNodes = new WeakSet(); // Markierungen und Textstücke, die dieses Skript selbst erzeugt hat

@@ -2,25 +2,26 @@ const UI_CSS = `
     ::highlight(slim-page) { background-color: #ffe082; color: #000; }
     ::highlight(slim-page-current) { background-color: #ffca28; color: #000; text-decoration: underline; }
     #slim-selection-tools {
-        all: initial; position: fixed; z-index: 2147483647; display: flex; align-items: start; gap: 6px;
-        width: max-content; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; box-sizing: border-box;
-        background: var(--hl-surface); color: var(--hl-text); border-radius: 8px; padding: 4px;
-        box-shadow: 0 4px 18px var(--hl-shadow); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme);
+        all: initial; position: fixed; z-index: 2147483647; display: flex; flex-direction: column; align-items: start; gap: 4px;
+        width: max-content; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); box-sizing: border-box;
+        color: var(--hl-text); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme);
     }
+    #slim-selection-tools[data-placement=above] { flex-direction: column-reverse; }
     #slim-selection-tools :where(:not(svg, svg *)) { all: revert; font: inherit; color: inherit; box-sizing: border-box; }
     #slim-selection-tools[hidden], #slim-selection-tools [hidden] { display: none !important; }
     #slim-selection-tools button {
-        display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 10px;
-        border: 1px solid var(--hl-border); border-radius: var(--hl-radius); cursor: pointer; background: var(--hl-field); color: var(--hl-text);
+        display: flex; align-items: center; justify-content: center; min-height: 36px; padding: 6px 8px;
+        border: 1px solid transparent; border-radius: var(--hl-radius); cursor: pointer; background: transparent; color: var(--hl-text);
     }
-    #slim-selection-tools #selection-trigger { width: 40px; padding: 6px; }
+    #slim-selection-tools #selection-trigger { width: 40px; min-height: 40px; padding: 6px; background: var(--hl-field); border-color: var(--hl-border); box-shadow: 0 2px 8px var(--hl-shadow); flex-shrink: 0; }
     #slim-selection-tools #selection-trigger img { display: block; width: 26px; height: 26px; }
-    #slim-selection-tools button:hover { background: var(--hl-hover); }
-    #slim-selection-tools button:active { background: var(--hl-active); }
+    #slim-selection-tools button:not(:disabled):hover, #slim-selection-tools summary:hover { background: var(--hl-hover); }
+    #slim-selection-tools button:not(:disabled):active, #slim-selection-tools summary:active { background: var(--hl-active); }
     #slim-selection-tools button:disabled { opacity: .5; cursor: default; }
     #slim-selection-tools :focus-visible { outline: 2px solid var(--hl-focus); outline-offset: -2px; }
     #slim-selection-tools svg { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    #slim-selection-tools #selection-actions { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    #slim-selection-tools #selection-actions { display: flex; flex-direction: column; gap: 2px; min-width: 0; width: 100%; max-height: var(--hl-selection-menu-height, calc(100dvh - 64px)); overflow: auto; padding: 4px; background: var(--hl-surface); border: 1px solid var(--hl-divider); border-radius: 8px; box-shadow: 0 4px 18px var(--hl-shadow); }
+    #slim-selection-tools #selection-highlight { font-weight: 600; background: var(--hl-field); }
     #slim-selection-tools #selection-actions button { gap: 8px; white-space: normal; text-align: left; justify-content: start; }
     #slim-selection-tools #selection-actions button > span { min-width: 0; overflow-wrap: anywhere; }
     #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
@@ -33,9 +34,11 @@ const UI_CSS = `
     #slim-hl-panel .page-save[aria-pressed=true] { color: var(--hl-accent-text); }
     #slim-hl-panel .page-actions { display: flex; flex-shrink: 0; gap: 4px; }
     #slim-hl-panel textarea { resize: none; min-height: 120px; margin-bottom: 8px; }
-    #slim-selection-tools details { display: block; }
-    #slim-selection-tools summary { display: list-item; cursor: pointer; min-height: 36px; padding: 8px; }
-    #slim-selection-tools details button { width: 100%; margin-top: 4px; }
+    #slim-selection-tools details { display: block; border-top: 1px solid var(--hl-divider); margin-top: 2px; padding-top: 2px; }
+    #slim-selection-tools summary { display: list-item; cursor: pointer; min-height: 36px; padding: 6px 8px; border-radius: var(--hl-radius); }
+    #slim-selection-tools details button { width: 100%; margin-top: 2px; }
+    #slim-hl-feedback { all: initial; position: fixed; z-index: 2147483647; pointer-events: none; box-sizing: border-box; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 8px 10px; border: 1px solid var(--hl-divider); border-radius: var(--hl-radius); background: var(--hl-surface); color: var(--hl-text); box-shadow: 0 4px 18px var(--hl-shadow); font: 14px/1.45 system-ui, sans-serif; overflow-wrap: anywhere; }
+    #slim-hl-feedback[hidden] { display: none !important; }
     #slim-hl-panel .page-term { display: block; overflow-wrap: anywhere; max-height: 5.8em; overflow: auto; }
     #slim-hl-panel #page-heading { margin-top: 0; }
     #slim-hl-panel #clear-page { margin: 0; }
@@ -43,7 +46,7 @@ const UI_CSS = `
     #slim-hl-panel #shortcut-label { display: block; font-weight: 600; margin: 6px 0; }
     #slim-hl-panel #navigation-scope { margin: 0; }
     .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
-    #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle {
+    #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle, #slim-hl-feedback {
         --hl-brand-logo: url("${LOGOS.dark}");
         --hl-bg: #1a1a1a; --hl-surface: #242424; --hl-field: #222;
         --hl-text: #f0f0f0; --hl-muted: #b5b5b5; --hl-border: #666;
@@ -53,7 +56,7 @@ const UI_CSS = `
         --hl-shadow: rgba(0,0,0,.4); --hl-scheme: dark;
         --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 10px;
     }
-    #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light] {
+    #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light], #slim-hl-feedback[data-theme=light] {
         --hl-brand-logo: url("${LOGOS.light}");
         --hl-bg: #fff; --hl-surface: #f1f4f7; --hl-field: #fff;
         --hl-text: #1e2933; --hl-muted: #52606d; --hl-border: #778391;
@@ -79,7 +82,7 @@ const UI_CSS = `
         all: revert; box-sizing: border-box; font: inherit; color: inherit;
     }
     #slim-hl-panel [hidden] { display: none !important; }
-    #slim-hl-panel, #slim-hl-panel *, #slim-selection-tools, #slim-selection-tools * { scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
+    #slim-hl-panel, #slim-hl-panel *, #slim-selection-tools, #slim-selection-tools *, #slim-hl-feedback { scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
     #slim-hl-panel ::-webkit-scrollbar { width: 10px; height: 10px; }
     #slim-hl-panel ::-webkit-scrollbar-track { background: var(--hl-field); }
     #slim-hl-panel ::-webkit-scrollbar-thumb { background: var(--hl-scroll-thumb); border: 2px solid var(--hl-field); border-radius: 6px; }
@@ -176,6 +179,7 @@ const UI_CSS = `
     #slim-pos-bar .mark { position: absolute; left: 0; width: 8px; height: 4px; border-radius: 2px; pointer-events: auto; cursor: pointer; opacity: .75; }
     #slim-pos-bar .mark:hover, #slim-pos-bar .mark.active { opacity: 1; transform: scaleX(1.6); }
     @media (max-width: 480px) {
+        #slim-selection-tools #selection-trigger { min-height: 44px; }
         #slim-hl-panel input[type=text], #slim-hl-panel select, #slim-hl-panel textarea { font-size: 16px; }
         #slim-hl-panel button, #slim-hl-panel summary, #slim-selection-tools button, #slim-selection-tools summary { min-height: 44px; }
         #slim-hl-panel .icon-btn { width: 40px; }
