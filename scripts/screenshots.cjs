@@ -1,9 +1,76 @@
 const fs=require('fs'),path=require('path');const {chromium}=require('playwright');
 const output=path.resolve(__dirname,'../artifacts/screenshots');
 fs.mkdirSync(output,{recursive:true});
+
+// README captures use the shipped UI and native interactions on a local article.
+// Only the webpage fixture is styled here; userscript styles remain untouched.
+async function captureReadme(browser, source) {
+ const html=fs.readFileSync(path.join(__dirname,'fixtures/readme.html'),'utf8');
+ const viewport={width:1200,height:800};
+ const results=[];
+ for(const language of ['de','en']) for(const theme of ['light','dark']) {
+  const name=`readme-${language}-${theme}`;
+  const page=await browser.newPage({viewport,deviceScaleFactor:2,locale:language==='de'?'de-DE':'en-US'});
+  const errors=[];
+  page.on('pageerror',error=>errors.push(error.message));
+  try {
+   await page.route('**/*',route=>route.fulfill({contentType:'text/html; charset=utf-8',body:html}));
+   await page.goto('https://example.test/reading/energy');
+   await page.evaluate(({language,theme})=>{
+    document.documentElement.lang=language;
+    document.documentElement.dataset.theme=theme;
+    document.querySelector(`article:not([lang="${language}"])`).remove();
+    for(const node of document.querySelectorAll('[data-de]')) node.textContent=node.dataset[language];
+    const store={hl_keywords:[],hl_auto_search:false,hl_ui_theme:theme,hl_lang:language};
+    window.GM_getValue=(key,fallback)=>structuredClone(store[key]??fallback);
+    window.GM_setValue=(key,value)=>{store[key]=structuredClone(value)};
+    window.GM_addStyle=css=>{const style=document.createElement('style');style.textContent=css;document.head.append(style)};
+    window.GM_registerMenuCommand=()=>{};
+   },{language,theme});
+   await page.evaluate(require('../tests/helpers/ui-driver.cjs'));
+   await page.addScriptTag({content:source});
+   const select=term=>page.locator(`[data-term="${term}"]`).evaluate(node=>{
+    document.activeElement?.blur();
+    const range=document.createRange();range.selectNodeContents(node);
+    getSelection().removeAllRanges();getSelection().addRange(range);
+   });
+   for(const [term,expectedCount] of [['solar',3],['storage',5],['climate',7]]) {
+    await select(term);
+    await page.locator('#selection-trigger').waitFor({state:'visible'});
+    await page.keyboard.press('Alt+Shift+H');
+    await page.waitForFunction(expected=>CSS.highlights.get('slim-page')?.size===expected,expectedCount);
+   }
+   await page.locator('.page-save').first().click();
+   // Exercise the occurrence navigator before opening another selection.
+   await page.keyboard.press('Alt+ArrowRight');
+   await page.keyboard.press('Alt+ArrowRight');
+   await select('selection');
+   await page.locator('#selection-trigger').waitFor({state:'visible'});
+   await page.locator('#selection-trigger').hover();
+   await page.getByRole('button',{name:language==='de'?'Im Web suchen':'Search the web',exact:true}).waitFor({state:'visible'});
+   await page.mouse.move(800,740);
+   await page.evaluate(()=>document.fonts.ready);
+   const panel=await page.locator('#slim-hl-panel').boundingBox();
+   const menu=await page.locator('#slim-selection-tools').boundingBox();
+   const article=await page.locator('article').boundingBox();
+   for(const box of [panel,menu]) if(!box||box.x<0||box.y<0||box.x+box.width>viewport.width||box.y+box.height>viewport.height) throw Error(`${name}: UI outside viewport`);
+   if(article.x+article.width>panel.x) throw Error(`${name}: panel overlaps article`);
+   if(menu.y<article.y+article.height) throw Error(`${name}: menu obscures article`);
+   const counts=await page.locator('.page-item .kw-count').allTextContents();
+   if(counts.join(',')!=='3,2,2') throw Error(`${name}: incorrect occurrence counts ${counts}`);
+   if(errors.length) throw Error(`${name}: ${errors.join('; ')}`);
+   await page.screenshot({path:path.join(output,`${name}.png`)});
+   results.push({name,language,theme,counts,panel,menu});
+  } finally {await page.close()}
+ }
+ fs.writeFileSync(path.join(output,'readme.json'),JSON.stringify(results,null,2));
+ console.log('Captured README examples in German/English and light/dark in artifacts/screenshots/');
+}
+
 (async()=>{
 const browser=await chromium.launch(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{channel:'chromium'}),results=[],errors=[];
 const source=fs.readFileSync(path.resolve(__dirname,'../userscript/slim-search-highlight.user.js'),'utf8');
+if(process.argv.includes('--readme')) {try {await captureReadme(browser,source)} finally {await browser.close()} return}
 for(const theme of ['dark','light']) for(const [viewport,width,height] of [['desktop',1280,900],['narrow',390,844]]){
  const name=theme+'-'+viewport;
  const p=await browser.newPage({viewport:{width,height},locale:'de-DE'});
