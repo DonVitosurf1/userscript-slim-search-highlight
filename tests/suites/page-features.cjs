@@ -7,6 +7,49 @@ module.exports=({open,eq,ok,selectionShortcutTime})=>{
   const count=p=>p.evaluate(()=>CSS.highlights.get('slim-page')?.size||0);
   const tools=async p=>{await select(p);await p.locator('#selection-trigger').waitFor({state:'visible'});await p.locator('#selection-trigger').hover();};
   return {
+    async feature_new_page_highlights_get_distinct_vivid_colors(b){
+      const words=Array.from({length:14},(_,i)=>'Begriff-'+String.fromCharCode(65+i));
+      const p=await pageWith(b,{keywords:[{text:'Permanent',color:'#ffdf00'}],html:'<p>Permanent</p>'+words.map((word,i)=>`<p id="word-${i}">${word}</p><p>${word}</p>`).join('')});
+      for(let i=0;i<words.length;i++){
+        await p.evaluate(i=>{document.activeElement?.blur();const r=document.createRange();r.selectNodeContents(document.getElementById('word-'+i));getSelection().removeAllRanges();getSelection().addRange(r);},i);
+        if(i===1){await p.locator('#selection-trigger').waitFor({state:'visible'});await p.locator('#selection-trigger').hover();await p.click('#selection-highlight');}
+        else await p.keyboard.press('Alt+Shift+H');
+      }
+      const colors=await p.locator('.page-item input[type=color]').evaluateAll(inputs=>inputs.map(input=>input.value));
+      eq(colors.length,words.length);eq(new Set(colors).size,words.length,'Each new passage gets an unused color, including after the initial palette');
+      ok(!colors.includes('#ffdf00'),'Avoid colors of applicable permanent keywords too');
+      for(const color of colors){
+        const rgb=color.match(/\w\w/g).map(channel=>parseInt(channel,16));
+        ok(Math.max(...rgb)-Math.min(...rgb)>=100&&Math.max(...rgb)>=220,'Highlight color is bright and saturated: '+color);
+      }
+      const paints=await p.evaluate(()=>[...CSS.highlights.entries()].filter(([name])=>name.startsWith('slim-page-term-')).map(([name,ranges])=>{
+        const rule=[...document.getElementById('slim-page-colors').sheet.cssRules].find(rule=>rule.selectorText===`::highlight(${name})`);
+        return {count:ranges.size,background:rule.style.backgroundColor,foreground:rule.style.color};
+      }));
+      eq(paints.length,words.length);eq(new Set(paints.map(paint=>paint.background)).size,words.length,'Distinct colors reach the actual highlight styles');
+      for(const paint of paints){
+        eq(paint.count,2,'All occurrences share their passage color');
+        ok(['rgb(0, 0, 0)','rgb(255, 255, 255)'].includes(paint.foreground),'Black/white foreground');
+        const channels=paint.background.match(/\d+/g).map(Number).map(n=>n/255).map(n=>n<=0.04045?n/12.92:((n+0.055)/1.055)**2.4);
+        const luminance=channels[0]*0.2126+channels[1]*0.7152+channels[2]*0.0722;
+        const contrast=paint.foreground==='rgb(0, 0, 0)'?(luminance+0.05)/0.05:1.05/(luminance+0.05);
+        ok(contrast>=4.5,'Actual highlight text meets 4.5:1 contrast');
+      }
+    },
+    async feature_new_page_colors_preserve_custom_saved_and_duplicate_terms(b){
+      const store={hl_page_annotations:{version:1,pages:{[url]:{terms:[{id:'saved',text:'Solarenergie',color:'#FFDF00',anchor:{exact:'Solarenergie'}}],options:{}}}}};
+      const html='<p id="choose">Solarenergie</p><p id="next">Windkraft</p><p>Solarenergie Windkraft</p>';
+      const p=await pageWith(b,{store,html});await mark(p);
+      eq(await p.locator('.page-item').count(),1,'Selecting an existing passage does not duplicate it');
+      eq(await p.locator('.page-item input[type=color]').inputValue(),'#ffdf00','Saved color survives repeated selection');
+      await p.evaluate(()=>{document.activeElement?.blur();const r=document.createRange();r.selectNodeContents(document.getElementById('next'));getSelection().removeAllRanges();getSelection().addRange(r);});await p.keyboard.press('Alt+Shift+H');
+      const next=await p.locator('.page-item input[type=color]').nth(1).inputValue();ok(next!=='#ffdf00','New color avoids existing saved colors case-insensitively');
+      await p.locator('.page-save').nth(1).click();
+      const saved=await p.evaluate(()=>JSON.parse(JSON.stringify(window.__store)));
+      const restored=await pageWith(b,{store:saved,html});eq(await restored.locator('.page-item input[type=color]').nth(1).inputValue(),next,'Automatically assigned color is retained on reload');
+      await restored.locator('.page-item input[type=color]').nth(1).fill('#234567');
+      await restored.click('#undo-page');eq(await restored.locator('.page-item input[type=color]').nth(1).inputValue(),next,'Undo restores the assigned color');
+    },
     async feature_page_colors_and_undo_clear(b){
       const p=await pageWith(b);await mark(p);ok(await p.locator('.page-item input[type=color]').count(),'Page color control');
       await p.locator('.page-item input[type=color]').fill('#222222');await p.locator('.page-item input[type=color]').dispatchEvent('change');

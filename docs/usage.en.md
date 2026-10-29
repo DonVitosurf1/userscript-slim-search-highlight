@@ -20,7 +20,9 @@ An unfinished search-field draft does not replace a submitted URL query. The sea
 
 ## Color, removal and undo
 
-Each page passage has a color and count. Remove one passage or clear all page highlights. **Undo** restores text/color/saved state, retaining the latest 20 page states in memory. Navigation/reload ends that undo history.
+Each new page passage automatically gets a different vivid color and a count. All occurrences of the same passage share its color. Assignment skips colors already used by current page passages or applicable keywords, adding further colors after the initial palette. The color field still allows manual changes. Selecting the same passage again or restoring saved passages preserves their colors.
+
+Remove one passage or clear all page highlights. **Undo** restores text/color/saved state, retaining the latest 20 page states in memory. Navigation/reload ends that undo history.
 
 While page terms exist, Previous/Next and **Alt+Left / Right** navigate their results. Otherwise navigation uses saved/automatic keyword matches. Position ticks are aggregated to at most 500 and match details to 300 rows; every actual occurrence remains accessible through navigation.
 

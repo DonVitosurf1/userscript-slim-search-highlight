@@ -133,6 +133,8 @@ The canonical runtime styles are in src/10-styles.js; the deterministic assemble
 
 Page rows expose a labeled color input, passage/count, explicit save/forget state and remove action. Color, remove, clear and option changes can be undone (20 states). Saving is never inferred from highlighting. “Remember for this page” persists only that URL; missing exact text is labeled, and failures retain the previous state. Per-passage native highlight groups use contrast-selected foregrounds.
 
+New page passages use the vivid `PAGE_HIGHLIGHT_COLORS` palette in `src/00-state-i18n.js`; `nextPageHighlightColor` in `src/30-page-state.js` skips colors occupied by current passages or applicable keywords. After the initial palette it allocates unused bright, saturated RGB colors. Existing, saved and manually chosen colors are stable; every occurrence of a passage shares its assigned color. Text labels/counts and black/white contrast-selected foregrounds keep color from being the only identifying cue.
+
 Page search options are a disclosure with a labeled native scope select and whole-word checkbox. Missing article scope gets an inline explanation; searches are never silently broadened. Search progress uses aria-busy and a stable status area, with navigation disabled until commit.
 
 The compact selection trigger still expands into the two primary actions; a secondary “Copy / export” disclosure contains quote/URL and text-fragment copying. Successful copy confirms in the panel; clipboard denial opens a labeled readonly textarea for manual copy. The quote format is a native select in Settings. Markdown/JSON exports are explicit local downloads. Shared semantic status keys are translated when rendered, including after locale change.

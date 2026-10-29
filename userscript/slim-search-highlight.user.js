@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.0
+// @version      4.5.1
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -232,6 +232,7 @@
         return typeof v === 'function' ? v(...args) : v;
     }
     const DEFAULT_COLOR = '#ffe082';
+    const PAGE_HIGHLIGHT_COLORS = ['#ffdf00', '#00e5ff', '#ff80ab', '#76ff03', '#b388ff', '#ff9100', '#448aff', '#ff5252', '#1de9b6', '#ea80fc', '#c6ff00', '#ff6e40'];
     const AUTO_COLORS = ['#90caf9', '#a5d6a7', '#ef9a9a', '#ffcc80', '#ce93d8', '#80cbc4', '#fff176', '#b0bec5'];
     const SEARCH_ENGINES = ['google.', 'bing.', 'duckduckgo.', 'yahoo.', 'baidu.', 'yandex.', 'startpage.', 'ecosia.', 'qwant.'];
     const CROSS_TTL = 10 * 60 * 1000;
@@ -526,6 +527,22 @@
     let copyFormat = GM_getValue('hl_copy_format', 'plain') === 'markdown' ? 'markdown' : 'plain';
     const pagePaintNames = new Set();
 
+    function nextPageHighlightColor() {
+        const used = new Set([...pageTerms, ...getActiveKeywords()].map(term => String(term.color).toLowerCase()));
+        const available = PAGE_HIGHLIGHT_COLORS.find(color => !used.has(color));
+        if (available) return available;
+        // An odd multiplier visits every 24-bit RGB value once. Keep extra colors
+        // bright/saturated and skip occupied colors rather than wrapping the palette.
+        for (let step = 1; step <= 0xffffff; step++) {
+            const value = Math.imul(step, 0x9e3779) & 0xffffff;
+            const rgb = [value >>> 16, (value >>> 8) & 255, value & 255];
+            if (Math.max(...rgb) < 240 || Math.max(...rgb) - Math.min(...rgb) < 128) continue;
+            const color = '#' + value.toString(16).padStart(6, '0');
+            if (!used.has(color)) return color;
+        }
+        return PAGE_HIGHLIGHT_COLORS[0]; // All available vivid RGB colors are occupied.
+    }
+
     function newPageId() {
         let id;
         do { id = 'p' + nextPageTermId++; } while (pageTerms.some(term => term.id === id));
@@ -810,7 +827,7 @@
         if (!value) return false;
         if (!pageTerms.some(term => term.text.toLowerCase() === value.toLowerCase())) {
             rememberPageChange();
-            pageTerms.push({ id: newPageId(), text: value, color: DEFAULT_COLOR, saved: false, anchor: null });
+            pageTerms.push({ id: newPageId(), text: value, color: nextPageHighlightColor(), saved: false, anchor: null });
         }
         watchPageIdentity(); currentIdx = -1; isSelecting = false;
         const focusPanel = uiById('slim-selection-tools')?.contains(uiActiveElement());

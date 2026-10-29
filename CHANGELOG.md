@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.1
+
+- Neue Seitenmarkierungen erhalten automatisch unterschiedliche, kräftige Farben. Bereits belegte Farben der Seite und ihrer aktiven Keywords werden übersprungen; nach der Startpalette folgen zusätzliche helle, gesättigte Farben.
+- Alle Vorkommen derselben Passage behalten ihre Farbe. Manuelle Farbwahl, gespeicherte Farben und Rückgängig bleiben erhalten; die Textfarbe wird für lesbaren Kontrast automatisch gewählt.
+
 ## 4.5.0
 
 ### Sicherheitskorrekturen

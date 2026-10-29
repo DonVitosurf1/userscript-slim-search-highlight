@@ -22,7 +22,7 @@ Seitenmarkierungen benötigen einen Browser mit **CSS Custom Highlights**. Ohne 
 
 - Text auswählen → Textmarker-Symbol öffnen → **Alle Vorkommen markieren**. Alternativ **Alt+Shift+H** verwenden; die Kombination ist in den Einstellungen änderbar und abschaltbar.
 - Mit Vor/Zurück oder **Alt+← / →** durch die Treffer navigieren. Rechtsklick und Doppelklick bleiben beim Browser.
-- Jede Seitenpassage hat eine eigene Farbe. Entfernen, Leeren und weitere Seitenänderungen lassen sich rückgängig machen.
+- Jede neue Seitenpassage bekommt automatisch eine andere, kräftige Farbe; alle ihre Vorkommen teilen diese Farbe. Farben bleiben manuell änderbar. Entfernen, Leeren und weitere Seitenänderungen lassen sich rückgängig machen.
 - **Merken** speichert nur ausdrücklich gewählte Passagen lokal für diese URL. Sonst bleiben Markierungen temporär. **Keywords** ist ein eigener Bereich für dauerhafte, seitenübergreifende Begriffe.
 - **Suchoptionen** bietet ganze Wörter und den Artikelbereich. Standard bleibt die ganze ausgewählte Passage auf der gesamten Seite.
 - **Kopieren / Export** an der Auswahl bietet Zitat+URL oder einen Link zur Textstelle. Websuche startet ausschließlich über **Im Web suchen**.

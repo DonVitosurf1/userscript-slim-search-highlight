@@ -179,6 +179,7 @@ function t(key, ...args) {
     return typeof v === 'function' ? v(...args) : v;
 }
 const DEFAULT_COLOR = '#ffe082';
+const PAGE_HIGHLIGHT_COLORS = ['#ffdf00', '#00e5ff', '#ff80ab', '#76ff03', '#b388ff', '#ff9100', '#448aff', '#ff5252', '#1de9b6', '#ea80fc', '#c6ff00', '#ff6e40'];
 const AUTO_COLORS = ['#90caf9', '#a5d6a7', '#ef9a9a', '#ffcc80', '#ce93d8', '#80cbc4', '#fff176', '#b0bec5'];
 const SEARCH_ENGINES = ['google.', 'bing.', 'duckduckgo.', 'yahoo.', 'baidu.', 'yandex.', 'startpage.', 'ecosia.', 'qwant.'];
 const CROSS_TTL = 10 * 60 * 1000;
