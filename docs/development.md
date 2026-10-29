@@ -6,7 +6,7 @@ Use Node.js 22 or newer (CI uses 22) and the checked-in lockfile:
 
 ```sh
 npm ci
-npx playwright install --with-deps chromium
+npx playwright install --with-deps --no-shell chromium
 npm run build
 npm test
 ```
@@ -18,6 +18,8 @@ CHROMIUM_PATH=/usr/bin/chromium npm test
 ```
 
 No credentials, environment file, database or separate server setup is needed. Browser tests use synthetic pages and GM-function adapters, with no live webpage traffic. The native search-navigation tests start and stop their own ephemeral HTTP server using local origins (including an official Google hostname mapped to loopback by the test runner) so normal and middle-click navigation are exercised without contacting Google or another external service.
+
+The test runner explicitly uses Playwright's full Chromium channel in new headless mode, rather than its separate headless shell. This preserves native browser tab behavior for the middle-click navigation test. `CHROMIUM_PATH` may select an installed full Chromium executable instead. CI uses the same channel and publishes named test failures as GitHub check annotations.
 
 ## Daily workflow
 
