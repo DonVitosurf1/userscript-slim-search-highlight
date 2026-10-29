@@ -16,7 +16,7 @@ for(const theme of ['dark','light']) for(const [viewport,width,height] of [['des
  await p.addScriptTag({content:source});
  const select=()=>p.evaluate(()=>{document.activeElement?.blur();const r=document.createRange();r.selectNodeContents(document.getElementById('choose'));getSelection().removeAllRanges();getSelection().addRange(r)});
  await select();await p.locator('#selection-trigger').waitFor({state:'visible'});await p.screenshot({path:path.join(output,name+'-symbol.png')});
- await p.locator('#selection-trigger').hover();await p.locator('#selection-share > summary').click();await p.screenshot({path:path.join(output,name+'-actions.png')});
+ await p.locator('#selection-trigger').hover();await p.locator('#slim-selection-tools').screenshot({path:path.join(output,name+'-toolbar.png')});await p.locator('#selection-share > summary').click();await p.screenshot({path:path.join(output,name+'-actions.png')});
  await p.getByRole('button',{name:'Alle Vorkommen markieren',exact:true}).click();
  await p.locator('.page-item input[type=color]').fill('#90caf9');await p.locator('.page-item input[type=color]').dispatchEvent('change');await p.locator('.page-save').click();
  await p.screenshot({path:path.join(output,name+'-panel.png')});

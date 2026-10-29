@@ -34,7 +34,7 @@ components:
 ## Overview
 
 ### Creative North Star
-A text-marker case beside the page: dark neutral tools, yellow navigation emphasis, colored swatches tied to real terms. Preserve the existing recognizable palette and concentrate the primary workflow at the top.
+A marked page beside the page: a white paper identity, dark ink lines and vivid yellow/cyan/pink highlights with a narrow occurrence rail. Keep surrounding tools quiet and concentrate the selection workflow at the top. The same mark links the logo, launcher, panel header and selection trigger; functional icons describe the action rather than replacing its label. The [German design guideline](docs/design-guidelines.de.md) explains the identity and usage rules.
 
 ### Product context and register
 - Audience/job: people reading and researching across webpages; add terms and move between occurrences.
@@ -71,7 +71,7 @@ Runtime token ownership remains **Model B**: `src/10-styles.js` is canonical; th
 
 The same `data-theme` variant owns panel, selection toolbar and launcher tokens. Yellow remains the highlighter signature; amber text/focus in the light scheme provides contrast rather than reusing pale yellow as text. No second per-component palette is introduced.
 
-Settings uses the existing native select pattern for theme and corner selection; platform-owned popups are intentional. Labeled native ranges control launcher size (44–80px, default 56) and edge distance (8–80px, default 20), both in 4px steps, with visible associated outputs. All four screen corners are supported, respecting device safe-area insets. Size reset changes only size. The recognizable dark-backed logo scales as one image and retains its identity in either scheme.
+Settings uses the existing native select pattern for theme and corner selection; platform-owned popups are intentional. Labeled native ranges control launcher size (44–80px, default 56) and edge distance (8–80px, default 20), both in 4px steps, with visible associated outputs. All four screen corners are supported, respecting device safe-area insets. Size reset changes only size. The white-backed logo scales as one image and retains its identity in either scheme; its fine contour keeps it visible on white pages.
 
 `applyAppearance` in `src/80-panel.js` updates existing surfaces in place; changing appearance must not discard drafts, collapse groups, move focus or invalidate page highlights. The shared local preference registry owns persistence. A failed write restores the last saved appearance and uses the semantic status region; a successful retry clears that error. Language changes recreate translated controls with the same saved appearance. Verification lives in `tests/suites/appearance.cjs`, including contrast, keyboard, narrow geometry and failure recovery.
 
@@ -105,7 +105,9 @@ Labeled add form submits with click or Enter except during IME composition. Inva
 The panel and selection toolbar live in a closed shadow root in the manager’s isolated world. Closed roots reduce DOM/CSS interference but are not a confidentiality boundary. Render only saved keywords applicable to the current domain; keep full search-history labels in manager-owned menus. Applicable global terms remain observable by the host page. Existing keyword text/color edits require Save or Enter, with a named save action distinct from Delete; blur never persists a draft. Export actions use manager downloads without document links.
 
 ### Iconography
-Authored 24-unit line SVGs, 18px rendered, 1.8 stroke. SVGs are decorative; every icon button has a localized accessible name. Existing embedded logo remains.
+Authored 24-unit line SVGs with 1.8 stroke and rounded ends, rendered at 18px in the panel and 20px beside selection-action labels. Icons never shrink beside wrapping text. SVGs are decorative; every icon button has a localized accessible name.
+
+Canonical brand assets: `assets/icon.svg` (128-unit white tile, ink `#253540`, yellow `#ffdf00`, cyan `#00e5ff`, pink `#ff80ab`, contour `#d9e2e7`), `assets/icons/highlight-all.svg` (repeated marks and occurrence rail) and `assets/icons/search-web.svg` (globe and magnifier). The deterministic build embeds the logo and manifest-listed action SVGs; source code never maintains a second base64 copy. The selection trigger uses the logo at 26px; launcher and header use the same embedded image. Action SVGs inherit the active theme's text color and keep their visible localized labels.
 
 ### Motion
 Only short color transitions on controls; reduced motion removes them and uses instant match scrolling. Navigation feedback retains the visible active state. No entrance choreography.

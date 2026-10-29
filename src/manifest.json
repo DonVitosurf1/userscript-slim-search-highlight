@@ -1,5 +1,9 @@
 {
   "header": "metadata.txt",
+  "icons": {
+    "highlightAll": "highlight-all.svg",
+    "searchWeb": "search-web.svg"
+  },
   "parts": [
     "00-state-i18n.js",
     "10-styles.js",

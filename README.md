@@ -4,6 +4,8 @@
 
 [English](README.en.md) · [Dokumentation](docs/README.md) · [Bedienung](docs/usage.de.md) · [Entwicklung](docs/development.md)
 
+Helles Logo und eine gemeinsame Symbolfamilie für Auswahl, Markierungen und Websuche: [Designrichtlinie](docs/design-guidelines.de.md).
+
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-blue.svg)](LICENSE)
 
 Wörter, Sätze oder Absätze auf Webseiten auswählen und alle Vorkommen derselben Passage markieren. Ein lokales Userscript für Tampermonkey und Violentmonkey, ohne Konto, Server oder Laufzeitabhängigkeiten.
@@ -54,7 +56,7 @@ scripts/      Build, Benchmark und Screenshot-Aufnahmen
 tests/        Browser-Fixtures, benannte Suites und Test-Runner
 userscript/   generiertes installierbares Userscript
 docs/         Aktuelle Leitfäden und historisches Entwicklungsarchiv
-assets/       Logo und Screenshot
+assets/       Logo, SVG-Symbole und Screenshots
 artifacts/    Lokal erzeugte Screenshots; nicht versioniert
 ```
 
