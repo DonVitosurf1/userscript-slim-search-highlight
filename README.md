@@ -14,7 +14,7 @@ Wörter, Sätze oder Absätze auf Webseiten auswählen und alle Vorkommen dersel
 
 1. [Tampermonkey](https://www.tampermonkey.net/) oder [Violentmonkey](https://violentmonkey.github.io/) installieren.
 2. [Skript installieren](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) und im Manager bestätigen.
-3. Webseite neu laden. Updates erfolgen über den Userscript-Manager.
+3. Webseite neu laden. Updates erfolgen über den Userscript-Manager. Für Exporte die Download-Berechtigung des Managers bestätigen.
 
 Seitenmarkierungen benötigen einen Browser mit **CSS Custom Highlights**. Ohne diese API wird die Aktion mit Erklärung deaktiviert. Dauerhafte Keywords und ausdrückliche Websuche bleiben verfügbar.
 
@@ -30,6 +30,8 @@ Seitenmarkierungen benötigen einen Browser mit **CSS Custom Highlights**. Ohne 
 - **Einstellungen → Darstellung:** helles/dunkles Farbschema sowie Größe, Bildschirmecke und Randabstand des Öffnen-Buttons. Standardgröße: 56 px.
 - Das Panel bleibt kompakt: zusätzliche Bereiche sind zweispaltig aufklappbar; Erklärungen stehen unter **Hilfe & Shortcuts**.
 - **Automatisch von Suche übernehmen:** Google-Suchwörter auch auf geöffneten Ergebnisseiten markieren. Die Begriffe werden beim Öffnen des Ergebnisses frisch übernommen; normale Klicks, neue Tabs und das Browser-Kontextmenü bleiben erhalten.
+
+Das Panel zeigt nur Keywords, deren Domain-Einschränkung zur aktuellen Seite passt. Änderungen mit **Speichern** oder Enter bestätigen; Suchverlaufseinträge stehen im Menü des Userscript-Managers. Global geltende Keywords sind für die Seiten, auf denen sie gelten, erkennbar. Details: [Sicherheitsmodell](docs/security-model.md).
 
 Gespeicherte Passagen werden bei Wiederbesuch erneut gesucht. Fehlender Text wird als **Nicht gefunden** gemeldet. Ohne Zwischenablagenzugriff steht ein Feld zum manuellen Kopieren bereit. Vollständige Details und Grenzen: [Bedienung](docs/usage.de.md), [Datenformat](docs/data-format.md).
 

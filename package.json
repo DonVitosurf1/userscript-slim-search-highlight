@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build.mjs",
+    "check:secrets": "node scripts/check-secrets.mjs",
     "check": "node scripts/build.mjs --check && node --check userscript/slim-search-highlight.user.js",
     "test": "npm run check && node tests/run_tests.js",
     "test:selection": "npm run check && node tests/run_tests.js -k selection_",

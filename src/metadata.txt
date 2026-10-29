@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.4.2
+// @version      4.5.0
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -16,7 +16,10 @@
 // @grant        GM_setValue
 // @grant        GM_addStyle
 // @grant        GM_setClipboard
+// @grant        GM_download
 // @grant        GM_registerMenuCommand
-// @run-at       document-end
+// @run-at       document-start
+// @sandbox      DOM
+// @inject-into  content
 // @noframes
 // ==/UserScript==

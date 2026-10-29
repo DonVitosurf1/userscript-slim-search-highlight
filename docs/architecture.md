@@ -12,6 +12,7 @@ Slim Search Highlight has no production dependencies and installs as one userscr
 | `src/00-state-i18n.js` | Preferences including validated appearance values, embedded logo, German/English messages |
 | `src/10-styles.js` | Scoped panel/selection toolbar CSS and tokens |
 | `src/20-utils.js` | Icons, escaping, contrast calculation |
+| `src/25-private-ui.js` | Closed UI root, private node references and activation boundary |
 | `src/30-page-state.js` | Page records, undo, explicit storage and search options |
 | `src/40-page-search.js` | Rendered-text index, normalized offset mapping, range collection and painting |
 | `src/50-page-ui-sharing.js` | Page list, selection actions, clipboard and local exports |
@@ -33,6 +34,8 @@ These are ordered source sections sharing one private lexical scope, **not isola
 Large page searches run in bounded work steps with a generation token. New requests, disable/exclusion and page identity changes cancel obsolete work. A completed generation commits paint, counts and navigation. Position ticks are limited to 500 and the contextual list to 300; actual occurrences remain available through navigation.
 
 The shared navigation uses page passages while any page terms exist, otherwise permanent/automatic keyword results. Per-term paint groups have contrast-selected foregrounds; the current occurrence has higher priority.
+
+UI lookup uses closure-owned `uiById`/`uiQueryAll` references rather than webpage IDs. Panel, toolbar and launcher are rendered inside a closed shadow tree in the manager's isolated world, using the shared `UI_CSS`; document highlights and position ticks intentionally remain in the webpage. Closed Shadow DOM alone does not hide data from native search. Profile display is limited to applicable domains, and search history stays in the manager menu. Exports call the manager download API without a page-visible Blob link. See the [security model](security-model.md).
 
 ## Ownership and invalidation
 

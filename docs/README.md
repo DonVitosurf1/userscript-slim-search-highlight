@@ -23,6 +23,7 @@ Die technischen Leitfäden sind auf Englisch; die Bedienungsanleitung ist zweisp
 | [Saved data format](data-format.md) | URL identity, storage schema and export limits |
 | [Design system](../DESIGN.md) | UI tokens, accessibility and interaction contracts |
 | [Release checklist](releasing.md) | Automated checks, manual browser checks and integration |
+| [Security model](security-model.md) | Host-page boundaries, permitted profile display, downloads and regex limits |
 | [SearchJumper comparison](research/searchjumper-search-handoff.md) | Primary-source research behind search-result term transfer |
 
 ## Repository layout

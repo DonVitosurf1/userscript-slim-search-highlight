@@ -73,7 +73,7 @@ function undoPageChange() {
     const current = { terms: pageTerms, options: pageOptions };
     pageTerms = previous.terms; pageOptions = previous.options; currentIdx = -1;
     if (!savePageRecord(current.terms.some(term => term.saved))) { pageTerms = current.terms; pageOptions = current.options; pageUndo.push(previous); return; } watchPageIdentity(); refreshPageResults(); setPanelStatus('pageUndone');
-    document.getElementById('page-heading')?.focus({ preventScroll: true });
+    uiById('page-heading')?.focus({ preventScroll: true });
 }
 function watchPageIdentity() {
     if (!pageTerms.length && !knownSavedPages && pageURLTimer) { clearInterval(pageURLTimer); pageURLTimer = null; }
@@ -90,12 +90,12 @@ function searchRoot() {
     return document.querySelector('article') || document.querySelector('main, [role="main"]');
 }
 function renderSearchState() {
-    const panel = document.getElementById('page-list');
+    const panel = uiById('page-list');
     panel?.setAttribute('aria-busy', String(pageSearchBusy));
-    const state = document.getElementById('page-search-status');
+    const state = uiById('page-search-status');
     if (state) state.textContent = pageSearchBusy ? t('searching') : pageOptions.articleOnly && !searchRoot() ? t('articleMissing') : '';
-    const whole = document.getElementById('page-whole'); if (whole) whole.checked = pageOptions.wholeWords;
-    const scope = document.getElementById('page-scope'); if (scope) scope.value = pageOptions.articleOnly ? 'article' : 'all';
+    const whole = uiById('page-whole'); if (whole) whole.checked = pageOptions.wholeWords;
+    const scope = uiById('page-scope'); if (scope) scope.value = pageOptions.articleOnly ? 'article' : 'all';
 }
 
 function validShortcut(value) {

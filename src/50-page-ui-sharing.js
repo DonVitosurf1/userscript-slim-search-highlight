@@ -12,7 +12,7 @@ function addPageSelection(text) {
         pageTerms.push({ id: newPageId(), text: value, color: DEFAULT_COLOR, saved: false, anchor: null });
     }
     watchPageIdentity(); currentIdx = -1; isSelecting = false;
-    const focusPanel = document.getElementById('slim-selection-tools')?.contains(document.activeElement);
+    const focusPanel = uiById('slim-selection-tools')?.contains(uiActiveElement());
     hideSelectionTools(); getSelection()?.removeAllRanges();
     setPanelOpen(true, !!focusPanel); refreshPageResults();
     return true;
@@ -29,9 +29,9 @@ function changePageTerm(term, action) {
 }
 function renderPageList() {
     watchPageIdentity(); renderSearchState();
-    const list = document.getElementById('page-list');
+    const list = uiById('page-list');
     if (!list) return;
-    const focused = list.contains(document.activeElement);
+    const focused = list.contains(uiActiveElement());
     list.replaceChildren();
     if (!pageTerms.length) {
         const empty = document.createElement('p'); empty.className = 'hint'; empty.textContent = t('pageHintShort'); list.append(empty);
@@ -46,7 +46,7 @@ function renderPageList() {
         const count = document.createElement('span'); count.className = 'kw-count'; count.textContent = pageCounts.get(term.id) || 0;
         const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'icon-btn page-remove'; remove.innerHTML = icon('close'); remove.title = t('remove');
         remove.setAttribute('aria-label', t('deletePageTerm', term.text));
-        remove.onclick = () => { changePageTerm(term, () => { pageTerms = pageTerms.filter(item => item.id !== term.id); }); document.getElementById('undo-page')?.focus({ preventScroll: true }); };
+        remove.onclick = () => { changePageTerm(term, () => { pageTerms = pageTerms.filter(item => item.id !== term.id); }); uiById('undo-page')?.focus({ preventScroll: true }); };
         row.append(color, label, count, remove);
         const meta = document.createElement('div'); meta.className = 'page-meta';
         const state = document.createElement('span'); state.className = 'hint page-state';
@@ -62,10 +62,10 @@ function renderPageList() {
         };
         meta.append(state, save); item.append(row, meta); list.append(item);
     }
-    const clear = document.getElementById('clear-page'); if (clear) clear.hidden = !pageTerms.length;
-    const undo = document.getElementById('undo-page'); if (undo) undo.hidden = !pageUndo.length;
-    const scope = document.getElementById('navigation-scope'); if (scope) scope.textContent = t(pageTerms.length ? 'pageResults' : 'allResults');
-    if (focused) document.getElementById('page-heading')?.focus({ preventScroll: true });
+    const clear = uiById('clear-page'); if (clear) clear.hidden = !pageTerms.length;
+    const undo = uiById('undo-page'); if (undo) undo.hidden = !pageUndo.length;
+    const scope = uiById('navigation-scope'); if (scope) scope.textContent = t(pageTerms.length ? 'pageResults' : 'allResults');
+    if (focused) uiById('page-heading')?.focus({ preventScroll: true });
 }
 
 function safePageURL() {
@@ -88,8 +88,8 @@ async function copyText(text, status = 'copied') {
         setPanelOpen(true, false); setPanelStatus(status);
     } catch {
         setPanelOpen(true, false);
-        const field = document.getElementById('manual-copy'); field.value = text;
-        document.getElementById('manual-copy-section').hidden = false;
+        const field = uiById('manual-copy'); field.value = text;
+        uiById('manual-copy-section').hidden = false;
         setPanelStatus('manualCopyReady'); field.focus(); field.select();
         field.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
     }
@@ -105,9 +105,14 @@ function selectedShare(kind) {
     void copyText(url.href);
 }
 function downloadLocal(name, contents, type) {
+    if (typeof GM_download !== 'function') { setPanelStatus('downloadUnsupported'); return; }
     const url = URL.createObjectURL(new Blob([contents], { type }));
-    const a = document.createElement('a'); a.id = 'slim-download'; a.href = url; a.download = name;
-    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    let timer;
+    const cleanup = () => { clearTimeout(timer); URL.revokeObjectURL(url); };
+    timer = setTimeout(cleanup, 60000);
+    try {
+        GM_download({ url, name, saveAs: true, onload: cleanup, onerror: () => { cleanup(); setPanelStatus('downloadFailed'); } });
+    } catch { cleanup(); setPanelStatus('downloadFailed'); }
 }
 function exportSavedPages() {
     const data = GM_getValue('hl_page_annotations', { version: 1, pages: {} });
@@ -125,9 +130,9 @@ function shortcutLabel() {
 }
 
 function renderShortcut() {
-    const label = document.getElementById('shortcut-label'); if (label) label.textContent = shortcutLabel();
-    const hint = document.getElementById('page-shortcut-hint'); if (hint) hint.textContent = t('shortcutHint', shortcutLabel());
-    const record = document.getElementById('record-shortcut'); if (record) record.textContent = t(recordingShortcut ? 'recordingShortcut' : 'recordShortcut');
+    const label = uiById('shortcut-label'); if (label) label.textContent = shortcutLabel();
+    const hint = uiById('page-shortcut-hint'); if (hint) hint.textContent = t('shortcutHint', shortcutLabel());
+    const record = uiById('record-shortcut'); if (record) record.textContent = t(recordingShortcut ? 'recordingShortcut' : 'recordShortcut');
 }
 
 function shortcutMatches(e) {
@@ -140,7 +145,7 @@ function editingTarget(target) {
 
 function selectedDocumentText() {
     const sel = getSelection();
-    if (!sel?.rangeCount || sel.isCollapsed || editingTarget(document.activeElement)) return null;
+    if (!sel?.rangeCount || sel.isCollapsed || editingTarget(uiActiveElement())) return null;
     const range = sel.getRangeAt(0);
     const parent = range.commonAncestorContainer.nodeType === 1 ? range.commonAncestorContainer : range.commonAncestorContainer.parentElement;
     if (!parent || parent.closest(SKIP_SELECTOR + ', ' + OWN_UI)) return null;
@@ -155,15 +160,15 @@ function validSelectionSnapshot() {
 }
 
 function hideSelectionTools(restoreFocus = false) {
-    const tools = document.getElementById('slim-selection-tools');
-    const hadFocus = tools?.contains(document.activeElement);
+    const tools = uiById('slim-selection-tools');
+    const hadFocus = tools?.contains(uiActiveElement());
     if (tools) tools.hidden = true;
     selectionSnapshot = null;
-    if (restoreFocus && hadFocus) document.getElementById('slim-hl-toggle')?.focus({ preventScroll: true });
+    if (restoreFocus && hadFocus) uiById('slim-hl-toggle')?.focus({ preventScroll: true });
 }
 
 function positionSelectionTools() {
-    const tools = document.getElementById('slim-selection-tools');
+    const tools = uiById('slim-selection-tools');
     if (!tools || tools.hidden || !selectionSnapshot) return;
     const rects = [...selectionSnapshot.range.getClientRects()];
     const rect = rects.filter(r => r.bottom > 0 && r.top < innerHeight).at(-1);
@@ -194,14 +199,14 @@ function createSelectionTools() {
     };
     tools.querySelector('#selection-quote').onclick = () => selectedShare('quote');
     tools.querySelector('#selection-link').onclick = () => selectedShare('link');
-    document.body.append(tools);
+    ensureUIRoot().append(tools);
     applyAppearance();
     return tools;
 }
 
 function updateSelectionTools() {
-    const existing = document.getElementById('slim-selection-tools');
-    if (existing?.contains(document.activeElement)) { if (!validSelectionSnapshot()) hideSelectionTools(true); return; }
+    const existing = uiById('slim-selection-tools');
+    if (existing?.contains(uiActiveElement())) { if (!validSelectionSnapshot()) hideSelectionTools(true); return; }
     if (isBlacklisted() || composing) { hideSelectionTools(); return; }
     const selected = selectedDocumentText();
     if (!selected) { hideSelectionTools(); return; }

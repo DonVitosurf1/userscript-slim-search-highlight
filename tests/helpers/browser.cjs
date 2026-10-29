@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const installUIDriver = require('./ui-driver.cjs');
 
 const SRC = fs.readFileSync(path.join(__dirname, '..', '..', 'userscript', 'slim-search-highlight.user.js'), 'utf8');
 const KW = [
@@ -15,6 +16,7 @@ const paragraphs = n => Array.from({ length: n }, (_, i) =>
 async function open(browser, { html = paragraphs(10), keywords = KW, url = null, referrer = null, panelOpen = false, store = {}, locale = 'de-DE', viewport = { width: 1200, height: 800 }, permanentOpen = true } = {}) {
     const page = await browser.newPage({ viewport, locale });
     page.on('pageerror', e => { page.__errors = (page.__errors || []).concat(e.message); });
+    await page.addInitScript(installUIDriver);
     await page.addInitScript(([kw, panelOpen, extra]) => {
         const store = Object.assign({ hl_keywords: kw, hl_panel_state: { open: panelOpen, minimized: false } }, extra);
         window.__store = store; window.__sets = 0; window.__walkers = 0;
@@ -23,6 +25,7 @@ async function open(browser, { html = paragraphs(10), keywords = KW, url = null,
         window.GM_addStyle = css => { const s = document.createElement('style'); s.textContent = css; document.head.appendChild(s); };
         window.__menus = {};
         window.GM_registerMenuCommand = (label, action) => { window.__menus[label] = action; };
+        window.GM_download = options => { window.__download = options; };
         const orig = Document.prototype.createTreeWalker;
         Document.prototype.createTreeWalker = function (...a) { window.__walkers++; return orig.apply(this, a); };
     }, [keywords, panelOpen, store]);
@@ -53,5 +56,19 @@ async function settled(page, timeout = 60000) {
 function eq(a, b, msg) { if (a !== b) throw new Error(`${msg || 'eq'}: erwartet ${b}, erhalten ${a}`); }
 function ok(c, msg) { if (!c) throw new Error(msg || 'assertion failed'); }
 
+async function selectionShortcutTime(page) {
+    await page.evaluate(() => {
+        let start;
+        const begin = event => { if (event.key.toLowerCase() === 'h') start = performance.now(); };
+        const end = event => {
+            if (event.key.toLowerCase() !== 'h') return;
+            window.__shortcutMs = performance.now() - start;
+            document.removeEventListener('keydown', begin, true); document.removeEventListener('keydown', end);
+        };
+        document.addEventListener('keydown', begin, true); document.addEventListener('keydown', end);
+    });
+    await page.keyboard.press('Alt+Shift+H');
+    return page.evaluate(() => window.__shortcutMs);
+}
 
-module.exports = { SRC, KW, paragraphs, open, hits, settled, eq, ok };
+module.exports = { SRC, KW, paragraphs, open, hits, settled, eq, ok, selectionShortcutTime };

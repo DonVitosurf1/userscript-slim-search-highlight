@@ -14,7 +14,7 @@ Select words, sentences or paragraphs and highlight every occurrence of the same
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/).
 2. [Install the script](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) and confirm in the manager.
-3. Reload the webpage. The userscript manager handles updates.
+3. Reload the webpage. The userscript manager handles updates. Allow manager download permission for exports.
 
 Page passages require a browser supporting **CSS Custom Highlights**. Unsupported browsers disable that action with an explanation; persistent keywords and explicit web search remain available.
 
@@ -30,6 +30,8 @@ Page passages require a browser supporting **CSS Custom Highlights**. Unsupporte
 - **Settings → Appearance:** light/dark theme, plus open-button size, screen corner and edge distance. Default size: 56 px.
 - The panel stays compact: additional tools use two columns of disclosures; guidance lives under **Help & shortcuts**.
 - **Take over terms from search:** highlight Google search words on opened result pages. Terms are captured fresh when opening a result; normal clicks, new tabs and the browser context menu remain native.
+
+The panel shows only keywords whose domain restrictions match the current site. Confirm edits with **Save** or Enter; recent searches are available in the userscript manager menu. Globally applicable keywords are observable by the sites they apply to. See the [security model](docs/security-model.md).
 
 Saved passages are searched again when revisiting a page. Missing text is shown as **Not found**. Clipboard failure provides a manual-copy field. See [Usage](docs/usage.en.md) and the [data format](docs/data-format.md) for behavior and limits.
 

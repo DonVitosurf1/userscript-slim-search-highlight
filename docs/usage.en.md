@@ -16,7 +16,7 @@ Search on Google and open a result normally, with Ctrl/Cmd, with the middle butt
 
 Transfer does not require query parameters in the referrer and does not append words to result URLs. Local handoffs associate terms with up to twelve clicked destination URLs for ten minutes; URL fragments are ignored for this match. Redirects to a different address and special links can prevent an exact match; a search-engine referrer provides a fallback.
 
-An unfinished search-field draft does not replace a submitted URL query. The search field is a fallback when the URL has no query. Short words and common stopwords are filtered; this is not a complete Google-operator parser. Automatic search terms do not create permanent keywords or saved page passages. Turning the option off stops new automatic capture and application; explicit `#hl`/`#sjhl` links and manually chosen history entries remain independent.
+An unfinished search-field draft does not replace a submitted URL query. The search field is a fallback when the URL has no query. Short words and common stopwords are filtered; this is not a complete Google-operator parser. Automatic search terms do not create permanent keywords or saved page passages. Turning the option off stops new automatic capture and application; explicit `#hl`/`#sjhl` links and history entries explicitly chosen from the userscript manager menu remain independent.
 
 ## Color, removal and undo
 
@@ -46,7 +46,7 @@ Expand **Copy / export** beside a selection:
 - **Copy quote + URL** uses the plain-text or Markdown format chosen in Settings.
 - **Copy link to text** creates a `#:~:text=` link for supported HTTP(S) pages. Otherwise it copies a normal page link and explains why. Repeated text can resolve to the first matching occurrence. Changed text, selections crossing block boundaries and browser support can affect link resolution.
 
-If clipboard access fails, a labeled manual-copy field appears. Settings also exports current page passages as Markdown and all saved pages as versioned JSON. These explicit local exports contain selected text and full URLs; nothing is uploaded automatically.
+If clipboard access fails, a labeled manual-copy field appears. Settings also exports current page passages as Markdown and all saved pages as versioned JSON. These explicit local exports contain selected text and full URLs; nothing is uploaded automatically. Downloads use the manager’s `GM_download` API and require its download permission. If this path is unavailable, the script reports the limitation.
 
 ## Appearance and open button
 
@@ -70,6 +70,10 @@ Escape dismisses selection actions or the panel and restores focus. Tab to the p
 
 ## Saved keywords and limits
 
-**Keywords** remains a separate disclosure for cross-page terms, regex, colors and domain restrictions. Enter/Add submits; validation retains invalid input and explains the problem inline. The userscript menu can exclude the current domain.
+**Keywords** remains a separate disclosure for cross-page terms, regex, colors and domain restrictions. The panel shows only entries applicable to the current domain. Enter/Add creates a keyword; confirm text/color edits with **Save** or Enter. Leaving a field does not save it. Validation retains invalid input and explains the problem inline. The userscript menu can exclude the current domain.
+
+Search history is available only in the userscript manager menu. Choosing an entry explicitly applies its terms to the current page. Globally applicable keywords are observable by sites they apply to, including while the panel is closed. Use domain restrictions for private-scope terms. See the [security model](security-model.md) for limits.
+
+Automatically captured terms and `#hl`/`#sjhl` links are always literal. Only explicitly saved keywords support a limited regex subset; complex or unsafe patterns are rejected.
 
 Page passages require CSS Custom Highlights. Real browser-manager/device, screen-reader and mobile keyboard checks complement automated Chromium coverage; no full accessibility certification is claimed.

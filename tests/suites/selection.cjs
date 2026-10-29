@@ -4,7 +4,7 @@ module.exports = ({ open, eq, ok }) => {
         const page=await open(browser,{keywords:[],panelOpen:true,permanentOpen:false,html:'<p id="choose">Solarenergie</p><p>Solarenergie hilft.</p>',...options});
         page.setDefaultTimeout(2500);return page;
     };
-    const select = page => page.evaluate(()=>{const range=document.createRange();range.selectNodeContents(document.getElementById('choose'));const sel=getSelection();sel.removeAllRanges();sel.addRange(range);});
+    const select = page => page.evaluate(()=>{document.activeElement?.blur();const range=document.createRange();range.selectNodeContents(document.getElementById('choose'));const sel=getSelection();sel.removeAllRanges();sel.addRange(range);});
     const count = page => page.evaluate(()=>CSS.highlights?.get('slim-page')?.size||0);
     const highlight = async page => {await select(page);await page.keyboard.press('Alt+Shift+H');};
     const settleCount = async (page,n) => page.waitForFunction(n=>(CSS.highlights?.get('slim-page')?.size||0)===n,n,{timeout:3000});
