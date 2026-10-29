@@ -94,7 +94,11 @@ function setPanelOpen(open, focus = true) {
 
 function handlePanelShortcut(event) {
     if (!event.isTrusted || isBlacklisted() || event.isComposing || event.repeat || composing || recordingShortcut || editingTarget(event.target) || !panelShortcutAvailable() || !shortcutMatches(event, PANEL_SHORTCUT)) return false;
-    event.preventDefault(); hideSelectionTools(); setPanelOpen(!panelState.open);
+    event.preventDefault(); event.stopPropagation(); hideSelectionTools();
+    const feedback = uiById('slim-hl-feedback');
+    if (feedback?.dataset.message === 'panelStateSaveFailed') { feedback.hidden = true; feedback.textContent = ''; }
+    try { setPanelOpen(!panelState.open); }
+    catch { showLocalFeedback('panelStateSaveFailed', uiById('slim-hl-toggle')?.getBoundingClientRect()); }
     return true;
 }
 
@@ -509,6 +513,7 @@ function createToggle() {
     btn.setAttribute('aria-expanded', String(panelState.open));
     btn.onclick = () => setPanelOpen(!panelState.open);
     ensureUIRoot().appendChild(btn);
+    ensureLocalFeedback();
     applyAppearance();
     renderShortcut();
 }

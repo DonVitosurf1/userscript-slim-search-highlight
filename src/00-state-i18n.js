@@ -34,6 +34,7 @@ const I18N = {
     en: {
         openPanel: 'Open highlight panel', minimize: 'Minimize', close: 'Close',
         togglePanel: 'Open / close highlight panel', panelShortcutHint: key => `${key}: open or close the highlight panel.`, panelShortcutConflict: key => `${key} is assigned to highlighting. Change the selection shortcut to use it for the panel.`,
+        panelStateSaveFailed: 'Panel toggled. Its open/closed state could not be saved for the next visit.',
         prev: 'Previous highlight (Alt + ←)', next: 'Next highlight (Alt + →)',
         kwSearch: 'Search keywords…', kwPlaceholder: 'Keyword or /regex/',
         wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
@@ -60,6 +61,7 @@ const I18N = {
     de: {
         openPanel: 'Highlight-Panel öffnen', minimize: 'Minimieren', close: 'Schließen',
         togglePanel: 'Highlight-Panel öffnen / schließen', panelShortcutHint: key => `${key}: Highlight-Panel öffnen oder schließen.`, panelShortcutConflict: key => `${key} ist dem Markieren zugewiesen. Ändere den Auswahl-Shortcut, um die Kombination für das Panel zu nutzen.`,
+        panelStateSaveFailed: 'Panel umgeschaltet. Der Öffnungszustand konnte für den nächsten Besuch nicht gespeichert werden.',
         prev: 'Vorheriges Highlight (Alt + ←)', next: 'Nächstes Highlight (Alt + →)',
         kwSearch: 'Keywords suchen…', kwPlaceholder: 'Keyword oder /regex/',
         wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',

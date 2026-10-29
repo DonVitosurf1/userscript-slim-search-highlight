@@ -66,7 +66,7 @@ Appearance preferences join the existing change-only persistence registry. A fai
 
 `renderShortcut` owns the current selection shortcut labels, hover titles and `aria-keyshortcuts`. Disabling, resetting, recording or changing locale refreshes those values. Selection shortcuts remain independently configurable; Alt+Shift+H is the default.
 
-`handlePanelShortcut` in `src/80-panel.js` handles Alt+Shift+P. Both the document handler and the private-root key handler call it, because private UI key events intentionally do not propagate to the host page. The shared handler requires a trusted event and rejects editing fields, IME, repeat, recording mode and excluded domains. Existing selection assignments take priority; if marking owns Alt+Shift+P, panel activation is unavailable and its tooltip/Help reflect that state.
+`handlePanelShortcut` in `src/80-panel.js` handles Alt+Shift+P. Both the document handler and the private-root key handler call it, because private UI key events intentionally do not propagate to the host page. The shared handler requires a trusted event and rejects editing fields, IME, repeat, recording mode and excluded domains. It consumes the event before changing state, so a storage exception cannot relay a private key event to the document and toggle twice. A failed state write keeps the current session toggle and uses `showLocalFeedback`, the same private status provider as copying; a successful retry clears that failure. Existing selection assignments take priority; if marking owns Alt+Shift+P, panel activation is unavailable and its tooltip/Help reflect that state.
 
 ## Storage and privacy
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.9
+
+- Alt+Shift+P wird auch bei einem Speicherfehler nur einmal verarbeitet. Das Panel bleibt bedienbar; eine lokale Meldung erklärt, wenn sein Öffnungszustand nicht für den nächsten Besuch gespeichert werden konnte. Eine erfolgreiche Wiederholung entfernt die Fehlermeldung.
+- Kurze Kopierbestätigungen und Meldungen über fehlgeschlagene Panelzustandsspeicherung verwenden dieselbe private Statusfläche. Der Speicherfehler öffnet das Panel nicht erneut und löst keine unbehandelte Ausnahme aus.
+
 ## 4.5.8
 
 - Unter Einstellungen → Darstellung lässt sich der Stil des Auswahl-Symbols wählen: „Logo-Kachel“ wie beim Panel-Öffner oder „Buttonfläche“ mit der transparenten Bildmarke. Beide Varianten bleiben in derselben Installation direkt vergleichbar; neuer Standard ist die Logo-Kachel.

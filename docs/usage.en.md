@@ -84,6 +84,8 @@ Without a saved position, it opens **on the right, vertically centered**, with a
 
 **Alt+Shift+P** opens or closes the panel, including while focus is inside the panel. The opener's hover hint displays the combination. Both shortcuts ignore editing fields, active IME and key repeat. Native right-click and double-click remain intact; Alt+H no longer saves keywords.
 
+If saving the open/closed state fails, the shortcut still toggles the panel for the current session. A message beside the opener explains the failure; the next visit may restore the previously saved state.
+
 If Alt+Shift+P is already assigned to marking, or is recorded for it later, that selection shortcut takes priority. The panel shortcut is unavailable and is omitted from the opener's hover hint; **Help & shortcuts** explains the conflict. Changing or resetting the marking shortcut frees Alt+Shift+P for the panel again.
 
 | Key | Action |
