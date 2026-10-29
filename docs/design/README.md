@@ -33,12 +33,11 @@ Farbe trägt Bedeutung: Markierungsfarben verbinden Text, Farbfeld und Trefferle
 | ![Alle Vorkommen markieren](../../assets/icons/highlight-all.svg) | Alle Vorkommen markieren | Drei wiederholte Markierungen mit Trefferleiste |
 | ![Im Web suchen](../../assets/icons/search-web.svg) | Im Web suchen | Weltkugel mit Lupe |
 
-Öffnen-Button und Panelkopf verwenden das vollständige Logo. Für das Auswahl-Symbol sind unter Einstellungen → Darstellung zwei Varianten wählbar: „Logo-Kachel“ zeigt das vollständige Logo ohne zusätzlichen Buttonrahmen und ist der Standard; „Buttonfläche“ zeigt dieselben Markierungen und die Trefferleiste als transparente Bildmarke auf einer einzigen Schaltfläche. Der Build leitet die Bildmarke aus den Originalen ab. Die Logo-Variante erhält ein Menü mit ruhiger passender Fläche, weicherem Schatten und 10-px-Radius. Hell/Dunkel, Hover, gedrückter Zustand und Tastaturfokus bleiben in beiden Varianten erkennbar. Funktions-Icons ergänzen ihre sichtbaren Beschriftungen. Sie ersetzen keine Texte durch unklare Bildzeichen. Neue Funktions-Icons folgen einem 24×24-Raster, einer Strichstärke von 1,8 Einheiten und abgerundeten Linienenden. Sie verwenden die Textfarbe des aktiven Farbschemas, damit sie auch im dunklen Modus lesbar bleiben.
+Öffnen-Button, Panelkopf und Auswahl-Symbol verwenden dasselbe vollständige Logo in der zum Farbschema passenden Variante. Das Auswahl-Symbol zeigt die Logo-Kachel ohne zusätzlichen Buttonrahmen. Das Menü erhält eine ruhige passende Fläche, weichen Schatten und 10-px-Radius. Hell/Dunkel, Hover, gedrückter Zustand und Tastaturfokus bleiben erkennbar. Funktions-Icons ergänzen ihre sichtbaren Beschriftungen. Neue Funktions-Icons folgen einem 24×24-Raster mit 1,8 Einheiten Strichstärke, abgerundeten Linienenden und der Textfarbe des aktiven Farbschemas.
 
 | Auswahl-Symbol | Hell | Dunkel |
 |---|---|---|
-| Logo-Kachel, Variante 2 (Standard) | ![Logo-Kachel hell](../../assets/selection-actions-light.png) | ![Logo-Kachel dunkel](../../assets/selection-actions-dark.png) |
-| Buttonfläche, Variante 1 | ![Buttonfläche hell](../../assets/selection-actions-button-light.png) | ![Buttonfläche dunkel](../../assets/selection-actions-button-dark.png) |
+| Logo-Kachel | ![Logo-Kachel hell](../../assets/selection-actions-light.png) | ![Logo-Kachel dunkel](../../assets/selection-actions-dark.png) |
 
 ## Form, Schrift und Verhalten
 

@@ -4,11 +4,7 @@ function applyAppearance() {
         if (el) {
             el.dataset.theme = uiTheme;
             el.style.opacity = String((100 - uiTransparency) / 100);
-            if (id === 'slim-selection-tools') {
-                el.dataset.symbolStyle = selectionStyle;
-                el.querySelector('#selection-trigger img').dataset.hlLogo = selectionStyle === 'button' ? 'mark' : 'tile';
-            }
-            el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = (image.dataset.hlLogo === 'mark' ? LOGO_MARKS : LOGOS)[uiTheme]; });
+            el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = LOGOS[uiTheme]; });
             if (id === 'slim-hl-feedback') { el.textContent = el.hidden ? '' : t(el.dataset.message); el.lang = currentLang(); }
         }
     }
@@ -21,8 +17,6 @@ function applyAppearance() {
     const panel = uiById('slim-hl-panel');
     const theme = panel?.querySelector('#ui-theme');
     if (theme) theme.value = uiTheme;
-    const style = panel?.querySelector('#selection-style');
-    if (style) style.value = selectionStyle;
     const transparency = panel?.querySelector('#ui-transparency');
     if (transparency) { transparency.value = uiTransparency; transparency.setAttribute('aria-valuetext', t('transparencyValue', uiTransparency)); }
     const transparencyOutput = panel?.querySelector('#ui-transparency-value');
@@ -47,7 +41,6 @@ function saveAppearance() {
     }
     catch {
         uiTheme = JSON.parse(lastSaved.hl_ui_theme);
-        selectionStyle = JSON.parse(lastSaved.hl_selection_style);
         uiTransparency = normalizeUITransparency(JSON.parse(lastSaved.hl_ui_transparency));
         launcherSize = normalizeLauncherSize(JSON.parse(lastSaved.hl_launcher_size));
         launcherPosition = JSON.parse(lastSaved.hl_launcher_position);
@@ -234,8 +227,6 @@ function createPanel(snapshot = null) {
                 <h3 class="section-title">${t('appearance')}</h3>
                 <label for="ui-theme">${t('colorTheme')}</label>
                 <select id="ui-theme"><option value="dark">${t('themeDark')}</option><option value="light">${t('themeLight')}</option></select>
-                <label for="selection-style">${t('selectionStyle')}</label>
-                <select id="selection-style"><option value="logo">${t('selectionLogo')}</option><option value="button">${t('selectionButton')}</option></select>
                 <label for="ui-transparency" class="section-title">${t('uiTransparency')}</label>
                 <div class="launcher-size-row"><input type="range" id="ui-transparency" min="0" max="80" step="5" aria-describedby="ui-transparency-hint"><output id="ui-transparency-value" for="ui-transparency"></output></div>
                 <p class="hint" id="ui-transparency-hint">${t('transparencyHint')}</p>
@@ -352,7 +343,6 @@ function createPanel(snapshot = null) {
         }
     };
     panel.querySelector('#ui-theme').onchange = e => { uiTheme = e.target.value === 'light' ? 'light' : 'dark'; applyAppearance(); saveAppearance(); };
-    panel.querySelector('#selection-style').onchange = e => { selectionStyle = e.target.value === 'button' ? 'button' : 'logo'; applyAppearance(); saveAppearance(); };
     panel.querySelector('#ui-transparency').oninput = e => { uiTransparency = normalizeUITransparency(+e.target.value); applyAppearance(); };
     panel.querySelector('#ui-transparency').onchange = saveAppearance;
     panel.querySelector('#reset-transparency').onclick = () => { uiTransparency = 0; applyAppearance(); saveAppearance(); };

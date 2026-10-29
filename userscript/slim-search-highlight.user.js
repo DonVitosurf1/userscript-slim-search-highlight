@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.9
+// @version      4.5.10
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -51,8 +51,7 @@
     'use strict';
 
     // Embedded from canonical SVG assets; no runtime asset requests.
-    const LOGOS = {"light":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgaWQ9ImxvZ28tdGlsZSIgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDllMmU3IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZmRmMDAiLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZjgwYWIiLz4KICA8ZyBmaWxsPSIjMjUzNTQwIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGZpbGw9IiNlOGVlZjIiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjYjU4OTAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzAwN2Y5NiIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNjNDNiNzAiLz4KPC9zdmc+Cg==","dark":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgaWQ9ImxvZ28tdGlsZSIgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZmlsbD0iIzI0MjQyNCIgc3Ryb2tlPSIjNTI2MDZkIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZmRmMDAiLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZjgwYWIiLz4KICA8ZyBmaWxsPSIjMjUzNTQwIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGZpbGw9IiM0NjU0NWUiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjZmZkZjAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzAwZTVmZiIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNmZjgwYWIiLz4KPC9zdmc+Cg=="};
-    const LOGO_MARKS = {"light":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgCiAgPHJlY3QgeD0iMjAiIHk9IjI4IiB3aWR0aD0iNjYiIGhlaWdodD0iMjAiIHJ4PSI1IiBmaWxsPSIjZmZkZjAwIi8+CiAgPHJlY3QgeD0iMzAiIHk9IjU1IiB3aWR0aD0iNTYiIGhlaWdodD0iMjAiIHJ4PSI1IiBmaWxsPSIjMDBlNWZmIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjgyIiB3aWR0aD0iNTQiIGhlaWdodD0iMjAiIHJ4PSI1IiBmaWxsPSIjZmY4MGFiIi8+CiAgPGcgZmlsbD0iIzI1MzU0MCI+CiAgICA8cmVjdCB4PSIyNiIgeT0iMzUiIHdpZHRoPSI0OCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMzYiIHk9IjYyIiB3aWR0aD0iMzgiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjI2IiB5PSI4OSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgPC9nPgogIDxyZWN0IHg9IjEwMSIgeT0iMjQiIHdpZHRoPSI3IiBoZWlnaHQ9IjgwIiByeD0iMy41IiBmaWxsPSIjZThlZWYyIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjM0IiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI2I1ODkwMCIvPgogIDxyZWN0IHg9Ijk4IiB5PSI2MSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiMwMDdmOTYiLz4KICA8cmVjdCB4PSI5OCIgeT0iODgiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjYzQzYjcwIi8+Cjwvc3ZnPgo=","dark":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgCiAgPHJlY3QgeD0iMjAiIHk9IjI4IiB3aWR0aD0iNjYiIGhlaWdodD0iMjAiIHJ4PSI1IiBmaWxsPSIjZmZkZjAwIi8+CiAgPHJlY3QgeD0iMzAiIHk9IjU1IiB3aWR0aD0iNTYiIGhlaWdodD0iMjAiIHJ4PSI1IiBmaWxsPSIjMDBlNWZmIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjgyIiB3aWR0aD0iNTQiIGhlaWdodD0iMjAiIHJ4PSI1IiBmaWxsPSIjZmY4MGFiIi8+CiAgPGcgZmlsbD0iIzI1MzU0MCI+CiAgICA8cmVjdCB4PSIyNiIgeT0iMzUiIHdpZHRoPSI0OCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMzYiIHk9IjYyIiB3aWR0aD0iMzgiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjI2IiB5PSI4OSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgPC9nPgogIDxyZWN0IHg9IjEwMSIgeT0iMjQiIHdpZHRoPSI3IiBoZWlnaHQ9IjgwIiByeD0iMy41IiBmaWxsPSIjNDY1NDVlIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjM0IiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI2ZmZGYwMCIvPgogIDxyZWN0IHg9Ijk4IiB5PSI2MSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSI5OCIgeT0iODgiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjZmY4MGFiIi8+Cjwvc3ZnPgo="};
+    const LOGOS = {"light":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDllMmU3IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZmRmMDAiLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZjgwYWIiLz4KICA8ZyBmaWxsPSIjMjUzNTQwIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGZpbGw9IiNlOGVlZjIiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjYjU4OTAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzAwN2Y5NiIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNjNDNiNzAiLz4KPC9zdmc+Cg==","dark":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZmlsbD0iIzI0MjQyNCIgc3Ryb2tlPSIjNTI2MDZkIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZmRmMDAiLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZjgwYWIiLz4KICA8ZyBmaWxsPSIjMjUzNTQwIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGZpbGw9IiM0NjU0NWUiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjZmZkZjAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzAwZTVmZiIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNmZjgwYWIiLz4KPC9zdmc+Cg=="};
     const INLINE_ICONS = {"highlightAll":"<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n  <rect x=\"3\" y=\"3.5\" width=\"13\" height=\"4\" rx=\"1.2\"/>\n  <rect x=\"6\" y=\"10\" width=\"10\" height=\"4\" rx=\"1.2\"/>\n  <rect x=\"3\" y=\"16.5\" width=\"10\" height=\"4\" rx=\"1.2\"/>\n  <path d=\"M20.5 4v16M19 5.5h3M19 12h3M19 18.5h3\"/>\n</svg>","searchWeb":"<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n  <path d=\"M12.5 20A8.5 8.5 0 1 1 20 11.5M3.5 8.5h16M3.5 14.5h7M11.5 3c-2.5 2.2-3.5 5-3.5 8.5 0 3.6 1 6.4 3.5 8.5M11.5 3c2 1.8 3.1 4 3.4 6.5\"/>\n  <circle cx=\"16.5\" cy=\"16\" r=\"3.5\"/>\n  <path d=\"m19 18.5 3 3\"/>\n</svg>"};
 
     // Source: src/00-state-i18n.js
@@ -73,7 +72,6 @@
             ? Math.max(44, Math.min(80, Math.round(value / 4) * 4)) : DEFAULT_LAUNCHER_SIZE;
     }
     let uiTheme = GM_getValue('hl_ui_theme', 'dark') === 'light' ? 'light' : 'dark';
-    let selectionStyle = GM_getValue('hl_selection_style', 'logo') === 'button' ? 'button' : 'logo';
     function normalizeUITransparency(value) {
         return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(80, Math.round(value / 5) * 5)) : 0;
     }
@@ -98,7 +96,6 @@
             wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
             keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
             appearance: 'Appearance', colorTheme: 'Color theme', themeLight: 'Light', themeDark: 'Dark',
-            selectionStyle: 'Selection symbol style', selectionLogo: 'Logo tile (like the open button)', selectionButton: 'Button surface',
             uiTransparency: 'Interface transparency', transparencyHint: 'Applies to the panel, selection menu and open button. 0% is opaque; 80% is mostly transparent.', resetTransparency: 'Reset transparency', transparencyValue: value => `${value}%`,
             launcherSize: 'Open button size', launcherSizeHint: 'Size of the floating open button (44–80 px).', resetLauncherSize: 'Reset size',
             launcherPosition: 'Open button position', launcherInset: 'Distance from edge', bottomRight: 'Bottom right', bottomLeft: 'Bottom left', topRight: 'Top right', topLeft: 'Top left',
@@ -125,7 +122,6 @@
             wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
             keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
             appearance: 'Darstellung', colorTheme: 'Farbschema', themeLight: 'Hell', themeDark: 'Dunkel',
-            selectionStyle: 'Stil des Auswahl-Symbols', selectionLogo: 'Logo-Kachel (wie Öffnen-Button)', selectionButton: 'Buttonfläche',
             uiTransparency: 'Transparenz der Bedienelemente', transparencyHint: 'Gilt für Panel, Auswahlmenü und Öffnen-Button. 0 % ist deckend, 80 % stark durchsichtig.', resetTransparency: 'Transparenz zurücksetzen', transparencyValue: value => `${value} %`,
             launcherSize: 'Größe des Öffnen-Buttons', launcherSizeHint: 'Größe des schwebenden Öffnen-Buttons (44–80 px).', resetLauncherSize: 'Größe zurücksetzen',
             launcherPosition: 'Position des Öffnen-Buttons', launcherInset: 'Abstand zum Rand', bottomRight: 'Unten rechts', bottomLeft: 'Unten links', topRight: 'Oben rechts', topLeft: 'Oben links',
@@ -288,26 +284,21 @@
             display: flex; align-items: center; justify-content: center; min-height: 36px; padding: 6px 8px;
             border: 1px solid transparent; border-radius: var(--hl-radius); cursor: pointer; background: transparent; color: var(--hl-text);
         }
-        #slim-selection-tools #selection-trigger { width: 40px; min-height: 40px; padding: 6px; background: var(--hl-field); border-color: var(--hl-border); box-shadow: 0 2px 8px var(--hl-shadow); flex-shrink: 0; }
-        #slim-selection-tools #selection-trigger img { display: block; width: 26px; height: 26px; }
-        #slim-selection-tools #selection-trigger:not(:disabled):hover, #slim-selection-tools button:not(:disabled):hover, #slim-selection-tools summary:hover { background: var(--hl-hover); }
-        #slim-selection-tools #selection-trigger:not(:disabled):active, #slim-selection-tools button:not(:disabled):active, #slim-selection-tools summary:active { background: var(--hl-active); }
+        #slim-selection-tools #selection-trigger { width: 40px; min-height: 40px; padding: 0; border: 0; border-radius: 10px; background: transparent; flex-shrink: 0; }
+        #slim-selection-tools #selection-trigger img { display: block; width: 40px; height: 40px; filter: drop-shadow(0 2px 6px var(--hl-shadow)); }
+        #slim-selection-tools button:not(:disabled):hover, #slim-selection-tools summary:hover { background: var(--hl-hover); }
+        #slim-selection-tools button:not(:disabled):active, #slim-selection-tools summary:active { background: var(--hl-active); }
+        #slim-selection-tools #selection-trigger:not(:disabled):hover, #slim-selection-tools #selection-trigger:not(:disabled):active { background: transparent; }
+        #slim-selection-tools #selection-trigger:not(:disabled):hover img { filter: drop-shadow(0 4px 8px var(--hl-shadow)); }
+        #slim-selection-tools #selection-trigger:not(:disabled):active img { opacity: .8; filter: drop-shadow(0 1px 3px var(--hl-shadow)); }
+        #slim-selection-tools #selection-trigger:focus-visible { outline-offset: 2px; }
         #slim-selection-tools button:disabled { opacity: .5; cursor: default; }
         #slim-selection-tools :focus-visible { outline: 2px solid var(--hl-focus); outline-offset: -2px; }
         #slim-selection-tools svg { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-        #slim-selection-tools #selection-actions { display: flex; flex-direction: column; gap: 2px; min-width: 0; width: 100%; max-height: var(--hl-selection-menu-height, calc(100dvh - 64px)); overflow: auto; padding: 4px; background: var(--hl-surface); border: 1px solid var(--hl-divider); border-radius: 8px; box-shadow: 0 4px 18px var(--hl-shadow); }
-        #slim-selection-tools #selection-highlight { font-weight: 600; background: var(--hl-field); }
+        #slim-selection-tools #selection-actions { display: flex; flex-direction: column; gap: 2px; min-width: 0; width: 100%; max-height: var(--hl-selection-menu-height, calc(100dvh - 64px)); overflow: auto; padding: 4px; background: var(--hl-bg); border: 1px solid var(--hl-divider); border-radius: 10px; box-shadow: 0 6px 20px var(--hl-shadow); }
+        #slim-selection-tools #selection-highlight { font-weight: 600; background: var(--hl-surface); }
         #slim-selection-tools #selection-actions button { gap: 8px; white-space: normal; text-align: left; justify-content: start; }
         #slim-selection-tools #selection-actions button > span { min-width: 0; overflow-wrap: anywhere; }
-        #slim-selection-tools[data-symbol-style=logo] #selection-trigger,
-        #slim-selection-tools[data-symbol-style=logo] #selection-trigger:not(:disabled):hover,
-        #slim-selection-tools[data-symbol-style=logo] #selection-trigger:not(:disabled):active { padding: 0; border: 0; background: transparent; box-shadow: none; border-radius: 10px; }
-        #slim-selection-tools[data-symbol-style=logo] #selection-trigger img { width: 40px; height: 40px; filter: drop-shadow(0 2px 6px var(--hl-shadow)); }
-        #slim-selection-tools[data-symbol-style=logo] #selection-trigger:not(:disabled):hover img { filter: drop-shadow(0 4px 8px var(--hl-shadow)); }
-        #slim-selection-tools[data-symbol-style=logo] #selection-trigger:not(:disabled):active img { opacity: .8; filter: drop-shadow(0 1px 3px var(--hl-shadow)); }
-        #slim-selection-tools[data-symbol-style=logo] #selection-trigger:focus-visible { outline-offset: 2px; }
-        #slim-selection-tools[data-symbol-style=logo] #selection-actions { background: var(--hl-bg); border-radius: 10px; box-shadow: 0 6px 20px var(--hl-shadow); }
-        #slim-selection-tools[data-symbol-style=logo] #selection-highlight { background: var(--hl-surface); }
         #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
         #slim-hl-panel .page-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         #slim-hl-panel .page-heading-row .section-title { margin: 0; }
@@ -463,8 +454,7 @@
         #slim-pos-bar .mark { position: absolute; left: 0; width: 8px; height: 4px; border-radius: 2px; pointer-events: auto; cursor: pointer; opacity: .75; }
         #slim-pos-bar .mark:hover, #slim-pos-bar .mark.active { opacity: 1; transform: scaleX(1.6); }
         @media (max-width: 480px) {
-            #slim-selection-tools #selection-trigger { min-height: 44px; }
-            #slim-selection-tools[data-symbol-style=logo] #selection-trigger { width: 44px; }
+            #slim-selection-tools #selection-trigger { min-height: 44px; width: 44px; }
             #slim-hl-panel input[type=text], #slim-hl-panel select, #slim-hl-panel textarea { font-size: 16px; }
             #slim-hl-panel button, #slim-hl-panel summary, #slim-selection-tools button, #slim-selection-tools summary { min-height: 44px; }
             #slim-hl-panel .icon-btn { width: 40px; }
@@ -1096,7 +1086,7 @@
     function createSelectionTools() {
         const tools = document.createElement('div'); tools.id = 'slim-selection-tools'; tools.hidden = true;
         tools.setAttribute('role', 'toolbar'); tools.setAttribute('aria-label', t('selectionActions')); tools.lang = currentLang();
-        tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img data-hl-logo="${selectionStyle === 'button' ? 'mark' : 'tile'}" src="${(selectionStyle === 'button' ? LOGO_MARKS : LOGOS)[uiTheme]}" width="26" height="26" alt="" draggable="false"></button>
+        tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img data-hl-logo src="${LOGOS[uiTheme]}" width="40" height="40" alt="" draggable="false"></button>
             <div id="selection-actions" hidden><button type="button" id="selection-highlight" title="${t('highlightSelectionHint')}">${icon('highlightAll')}<span>${t('highlightSelection')}</span></button><button type="button" id="selection-web">${icon('searchWeb')}<span>${t('webSearch')}</span></button><details id="selection-share"><summary>${t('shareActions')}</summary><button type="button" id="selection-quote">${t('copyQuote')}</button><button type="button" id="selection-link">${t('copyLink')}</button></details><p id="selection-support" role="status" hidden>${t('highlightUnsupported')}</p></div>`;
         const expand = () => { tools.querySelector('#selection-actions').hidden = false; tools.querySelector('#selection-trigger').setAttribute('aria-expanded', 'true'); positionSelectionTools(); };
         tools.querySelector('#selection-trigger').onclick = () => {
@@ -1151,7 +1141,6 @@
         hl_selection_shortcut: () => selectionShortcut,
         hl_copy_format: () => copyFormat,
         hl_ui_theme: () => uiTheme,
-        hl_selection_style: () => selectionStyle,
         hl_ui_transparency: () => uiTransparency,
         hl_launcher_size: () => launcherSize,
         hl_launcher_position: () => launcherPosition,
@@ -1841,11 +1830,7 @@
             if (el) {
                 el.dataset.theme = uiTheme;
                 el.style.opacity = String((100 - uiTransparency) / 100);
-                if (id === 'slim-selection-tools') {
-                    el.dataset.symbolStyle = selectionStyle;
-                    el.querySelector('#selection-trigger img').dataset.hlLogo = selectionStyle === 'button' ? 'mark' : 'tile';
-                }
-                el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = (image.dataset.hlLogo === 'mark' ? LOGO_MARKS : LOGOS)[uiTheme]; });
+                el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = LOGOS[uiTheme]; });
                 if (id === 'slim-hl-feedback') { el.textContent = el.hidden ? '' : t(el.dataset.message); el.lang = currentLang(); }
             }
         }
@@ -1858,8 +1843,6 @@
         const panel = uiById('slim-hl-panel');
         const theme = panel?.querySelector('#ui-theme');
         if (theme) theme.value = uiTheme;
-        const style = panel?.querySelector('#selection-style');
-        if (style) style.value = selectionStyle;
         const transparency = panel?.querySelector('#ui-transparency');
         if (transparency) { transparency.value = uiTransparency; transparency.setAttribute('aria-valuetext', t('transparencyValue', uiTransparency)); }
         const transparencyOutput = panel?.querySelector('#ui-transparency-value');
@@ -1884,7 +1867,6 @@
         }
         catch {
             uiTheme = JSON.parse(lastSaved.hl_ui_theme);
-            selectionStyle = JSON.parse(lastSaved.hl_selection_style);
             uiTransparency = normalizeUITransparency(JSON.parse(lastSaved.hl_ui_transparency));
             launcherSize = normalizeLauncherSize(JSON.parse(lastSaved.hl_launcher_size));
             launcherPosition = JSON.parse(lastSaved.hl_launcher_position);
@@ -2071,8 +2053,6 @@
                     <h3 class="section-title">${t('appearance')}</h3>
                     <label for="ui-theme">${t('colorTheme')}</label>
                     <select id="ui-theme"><option value="dark">${t('themeDark')}</option><option value="light">${t('themeLight')}</option></select>
-                    <label for="selection-style">${t('selectionStyle')}</label>
-                    <select id="selection-style"><option value="logo">${t('selectionLogo')}</option><option value="button">${t('selectionButton')}</option></select>
                     <label for="ui-transparency" class="section-title">${t('uiTransparency')}</label>
                     <div class="launcher-size-row"><input type="range" id="ui-transparency" min="0" max="80" step="5" aria-describedby="ui-transparency-hint"><output id="ui-transparency-value" for="ui-transparency"></output></div>
                     <p class="hint" id="ui-transparency-hint">${t('transparencyHint')}</p>
@@ -2189,7 +2169,6 @@
             }
         };
         panel.querySelector('#ui-theme').onchange = e => { uiTheme = e.target.value === 'light' ? 'light' : 'dark'; applyAppearance(); saveAppearance(); };
-        panel.querySelector('#selection-style').onchange = e => { selectionStyle = e.target.value === 'button' ? 'button' : 'logo'; applyAppearance(); saveAppearance(); };
         panel.querySelector('#ui-transparency').oninput = e => { uiTransparency = normalizeUITransparency(+e.target.value); applyAppearance(); };
         panel.querySelector('#ui-transparency').onchange = saveAppearance;
         panel.querySelector('#reset-transparency').onclick = () => { uiTransparency = 0; applyAppearance(); saveAppearance(); };

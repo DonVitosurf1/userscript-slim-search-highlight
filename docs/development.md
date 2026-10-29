@@ -39,11 +39,11 @@ The test runner explicitly uses Playwright's full Chromium channel in new headle
 | `node tests/run_tests.js -k correction_` | Review defect and long-node regressions |
 | `node tests/run_tests.js --list` | List test names without launching a browser |
 | `npm run benchmark` | Verify actual match counts while measuring handler and completion times |
-| `npm run screenshots` | Capture both symbol variants in light/dark desktop/narrow views, including panel and manual copying |
+| `npm run screenshots` | Capture light/dark desktop/narrow views, including selection tools, panel and manual copying |
 
 The `-k` filter matches names; zero selected tests is an error. `tests/run_tests.js` remains the stable entry point. Fixtures live in `tests/helpers/browser.cjs`; suites cover permanent keywords, panel interaction, selections, review regressions, page features, appearance preferences and search-result handoff. Each test closes its own browser contexts. Use `node tests/run_tests.js -k appearance_` for theme/launcher preferences, or `node tests/run_tests.js -k search_handoff_` for current queries, native link activation, concurrent destinations, referrers, expiry and storage-error recovery.
 
-For the current UI, `-k appearance_selection_` covers symbol choice, save/restore/error behavior and narrow actions; `-k panel_shortcut_` covers native panel toggling and assignment conflicts; `-k selection_hover_hints` covers tooltip/accessible shortcut updates after recording, disabling, resetting and locale changes. Keep synthetic-event rejection intact: native keyboard input must exercise privileged actions.
+For the current UI, `-k appearance_selection_` covers the logo on existing installations and narrow actions; `-k panel_shortcut_` covers native panel toggling and assignment conflicts; `-k selection_hover_hints` covers tooltip/accessible shortcut updates after recording, disabling, resetting and locale changes. Keep synthetic-event rejection intact: native keyboard input must exercise privileged actions.
 
 ## Performance checks
 
@@ -63,7 +63,7 @@ Treat timings as machine-specific evidence, not universal guarantees. Performanc
 CHROMIUM_PATH=/usr/bin/chromium npm run screenshots
 ```
 
-Omit `CHROMIUM_PATH` to use the installed Playwright Chromium, as with tests. The maintained capture script lives in `scripts/screenshots.cjs`. It uses a synthetic page and simulated GM bindings, creates PNGs for both symbol styles × light/dark × desktop/narrow layouts plus `browser.json` in `artifacts/screenshots/`, and checks panel bounds, both expected matches and page errors. The default logo style retains names such as `light-desktop-toolbar.png`; button-style captures use the `-button` suffix before the state, such as `light-desktop-button-toolbar.png`. `browser.json` records `symbolStyle`. Inspect the captures visually; geometry checks alone do not establish usability.
+Omit `CHROMIUM_PATH` to use the installed Playwright Chromium, as with tests. The maintained capture script lives in `scripts/screenshots.cjs`. It uses a synthetic page and simulated GM bindings, creates PNGs for light/dark × desktop/narrow layouts plus `browser.json` in `artifacts/screenshots/`, and checks panel bounds, both expected matches and page errors. Names such as `light-desktop-toolbar.png` identify the theme, viewport and state. Inspect the captures visually; geometry checks alone do not establish usability.
 
 `artifacts/` is ignored by Git and safe to regenerate. Copy a deliberately chosen public screenshot to `assets/screenshot.png` when updating the README. Commit only evidence needed for a specific review; do not keep appending routine captures to the documentation. Older reports and evidence live in the [archive](https://github.com/DonVitosurf1/userscript-slim-search-highlight/blob/6007c7328b6fbc1792ea27bc3fff2c10c2afa7c3/docs/archive/README.md); their scripts are historical snapshots.
 

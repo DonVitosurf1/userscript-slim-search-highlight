@@ -15,7 +15,6 @@ function normalizeLauncherSize(value) {
         ? Math.max(44, Math.min(80, Math.round(value / 4) * 4)) : DEFAULT_LAUNCHER_SIZE;
 }
 let uiTheme = GM_getValue('hl_ui_theme', 'dark') === 'light' ? 'light' : 'dark';
-let selectionStyle = GM_getValue('hl_selection_style', 'logo') === 'button' ? 'button' : 'logo';
 function normalizeUITransparency(value) {
     return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(80, Math.round(value / 5) * 5)) : 0;
 }
@@ -40,7 +39,6 @@ const I18N = {
         wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
         keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
         appearance: 'Appearance', colorTheme: 'Color theme', themeLight: 'Light', themeDark: 'Dark',
-        selectionStyle: 'Selection symbol style', selectionLogo: 'Logo tile (like the open button)', selectionButton: 'Button surface',
         uiTransparency: 'Interface transparency', transparencyHint: 'Applies to the panel, selection menu and open button. 0% is opaque; 80% is mostly transparent.', resetTransparency: 'Reset transparency', transparencyValue: value => `${value}%`,
         launcherSize: 'Open button size', launcherSizeHint: 'Size of the floating open button (44–80 px).', resetLauncherSize: 'Reset size',
         launcherPosition: 'Open button position', launcherInset: 'Distance from edge', bottomRight: 'Bottom right', bottomLeft: 'Bottom left', topRight: 'Top right', topLeft: 'Top left',
@@ -67,7 +65,6 @@ const I18N = {
         wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
         keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
         appearance: 'Darstellung', colorTheme: 'Farbschema', themeLight: 'Hell', themeDark: 'Dunkel',
-        selectionStyle: 'Stil des Auswahl-Symbols', selectionLogo: 'Logo-Kachel (wie Öffnen-Button)', selectionButton: 'Buttonfläche',
         uiTransparency: 'Transparenz der Bedienelemente', transparencyHint: 'Gilt für Panel, Auswahlmenü und Öffnen-Button. 0 % ist deckend, 80 % stark durchsichtig.', resetTransparency: 'Transparenz zurücksetzen', transparencyValue: value => `${value} %`,
         launcherSize: 'Größe des Öffnen-Buttons', launcherSizeHint: 'Größe des schwebenden Öffnen-Buttons (44–80 px).', resetLauncherSize: 'Größe zurücksetzen',
         launcherPosition: 'Position des Öffnen-Buttons', launcherInset: 'Abstand zum Rand', bottomRight: 'Unten rechts', bottomLeft: 'Unten links', topRight: 'Oben rechts', topLeft: 'Oben links',

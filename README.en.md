@@ -26,7 +26,7 @@ Page passages require **CSS Custom Highlights**. Without that browser API, persi
 
 ![Panel and page highlights](assets/screenshot.png)
 
-Under **Settings → Appearance**, choose Light/Dark, the selection symbol style (**Logo tile** or **Button surface**), transparency, and the panel opener's size and position. Your choice is saved locally.
+Under **Settings → Appearance**, choose Light/Dark, transparency, and the panel opener's size and position. Your preferences are saved locally.
 
 For automatic Google search words, saved passages, quotes and exports, see the [full usage guide](docs/usage.en.md). For common issues, see [Troubleshooting](docs/usage.en.md#troubleshooting).
 

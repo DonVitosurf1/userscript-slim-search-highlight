@@ -5,6 +5,7 @@ module.exports = ({ open, eq, ok }) => {
     const launcherWidth = async page => Math.round((await page.locator('#slim-hl-toggle').boundingBox()).width);
     const selectText = async page => {
         await page.evaluate(() => {
+            document.activeElement?.blur();
             const range = document.createRange();
             range.selectNodeContents(document.getElementById('passage'));
             getSelection().removeAllRanges(); getSelection().addRange(range);
@@ -12,38 +13,16 @@ module.exports = ({ open, eq, ok }) => {
         await page.locator('#selection-trigger').waitFor({ state: 'visible' });
     };
     return {
-        async appearance_selection_symbol_styles_switch_and_restore(browser) {
-            const page=await open(browser,{panelOpen:true,keywords:[],html:'<p id="passage">Solarenergie</p>'});
+        async appearance_selection_logo_replaces_retired_button_preference(browser) {
+            const page=await open(browser,{panelOpen:true,keywords:[],store:{hl_selection_style:'button'},html:'<p id="passage">Solarenergie</p>'});
             await selectText(page);
-            const trigger=page.locator('#selection-trigger'), image=trigger.locator('img');
-            const tile=await image.getAttribute('src');
-            eq(await image.evaluate(el=>Math.round(el.getBoundingClientRect().width)),40,'Logo variant uses the full tile');
-            eq(await trigger.evaluate(el=>getComputedStyle(el).borderTopWidth),'0px','No extra button frame around the logo');
-            await settings(page);await page.fill('#new-kw','Entwurf');
-            const style=page.getByLabel('Stil des Auswahl-Symbols',{exact:true});
-            await style.selectOption('button');
-            ok(await image.getAttribute('src')!==tile,'Button variant uses the transparent mark');
-            eq(await page.evaluate(()=>window.__store.hl_selection_style),'button','Choice persisted');
-            eq(await page.inputValue('#new-kw'),'Entwurf','Draft survives style switch');
-            await page.selectOption('#ui-theme','light');await page.selectOption('#ui-lang','en');
-            eq(await page.getByLabel('Selection symbol style',{exact:true}).inputValue(),'button','Locale preserves choice');
-            const restored=await open(browser,{panelOpen:true,keywords:[],store:await page.evaluate(()=>window.__store),html:'<p id="passage">Solarenergie</p>'});await selectText(restored);await settings(restored);
-            eq(await restored.getByLabel('Selection symbol style',{exact:true}).inputValue(),'button','Choice restored on revisit');
-            await restored.getByLabel('Selection symbol style',{exact:true}).selectOption('logo');
-            eq(await restored.locator('#selection-trigger img').getAttribute('src'),await restored.locator('#slim-hl-header img').getAttribute('src'),'Logo variant matches the launcher/header asset');
-        },
-        async appearance_selection_style_failed_save_and_invalid_value(browser) {
-            const page=await open(browser,{panelOpen:true,keywords:[],store:{hl_selection_style:'broken'},html:'<p id="passage">Solarenergie</p>'});
-            page.setDefaultTimeout(3000);
-            await selectText(page);await settings(page);
-            const style=page.getByLabel('Stil des Auswahl-Symbols',{exact:true});eq(await style.inputValue(),'logo','Invalid value falls back to logo');
-            await page.evaluate(()=>{window.__write=GM_setValue;window.GM_setValue=(key,value)=>{if(key==='hl_selection_style')throw Error('quota');window.__write(key,value);};});
-            await style.selectOption('button');eq(await style.inputValue(),'logo','Failed save rolls back the choice');
-            eq(await page.locator('#selection-trigger img').getAttribute('src'),await page.locator('#slim-hl-header img').getAttribute('src'),'Failed save restores the rendered logo');
-            ok((await page.locator('#panel-status').textContent()).includes('nicht gespeichert'),'Save failure is explained');
-            await page.evaluate(()=>{window.GM_setValue=window.__write;});await style.selectOption('button');
-            eq(await page.evaluate(()=>window.__store.hl_selection_style),'button','Retry persists choice');
-            eq(await page.locator('#panel-status').textContent(),'','Successful retry clears the error');
+            const check=async()=>{
+                eq(await page.locator('#selection-trigger img').getAttribute('src'),await page.locator('#slim-hl-header img').getAttribute('src'),'Existing installations use the same full logo as the panel opener');
+                eq(await page.locator('#selection-trigger').evaluate(el=>getComputedStyle(el).borderTopWidth),'0px','Logo has no additional button frame');
+                eq(await page.locator('#selection-trigger img').evaluate(el=>Math.round(el.getBoundingClientRect().width)),40,'Full logo remains readable');
+            };
+            await check();await settings(page);await page.selectOption('#ui-theme','light');await check();
+            await page.selectOption('#ui-lang','en');await selectText(page);await check();
         },
         async appearance_transparency_applies_to_all_surfaces_and_restores(browser) {
             const page = await open(browser, { panelOpen: true, keywords: [], store: { hl_launcher_size: 64 }, html: '<p id="passage">Solarenergie</p>' });
@@ -87,8 +66,7 @@ module.exports = ({ open, eq, ok }) => {
             eq(await page.locator('#panel-status').textContent(),'','Successful retry clears failure');
         },
         async appearance_logo_follows_theme_on_every_surface(browser) {
-          for (const symbolStyle of ['logo', 'button']) {
-            const page = await open(browser, { panelOpen: true, keywords: [], store: { hl_ui_theme: 'dark', hl_selection_style: symbolStyle }, html: '<p id="passage">Solarenergie</p>' });
+            const page = await open(browser, { panelOpen: true, keywords: [], store: { hl_ui_theme: 'dark' }, html: '<p id="passage">Solarenergie</p>' });
             await selectText(page);
             const checkLogo = async theme => {
                 const logo = await page.locator('#slim-hl-header img').getAttribute('src');
@@ -100,7 +78,7 @@ module.exports = ({ open, eq, ok }) => {
                     const context = canvas.getContext('2d'); context.drawImage(image, 0, 0, 128, 128);
                     return { background: [...context.getImageData(64, 114, 1, 1).data], track: [...context.getImageData(105, 27, 1, 1).data] };
                 }, selectionLogo);
-                eq(selectionPixels.background[3], symbolStyle === 'button' ? 0 : 255, 'Selection image matches the chosen style');
+                eq(selectionPixels.background[3], 255, 'Selection uses the complete logo tile');
                 const trackBrightness = selectionPixels.track.slice(0,3).reduce((a,b)=>a+b,0)/3;
                 ok(theme === 'dark' ? trackBrightness < 120 : trackBrightness > 180, 'Selection mark details follow the active theme');
                 ok((await page.locator('#slim-hl-toggle').evaluate(el => getComputedStyle(el).backgroundImage)).includes(logo), 'Launcher shares the current theme logo');
@@ -120,7 +98,6 @@ module.exports = ({ open, eq, ok }) => {
             await page.selectOption('#ui-theme','dark'); eq(await checkLogo('dark'), dark, 'Returning to dark restores the dark logo');
             const restored = await open(browser, { panelOpen: true, keywords: [], store: await page.evaluate(()=>window.__store) });
             eq(await restored.locator('#slim-hl-header img').getAttribute('src'), dark, 'Saved dark theme restores its logo');
-          }
         },
         async appearance_selection_action_icons_fit_narrow_viewports(browser) {
             for (const width of [320, 390]) for (const lang of ['de', 'en']) {

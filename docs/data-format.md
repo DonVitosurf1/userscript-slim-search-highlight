@@ -41,13 +41,14 @@ These independent local preferences apply across pages. They are separate from p
 | Key | Values | Default |
 |---|---|---|
 | `hl_ui_theme` | `dark`, `light` | `dark` |
-| `hl_selection_style` | `logo` (standalone logo tile), `button` (transparent mark on a button) | `logo` |
 | `hl_ui_transparency` | 0–80%, steps of 5; 0 = opaque | 0 |
 | `hl_launcher_size` | 44–80 px, steps of 4 | 56 |
 | `hl_launcher_position` | `bottom-right`, `bottom-left`, `top-right`, `top-left` | `bottom-right` |
 | `hl_launcher_inset` | 8–80 px, steps of 4 | 20 |
 
-Unknown theme/selection-style/position values use the default; numeric sizes/insets/transparency are rounded and bounded, and invalid types use the default. Failed writes restore the last saved appearance. Size reset affects only `hl_launcher_size`; transparency reset affects only `hl_ui_transparency`.
+Unknown theme/position values use the default; numeric sizes/insets/transparency are rounded and bounded, and invalid types use the default. Failed writes restore the last saved appearance. Size reset affects only `hl_launcher_size`; transparency reset affects only `hl_ui_transparency`.
+
+The retired `hl_selection_style` preference is no longer read or written. Existing values are ignored; every installation uses the logo tile. Other preferences and saved page records are unchanged.
 
 ## Keyboard preferences
 

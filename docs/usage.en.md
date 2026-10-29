@@ -64,7 +64,7 @@ If clipboard access fails, the panel opens with a labeled manual-copy field. Set
 
 Under **Settings → Appearance**, choose **Light** or **Dark**. The panel, selection actions and native form fields switch together immediately. Dark remains the default; webpage colors and chosen highlight colors stay unchanged.
 
-**Selection symbol style** switches between **Logo tile (like the open button)**, the default standalone logo without an additional button frame, and **Button surface**, the transparent mark on a shared button surface. The selection menu follows the chosen style. The preference is saved locally and survives language changes and reloads; the panel opener's size and position remain independent.
+The selection symbol uses the same theme-matched **logo tile as the panel opener**, without an additional button frame. Its menu uses a matching quiet surface. The panel opener’s size and position remain independently configurable.
 
 **Interface transparency** makes text behind the panel, selection menu and open button visible. The range is **0%** (fully opaque, default) to **80%** (mostly transparent), in 5% steps. Logos, labels and controls become translucent together; highlights in the page retain their colors. Changes preview immediately and are saved for future visits. **Reset transparency** restores only this setting to 0%. Choose low transparency for the clearest controls.
 

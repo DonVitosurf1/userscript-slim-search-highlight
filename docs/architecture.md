@@ -26,7 +26,7 @@ These are ordered source sections sharing one private lexical scope, **not isola
 
 `npm run build` writes the artifact. `npm run check` compares it byte-for-byte with the source-generated result and checks JavaScript syntax. `npm test` includes this check. Do not hand-edit the generated file.
 
-The build also embeds `assets/icon.svg` and `assets/icon-dark.svg` as the shared theme-specific `LOGOS`, derives transparent `LOGO_MARKS` by removing their uniquely identified `logo-tile` rectangle, and embeds manifest-listed action SVGs as `INLINE_ICONS` before the source sections. The selection style chooses between a complete logo tile and a transparent mark on a button. Assets are canonical; no duplicated SVG/base64 source or runtime icon fetch is needed. Inline action SVGs are decorative and their buttons retain localized labels.
+The build embeds `assets/icon.svg` and `assets/icon-dark.svg` as the shared theme-specific `LOGOS` and manifest-listed action SVGs as `INLINE_ICONS` before the source sections. Selection trigger, launcher and panel header use the same complete logo. Assets are canonical; no derived alternate logo, duplicated SVG/base64 source or runtime icon fetch is needed. Inline action SVGs are decorative and their buttons retain localized labels.
 
 ## Two highlighting paths
 
@@ -58,7 +58,7 @@ A selection snapshot preserves raw text, visible selected text, URL, a cloned ra
 
 ## Appearance ownership
 
-The shared `data-theme` variant in `src/10-styles.js` owns dark/light tokens for the panel, selection toolbar, launcher and copy confirmation. `applyAppearance` in `src/80-panel.js` updates those surfaces in place, applies interface transparency and bounded launcher geometry, and selects the current symbol variant. Selection style is independent of the launcher; switching styles repositions visible selection tools after their geometry changes. Generic control IDs are always resolved inside the owned panel so host-page fields remain untouched. No theme attributes or variables are written to the host document root.
+The shared `data-theme` variant in `src/10-styles.js` owns dark/light tokens for the panel, selection toolbar, launcher and copy confirmation. `applyAppearance` in `src/80-panel.js` updates those surfaces in place, applies interface transparency and bounded launcher geometry. The selection trigger consistently uses the standalone logo tile; its size remains independent of launcher geometry. Generic control IDs are always resolved inside the owned panel so host-page fields remain untouched. No theme attributes or variables are written to the host document root.
 
 Appearance preferences join the existing change-only persistence registry. A failed write restores the last saved appearance and reports a semantic localized status; a successful retry clears the stale failure. Native selects and ranges use the same control styles as existing settings. See [Design system](design/DESIGN.md) for the token mapping and [data format](data-format.md) for preference keys.
 
