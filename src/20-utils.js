@@ -6,7 +6,6 @@ const ICONS = {
     close: '<path d="m6 6 12 12M18 6 6 18"/>',
     minus: '<path d="M5 12h14"/>',
     expand: '<path d="M5 8h14v10H5zM5 5h14"/>',
-    newWindow: '<path d="M14 3h7v7M21 3l-10 10M10 3H3v18h18v-7"/>',
     prev: '<path d="m14 6-6 6 6 6"/>', next: '<path d="m10 6 6 6-6 6"/>',
     highlight: '<path d="m4 16 9-11 6 6-11 9H4v-4Z M11 7l6 6 M3 22h15"/>',
     reset: '<path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/>'

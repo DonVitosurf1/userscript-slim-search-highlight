@@ -28,9 +28,6 @@ const UI_CSS = `
     #slim-selection-tools #selection-highlight { font-weight: 600; background: var(--hl-surface); }
     #slim-selection-tools #selection-actions button { gap: 8px; white-space: normal; text-align: left; justify-content: start; }
     #slim-selection-tools #selection-actions button > span { min-width: 0; overflow-wrap: anywhere; }
-    #slim-selection-tools .selection-web-row { display: flex; align-items: stretch; min-width: 0; }
-    #slim-selection-tools #selection-web { flex: 1; min-width: 0; border-radius: var(--hl-radius) 0 0 var(--hl-radius); }
-    #slim-selection-tools #selection-actions #selection-web-new { flex: 0 0 44px; justify-content: center; border-left: 1px solid var(--hl-divider); border-radius: 0 var(--hl-radius) var(--hl-radius) 0; }
     #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
     #slim-hl-panel .page-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     #slim-hl-panel .page-heading-row .section-title { margin: 0; }

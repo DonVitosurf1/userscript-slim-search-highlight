@@ -75,33 +75,16 @@ module.exports = ({ open, eq, ok }) => {
             eq(page.url(),'https://example.test/article','Selecting text never starts a search');
             eq(page.context().pages().length,1,'Selection alone never opens another tab');
             await page.locator('#selection-trigger').focus();await page.keyboard.press('Enter');
+            await page.getByRole('button',{name:'Im Web suchen',exact:true}).focus();
             const [popup]=await Promise.all([
                 page.context().waitForEvent('page',{timeout:2500}),
-                page.getByRole('button',{name:'Im Web suchen',exact:true}).click()
+                page.keyboard.press('Enter')
             ]);
             await popup.waitForURL('https://duckduckgo.com/?q=A%20%26%20B%20%2B%20M%C3%BCnchen');
-            eq(await windowId(popup),readingWindow,'Primary action opens a tab in the same browser window');
-            eq(page.url(),'https://example.test/article','Primary action preserves the reading tab');
+            eq(await windowId(popup),readingWindow,'Search opens a tab in the same browser window');
+            eq(page.url(),'https://example.test/article','Search preserves the reading tab');
             eq(await popup.evaluate(()=>window.opener),null,'Search cannot control the reading page');
             eq(await popup.evaluate(()=>document.referrer),'','Search does not disclose the reading URL');
-            await popup.close();
-        },
-        async selection_web_search_new_window_keeps_the_reading_page(browser){
-            const page=await pageWith(browser,{url:'https://example.test/article',store:{hl_search_engine:'ddg'},html:'<p id="choose">A &amp; B + München</p>'});
-            await page.context().route('https://duckduckgo.com/**',route=>route.fulfill({contentType:'text/html',body:'<h1>Search results</h1>'}));
-            const readingWindow=await windowId(page);
-            await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});
-            await page.locator('#selection-trigger').focus();await page.keyboard.press('Enter');
-            const secondary=page.getByRole('button',{name:'Im Web suchen – neues Fenster',exact:true});
-            await page.getByRole('button',{name:'Im Web suchen',exact:true}).focus();
-            await page.keyboard.press('Tab');
-            eq(await secondary.evaluate(el=>el===document.activeElement),true,'Both search targets are reachable in reading order');
-            const [popup]=await Promise.all([page.context().waitForEvent('page',{timeout:2500}),page.keyboard.press('Enter')]);
-            await popup.waitForURL('https://duckduckgo.com/?q=A%20%26%20B%20%2B%20M%C3%BCnchen');
-            ok(await windowId(popup)!==readingWindow,'Secondary action opens a separate browser window');
-            eq(page.url(),'https://example.test/article','Secondary action preserves the reading tab');
-            eq(await popup.evaluate(()=>window.opener),null,'Search page cannot access the reading page');
-            eq(await popup.evaluate(()=>document.referrer),'','Search does not send the reading URL');
             eq(await count(page),0,'Searching does not create highlights');
             eq(await page.locator('#slim-selection-tools').isVisible(),false,'Search dismisses the selection menu');
             eq(await page.evaluate(()=>document.activeElement.id),'slim-hl-toggle','Keyboard search restores launcher focus');

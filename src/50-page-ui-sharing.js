@@ -237,7 +237,7 @@ function createSelectionTools() {
     const tools = document.createElement('div'); tools.id = 'slim-selection-tools'; tools.hidden = true;
     tools.setAttribute('role', 'toolbar'); tools.setAttribute('aria-label', t('selectionActions')); tools.lang = currentLang();
     tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img data-hl-logo src="${LOGOS[uiTheme]}" width="40" height="40" alt="" draggable="false"></button>
-        <div id="selection-actions" hidden><button type="button" id="selection-highlight" title="${t('highlightSelectionHint')}">${icon('highlightAll')}<span>${t('highlightSelection')}</span></button><div class="selection-web-row" role="group" aria-label="${t('webSearch')}"><button type="button" id="selection-web" title="${t('webSearchNewTab')}">${icon('searchWeb')}<span>${t('webSearch')}</span></button><button type="button" id="selection-web-new" title="${t('webSearchNewWindow')}" aria-label="${t('webSearchNewWindow')}">${icon('newWindow')}</button></div><details id="selection-share"><summary>${t('shareActions')}</summary><button type="button" id="selection-quote">${t('copyQuote')}</button><button type="button" id="selection-link">${t('copyLink')}</button></details><p id="selection-support" role="status" hidden>${t('highlightUnsupported')}</p></div>`;
+        <div id="selection-actions" hidden><button type="button" id="selection-highlight" title="${t('highlightSelectionHint')}">${icon('highlightAll')}<span>${t('highlightSelection')}</span></button><button type="button" id="selection-web" title="${t('webSearchNewTab')}">${icon('searchWeb')}<span>${t('webSearch')}</span></button><details id="selection-share"><summary>${t('shareActions')}</summary><button type="button" id="selection-quote">${t('copyQuote')}</button><button type="button" id="selection-link">${t('copyLink')}</button></details><p id="selection-support" role="status" hidden>${t('highlightUnsupported')}</p></div>`;
     const expand = () => { tools.querySelector('#selection-actions').hidden = false; tools.querySelector('#selection-trigger').setAttribute('aria-expanded', 'true'); positionSelectionTools(); };
     tools.querySelector('#selection-trigger').onclick = () => {
         const actions = tools.querySelector('#selection-actions');
@@ -247,14 +247,12 @@ function createSelectionTools() {
     tools.querySelector('#selection-share').addEventListener('toggle', positionSelectionTools);
     tools.onpointerdown = e => { if (e.button === 0) e.preventDefault(); };
     tools.querySelector('#selection-highlight').onclick = () => { if (validSelectionSnapshot()) addPageSelection(selectionSnapshot.text); else hideSelectionTools(true); };
-    const searchSelection = newWindow => {
+    tools.querySelector('#selection-web').onclick = () => {
         if (!validSelectionSnapshot()) { hideSelectionTools(true); return; }
         const text = selectionSnapshot.text; hideSelectionTools(true);
         const url = (SEARCH_URLS[searchEngine] || SEARCH_URLS.google) + encodeURIComponent(text);
-        window.open(url, '_blank', newWindow ? 'popup=yes,noopener,noreferrer' : 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
     };
-    tools.querySelector('#selection-web').onclick = () => searchSelection(false);
-    tools.querySelector('#selection-web-new').onclick = () => searchSelection(true);
     tools.querySelector('#selection-quote').onclick = () => selectedShare('quote');
     tools.querySelector('#selection-link').onclick = () => selectedShare('link');
     ensureUIRoot().append(tools);
