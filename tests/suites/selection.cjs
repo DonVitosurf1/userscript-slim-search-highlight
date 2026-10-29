@@ -9,6 +9,21 @@ module.exports = ({ open, eq, ok }) => {
     const highlight = async page => {await select(page);await page.keyboard.press('Alt+Shift+H');};
     const settleCount = async (page,n) => page.waitForFunction(n=>(CSS.highlights?.get('slim-page')?.size||0)===n,n,{timeout:3000});
     return {
+        async selection_menu_reflows_above_and_below_with_copy_actions(browser){
+            for(const [width,height,top] of [[1200,800,30],[320,500,400]]){
+                const page=await pageWith(browser,{panelOpen:false,viewport:{width,height},html:`<style>body{margin:0}#choose{position:absolute;top:${top}px;left:12px}</style><p id="choose">Solarenergie</p>`});
+                await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});await page.locator('#selection-trigger').hover();
+                await page.locator('#selection-share > summary').click();
+                const trigger=await page.locator('#selection-trigger').boundingBox(),menu=await page.locator('#selection-actions').boundingBox();
+                ok(top<100?menu.y>=trigger.y+trigger.height:menu.y+menu.height<=trigger.y,'Menu opens vertically beside its trigger');
+                ok(menu.x>=8&&menu.y>=8&&menu.x+menu.width<=width-7&&menu.y+menu.height<=height-7,'Expanded copying remains inside viewport');
+                for(const id of ['selection-highlight','selection-web','selection-quote','selection-link']){
+                    const box=await page.locator('#'+id).boundingBox();ok(Math.abs(box.x-menu.x)<=8,'Actions use the menu width without a logo column');
+                    ok(box.height>=(width<=480?44:36),'Readable action targets');
+                }
+                await page.locator('#selection-quote').focus();await page.keyboard.press('Escape');eq(await page.locator('#slim-selection-tools').isVisible(),false);
+            }
+        },
         async selection_shortcut_highlights_all_without_saving(browser){
             const page=await pageWith(browser);await highlight(page);
             eq(await count(page),2,'Alle Vorkommen markiert');

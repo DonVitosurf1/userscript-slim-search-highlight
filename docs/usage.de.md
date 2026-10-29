@@ -47,12 +47,14 @@ Die Optionen gelten für die aktuellen Seitenmarkierungen und werden mit ausdrü
 
 ## Kopieren und Export
 
-Im Auswahlmenü **Kopieren / Export** öffnen:
+Im Auswahlmenü **Kopieren** öffnen:
 
-- **Zitat + URL kopieren** verwendet das in den Einstellungen gewählte Format Klartext oder Markdown.
+- **Zitat mit Quelle kopieren** kopiert den ausgewählten Text samt Seiten-URL im gewählten Format Klartext oder Markdown.
 - **Link zur Textstelle kopieren** erzeugt bei unterstützten HTTP(S)-Seiten einen `#:~:text=`-Link. Sonst wird der normale Seitenlink kopiert und der Grund angezeigt. Bei mehrfach vorkommendem Text kann der Browser zum ersten passenden Vorkommen springen. Geänderter Text, blockübergreifende Auswahlen oder fehlende Browserunterstützung können die Textverknüpfung ungültig machen.
 
-Wenn direkter Zwischenablagenzugriff scheitert, erscheint ein beschriftetes Textfeld zum manuellen Kopieren. Einstellungen bieten außerdem Markdown-Export der aktuellen Passagen und JSON-Export aller gespeicherten Seiten. Diese Dateien enthalten ausgewählten Text und vollständige URLs; sie werden nur auf ausdrückliche Aktion lokal erzeugt, nicht hochgeladen. Downloads laufen über `GM_download` im Userscript-Manager; dessen Download-Berechtigung muss erlaubt sein. Fehlt diese Unterstützung, meldet das Skript die Einschränkung.
+Erfolgreiches Kopieren zeigt für einige Sekunden eine Bestätigung beim Auswahlmenü; das Hauptpanel wird dafür nicht geöffnet. Das Menü erscheint je nach Platz unter oder über dem Auswahl-Symbol. Bei wenig Höhe ist die Menüfläche scrollbar.
+
+Wenn direkter Zwischenablagenzugriff scheitert, öffnet sich das Panel mit einem beschrifteten Textfeld zum manuellen Kopieren. Einstellungen bieten außerdem Markdown-Export der aktuellen Passagen und JSON-Export aller gespeicherten Seiten. Diese Dateien enthalten ausgewählten Text und vollständige URLs; sie werden nur auf ausdrückliche Aktion lokal erzeugt, nicht hochgeladen. Downloads laufen über `GM_download` im Userscript-Manager; dessen Download-Berechtigung muss erlaubt sein. Fehlt diese Unterstützung, meldet das Skript die Einschränkung.
 
 ## Darstellung und Öffnen-Button
 

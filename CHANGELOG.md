@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.5.6
+
+- Das Auswahlmenü öffnet als eigene schmale Fläche unter oder über dem Logo-Symbol. Ruhige Aktionszeilen ersetzen einzelne Rahmen; „Alle Vorkommen markieren“ bleibt dezent hervorgehoben. Desktop-Zeilen sind mindestens 36 px, schmale Ansichten mindestens 44 px hoch.
+- „Kopieren / Export“ heißt jetzt „Kopieren“, „Zitat + URL kopieren“ heißt „Zitat mit Quelle kopieren“. Der Kopierbereich wird beim Aufklappen erneut im sichtbaren Bildschirm positioniert; bei wenig Höhe scrollt nur die Menüfläche.
+- Erfolgreiches Kopieren bestätigt eine kurze lokale Statusmeldung, ohne das Hauptpanel zu öffnen. Seitenfokus und neue Auswahlen bleiben erhalten; verweigerter Zwischenablagenzugriff öffnet weiterhin das manuelle Kopierfeld. Die Bestätigung folgt Sprache, Farbschema und Transparenz.
+
 ## 4.5.5
 
 - „Auf dieser Seite“ ist kompakter: Farbe, Begriff, Trefferzahl, Lesezeichen und Entfernen stehen in einer Zeile; der Speicherstatus steht klein direkt unter dem Begriff. Alle löschen und Rückgängig sitzen als zugängliche Symbol-Buttons neben der Überschrift.

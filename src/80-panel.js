@@ -1,10 +1,11 @@
 function applyAppearance() {
-    for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle']) {
+    for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle', 'slim-hl-feedback']) {
         const el = uiById(id);
         if (el) {
             el.dataset.theme = uiTheme;
             el.style.opacity = String((100 - uiTransparency) / 100);
             el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = LOGOS[uiTheme]; });
+            if (id === 'slim-hl-feedback') { el.textContent = el.hidden ? '' : t(el.dataset.message); el.lang = currentLang(); }
         }
     }
     const toggle = uiById('slim-hl-toggle');
