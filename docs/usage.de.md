@@ -22,7 +22,9 @@ Ein begonnenes, noch nicht abgeschicktes Suchfeld ersetzt die bereits bestätigt
 
 ## Farben, Löschen und Rückgängig
 
-Unter **Auf dieser Seite** hat jede Passage eine Farbe und Trefferzahl. Entfernen löscht die Passage und alle zugehörigen Markierungen; **Alle löschen** leert die Liste. **Rückgängig** stellt den vorherigen Zustand einschließlich Farbe und Speicherstatus wieder her. Die letzten 20 Seitenzustände bleiben während der Sitzung erhalten; Navigation oder Neuladen beendet diesen Verlauf.
+Unter **Auf dieser Seite** bekommt jede neue Passage automatisch eine andere, kräftige Farbe und eine Trefferzahl. Alle Vorkommen derselben Passage teilen ihre Farbe. Bereits belegte Farben, auch von aktiven Keywords, werden bei der Vergabe übersprungen; weitere Farben folgen, wenn die Startpalette aufgebraucht ist. Über das Farbfeld lässt sich die Farbe weiterhin selbst wählen. Erneutes Markieren derselben Passage und Wiederherstellen gespeicherter Passagen behalten deren Farbe.
+
+Entfernen löscht die Passage und alle zugehörigen Markierungen; **Alle löschen** leert die Liste. **Rückgängig** stellt den vorherigen Zustand einschließlich Farbe und Speicherstatus wieder her. Die letzten 20 Seitenzustände bleiben während der Sitzung erhalten; Navigation oder Neuladen beendet diesen Verlauf.
 
 Solange Seitenpassagen existieren, steuern Vor/Zurück und **Alt+← / →** deren Treffer. Andernfalls werden die gespeicherten/automatischen Keyword-Treffer navigiert. Die Positionsleiste bündelt bei vielen Treffern bis zu 500 Markierungen; die Trefferdetails zeigen bis zu 300 Einträge. Alle tatsächlichen Treffer bleiben über die Navigation erreichbar.
 

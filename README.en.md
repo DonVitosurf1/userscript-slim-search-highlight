@@ -22,7 +22,7 @@ Page passages require a browser supporting **CSS Custom Highlights**. Unsupporte
 
 - Select text → open the highlighter symbol → **Highlight all occurrences**. Alternatively use **Alt+Shift+H**, configurable or disabled in Settings.
 - Move through results with Previous/Next or **Alt+Left / Right**. Native right-click and double-click remain intact.
-- Set a color for each page passage. Undo page changes, removals and clearing.
+- Each new page passage automatically gets a different vivid color; all its occurrences share that color. You can still change colors manually. Undo page changes, removals and clearing.
 - **Remember** explicitly saves chosen passages locally for that URL. Otherwise they stay temporary. **Keywords** is a separate list of permanent cross-page terms.
 - **Search options** offers whole-word and article-only search. The default remains the entire selected passage across the full page.
 - **Copy / export** beside a selection offers quote+URL or a link to text. Web search runs only when **Search the web** is explicitly chosen.

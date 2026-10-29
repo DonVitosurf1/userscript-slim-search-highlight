@@ -21,6 +21,22 @@ let nextPageTermId = 1;
 let copyFormat = GM_getValue('hl_copy_format', 'plain') === 'markdown' ? 'markdown' : 'plain';
 const pagePaintNames = new Set();
 
+function nextPageHighlightColor() {
+    const used = new Set([...pageTerms, ...getActiveKeywords()].map(term => String(term.color).toLowerCase()));
+    const available = PAGE_HIGHLIGHT_COLORS.find(color => !used.has(color));
+    if (available) return available;
+    // An odd multiplier visits every 24-bit RGB value once. Keep extra colors
+    // bright/saturated and skip occupied colors rather than wrapping the palette.
+    for (let step = 1; step <= 0xffffff; step++) {
+        const value = Math.imul(step, 0x9e3779) & 0xffffff;
+        const rgb = [value >>> 16, (value >>> 8) & 255, value & 255];
+        if (Math.max(...rgb) < 240 || Math.max(...rgb) - Math.min(...rgb) < 128) continue;
+        const color = '#' + value.toString(16).padStart(6, '0');
+        if (!used.has(color)) return color;
+    }
+    return PAGE_HIGHLIGHT_COLORS[0]; // All available vivid RGB colors are occupied.
+}
+
 function newPageId() {
     let id;
     do { id = 'p' + nextPageTermId++; } while (pageTerms.some(term => term.id === id));

@@ -9,7 +9,7 @@ function addPageSelection(text) {
     if (!value) return false;
     if (!pageTerms.some(term => term.text.toLowerCase() === value.toLowerCase())) {
         rememberPageChange();
-        pageTerms.push({ id: newPageId(), text: value, color: DEFAULT_COLOR, saved: false, anchor: null });
+        pageTerms.push({ id: newPageId(), text: value, color: nextPageHighlightColor(), saved: false, anchor: null });
     }
     watchPageIdentity(); currentIdx = -1; isSelecting = false;
     const focusPanel = uiById('slim-selection-tools')?.contains(uiActiveElement());
