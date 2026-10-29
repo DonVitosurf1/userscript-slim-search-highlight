@@ -75,6 +75,8 @@ Settings uses the existing native select pattern for theme and corner selection;
 
 `applyAppearance` in `src/80-panel.js` updates existing surfaces in place; changing appearance must not discard drafts, collapse groups, move focus or invalidate page highlights. The shared local preference registry owns persistence. A failed write restores the last saved appearance and uses the semantic status region; a successful retry clears that error. Language changes recreate translated controls with the same saved appearance. Verification lives in `tests/suites/appearance.cjs`, including contrast, keyboard, narrow geometry and failure recovery.
 
+Interface transparency is a separate native percentage slider, 0–80 in steps of 5, default 0 (opaque). `applyAppearance` maps it to the opacity of panel, selection toolbar and launcher together, including their logos and labels; it never changes page highlight painting. The localized output and accessible value text update during preview. Reset affects only transparency; failed persistence rolls back the value and all surfaces. Higher user-selected transparency deliberately blends controls with arbitrary host content; the opaque default remains the contrast baseline.
+
 ## Typography
 14px/1.45 system UI for controls and content, 16px for counts and narrow-screen text fields/selects, 12–13px for supporting copy. Use tabular numerals for counts. No remote fonts. Keep wording direct and task-specific.
 

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.3
+// @version      4.5.4
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -71,6 +71,10 @@
             ? Math.max(44, Math.min(80, Math.round(value / 4) * 4)) : DEFAULT_LAUNCHER_SIZE;
     }
     let uiTheme = GM_getValue('hl_ui_theme', 'dark') === 'light' ? 'light' : 'dark';
+    function normalizeUITransparency(value) {
+        return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(80, Math.round(value / 5) * 5)) : 0;
+    }
+    let uiTransparency = normalizeUITransparency(GM_getValue('hl_ui_transparency', 0));
     let launcherSize = normalizeLauncherSize(GM_getValue('hl_launcher_size', DEFAULT_LAUNCHER_SIZE));
     const LAUNCHER_POSITIONS = ['bottom-right', 'bottom-left', 'top-right', 'top-left'];
     const savedLauncherPosition = GM_getValue('hl_launcher_position', 'bottom-right');
@@ -89,6 +93,7 @@
             wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
             keywords: 'Keywords', settings: 'Settings', recent: 'Recent searches',
             appearance: 'Appearance', colorTheme: 'Color theme', themeLight: 'Light', themeDark: 'Dark',
+            uiTransparency: 'Interface transparency', transparencyHint: 'Applies to the panel, selection menu and open button. 0% is opaque; 80% is mostly transparent.', resetTransparency: 'Reset transparency', transparencyValue: value => `${value}%`,
             launcherSize: 'Open button size', launcherSizeHint: 'Size of the floating open button (44–80 px).', resetLauncherSize: 'Reset size',
             launcherPosition: 'Open button position', launcherInset: 'Distance from edge', bottomRight: 'Bottom right', bottomLeft: 'Bottom left', topRight: 'Top right', topLeft: 'Top left',
             appearanceSaveFailed: 'Could not save the appearance. The previous setting was restored.',
@@ -112,6 +117,7 @@
             wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
             keywords: 'Keywords', settings: 'Einstellungen', recent: 'Letzte Suchen',
             appearance: 'Darstellung', colorTheme: 'Farbschema', themeLight: 'Hell', themeDark: 'Dunkel',
+            uiTransparency: 'Transparenz der Bedienelemente', transparencyHint: 'Gilt für Panel, Auswahlmenü und Öffnen-Button. 0 % ist deckend, 80 % stark durchsichtig.', resetTransparency: 'Transparenz zurücksetzen', transparencyValue: value => `${value} %`,
             launcherSize: 'Größe des Öffnen-Buttons', launcherSizeHint: 'Größe des schwebenden Öffnen-Buttons (44–80 px).', resetLauncherSize: 'Größe zurücksetzen',
             launcherPosition: 'Position des Öffnen-Buttons', launcherInset: 'Abstand zum Rand', bottomRight: 'Unten rechts', bottomLeft: 'Unten links', topRight: 'Oben rechts', topLeft: 'Oben links',
             appearanceSaveFailed: 'Darstellung konnte nicht gespeichert werden. Die vorherige Einstellung wurde wiederhergestellt.',
@@ -1059,6 +1065,7 @@
         hl_selection_shortcut: () => selectionShortcut,
         hl_copy_format: () => copyFormat,
         hl_ui_theme: () => uiTheme,
+        hl_ui_transparency: () => uiTransparency,
         hl_launcher_size: () => launcherSize,
         hl_launcher_position: () => launcherPosition,
         hl_launcher_inset: () => launcherInset
@@ -1746,6 +1753,7 @@
             const el = uiById(id);
             if (el) {
                 el.dataset.theme = uiTheme;
+                el.style.opacity = String((100 - uiTransparency) / 100);
                 el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = LOGOS[uiTheme]; });
             }
         }
@@ -1758,6 +1766,10 @@
         const panel = uiById('slim-hl-panel');
         const theme = panel?.querySelector('#ui-theme');
         if (theme) theme.value = uiTheme;
+        const transparency = panel?.querySelector('#ui-transparency');
+        if (transparency) { transparency.value = uiTransparency; transparency.setAttribute('aria-valuetext', t('transparencyValue', uiTransparency)); }
+        const transparencyOutput = panel?.querySelector('#ui-transparency-value');
+        if (transparencyOutput) transparencyOutput.value = t('transparencyValue', uiTransparency);
         const size = panel?.querySelector('#launcher-size');
         if (size) { size.value = launcherSize; size.setAttribute('aria-valuetext', launcherSize + ' px'); }
         const output = panel?.querySelector('#launcher-size-value');
@@ -1777,6 +1789,7 @@
         }
         catch {
             uiTheme = JSON.parse(lastSaved.hl_ui_theme);
+            uiTransparency = normalizeUITransparency(JSON.parse(lastSaved.hl_ui_transparency));
             launcherSize = normalizeLauncherSize(JSON.parse(lastSaved.hl_launcher_size));
             launcherPosition = JSON.parse(lastSaved.hl_launcher_position);
             launcherInset = normalizeLauncherInset(JSON.parse(lastSaved.hl_launcher_inset));
@@ -1951,6 +1964,10 @@
                     <h3 class="section-title">${t('appearance')}</h3>
                     <label for="ui-theme">${t('colorTheme')}</label>
                     <select id="ui-theme"><option value="dark">${t('themeDark')}</option><option value="light">${t('themeLight')}</option></select>
+                    <label for="ui-transparency" class="section-title">${t('uiTransparency')}</label>
+                    <div class="launcher-size-row"><input type="range" id="ui-transparency" min="0" max="80" step="5" aria-describedby="ui-transparency-hint"><output id="ui-transparency-value" for="ui-transparency"></output></div>
+                    <p class="hint" id="ui-transparency-hint">${t('transparencyHint')}</p>
+                    <button type="button" id="reset-transparency">${t('resetTransparency')}</button>
                     <label for="launcher-size" class="section-title">${t('launcherSize')}</label>
                     <div class="launcher-size-row"><input type="range" id="launcher-size" min="44" max="80" step="4" aria-describedby="launcher-size-hint"><output id="launcher-size-value" for="launcher-size"></output></div>
                     <p class="hint" id="launcher-size-hint">${t('launcherSizeHint')}</p>
@@ -2061,6 +2078,9 @@
             }
         };
         panel.querySelector('#ui-theme').onchange = e => { uiTheme = e.target.value === 'light' ? 'light' : 'dark'; applyAppearance(); saveAppearance(); };
+        panel.querySelector('#ui-transparency').oninput = e => { uiTransparency = normalizeUITransparency(+e.target.value); applyAppearance(); };
+        panel.querySelector('#ui-transparency').onchange = saveAppearance;
+        panel.querySelector('#reset-transparency').onclick = () => { uiTransparency = 0; applyAppearance(); saveAppearance(); };
         panel.querySelector('#launcher-size').oninput = e => { launcherSize = normalizeLauncherSize(+e.target.value); applyAppearance(); };
         panel.querySelector('#launcher-size').onchange = saveAppearance;
         panel.querySelector('#reset-launcher-size').onclick = () => { launcherSize = DEFAULT_LAUNCHER_SIZE; applyAppearance(); saveAppearance(); };
