@@ -20,7 +20,7 @@ Seitenmarkierungen benötigen **CSS Custom Highlights**. Ohne diese Browser-API 
 
 - Text auswählen → das Logo-Symbol öffnen → **Alle Vorkommen markieren**. Alternativ **Alt+Shift+H** verwenden; der Shortcut ist einstellbar.
 - Jede neue Passage bekommt eine andere kräftige Farbe. Mit den Pfeilen oder **Alt+← / →** durch die Treffer wechseln.
-- **Merken** speichert eine Passage lokal für diese URL. Ohne diese Aktion bleiben Seitenmarkierungen temporär; **Keywords** verwaltet dauerhafte Begriffe getrennt.
+- Das **Lesezeichen-Symbol** speichert eine Passage lokal für diese URL. Ohne diese Aktion bleiben Seitenmarkierungen temporär; **Keywords** verwaltet dauerhafte Begriffe getrennt.
 - **Im Web suchen** startet ausdrücklich eine Websuche. Rechtsklick bleibt beim Browser.
 
 ![Panel und Seitenmarkierungen](assets/screenshot.png)

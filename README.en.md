@@ -20,7 +20,7 @@ Page passages require **CSS Custom Highlights**. Without that browser API, persi
 
 - Select text → open the logo symbol → **Highlight all occurrences**. Alternatively use **Alt+Shift+H**; the shortcut is configurable.
 - Each new passage gets a different vivid color. Navigate results with the arrows or **Alt+Left / Right**.
-- **Remember** saves a passage locally for this URL. Otherwise page highlights remain temporary; **Keywords** manages permanent terms separately.
+- The **bookmark icon** saves a passage locally for this URL. Otherwise page highlights remain temporary; **Keywords** manages permanent terms separately.
 - **Search the web** explicitly starts a web search. Native right-click remains available.
 
 ![Panel and page highlights](assets/screenshot.png)

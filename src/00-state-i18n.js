@@ -1,7 +1,8 @@
 let keywords = GM_getValue('hl_keywords', []);
 let enabled = GM_getValue('hl_enabled', true);
 let autoSearch = GM_getValue('hl_auto_search', true);
-let panelPos = GM_getValue('hl_panel_pos', { x: 20, y: 80 });
+const storedPanelPos = GM_getValue('hl_panel_pos', null);
+let panelPos = Number.isFinite(storedPanelPos?.x) && Number.isFinite(storedPanelPos?.y) ? { x: storedPanelPos.x, y: storedPanelPos.y } : null;
 let panelState = GM_getValue('hl_panel_state', { open: false, minimized: false });
 let searchHistory = GM_getValue('hl_search_history', []);
 let blacklist = GM_getValue('hl_blacklist', ['docs.google.com', 'youtube.com', 'netflix.com']);

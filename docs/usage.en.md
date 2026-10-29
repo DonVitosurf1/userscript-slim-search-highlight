@@ -24,15 +24,15 @@ An unfinished search-field draft does not replace a submitted URL query. The sea
 
 Each new page passage automatically gets a different vivid color and a count. All occurrences of the same passage share its color. Assignment skips colors already used by current page passages or applicable keywords, adding further colors after the initial palette. The color field still allows manual changes. Selecting the same passage again or restoring saved passages preserves their colors.
 
-Remove one passage or clear all page highlights. **Undo** restores text/color/saved state, retaining the latest 20 page states in memory. Navigation/reload ends that undo history.
+Color, passage, count, bookmark and remove share one compact row, with the saved state beneath the passage text. The cross removes one passage. The **trash icon beside “On this page”** clears the list; the **back arrow beside it** undoes the latest change, including color and saved state. Buttons retain descriptive tooltips and accessible names. The latest 20 page states stay in memory; navigation/reload ends that undo history.
 
 While page terms exist, Previous/Next and **Alt+Left / Right** navigate their results. Otherwise navigation uses saved/automatic keyword matches. Position ticks are aggregated to at most 500 and match details to 300 rows; every actual occurrence remains accessible through navigation.
 
 ## Remember for this page
 
-Highlights start as temporary. **Remember** explicitly stores a passage, color and quote context locally in the userscript manager. Revisiting searches the exact text again; missing text is labeled **Not found**, without silently substituting similar content.
+Highlights start as temporary. The **bookmark icon (Remember for this page)** explicitly stores a passage, color and quote context locally in the userscript manager. A filled bookmark and “Saved” indicate persistence. Revisiting searches the exact text again; missing text is labeled **Not found**, without silently substituting similar content.
 
-**Forget** removes persistence but keeps temporary highlights. Removing/clearing saved passages updates stored data too; undo can restore it during the current session. Keys use the complete URL, including query and fragment. Concurrent tabs editing the same URL use the latest saved write.
+Clicking the bookmark again (**Forget saved passage**) removes persistence but keeps temporary highlights. Removing/clearing saved passages updates stored data too; undo can restore it during the current session. Keys use the complete URL, including query and fragment. Concurrent tabs editing the same URL use the latest saved write.
 
 Storage errors retain the previous state and report a failure. Unknown data versions are not overwritten. **Export saved pages (JSON)** preserves local data; this release does not have a file-import interface.
 
@@ -67,6 +67,8 @@ Size and edge-distance sliders show their pixel value and support arrow keys in 
 ## Keyboard and panel
 
 The panel is at most 320 px wide. Its collapsed overview is capped at 560 px or 80% of the visible viewport. Additional tools use two columns; open sections span the full width and can use more height. Guidance and the current shortcut live in **Help & shortcuts**. Font sizes are unchanged, and narrow-screen buttons/summaries remain at least 44 px tall.
+
+Without a saved position, it opens **on the right, vertically centered**, with a 20 px edge margin where space permits. Automatic placement follows viewport and panel size changes. Saved positions are reused; **Reset panel position** in the header, or **Home** on the focused header, restores automatic right-center placement.
 
 **Alt+Shift+H** highlights all occurrences directly. Settings can record another shortcut, disable it or restore the default. Use Alt/Ctrl/Meta plus a letter/digit, with optional Shift. Escape cancels recording. Browser/OS shortcut conflicts cannot be universally avoided.
 

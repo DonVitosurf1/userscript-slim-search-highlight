@@ -56,14 +56,15 @@ function clampPanelPosition(panel, persist = false) {
     panel.style.setProperty('--hl-panel-collapsed-height', Math.max(0, Math.min(560, height * .8, height - 24)) + 'px');
     panel.style.setProperty('--hl-panel-expanded-height', Math.max(0, height - 24) + 'px');
     const box = panel.getBoundingClientRect();
-    const x = Number.isFinite(panelPos?.x) ? panelPos.x : 20;
-    const y = Number.isFinite(panelPos?.y) ? panelPos.y : 80;
+    const custom = Number.isFinite(panelPos?.x) && Number.isFinite(panelPos?.y);
+    const x = custom ? panelPos.x : left + width - box.width - 20;
+    const y = custom ? panelPos.y : top + (height - box.height) / 2;
     const next = {
         x: Math.max(left + 12, Math.min(x, left + width - box.width - 12)),
         y: Math.max(top + 12, Math.min(y, top + height - box.height - 12))
     };
     panel.style.left = next.x + 'px'; panel.style.top = next.y + 'px';
-    panelPos = next;
+    if (custom) panelPos = next;
     if (persist) save();
 }
 
@@ -156,7 +157,7 @@ function createPanel(snapshot = null) {
     const panel = document.createElement('section');
     panel.id = 'slim-hl-panel'; panel.lang = currentLang();
     panel.setAttribute('aria-label', 'Slim Search Highlight');
-    panel.style.left = (panelPos?.x || 20) + 'px'; panel.style.top = (panelPos?.y || 80) + 'px';
+    panel.style.left = (panelPos?.x ?? 0) + 'px'; panel.style.top = (panelPos?.y ?? 0) + 'px';
     if (panelState.minimized) panel.classList.add('minimized');
     panel.innerHTML = `
         <header id="slim-hl-header" tabindex="0" aria-label="${t('movePanel')}" title="${t('movePanel')}">
@@ -175,10 +176,10 @@ function createPanel(snapshot = null) {
                     <button type="button" class="icon-btn" id="btn-next" title="${t('next')}" aria-label="${t('next')}">${icon('next')}</button>
                 </div>
             </div>
-            <h2 id="page-heading" class="section-title" tabindex="-1">${t('pageHeading')}</h2>
+            <div class="page-heading-row"><h2 id="page-heading" class="section-title" tabindex="-1">${t('pageHeading')}</h2>
+            <div class="page-actions"><button type="button" class="icon-btn" id="clear-page" aria-label="${t('clearPageShort')} – ${t('pageHeading')}" title="${t('clearPage')}" hidden>${icon('trash')}</button><button type="button" class="icon-btn" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${icon('reset')}</button></div></div>
             <div id="page-search-status" class="hint" role="status"></div>
             <div id="page-list"></div>
-            <div class="page-actions"><button type="button" id="clear-page" aria-label="${t('clearPageShort')} – ${t('pageHeading')}" title="${t('clearPage')}" hidden>${t('clearPageShort')}</button><button type="button" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${t('undoShort')}</button></div>
             <div class="status-row"><span id="panel-status" class="hint" role="status"></span><button type="button" id="undo-delete" hidden>${t('undo')}</button></div>
             <section id="manual-copy-section" hidden><label for="manual-copy">${t('manualCopy')}</label><p id="manual-copy-help" class="hint">${t('manualCopyHint')}</p><textarea id="manual-copy" readonly aria-describedby="manual-copy-help"></textarea><button type="button" id="close-manual-copy">${t('closeManualCopy')}</button></section>
             <div class="panel-tools">
@@ -254,7 +255,8 @@ function createPanel(snapshot = null) {
     let drag = null;
     header.onpointerdown = e => {
         if (e.button !== 0 || e.target.closest('button')) return;
-        drag = { x: e.clientX - panelPos.x, y: e.clientY - panelPos.y };
+        const box = panel.getBoundingClientRect();
+        drag = { x: e.clientX - box.x, y: e.clientY - box.y };
         header.setPointerCapture(e.pointerId); e.preventDefault();
     };
     header.onpointermove = e => {
@@ -267,15 +269,16 @@ function createPanel(snapshot = null) {
     header.onkeydown = e => {
         if (e.target !== header || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home'].includes(e.key)) return;
         e.preventDefault();
-        if (e.key === 'Home') panelPos = { x: 20, y: 80 };
+        if (e.key === 'Home') panelPos = null;
         else {
+            if (!panelPos) { const box = panel.getBoundingClientRect(); panelPos = { x: box.x, y: box.y }; }
             const step = e.shiftKey ? 40 : 10;
             panelPos.x += e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0;
             panelPos.y += e.key === 'ArrowUp' ? -step : e.key === 'ArrowDown' ? step : 0;
         }
         clampPanelPosition(panel, true);
     };
-    panel.querySelector('#btn-reset').onclick = () => { panelPos = { x: 20, y: 80 }; clampPanelPosition(panel, true); };
+    panel.querySelector('#btn-reset').onclick = () => { panelPos = null; clampPanelPosition(panel, true); };
     panel.querySelector('#btn-min').onclick = e => {
         panelState.minimized = !panelState.minimized;
         panel.classList.toggle('minimized', panelState.minimized);

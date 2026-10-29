@@ -18,6 +18,34 @@ module.exports = ({ open, settled, eq, ok }) => {
         await page.locator('#settings-section > summary').click();
     };
     return {
+        async review_panel_defaults_to_right_center_and_tracks_viewport(browser) {
+            for (const viewport of [{width:1280,height:900},{width:390,height:844}]) {
+                const page=await panel(browser,{keywords:[],permanentOpen:false,viewport});
+                const centered=async()=>page.waitForFunction(()=>{
+                    const r=document.getElementById('slim-hl-panel').getBoundingClientRect();
+                    return Math.abs(innerWidth-r.right-20)<1&&Math.abs(r.y+r.height/2-innerHeight/2)<1;
+                });
+                await centered();
+                await page.locator('#settings-section > summary').click();await centered();
+                await page.locator('#settings-section > summary').click();await centered();
+                await page.setViewportSize({width:800,height:600});await centered();
+                eq(await page.evaluate(()=>window.__store.hl_panel_pos??null),null,'Automatic placement does not save fixed coordinates');
+                await page.close();
+            }
+        },
+        async review_panel_custom_position_persists_and_reset_restores_right_center(browser) {
+            const page=await panel(browser,{keywords:[],permanentOpen:false,store:{hl_panel_pos:{x:100,y:120}},viewport:{width:1280,height:900}});
+            eq((await rect(page)).x,100);eq((await rect(page)).y,120,'Custom placement restored');
+            await page.click('#btn-reset');
+            await page.waitForFunction(()=>{const r=document.getElementById('slim-hl-panel').getBoundingClientRect();return Math.abs(innerWidth-r.right-20)<1&&Math.abs(r.y+r.height/2-innerHeight/2)<1;});
+            eq(await page.evaluate(()=>window.__store.hl_panel_pos),null,'Reset restores automatic placement');
+            await page.locator('#slim-hl-header').focus();await page.keyboard.press('ArrowLeft');
+            const moved=await rect(page),store=await page.evaluate(()=>window.__store);
+            const restored=await panel(browser,{keywords:[],permanentOpen:false,store,viewport:{width:1280,height:900}});
+            eq((await rect(restored)).x,moved.x);eq((await rect(restored)).y,moved.y,'Keyboard placement survives reload');
+            await restored.locator('#slim-hl-header').focus();await restored.keyboard.press('Home');
+            await restored.waitForFunction(()=>{const r=document.getElementById('slim-hl-panel').getBoundingClientRect();return Math.abs(innerWidth-r.right-20)<1&&Math.abs(r.y+r.height/2-innerHeight/2)<1;});
+        },
         async review_panel_stays_inside_narrow_viewport(browser) {
             const page = await panel(browser, { viewport: { width: 320, height: 568 }, store: { hl_panel_pos: { x: 900, y: 650 } } });
             await inside(page);

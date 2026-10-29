@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.4
+// @version      4.5.5
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -58,7 +58,8 @@
     let keywords = GM_getValue('hl_keywords', []);
     let enabled = GM_getValue('hl_enabled', true);
     let autoSearch = GM_getValue('hl_auto_search', true);
-    let panelPos = GM_getValue('hl_panel_pos', { x: 20, y: 80 });
+    const storedPanelPos = GM_getValue('hl_panel_pos', null);
+    let panelPos = Number.isFinite(storedPanelPos?.x) && Number.isFinite(storedPanelPos?.y) ? { x: storedPanelPos.x, y: storedPanelPos.y } : null;
     let panelState = GM_getValue('hl_panel_state', { open: false, minimized: false });
     let searchHistory = GM_getValue('hl_search_history', []);
     let blacklist = GM_getValue('hl_blacklist', ['docs.google.com', 'youtube.com', 'netflix.com']);
@@ -290,20 +291,21 @@
         #slim-selection-tools #selection-actions button { gap: 8px; white-space: normal; text-align: left; justify-content: start; }
         #slim-selection-tools #selection-actions button > span { min-width: 0; overflow-wrap: anywhere; }
         #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
-        #slim-hl-panel .page-item { display: block; margin: 8px 0; padding-bottom: 6px; border-bottom: 1px solid var(--hl-divider); }
-        #slim-hl-panel .page-row { display: flex; align-items: center; gap: 8px; }
-        #slim-hl-panel .page-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
-        #slim-hl-panel .page-meta .hint { margin: 0; }
-        #slim-hl-panel .page-meta button { font-size: 12px; padding: 5px 8px; }
-        #slim-hl-panel .page-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+        #slim-hl-panel .page-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        #slim-hl-panel .page-heading-row .section-title { margin: 0; }
+        #slim-hl-panel .page-item { display: block; margin: 6px 0; padding-bottom: 4px; border-bottom: 1px solid var(--hl-divider); }
+        #slim-hl-panel .page-row { display: flex; align-items: center; gap: 6px; }
+        #slim-hl-panel .page-label { flex: 1; min-width: 0; }
+        #slim-hl-panel .page-label .page-state { display: block; margin: 0; font-size: 12px; line-height: 1.3; }
+        #slim-hl-panel .page-save[aria-pressed=true] { color: var(--hl-accent-text); }
+        #slim-hl-panel .page-actions { display: flex; flex-shrink: 0; gap: 4px; }
         #slim-hl-panel textarea { resize: none; min-height: 120px; margin-bottom: 8px; }
         #slim-selection-tools details { display: block; }
         #slim-selection-tools summary { display: list-item; cursor: pointer; min-height: 36px; padding: 8px; }
         #slim-selection-tools details button { width: 100%; margin-top: 4px; }
-        #slim-hl-panel .page-term { flex: 1; min-width: 0; overflow-wrap: anywhere; max-height: 5.8em; overflow: auto; }
+        #slim-hl-panel .page-term { display: block; overflow-wrap: anywhere; max-height: 5.8em; overflow: auto; }
         #slim-hl-panel #page-heading { margin-top: 0; }
         #slim-hl-panel #clear-page { margin: 0; }
-        #slim-hl-panel .page-actions button { flex: 1; }
         #slim-hl-panel .shortcut-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
         #slim-hl-panel #shortcut-label { display: block; font-weight: 600; margin: 6px 0; }
         #slim-hl-panel #navigation-scope { margin: 0; }
@@ -459,6 +461,9 @@
     // Source: src/20-utils.js
     const ICONS = {
         save: '<path d="m5 12 4 4L19 6"/>',
+        bookmark: '<path d="M6 3h12v18l-6-4-6 4V3Z"/>',
+        bookmarked: '<path d="M6 3h12v18l-6-4-6 4V3Z" fill="currentColor"/>',
+        trash: '<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',
         close: '<path d="m6 6 12 12M18 6 6 18"/>',
         minus: '<path d="M5 12h14"/>',
         expand: '<path d="M5 8h14v10H5zM5 5h14"/>',
@@ -878,12 +883,11 @@
             const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'icon-btn page-remove'; remove.innerHTML = icon('close'); remove.title = t('remove');
             remove.setAttribute('aria-label', t('deletePageTerm', term.text));
             remove.onclick = () => { changePageTerm(term, () => { pageTerms = pageTerms.filter(item => item.id !== term.id); }); uiById('undo-page')?.focus({ preventScroll: true }); };
-            row.append(color, label, count, remove);
-            const meta = document.createElement('div'); meta.className = 'page-meta';
+            const content = document.createElement('div'); content.className = 'page-label';
             const state = document.createElement('span'); state.className = 'hint page-state';
             state.textContent = term.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled ? t('savedMissing') : t(term.saved ? 'pageSavedShort' : 'pageTemporary');
-            const save = document.createElement('button'); save.type = 'button'; save.className = 'page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
-            save.textContent = t(term.saved ? 'forgetShort' : 'rememberShort');
+            const save = document.createElement('button'); save.type = 'button'; save.className = 'icon-btn page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
+            save.innerHTML = icon(term.saved ? 'bookmarked' : 'bookmark');
             save.setAttribute('aria-label', t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm'));
             save.title = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
             save.onclick = () => {
@@ -891,7 +895,7 @@
                 if (!changePageTerm(term, () => { term.saved = !term.saved; })) return;
                 setPanelStatus(term.saved ? 'pageRemembered' : 'pageForgotten');
             };
-            meta.append(state, save); item.append(row, meta); list.append(item);
+            content.append(label, state); row.append(color, content, count, save, remove); item.append(row); list.append(item);
         }
         const clear = uiById('clear-page'); if (clear) clear.hidden = !pageTerms.length;
         const undo = uiById('undo-page'); if (undo) undo.hidden = !pageUndo.length;
@@ -1806,14 +1810,15 @@
         panel.style.setProperty('--hl-panel-collapsed-height', Math.max(0, Math.min(560, height * .8, height - 24)) + 'px');
         panel.style.setProperty('--hl-panel-expanded-height', Math.max(0, height - 24) + 'px');
         const box = panel.getBoundingClientRect();
-        const x = Number.isFinite(panelPos?.x) ? panelPos.x : 20;
-        const y = Number.isFinite(panelPos?.y) ? panelPos.y : 80;
+        const custom = Number.isFinite(panelPos?.x) && Number.isFinite(panelPos?.y);
+        const x = custom ? panelPos.x : left + width - box.width - 20;
+        const y = custom ? panelPos.y : top + (height - box.height) / 2;
         const next = {
             x: Math.max(left + 12, Math.min(x, left + width - box.width - 12)),
             y: Math.max(top + 12, Math.min(y, top + height - box.height - 12))
         };
         panel.style.left = next.x + 'px'; panel.style.top = next.y + 'px';
-        panelPos = next;
+        if (custom) panelPos = next;
         if (persist) save();
     }
 
@@ -1906,7 +1911,7 @@
         const panel = document.createElement('section');
         panel.id = 'slim-hl-panel'; panel.lang = currentLang();
         panel.setAttribute('aria-label', 'Slim Search Highlight');
-        panel.style.left = (panelPos?.x || 20) + 'px'; panel.style.top = (panelPos?.y || 80) + 'px';
+        panel.style.left = (panelPos?.x ?? 0) + 'px'; panel.style.top = (panelPos?.y ?? 0) + 'px';
         if (panelState.minimized) panel.classList.add('minimized');
         panel.innerHTML = `
             <header id="slim-hl-header" tabindex="0" aria-label="${t('movePanel')}" title="${t('movePanel')}">
@@ -1925,10 +1930,10 @@
                         <button type="button" class="icon-btn" id="btn-next" title="${t('next')}" aria-label="${t('next')}">${icon('next')}</button>
                     </div>
                 </div>
-                <h2 id="page-heading" class="section-title" tabindex="-1">${t('pageHeading')}</h2>
+                <div class="page-heading-row"><h2 id="page-heading" class="section-title" tabindex="-1">${t('pageHeading')}</h2>
+                <div class="page-actions"><button type="button" class="icon-btn" id="clear-page" aria-label="${t('clearPageShort')} – ${t('pageHeading')}" title="${t('clearPage')}" hidden>${icon('trash')}</button><button type="button" class="icon-btn" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${icon('reset')}</button></div></div>
                 <div id="page-search-status" class="hint" role="status"></div>
                 <div id="page-list"></div>
-                <div class="page-actions"><button type="button" id="clear-page" aria-label="${t('clearPageShort')} – ${t('pageHeading')}" title="${t('clearPage')}" hidden>${t('clearPageShort')}</button><button type="button" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${t('undoShort')}</button></div>
                 <div class="status-row"><span id="panel-status" class="hint" role="status"></span><button type="button" id="undo-delete" hidden>${t('undo')}</button></div>
                 <section id="manual-copy-section" hidden><label for="manual-copy">${t('manualCopy')}</label><p id="manual-copy-help" class="hint">${t('manualCopyHint')}</p><textarea id="manual-copy" readonly aria-describedby="manual-copy-help"></textarea><button type="button" id="close-manual-copy">${t('closeManualCopy')}</button></section>
                 <div class="panel-tools">
@@ -2004,7 +2009,8 @@
         let drag = null;
         header.onpointerdown = e => {
             if (e.button !== 0 || e.target.closest('button')) return;
-            drag = { x: e.clientX - panelPos.x, y: e.clientY - panelPos.y };
+            const box = panel.getBoundingClientRect();
+            drag = { x: e.clientX - box.x, y: e.clientY - box.y };
             header.setPointerCapture(e.pointerId); e.preventDefault();
         };
         header.onpointermove = e => {
@@ -2017,15 +2023,16 @@
         header.onkeydown = e => {
             if (e.target !== header || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home'].includes(e.key)) return;
             e.preventDefault();
-            if (e.key === 'Home') panelPos = { x: 20, y: 80 };
+            if (e.key === 'Home') panelPos = null;
             else {
+                if (!panelPos) { const box = panel.getBoundingClientRect(); panelPos = { x: box.x, y: box.y }; }
                 const step = e.shiftKey ? 40 : 10;
                 panelPos.x += e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0;
                 panelPos.y += e.key === 'ArrowUp' ? -step : e.key === 'ArrowDown' ? step : 0;
             }
             clampPanelPosition(panel, true);
         };
-        panel.querySelector('#btn-reset').onclick = () => { panelPos = { x: 20, y: 80 }; clampPanelPosition(panel, true); };
+        panel.querySelector('#btn-reset').onclick = () => { panelPos = null; clampPanelPosition(panel, true); };
         panel.querySelector('#btn-min').onclick = e => {
             panelState.minimized = !panelState.minimized;
             panel.classList.toggle('minimized', panelState.minimized);

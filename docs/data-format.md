@@ -34,6 +34,8 @@ Unknown schema versions are not overwritten by save actions. “Export saved pag
 
 ## Appearance preferences
 
+Panel placement uses `hl_panel_pos`: `null` (or an absent/invalid value) means automatic right-center placement; `{x, y}` stores a manually selected position in viewport pixels. Coordinates are kept inside the visible viewport. Reset stores `null`, so automatic placement continues to follow viewport and panel-height changes.
+
 These independent local preferences apply across pages. They are separate from page annotations and are not included in the saved-pages JSON export:
 
 | Key | Values | Default |
