@@ -26,7 +26,14 @@ for (const suite of suites) {
     for (const [name, run] of selected) {
       const start = Date.now();
       try { await run(browser); console.log(`PASS ${name} (${Date.now() - start} ms)`); }
-      catch (error) { failed++; console.log(`FAIL ${name}: ${error.message.split('\n')[0]}`); }
+      catch (error) {
+        failed++; console.log(`FAIL ${name}: ${error.message.split('\n')[0]}`);
+        if (process.env.GITHUB_ACTIONS === 'true') {
+          const details = `${name}\n${error.message}\nBrowser: ${browser.version()}`
+            .replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+          console.log(`::error title=Browser test failed::${details}`);
+        }
+      }
       finally { await Promise.all(browser.contexts().map(context => context.close())); }
     }
   } finally { await browser.close(); }
