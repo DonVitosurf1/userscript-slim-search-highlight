@@ -61,7 +61,7 @@ CHROMIUM_PATH=/usr/bin/chromium npm run screenshots
 
 Omit `CHROMIUM_PATH` to use the installed Playwright Chromium, as with tests. The maintained capture script lives in `scripts/screenshots.cjs`. It uses a synthetic page and simulated GM bindings, creates PNGs for light/dark desktop and narrow layouts plus `browser.json` in `artifacts/screenshots/`, and checks panel bounds, both expected matches and page errors. Inspect the captures visually; geometry checks alone do not establish usability.
 
-`artifacts/` is ignored by Git and safe to regenerate. Copy a deliberately chosen public screenshot to `assets/screenshot.png` when updating the README. Commit only evidence needed for a specific review; do not keep appending routine captures to the documentation. Older reports and evidence live in the [archive](archive/README.md); their scripts are historical snapshots.
+`artifacts/` is ignored by Git and safe to regenerate. Copy a deliberately chosen public screenshot to `assets/screenshot.png` when updating the README. Commit only evidence needed for a specific review; do not keep appending routine captures to the documentation. Older reports and evidence live in the [archive](https://github.com/DonVitosurf1/userscript-slim-search-highlight/blob/6007c7328b6fbc1792ea27bc3fff2c10c2afa7c3/docs/archive/README.md); their scripts are historical snapshots.
 
 ## Release checks
 

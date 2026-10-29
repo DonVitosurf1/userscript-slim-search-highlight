@@ -34,11 +34,11 @@ components:
 ## Overview
 
 ### Creative North Star
-A marked page beside the page: a white paper identity, dark ink lines and vivid yellow/cyan/pink highlights with a narrow occurrence rail. Keep surrounding tools quiet and concentrate the selection workflow at the top. The same mark links the logo, launcher, panel header and selection trigger; functional icons describe the action rather than replacing its label. The [German design guideline](docs/design-guidelines.de.md) explains the identity and usage rules.
+A marked page beside the page: a white paper identity, dark ink lines and vivid yellow/cyan/pink highlights with a narrow occurrence rail. Keep surrounding tools quiet and concentrate the selection workflow at the top. The same mark links the logo, launcher, panel header and selection trigger; functional icons describe the action rather than replacing its label. The [German design guideline](README.md) explains the identity and usage rules.
 
 ### Product context and register
 - Audience/job: people reading and researching across webpages; add terms and move between occurrences.
-- Evidence: README, docs/archive/reviews/review-report.md, existing script and browser tests. No specific geographic market or user-research claims.
+- Evidence: README, current usage guides, canonical SVG assets, existing script and browser tests. No specific geographic market or user-research claims.
 - Locales: German and English, auto follows browser language with English fallback. All owned labels, errors and accessible names use the active locale.
 - Register: product utility; a nonmodal floating panel with underlying webpage remaining interactive.
 - Signature: keyword colors link saved terms, in-page marks and the position bar.

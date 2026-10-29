@@ -1,12 +1,12 @@
 # Designrichtlinie
 
-[Dokumentation](README.md) · [Technisches Designsystem](../DESIGN.md)
+[Dokumentation](../README.md) · [Technisches Designsystem](DESIGN.md)
 
 ## Leitidee: eine markierte Seite
 
 Slim Search Highlight ist ein Lesewerkzeug. Die Gestaltung erinnert an markierten Text auf weißem Papier: ruhig im Umfeld, kräftig an den Fundstellen. Das Logo zeigt drei farbige Textzeilen und eine schmale Trefferleiste. Diese Formen verbinden die Marke mit den tatsächlichen Funktionen.
 
-![Helles Logo](../assets/icon.svg)
+![Helles Logo](../../assets/icon.svg)
 
 ## Farben mit festen Aufgaben
 
@@ -19,7 +19,7 @@ Slim Search Highlight ist ein Lesewerkzeug. Die Gestaltung erinnert an markierte
 | Pink | `#ff80ab` | Dritte Logo-Markierung |
 | Kontur | `#d9e2e7` | Dezente Begrenzung des weißen Logos |
 
-Die UI-Farben für Hintergrund, Text, Fokus und Fehler stehen als `--hl-*`-Tokens im [Designsystem](../DESIGN.md). Das helle Logo bleibt in beiden Farbschemata gleich. Hell und Dunkel sind weiterhin wählbar; Webseitenfarben bleiben davon unabhängig.
+Die UI-Farben für Hintergrund, Text, Fokus und Fehler stehen als `--hl-*`-Tokens im [Designsystem](DESIGN.md). Das helle Logo bleibt in beiden Farbschemata gleich. Hell und Dunkel sind weiterhin wählbar; Webseitenfarben bleiben davon unabhängig.
 
 Farbe trägt Bedeutung: Markierungsfarben verbinden Text, Farbfeld und Trefferleiste. Zusätzliche Begriffe erhalten automatisch andere kräftige Farben. Beschriftung und Trefferzahl bleiben nötig; Unterscheidung erfolgt nicht ausschließlich über Farbe. Markierungen erhalten automatisch schwarze oder weiße Schrift für lesbaren Kontrast.
 
@@ -27,13 +27,13 @@ Farbe trägt Bedeutung: Markierungsfarben verbinden Text, Farbfeld und Trefferle
 
 | Symbol | Bedeutung | Gestaltung |
 |---|---|---|
-| [Logo](../assets/icon.svg) | Programm öffnen / Auswahlaktionen | Weißes Blatt, drei Markierungen, Trefferleiste |
-| ![Alle Vorkommen markieren](../assets/icons/highlight-all.svg) | Alle Vorkommen markieren | Drei wiederholte Markierungen mit Trefferleiste |
-| ![Im Web suchen](../assets/icons/search-web.svg) | Im Web suchen | Weltkugel mit Lupe |
+| [Logo](../../assets/icon.svg) | Programm öffnen / Auswahlaktionen | Weißes Blatt, drei Markierungen, Trefferleiste |
+| ![Alle Vorkommen markieren](../../assets/icons/highlight-all.svg) | Alle Vorkommen markieren | Drei wiederholte Markierungen mit Trefferleiste |
+| ![Im Web suchen](../../assets/icons/search-web.svg) | Im Web suchen | Weltkugel mit Lupe |
 
 Öffnen-Button, Panelkopf und Auswahl-Symbol verwenden dieselbe Logo-Datei. Funktions-Icons ergänzen ihre sichtbaren Beschriftungen. Sie ersetzen keine Texte durch unklare Bildzeichen. Neue Funktions-Icons folgen einem 24×24-Raster, einer Strichstärke von 1,8 Einheiten und abgerundeten Linienenden. Sie verwenden die Textfarbe des aktiven Farbschemas, damit sie auch im dunklen Modus lesbar bleiben.
 
-![Auswahlaktionen mit Logo und Funktionssymbolen](../assets/selection-actions-light.png)
+![Auswahlaktionen mit Logo und Funktionssymbolen](../../assets/selection-actions-light.png)
 
 ## Form, Schrift und Verhalten
 

@@ -10,7 +10,7 @@
 | [Usage (English)](usage.en.md) | Selection, navigation, saving, shortcuts and export |
 | [Änderungen / Changelog](../CHANGELOG.md) | Versionsverlauf und Migrationen |
 | [Sicherheit / Security](../SECURITY.md) | Sicherheitsprobleme vertraulich melden |
-| [Designrichtlinie](design-guidelines.de.md) | Helles Logo, Symbolfamilie, Farbrollen und Gestaltungsregeln |
+| [Designrichtlinie](design/README.md) | Helles Logo, Symbolfamilie, Farbrollen und Gestaltungsregeln |
 
 ## Entwicklung / Development
 
@@ -18,11 +18,11 @@ Die technischen Leitfäden sind auf Englisch; die Bedienungsanleitung ist zweisp
 
 | Document | Purpose |
 |---|---|
-| [Contributing](../CONTRIBUTING.md) | Scope, contribution rules and review expectations |
+| [Contributing](../.github/CONTRIBUTING.md) | Scope, contribution rules and review expectations |
 | [Development](development.md) | Setup, build, tests, screenshots and benchmark |
 | [Architecture](architecture.md) | Source ownership, lifecycle and the two highlighting paths |
 | [Saved data format](data-format.md) | URL identity, storage schema and export limits |
-| [Design system](../DESIGN.md) | UI tokens, accessibility and interaction contracts |
+| [Design system](design/DESIGN.md) | UI tokens, accessibility and interaction contracts |
 | [Release checklist](releasing.md) | Automated checks, manual browser checks and integration |
 | [Security model](security-model.md) | Host-page boundaries, permitted profile display, downloads and regex limits |
 | [SearchJumper comparison](research/searchjumper-search-handoff.md) | Primary-source research behind search-result term transfer |
@@ -33,7 +33,7 @@ Die technischen Leitfäden sind auf Englisch; die Bedienungsanleitung ist zweisp
 .github/       CI, dependency updates, issue and pull-request templates
 assets/        Shared logo, SVG action icons and public screenshots
 docs/          Current guides and this index
-  archive/     Historical reviews, evidence, plans and specifications
+  design/      Visual guideline and technical design system
   research/    Current technical research with primary-source citations
 scripts/       Build, benchmark and current screenshot capture
 src/           Ordered source sections and userscript metadata
@@ -42,6 +42,6 @@ userscript/    Generated installable userscript at its stable update URL
 artifacts/     Local generated screenshots and measurements (gitignored)
 ```
 
-The repository root keeps the project entry points and repository-wide policies: README files, CHANGELOG, CONTRIBUTING, DESIGN, SECURITY and LICENSE. Work on `src/`; regenerate `userscript/` rather than editing the installable file directly. `node_modules/` and `artifacts/` are generated locally.
+The repository root keeps the README files, CHANGELOG, SECURITY, LICENSE and tool configuration. Contribution rules live in `.github/`; both design documents live in `docs/design/`. Work on `src/`; regenerate `userscript/` rather than editing the installable file directly. `node_modules/` and `artifacts/` are generated locally.
 
-[Archived material](archive/README.md) records the work that led to earlier versions. Historical test counts, paths and publication statements describe those snapshots; use the current guides for today's workflow.
+Earlier plans, reviews and screenshots remain available in the [Git history before this cleanup](https://github.com/DonVitosurf1/userscript-slim-search-highlight/tree/6007c7328b6fbc1792ea27bc3fff2c10c2afa7c3/docs/archive). They describe historical snapshots, rather than current instructions or open work. Routine new evidence belongs in ignored `artifacts/`.

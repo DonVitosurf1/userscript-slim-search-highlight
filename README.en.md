@@ -2,68 +2,35 @@
 
 # Slim Search Highlight
 
-[Deutsch](README.md) · [Documentation](docs/README.md) · [Usage](docs/usage.en.md) · [Development](docs/development.md)
-
-A light logo and a shared icon family for selection, highlighting and web search: [design guideline (German)](docs/design-guidelines.de.md) · [technical design system](DESIGN.md).
+[Deutsch](README.md) · [Usage](docs/usage.en.md) · [Documentation](docs/README.md)
 
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Select words, sentences or paragraphs and highlight every occurrence of the same passage. A local Tampermonkey/Violentmonkey userscript with no account, server or runtime dependencies.
-
-![Panel and page highlights](assets/screenshot.png)
+Select words, sentences or paragraphs on webpages and highlight every occurrence. A local Tampermonkey/Violentmonkey userscript with no account, server or runtime dependencies.
 
 ## Installation
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/).
 2. [Install the script](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) and confirm in the manager.
-3. Reload the webpage. The userscript manager handles updates. Allow manager download permission for exports.
+3. Reload the webpage. The userscript manager handles future updates.
 
-Page passages require a browser supporting **CSS Custom Highlights**. Unsupported browsers disable that action with an explanation; persistent keywords and explicit web search remain available.
+Page passages require **CSS Custom Highlights**. Without that browser API, persistent keywords and explicit web search remain available. File exports require the manager's download permission.
 
 ## Quick start
 
-- Select text → open the highlighter symbol → **Highlight all occurrences**. Alternatively use **Alt+Shift+H**, configurable or disabled in Settings.
-- Move through results with Previous/Next or **Alt+Left / Right**. Native right-click and double-click remain intact.
-- Each new page passage automatically gets a different vivid color; all its occurrences share that color. You can still change colors manually. Undo page changes, removals and clearing.
-- **Remember** explicitly saves chosen passages locally for that URL. Otherwise they stay temporary. **Keywords** is a separate list of permanent cross-page terms.
-- **Search options** offers whole-word and article-only search. The default remains the entire selected passage across the full page.
-- **Copy / export** beside a selection offers quote+URL or a link to text. Web search runs only when **Search the web** is explicitly chosen.
-- Settings includes plain-text/Markdown quotes, Markdown export of the current page and JSON export of saved pages.
-- **Settings → Appearance:** light/dark theme, plus open-button size, screen corner and edge distance. Default size: 56 px.
-- The panel stays compact: additional tools use two columns of disclosures; guidance lives under **Help & shortcuts**.
-- **Take over terms from search:** highlight Google search words on opened result pages. Terms are captured fresh when opening a result; normal clicks, new tabs and the browser context menu remain native.
+- Select text → open the logo symbol → **Highlight all occurrences**. Alternatively use **Alt+Shift+H**; the shortcut is configurable.
+- Each new passage gets a different vivid color. Navigate results with the arrows or **Alt+Left / Right**.
+- **Remember** saves a passage locally for this URL. Otherwise page highlights remain temporary; **Keywords** manages permanent terms separately.
+- **Search the web** explicitly starts a web search. Native right-click remains available.
 
-The panel shows only keywords whose domain restrictions match the current site. Confirm edits with **Save** or Enter; recent searches are available in the userscript manager menu. Globally applicable keywords are observable by the sites they apply to. See the [security model](docs/security-model.md).
+![Panel and page highlights](assets/screenshot.png)
 
-Saved passages are searched again when revisiting a page. Missing text is shown as **Not found**. Clipboard failure provides a manual-copy field. See [Usage](docs/usage.en.md) and the [data format](docs/data-format.md) for behavior and limits.
+Automatically capture Google search words, customize colors, undo changes, copy quotes, export and select a light/dark theme: see the [full usage guide](docs/usage.en.md).
 
-## Development
+## Further information
 
-Node.js 22 or newer:
-
-```sh
-npm ci
-npx playwright install --with-deps chromium
-npm run build
-npm test
-```
-
-Edit `src/`; a deterministic build still produces **one** installable file under `userscript/`. `npm run check` detects stale generated output. Browser tests use synthetic pages without external network requests.
-
-```text
-src/          ordered source sections and userscript metadata
-scripts/      build, benchmark and screenshot capture
-tests/        browser fixtures, named suites and runner
-userscript/   generated installable userscript
-docs/         current guides and historical development archive
-assets/       logo, SVG icons and screenshots
-artifacts/    local generated screenshots; not tracked
-```
-
-[Documentation index](docs/README.md) · [Contributing](CONTRIBUTING.md) · [Release checklist](docs/releasing.md) · [Changelog](CHANGELOG.md) · [Security](SECURITY.md)
-
-When upgrading from 3.x, remove “Slim Search Highlight Pro v3.10”; settings need to be recreated once when switching to the stable script name.
-
-## License
-
-[MIT](LICENSE)
+- [Documentation index](docs/README.md)
+- [Design guideline and icons (German)](docs/design/README.md) · [Technical design system](docs/design/DESIGN.md)
+- [Development and tests](docs/development.md) · [Contributing](.github/CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md) · [Security model](docs/security-model.md) · [Report a vulnerability](SECURITY.md)
+- [MIT license](LICENSE)
