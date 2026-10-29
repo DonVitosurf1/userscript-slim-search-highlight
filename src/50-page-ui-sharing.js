@@ -182,7 +182,7 @@ function positionSelectionTools() {
 function createSelectionTools() {
     const tools = document.createElement('div'); tools.id = 'slim-selection-tools'; tools.hidden = true;
     tools.setAttribute('role', 'toolbar'); tools.setAttribute('aria-label', t('selectionActions')); tools.lang = currentLang();
-    tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img src="${LOGO}" width="26" height="26" alt="" draggable="false"></button>
+    tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img data-hl-logo src="${LOGOS[uiTheme]}" width="26" height="26" alt="" draggable="false"></button>
         <div id="selection-actions" hidden><button type="button" id="selection-highlight" title="${t('highlightSelectionHint')}">${icon('highlightAll')}<span>${t('highlightSelection')}</span></button><button type="button" id="selection-web">${icon('searchWeb')}<span>${t('webSearch')}</span></button><details id="selection-share"><summary>${t('shareActions')}</summary><button type="button" id="selection-quote">${t('copyQuote')}</button><button type="button" id="selection-link">${t('copyLink')}</button></details><p id="selection-support" role="status" hidden>${t('highlightUnsupported')}</p></div>`;
     const expand = () => { tools.querySelector('#selection-actions').hidden = false; tools.querySelector('#selection-trigger').setAttribute('aria-expanded', 'true'); positionSelectionTools(); };
     tools.querySelector('#selection-trigger').onclick = () => {

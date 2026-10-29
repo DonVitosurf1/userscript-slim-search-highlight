@@ -9,7 +9,7 @@ const { selectionShortcutTime } = require('../tests/helpers/browser.cjs');
   const script = index >= 0 ? process.argv[index + 1] : path.join(__dirname, '../userscript/slim-search-highlight.user.js');
   if (!script) throw new Error('--script requires a path');
   const source = fs.readFileSync(script, 'utf8');
-  const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
+  const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : { channel: 'chromium' });
   const samples = [];
   try {
     for (const [repetitions, separateNodes] of [[500, false], [1000, false], [2000, false], [2000, true]]) {

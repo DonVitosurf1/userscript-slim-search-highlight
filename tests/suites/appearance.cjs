@@ -12,6 +12,31 @@ module.exports = ({ open, eq, ok }) => {
         await page.locator('#selection-trigger').waitFor({ state: 'visible' });
     };
     return {
+        async appearance_logo_follows_theme_on_every_surface(browser) {
+            const page = await open(browser, { panelOpen: true, keywords: [], store: { hl_ui_theme: 'dark' }, html: '<p id="passage">Solarenergie</p>' });
+            await selectText(page);
+            const checkLogo = async theme => {
+                const logo = await page.locator('#slim-hl-header img').getAttribute('src');
+                ok(logo.startsWith('data:image/svg+xml;base64,'), 'Theme logo is embedded without network requests');
+                eq(await page.locator('#selection-trigger img').getAttribute('src'), logo, 'Selection and header share the current theme logo');
+                ok((await page.locator('#slim-hl-toggle').evaluate(el => getComputedStyle(el).backgroundImage)).includes(logo), 'Launcher shares the current theme logo');
+                const brightness = await page.evaluate(async source => {
+                    const image = new Image(); image.src = source; await image.decode();
+                    const canvas = document.createElement('canvas'); canvas.width = canvas.height = 128;
+                    const context = canvas.getContext('2d'); context.drawImage(image, 0, 0, 128, 128);
+                    const [r,g,b] = context.getImageData(64, 114, 1, 1).data;
+                    return (r+g+b)/3;
+                }, logo);
+                ok(theme === 'dark' ? brightness < 90 : brightness > 220, 'Rendered logo background matches '+theme+' theme; brightness '+brightness);
+                return logo;
+            };
+            const dark = await checkLogo('dark');
+            await settings(page); await page.selectOption('#ui-theme','light');
+            const light = await checkLogo('light'); ok(light !== dark, 'Themes use distinct logo variants');
+            await page.selectOption('#ui-theme','dark'); eq(await checkLogo('dark'), dark, 'Returning to dark restores the dark logo');
+            const restored = await open(browser, { panelOpen: true, keywords: [], store: await page.evaluate(()=>window.__store) });
+            eq(await restored.locator('#slim-hl-header img').getAttribute('src'), dark, 'Saved dark theme restores its logo');
+        },
         async appearance_selection_action_icons_fit_narrow_viewports(browser) {
             for (const width of [320, 390]) for (const lang of ['de', 'en']) {
                 const page = await open(browser, { viewport: { width, height: 700 }, keywords: [], store: { hl_ui_theme: 'light', hl_lang: lang }, html: '<style>body{margin:0;font:18px/1.8 system-ui;padding:24px}</style><p>Neue Wege beginnen mit Forschung. <b id="passage">Solarenergie</b> ist ein wichtiger Teil davon.</p>' });

@@ -27,4 +27,4 @@ Test the rules with a normal pull request before treating them as enforced. A wo
 
 ## Local review
 
-Run `node scripts/check-secrets.mjs` before committing and `node scripts/check-secrets.mjs --history` from a full clone before release. To inspect archive exclusions without changing the working tree, use `git archive HEAD` and confirm that `docs/archive/` is absent after the attributes are committed. Existing history and old release archives remain unchanged.
+Run `node scripts/check-secrets.mjs` before committing and `node scripts/check-secrets.mjs --history` from a full clone before release. Inspect `git archive HEAD` before publishing a source archive; the current tree omits historical plans and routine evidence, and the distributable must retain its embedded MIT notice. Existing history and old release archives remain unchanged.

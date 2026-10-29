@@ -2,7 +2,7 @@ const fs=require('fs'),path=require('path');const {chromium}=require('playwright
 const output=path.resolve(__dirname,'../artifacts/screenshots');
 fs.mkdirSync(output,{recursive:true});
 (async()=>{
-const browser=await chromium.launch(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),results=[],errors=[];
+const browser=await chromium.launch(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{channel:'chromium'}),results=[],errors=[];
 const source=fs.readFileSync(path.resolve(__dirname,'../userscript/slim-search-highlight.user.js'),'utf8');
 for(const theme of ['dark','light']) for(const [viewport,width,height] of [['desktop',1280,900],['narrow',390,844]]){
  const name=theme+'-'+viewport;

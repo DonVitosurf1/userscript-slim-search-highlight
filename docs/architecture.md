@@ -9,7 +9,7 @@ Slim Search Highlight has no production dependencies and installs as one userscr
 | Source | Responsibility |
 |---|---|
 | `src/metadata.txt` | Userscript identity, version, grants and update/install URLs |
-| `assets/icon.svg`, `assets/icons/` | Canonical shared logo and selection-action SVG assets, embedded by the build |
+| `assets/icon.svg`, `assets/icon-dark.svg`, `assets/icons/` | Canonical shared logo and selection-action SVG assets, embedded by the build |
 | `src/00-state-i18n.js` | Preferences including validated appearance values, German/English messages |
 | `src/10-styles.js` | Scoped panel/selection toolbar CSS and tokens |
 | `src/20-utils.js` | Icons, escaping, contrast calculation |
@@ -26,7 +26,7 @@ These are ordered source sections sharing one private lexical scope, **not isola
 
 `npm run build` writes the artifact. `npm run check` compares it byte-for-byte with the source-generated result and checks JavaScript syntax. `npm test` includes this check. Do not hand-edit the generated file.
 
-The build also embeds `assets/icon.svg` as the shared `LOGO` and the SVG action icons listed in the manifest as `INLINE_ICONS` before the source sections. Assets are canonical; no duplicated base64 source or runtime icon fetch is needed. Inline action SVGs are decorative and their buttons retain localized labels.
+The build also embeds `assets/icon.svg` and `assets/icon-dark.svg` as the shared theme-specific `LOGOS` and the SVG action icons listed in the manifest as `INLINE_ICONS` before the source sections. Assets are canonical; no duplicated base64 source or runtime icon fetch is needed. Inline action SVGs are decorative and their buttons retain localized labels.
 
 ## Two highlighting paths
 

@@ -1,10 +1,14 @@
 # Changelog
 
-## Unreleased
+## 4.5.3
+
+### Darstellung
+- Das Logo folgt dem ausgewählten Farbschema: dunkel in Dunkel, hell in Hell. Auswahl-Symbol, Öffnen-Button und Panelkopf wechseln sofort gemeinsam; beide SVG-Varianten sind lokal eingebettet.
 
 ### Repository
 - README-Dateien auf Installation, Schnellstart und weiterführende Links gekürzt. Design-Dokumentation unter `docs/design/` gebündelt, Beitragsregeln nach `.github/CONTRIBUTING.md` verschoben.
 - Historische Pläne, Reviews und Routine-Nachweise aus dem aktuellen Dateibaum entfernt; sie bleiben über die unveränderte Git-Historie erreichbar. Aktuelle Dokumentationslinks angepasst.
+- Browser-Fehler werden im GitHub-Check mit Testname und vollständiger Fehlermeldung angezeigt. Tests, Screenshots und Benchmark verwenden denselben vollständigen Chromium-Kanal statt der separaten Headless-Shell.
 
 ## 4.5.2
 
