@@ -20,7 +20,7 @@ for (const suite of suites) {
     console.log(selected.map(([name]) => name).join('\n'));
     return;
   }
-  const browser = await chromium.launch({ ...(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}), args: ['--no-proxy-server', '--host-resolver-rules=MAP www.google.com 127.0.0.1'] });
+  const browser = await chromium.launch({ ...(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : { channel: 'chromium' }), args: ['--no-proxy-server', '--host-resolver-rules=MAP www.google.com 127.0.0.1'] });
   let failed = 0;
   try {
     for (const [name, run] of selected) {
