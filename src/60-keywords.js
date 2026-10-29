@@ -12,6 +12,7 @@ const PERSISTED = {
     hl_selection_shortcut: () => selectionShortcut,
     hl_copy_format: () => copyFormat,
     hl_ui_theme: () => uiTheme,
+    hl_selection_style: () => selectionStyle,
     hl_ui_transparency: () => uiTransparency,
     hl_launcher_size: () => launcherSize,
     hl_launcher_position: () => launcherPosition,

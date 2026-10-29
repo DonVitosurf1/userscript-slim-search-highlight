@@ -9,7 +9,7 @@ This is a procedure for future releases, not a record that every check has alrea
 1. Make behavior changes in `src/`, with regression coverage in `tests/suites/`.
 2. For a product release, update `src/metadata.txt`, CHANGELOG and affected German/English documentation. Documentation-only changes do not require a userscript version bump.
 3. Run `npm ci`, then `npm run build` and `npm test`. Chromium installation and `CHROMIUM_PATH` are described in [Development](development.md).
-4. For search performance changes, run `npm run benchmark` and confirm the expected match counts. For UI changes, run `npm run screenshots` and inspect both viewports.
+4. For search performance changes, run `npm run benchmark` and confirm the expected match counts. For UI changes, run `npm run screenshots` and inspect both symbol styles in light/dark and desktop/narrow views.
 5. Run `npm run check:secrets`, `node scripts/check-secrets.mjs --history` from a full clone, and `npm audit`. Check actual hosted Security/CodeQL results separately.
 6. Check local documentation links and `git diff --check`. Include sources and regenerated userscript together; exclude local `artifacts/` and dependencies.
 
@@ -20,6 +20,8 @@ Automated tests use Chromium and simulated GM bindings. They do not replace thes
 - Install/update through Tampermonkey and Violentmonkey; verify settings and explicit page saving survive reload.
 - Select words, sentences and inline-formatted passages. Confirm every same-page occurrence, result navigation and native context menus.
 - Check keyboard use, screen-reader labels/status, zoom, touch and mobile keyboard behavior. Check shortcut conflicts on the target OS/browser.
+- Verify Alt+Shift+P opens/closes from both page and panel focus, stays inactive in editing fields/IME/repeat, and preserves an existing marking assignment. Check shortcut hover hints after recording, disabling, resetting and changing language.
+- Switch both selection symbol variants, theme and transparency; verify saved choices and rollback on write failure. Confirm the logo variant has no additional button frame and that expanded copy actions fit short/narrow viewports.
 - Verify isolated DOM/content-world execution in each manager; page-world injection is unsupported. Check the new download grant, successful Markdown/JSON exports and denial/error reporting without a page-visible export link.
 - Try clipboard denial and manual copying, missing saved text and storage failure behavior. Confirm domain-scoped keyword visibility, explicit Save/Enter edits and manager-menu-only search history.
 - Check a browser with CSS Custom Highlights and the unsupported-API explanation where that API is unavailable.

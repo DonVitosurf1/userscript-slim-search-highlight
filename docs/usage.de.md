@@ -6,7 +6,7 @@ Bei einem Wechsel von 3.x das alte „Slim Search Highlight Pro v3.10“ entfern
 
 ## Auswählen und suchen
 
-Wort, Satz oder Absatz auf der Webseite auswählen. Das kleine Textmarker-Symbol erscheint neben der Auswahl; darüberfahren oder anklicken öffnet **Alle Vorkommen markieren** und **Im Web suchen**. Die erste Aktion markiert immer die gewählte Passage und ihre weiteren Vorkommen auf derselben Seite. Websuche und Teilen werden nie automatisch ausgelöst.
+Wort, Satz oder Absatz auf der Webseite auswählen. Das kleine Logo-Symbol erscheint neben der Auswahl; darüberfahren oder anklicken öffnet **Alle Vorkommen markieren** und **Im Web suchen**. Die erste Aktion markiert immer die gewählte Passage und ihre weiteren Vorkommen auf derselben Seite. Websuche und Teilen werden nie automatisch ausgelöst. Der Hovertext am Auswahl-Symbol und an der Markieraktion nennt den aktuell eingestellten Markieren-Shortcut.
 
 Die Suche ist wörtlich, ohne Beachtung der Groß-/Kleinschreibung, mit vereinheitlichten Leerzeichen und Zeilenumbrüchen. Inline-Formatierung unterbricht sie nicht. Unsichtbarer Text zählt nicht als sichtbarer Wortabstand. Überlappende Fundstellen zählen einmal; bei gleichem Beginn gewinnt die längere Passage. Code, Eingabefelder und eigene Bedienelemente werden ausgelassen. Frames und Shadow-DOM-Inhalte werden nicht durchsucht.
 
@@ -31,6 +31,12 @@ Farbe, Begriff, Trefferzahl, Lesezeichen und Entfernen stehen in einer kompakten
 Solange Seitenpassagen existieren, steuern Vor/Zurück und **Alt+← / →** deren Treffer. Andernfalls werden die gespeicherten/automatischen Keyword-Treffer navigiert. Die Positionsleiste bündelt bei vielen Treffern bis zu 500 Markierungen; die Trefferdetails zeigen bis zu 300 Einträge. Alle tatsächlichen Treffer bleiben über die Navigation erreichbar.
 
 ## Für diese Seite merken
+
+| Art | Gültigkeit | Speicherung |
+|---|---|---|
+| Temporäre Seitenmarkierung | Aktuelle Seite, alle Vorkommen der Passage | Nur in dieser Sitzung; verschwindet beim Neuladen oder Navigieren |
+| Gemerkte Seitenpassage | Dieselbe vollständige URL | Erst nach Klick auf das Lesezeichen lokal im Userscript-Manager |
+| Dauerhaftes Keyword | Alle passenden Seiten bzw. eingeschränkte Domains | Separater Bereich „Keywords“ |
 
 Markierungen sind zunächst temporär. Das **Lesezeichen-Symbol (Für diese Seite merken)** speichert die jeweilige Passage mit Farbe und Textkontext lokal im Userscript-Manager. Ein gefülltes Lesezeichen und „Gespeichert“ zeigen den Speicherstatus. Bei einem Wiederbesuch wird genau dieser Text erneut gesucht. Wenn er fehlt, steht **Nicht gefunden** an der Passage; es wird kein ähnlicher Text automatisch eingesetzt.
 
@@ -60,6 +66,8 @@ Wenn direkter Zwischenablagenzugriff scheitert, öffnet sich das Panel mit einem
 
 Unter **Einstellungen → Darstellung** stehen **Hell** und **Dunkel** zur Wahl. Panel, Auswahlaktionen und Formularfelder wechseln sofort gemeinsam. Dunkel bleibt die Voreinstellung; Webseitenfarben und die gewählten Markierungsfarben werden nicht verändert.
 
+**Stil des Auswahl-Symbols** bietet zwei direkt umschaltbare Varianten: **Logo-Kachel (wie Öffnen-Button)** zeigt das vollständige Logo ohne zusätzlichen Buttonrahmen und ist der Standard. **Buttonfläche** zeigt die transparenten Markierungen auf einer gemeinsamen Schaltfläche. Das Auswahlmenü passt sich dem Stil an. Die Wahl wird lokal gespeichert und bleibt auch nach einem Sprachwechsel oder Neuladen erhalten; Größe und Lage des Panel-Öffners sind davon unabhängig.
+
 **Transparenz der Bedienelemente** lässt Text hinter Panel, Auswahlmenü und Öffnen-Button sichtbar werden. Der Regler reicht von **0 %** (vollständig deckend, Standard) bis **80 %** (stark durchsichtig), in 5-%-Schritten. Logo, Beschriftungen und Bedienelemente werden gemeinsam durchsichtig; die Markierungen im Seitentext behalten ihre Farben. Die Vorschau wirkt sofort, und der gewählte Wert bleibt für weitere Seitenaufrufe gespeichert. **Transparenz zurücksetzen** stellt nur diesen Wert auf 0 % zurück. Für möglichst gut lesbare Bedienelemente eine geringe Transparenz wählen.
 
 Der Öffnen-Button ist standardmäßig **56 px** groß. **Größe des Öffnen-Buttons** lässt sich von 44 bis 80 px verändern; **Größe zurücksetzen** stellt 56 px wieder her. **Position des Öffnen-Buttons** bietet die vier Bildschirmecken. **Abstand zum Rand** reicht von 8 bis 80 px und gilt für beide angrenzenden Ränder. Sichere Bildschirmränder, etwa an Geräten mit Aussparungen, haben Vorrang.
@@ -76,7 +84,18 @@ Ohne gespeicherte Position öffnet es **rechts, vertikal mittig**, mit möglichs
 
 **Alt+Shift+H** führt direkt „Alle Vorkommen markieren“ aus. Unter Einstellungen ist der Shortcut aufzeichenbar, abschaltbar und zurücksetzbar. Alt, Strg oder Meta plus Buchstabe/Ziffer; Shift ist optional. Escape bricht die Aufzeichnung ab. Betriebssystem-/Browserkonflikte sind nicht grundsätzlich vermeidbar.
 
-In Eingabefeldern, bei IME und Tastenwiederholung greift der Auswahl-Shortcut nicht. Rechtsklick und Doppelklick bleiben nativ; Alt+H speichert keine Keywords mehr.
+**Alt+Shift+P** öffnet oder schließt das Panel, auch wenn der Fokus bereits im Panel liegt. Der Hovertext am Panel-Symbol zeigt die Kombination an. In Eingabefeldern, bei IME und Tastenwiederholung greifen diese beiden Shortcuts nicht. Rechtsklick und Doppelklick bleiben nativ; Alt+H speichert keine Keywords mehr.
+
+Ist Alt+Shift+P bereits als eigener Markieren-Shortcut gespeichert oder wird neu dafür aufgezeichnet, hat diese Auswahl Vorrang. Die Kombination öffnet dann kein Panel; dessen Hovertext zeigt sie nicht als Panel-Shortcut an. **Hilfe & Shortcuts** erklärt den Konflikt. Durch Ändern oder Zurücksetzen des Markieren-Shortcuts wird Alt+Shift+P wieder für das Panel frei.
+
+| Taste | Aktion |
+|---|---|
+| Alt+Shift+H | Auswahl und weitere Vorkommen markieren; einstellbarer Standard |
+| Alt+Shift+P | Panel öffnen/schließen, sofern nicht dem Markieren zugewiesen |
+| Alt+← / Alt+→ | Vorheriger/nächster Treffer |
+| Escape | Auswahlmenü oder Panel schließen; Shortcut-Aufzeichnung abbrechen |
+| Pfeiltasten / Shift+Pfeiltasten | Fokussierten Panelkopf verschieben, mit Shift in größeren Schritten |
+| Pos1 am Panelkopf | Automatische Panelposition rechts mittig wiederherstellen |
 
 Escape schließt Auswahlaktionen oder Panel und gibt den Fokus zurück. Der Panelkopf ist per Tab und Pfeiltasten verschiebbar; Shift vergrößert die Schritte, Pos1 bzw. Reset setzt die Position zurück. Maus/Touch-Ziehen bleibt möglich. Trefferdetails unterstützen Pfeil hoch/runter, Pos1/Ende und Enter. Reduzierte Bewegung wird respektiert.
 
@@ -89,3 +108,17 @@ Der Suchverlauf wird ausschließlich im Menü des Userscript-Managers angeboten.
 Automatisch übernommene Begriffe und `#hl`-/`#sjhl`-Links werden immer wörtlich gesucht. Nur ausdrücklich gespeicherte Keywords unterstützen einen begrenzten Regex-Umfang; komplexe oder riskante Muster werden abgelehnt.
 
 Seitenmarkierungen brauchen CSS Custom Highlights. Browser-/Manager-Tests auf echten Geräten, Screenreader und mobile Bildschirmtastaturen ergänzen die automatisierte Chromium-Prüfung; es wird keine vollständige WCAG-Zertifizierung behauptet.
+
+## Problemlösungen
+
+**Das Symbol erscheint nicht:** Im Userscript-Manager prüfen, ob das Skript aktiviert ist und auf dieser Seite laufen darf. Auf ausgeschlossenen Domains erscheint keine Oberfläche. Nach einer Installation oder Aktualisierung die Webseite neu laden. Browserinterne Seiten und Inhalte fremder Frames werden nicht wie normale Webseiten bearbeitet.
+
+**Markierungen sind nach dem Neuladen weg:** Temporäre Markierungen werden absichtlich nicht gespeichert. Vorher das Lesezeichen an der Passage aktivieren. Bei gemerkten Passagen prüfen, ob die vollständige URL einschließlich Query und Fragment gleich ist und der ursprüngliche Text noch vorkommt.
+
+**Das Panel steht weiterhin an der alten Position:** Gespeicherte manuelle Positionen bleiben erhalten. Im Panelkopf „Panelposition zurücksetzen“ wählen oder den Panelkopf fokussieren und Pos1 drücken.
+
+**Google-Begriffe fehlen auf der Zielseite:** „Automatisch von Suche übernehmen“ muss aktiv sein; das Skript muss auf Google und der Zielseite ausgeführt werden dürfen. Weiterleitungen können die Zuordnung unterbrechen. Die Übergabe gilt zehn Minuten und fügt der Ziel-URL keine Suchwörter hinzu.
+
+**Ein Shortcut reagiert nicht:** Den Fokus aus Eingabefeldern nehmen und die Belegung unter „Hilfe & Shortcuts“ prüfen. Andere Erweiterungen oder Browser-/Betriebssystemfunktionen können Kombinationen belegen. Für das Markieren lässt sich unter Einstellungen eine andere Kombination aufzeichnen.
+
+**Kopieren oder Export funktioniert nicht:** Bei verweigerter Zwischenablage das manuelle Kopierfeld nutzen. Datei-Exporte benötigen die Download-Unterstützung und -Berechtigung des Userscript-Managers. JSON-Export sichert die Daten; ein Datei-Import wird derzeit nicht angeboten.

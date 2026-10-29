@@ -109,7 +109,8 @@ module.exports = ({ SRC, paragraphs, open, hits, settled, eq, ok }) => ({
         const page = await open(browser, { panelOpen: true, locale: 'en-US' });
         await settled(page);
         eq(await page.locator('#add-kw-btn').textContent(), 'Add');
-        eq(await page.locator('#slim-hl-toggle').getAttribute('title'), 'Open highlight panel');
+        eq(await page.locator('#slim-hl-toggle').getAttribute('title'), 'Open / close highlight panel (Alt + Shift + P)');
+        eq(await page.locator('#slim-hl-toggle').getAttribute('aria-label'), 'Open highlight panel');
     },
 
     async language_auto_german(browser) {

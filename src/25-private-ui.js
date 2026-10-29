@@ -16,6 +16,7 @@ function ensureUIRoot() {
     }
     for (const type of ['pointerdown', 'mousedown', 'mouseup', 'click', 'keydown', 'input', 'change', 'submit']) {
         privateUIRoot.addEventListener(type, event => {
+            if (type === 'keydown' && handlePanelShortcut(event)) { event.stopPropagation(); return; }
             if (type === 'keydown' && event.key === 'Escape' && event.target.closest?.('#slim-selection-tools')) {
                 hideSelectionTools(true); event.preventDefault();
             }

@@ -18,6 +18,35 @@ module.exports = ({ open, settled, eq, ok }) => {
         await page.locator('#settings-section > summary').click();
     };
     return {
+        async panel_shortcut_toggles_from_page_and_panel_focus(browser) {
+            const page=await open(browser,{keywords:[],panelOpen:false});
+            ok((await page.locator('#slim-hl-toggle').getAttribute('title')).includes('Alt + Shift + P'),'Launcher tooltip exposes panel shortcut');
+            eq(await page.locator('#slim-hl-toggle').getAttribute('aria-keyshortcuts'),'Alt+Shift+P');
+            await page.keyboard.press('Alt+Shift+P');eq(await page.locator('#slim-hl-panel').isVisible(),true);
+            eq(await page.evaluate(()=>document.activeElement.id),'page-heading','Opening focuses the panel');
+            await page.keyboard.press('Alt+Shift+P');eq(await page.locator('#slim-hl-panel').isVisible(),false,'Shortcut closes from inside the private panel');
+            await page.keyboard.down('Alt');await page.keyboard.down('Shift');await page.keyboard.down('p');await page.keyboard.down('p');
+            eq(await page.locator('#slim-hl-panel').isVisible(),true,'Key repeat does not toggle repeatedly');
+            await page.keyboard.up('p');await page.keyboard.up('Shift');await page.keyboard.up('Alt');
+            await page.locator('#permanent-keywords').evaluate(el=>{el.open=true;});await page.focus('#new-kw');
+            eq(await page.evaluate(()=>document.activeElement.id),'new-kw');
+            await page.keyboard.press('Alt+Shift+P');eq(await page.locator('#slim-hl-panel').isVisible(),true,'Editing fields keep their keyboard input');
+        },
+        async panel_shortcut_preserves_existing_marking_shortcut_assignment(browser) {
+            const page=await open(browser,{keywords:[],panelOpen:false,store:{hl_selection_shortcut:{key:'p',alt:true,shift:true,ctrl:false,meta:false}},html:'<p id="choose">Solarenergie</p><p>Solarenergie</p>'});
+            eq(await page.locator('#slim-hl-toggle').getAttribute('aria-keyshortcuts'),null,'Existing marking assignment has priority');
+            ok(!(await page.locator('#slim-hl-toggle').getAttribute('title')).includes('Shift + P'),'Conflicting panel shortcut is not advertised');
+            await page.evaluate(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('choose'));getSelection().removeAllRanges();getSelection().addRange(r);});
+            await page.keyboard.press('Alt+Shift+P');eq(await page.locator('.page-item').count(),1,'Original marking assignment still works');
+            await page.locator('#settings-section').evaluate(el=>{el.open=true;});await page.click('#reset-shortcut');
+            eq(await page.locator('#slim-hl-toggle').getAttribute('aria-keyshortcuts'),'Alt+Shift+P','Reset frees the panel shortcut');
+        },
+        async panel_shortcut_invalid_saved_marking_key_keeps_ui_available(browser) {
+            const page=await open(browser,{keywords:[],panelOpen:false,store:{hl_selection_shortcut:{key:5,alt:true,ctrl:false,shift:false,meta:false}}});
+            await page.keyboard.press('Alt+Shift+P');eq(await page.locator('#slim-hl-panel').isVisible(),true,'Malformed shortcut cannot break panel startup');
+            eq(await page.locator('#shortcut-label').textContent(),'Alt + Shift + H','Malformed selection shortcut falls back safely');
+            eq((page.__errors||[]).length,0,'No startup error');
+        },
         async review_panel_defaults_to_right_center_and_tracks_viewport(browser) {
             for (const viewport of [{width:1280,height:900},{width:390,height:844}]) {
                 const page=await panel(browser,{keywords:[],permanentOpen:false,viewport});

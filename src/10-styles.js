@@ -24,6 +24,15 @@ const UI_CSS = `
     #slim-selection-tools #selection-highlight { font-weight: 600; background: var(--hl-field); }
     #slim-selection-tools #selection-actions button { gap: 8px; white-space: normal; text-align: left; justify-content: start; }
     #slim-selection-tools #selection-actions button > span { min-width: 0; overflow-wrap: anywhere; }
+    #slim-selection-tools[data-symbol-style=logo] #selection-trigger,
+    #slim-selection-tools[data-symbol-style=logo] #selection-trigger:not(:disabled):hover,
+    #slim-selection-tools[data-symbol-style=logo] #selection-trigger:not(:disabled):active { padding: 0; border: 0; background: transparent; box-shadow: none; border-radius: 10px; }
+    #slim-selection-tools[data-symbol-style=logo] #selection-trigger img { width: 40px; height: 40px; filter: drop-shadow(0 2px 6px var(--hl-shadow)); }
+    #slim-selection-tools[data-symbol-style=logo] #selection-trigger:not(:disabled):hover img { filter: drop-shadow(0 4px 8px var(--hl-shadow)); }
+    #slim-selection-tools[data-symbol-style=logo] #selection-trigger:not(:disabled):active img { opacity: .8; filter: drop-shadow(0 1px 3px var(--hl-shadow)); }
+    #slim-selection-tools[data-symbol-style=logo] #selection-trigger:focus-visible { outline-offset: 2px; }
+    #slim-selection-tools[data-symbol-style=logo] #selection-actions { background: var(--hl-bg); border-radius: 10px; box-shadow: 0 6px 20px var(--hl-shadow); }
+    #slim-selection-tools[data-symbol-style=logo] #selection-highlight { background: var(--hl-surface); }
     #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
     #slim-hl-panel .page-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     #slim-hl-panel .page-heading-row .section-title { margin: 0; }
@@ -180,6 +189,7 @@ const UI_CSS = `
     #slim-pos-bar .mark:hover, #slim-pos-bar .mark.active { opacity: 1; transform: scaleX(1.6); }
     @media (max-width: 480px) {
         #slim-selection-tools #selection-trigger { min-height: 44px; }
+        #slim-selection-tools[data-symbol-style=logo] #selection-trigger { width: 44px; }
         #slim-hl-panel input[type=text], #slim-hl-panel select, #slim-hl-panel textarea { font-size: 16px; }
         #slim-hl-panel button, #slim-hl-panel summary, #slim-selection-tools button, #slim-selection-tools summary { min-height: 44px; }
         #slim-hl-panel .icon-btn { width: 40px; }
