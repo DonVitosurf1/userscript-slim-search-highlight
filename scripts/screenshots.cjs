@@ -12,6 +12,7 @@ for(const theme of ['dark','light']) for(const [viewport,width,height] of [['des
  await p.route('**/*',r=>r.fulfill({contentType:'text/html; charset=utf-8',body:html}));
  await p.goto('https://example.test/article');
  await p.evaluate(theme=>{const store={hl_keywords:[],hl_auto_search:false,hl_ui_theme:theme};window.GM_getValue=(k,d)=>structuredClone(store[k]??d);window.GM_setValue=(k,v)=>store[k]=structuredClone(v);window.GM_addStyle=css=>{let s=document.createElement('style');s.textContent=css;document.head.append(s)};window.GM_registerMenuCommand=()=>{};Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw Error('denied')}}});},theme);
+ await p.evaluate(require('../tests/helpers/ui-driver.cjs'));
  await p.addScriptTag({content:source});
  const select=()=>p.evaluate(()=>{document.activeElement?.blur();const r=document.createRange();r.selectNodeContents(document.getElementById('choose'));getSelection().removeAllRanges();getSelection().addRange(r)});
  await select();await p.locator('#selection-trigger').waitFor({state:'visible'});await p.screenshot({path:path.join(output,name+'-symbol.png')});

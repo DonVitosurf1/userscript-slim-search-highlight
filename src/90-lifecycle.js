@@ -9,14 +9,14 @@ function bindGlobalHandlers() {
     });
     window.addEventListener('scroll', () => hideSelectionTools(), { passive: true });
     document.addEventListener('keydown', e => {
-        if (!recordingShortcut || document.activeElement?.id !== 'record-shortcut' || e.isComposing || e.repeat || composing) return;
+        if (!e.isTrusted || !recordingShortcut || uiActiveElement()?.id !== 'record-shortcut' || e.isComposing || e.repeat || composing) return;
         e.preventDefault(); e.stopImmediatePropagation();
         if (e.key === 'Escape') { recordingShortcut = false; renderShortcut(); return; }
         if (['Alt', 'Control', 'Shift', 'Meta'].includes(e.key)) return;
         const candidate = { key: e.key.toLowerCase(), alt: e.altKey, ctrl: e.ctrlKey, shift: e.shiftKey, meta: e.metaKey };
-        if (!validShortcut(candidate)) { document.getElementById('shortcut-error').textContent = t('shortcutInvalid'); return; }
+        if (!validShortcut(candidate)) { uiById('shortcut-error').textContent = t('shortcutInvalid'); return; }
         selectionShortcut = candidate; recordingShortcut = false;
-        document.getElementById('shortcut-error').textContent = ''; save(); renderShortcut();
+        uiById('shortcut-error').textContent = ''; save(); renderShortcut();
     }, true);
     const changedPage = () => { resetPageIdentity(); refreshPageResults(); };
     window.addEventListener('popstate', changedPage); window.addEventListener('hashchange', changedPage);
@@ -24,18 +24,19 @@ function bindGlobalHandlers() {
     document.addEventListener('mouseup', () => { setTimeout(() => { isSelecting = false; }, 80); });
 
     document.addEventListener('click', e => {
-        if (isBlacklisted()) return;
+        if (!e.isTrusted || isBlacklisted()) return;
         const hl = e.target.closest('.slim-hl');
-        if (!hl || !e.altKey) return;
+        if (!hl || !e.altKey || !ownedMarkKeywords.has(hl)) return;
+        const keyword = ownedMarkKeywords.get(hl);
+        if (!keyword || !keywords.includes(keyword)) return;
         e.preventDefault();
-        const kw = hl.dataset.kw;
-        removeKeyword(keywords.findIndex(k => k.text === kw));
+        removeKeyword(keywords.indexOf(keyword));
     });
 
     document.addEventListener('keydown', e => {
-        if (isBlacklisted() || e.isComposing || composing) return;
+        if (!e.isTrusted || isBlacklisted() || e.isComposing || composing) return;
         if (e.repeat) return;
-        if (e.key === 'Escape' && !document.getElementById('slim-selection-tools')?.hidden) hideSelectionTools(true);
+        if (e.key === 'Escape' && !uiById('slim-selection-tools')?.hidden) hideSelectionTools(true);
         if (!editingTarget(e.target) && enabled && shortcutMatches(e)) {
             const selected = selectedDocumentText();
             if (selected && addPageSelection(selected.text)) { e.preventDefault(); return; }
@@ -88,11 +89,12 @@ function init() {
         let resizeTimer;
         new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(updatePosBar, 200); }).observe(document.documentElement);
     }
-    const reposition = () => { clampPanelPosition(document.getElementById('slim-hl-panel')); hideSelectionTools(); };
+    const reposition = () => { clampPanelPosition(uiById('slim-hl-panel')); hideSelectionTools(); };
     window.addEventListener('resize', reposition);
     window.visualViewport?.addEventListener('resize', reposition);
     window.visualViewport?.addEventListener('scroll', reposition);
     updateCrossPageTerms();
+    registerHistoryMenus();
     createToggle();
     if (panelState.open) createPanel();
     if (enabled) {
@@ -105,7 +107,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 else init();
 
 GM_registerMenuCommand(t('menuOpen'), () => {
-    if (!document.getElementById('slim-hl-toggle')) createToggle();
+    if (!uiById('slim-hl-toggle')) createToggle();
     setPanelOpen(true);
 });
 
@@ -114,12 +116,12 @@ function excludeCurrentDomain() {
     highlightGeneration++;
     pendingNodes.clear(); observer?.disconnect(); cleanupHighlights(); clearPagePaint(); hideSelectionTools(); keywordCounts = {}; currentIdx = -1;
     updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); save();
-    const status = document.getElementById('panel-status');
+    const status = uiById('panel-status');
     if (status) setPanelStatus('excluded');
 }
 
 GM_registerMenuCommand(t('menuBlacklist'), () => {
     if (isBlacklisted()) return;
-    if (!document.getElementById('slim-hl-toggle')) createToggle();
+    if (!uiById('slim-hl-toggle')) createToggle();
     setPanelOpen(true); excludeCurrentDomain();
 });

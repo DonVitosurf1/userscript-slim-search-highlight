@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.5.0
+
+### Sicherheitskorrekturen
+- Private UI-Referenzen und geschlossener Shadow-DOM-Bereich im isolierten Userscript-Kontext; künstliche Aktivierungen und globale Bearbeitungs-Shortcuts werden zurückgewiesen. Keywords anderer Domains werden nicht in die aktuelle Webseite gerendert, der private Suchverlauf ist nur im Userscript-Manager-Menü verfügbar.
+- Keyword-Änderungen benötigen ausdrücklich Speichern oder Enter. Native Texteingabe mit anschließendem Fokuswechsel schreibt nichts dauerhaft. Markierungen verweisen privat auf das ursprüngliche gespeicherte Keyword; manipulierte DOM-Daten und automatische Treffer können keine fremden Profile löschen.
+- Exporte laufen über `GM_download`, ohne Daten- oder Blob-Links im Webseiten-DOM. Das Skript fordert dafür die Download-Berechtigung an; bei fehlender Unterstützung gibt es eine Fehlermeldung statt eines unsicheren Fallbacks.
+- Automatische Such-/URL-Texte sind immer wörtlich. Unicode-Leertreffer bewegen den Index um vollständige Codepunkte weiter. Explizite Regexe verwenden eine konservative begrenzte Teilmenge und überspringen Textknoten über 4096 UTF-16-Einheiten.
+- Domainfilter prüfen Gleichheit und echte Subdomains; Suchmaschinen werden über eine explizite Domainliste erkannt.
+
+### Repository
+- Actions auf geprüfte Commit-SHAs gepinnt, Checkout-Zugangsdaten nicht persistiert. Secret-Scan und CodeQL als zusätzliche CI-Prüfungen, lokale Secret-Prüfung und Ausschlüsse für Zugangsdaten.
+- Vollständiger MIT-Hinweis in der Einzeldatei, historisches Archiv aus künftigen Quellarchiven ausgeschlossen. Sicherheitsmodell, Meldeweg und konkrete GitHub-Schutzkonfiguration dokumentiert; serverseitige Aktivierung muss separat bestätigt werden.
+
 ## 4.4.2
 
 ### Kompakteres Panel

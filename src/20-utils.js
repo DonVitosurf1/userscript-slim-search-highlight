@@ -1,4 +1,5 @@
 const ICONS = {
+    save: '<path d="m5 12 4 4L19 6"/>',
     close: '<path d="m6 6 12 12M18 6 6 18"/>',
     minus: '<path d="M5 12h14"/>',
     expand: '<path d="M5 8h14v10H5zM5 5h14"/>',
@@ -12,6 +13,7 @@ let removedKeyword = null;
 let composing = false;
 let panelSizeObserver = null;
 let highlightGeneration = 0;
+let ownedMarkKeywords = new WeakMap();
 
 function highlightTextColor(color) {
     const hex = String(color).replace('#', '');

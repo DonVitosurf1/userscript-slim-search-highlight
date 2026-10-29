@@ -1,15 +1,15 @@
 function applyAppearance() {
     for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle']) {
-        const el = document.getElementById(id);
+        const el = uiById(id);
         if (el) el.dataset.theme = uiTheme;
     }
-    const toggle = document.getElementById('slim-hl-toggle');
+    const toggle = uiById('slim-hl-toggle');
     if (toggle) {
         toggle.dataset.position = launcherPosition;
         toggle.style.setProperty('--hl-launcher-size', launcherSize + 'px');
         toggle.style.setProperty('--hl-launcher-inset', launcherInset + 'px');
     }
-    const panel = document.getElementById('slim-hl-panel');
+    const panel = uiById('slim-hl-panel');
     const theme = panel?.querySelector('#ui-theme');
     if (theme) theme.value = uiTheme;
     const size = panel?.querySelector('#launcher-size');
@@ -59,12 +59,12 @@ function clampPanelPosition(panel, persist = false) {
 }
 
 function setPanelOpen(open, focus = true) {
-    let panel = document.getElementById('slim-hl-panel');
-    if (!panel && open) { createPanel(); panel = document.getElementById('slim-hl-panel'); }
+    let panel = uiById('slim-hl-panel');
+    if (!panel && open) { createPanel(); panel = uiById('slim-hl-panel'); }
     if (!panel) return;
     panel.style.display = open ? 'flex' : 'none';
     panelState.open = open;
-    const toggle = document.getElementById('slim-hl-toggle');
+    const toggle = uiById('slim-hl-toggle');
     toggle?.setAttribute('aria-expanded', String(open));
     if (open) {
         clampPanelPosition(panel);
@@ -80,6 +80,7 @@ function keywordError(text, index = -1) {
         const last = text.lastIndexOf('/');
         try { new RegExp(text.slice(1, last), text.slice(last + 1)); }
         catch { return `${t('invalidRegex', text)}. ${t('regexHint')}`; }
+        if (!explicitRegexAllowed(text.slice(1, last), text.slice(last + 1))) return t('unsafeRegex');
     }
     return '';
 }
@@ -92,17 +93,17 @@ function setFieldError(field, error, message) {
 }
 
 function updatePreview() {
-    const preview = document.getElementById('color-preview');
+    const preview = uiById('color-preview');
     if (!preview) return;
-    const color = document.getElementById('new-color').value;
+    const color = uiById('new-color').value;
     preview.style.backgroundColor = color;
     preview.style.color = highlightTextColor(color);
-    preview.textContent = document.getElementById('new-kw').value.trim().slice(0, 32) || t('preview');
+    preview.textContent = uiById('new-kw').value.trim().slice(0, 32) || t('preview');
 }
 
 function submitKeyword() {
     if (composing) return;
-    const panel = document.getElementById('slim-hl-panel');
+    const panel = uiById('slim-hl-panel');
     const input = panel.querySelector('#new-kw');
     const text = input.value.trim();
     const error = keywordError(text);
@@ -120,12 +121,12 @@ function setPanelStatus(key, ...args) {
     renderPanelStatus();
 }
 function renderPanelStatus() {
-    const el = document.getElementById('panel-status');
+    const el = uiById('panel-status');
     if (el) el.textContent = panelStatus ? t(panelStatus.key, ...panelStatus.args) : '';
 }
 
 function updateUndo() {
-    const button = document.getElementById('undo-delete');
+    const button = uiById('undo-delete');
     if (!button) return;
     button.hidden = !removedKeyword;
     button.textContent = t('undo');
@@ -135,14 +136,14 @@ function removeKeyword(index) {
     if (index < 0 || !keywords[index]) return;
     removedKeyword = { keyword: keywords[index], index };
     keywords.splice(index, 1); save();
-    const status = document.getElementById('panel-status');
+    const status = uiById('panel-status');
     if (status) setPanelStatus('deleted', removedKeyword.keyword.text);
     renderKeywordList(); updateUndo(); refreshHighlights();
-    document.getElementById('undo-delete')?.focus({ preventScroll: true });
+    uiById('undo-delete')?.focus({ preventScroll: true });
 }
 
 function createPanel(snapshot = null) {
-    if (document.getElementById('slim-hl-panel')) return;
+    if (uiById('slim-hl-panel')) return;
     const panel = document.createElement('section');
     panel.id = 'slim-hl-panel'; panel.lang = currentLang();
     panel.setAttribute('aria-label', 'Slim Search Highlight');
@@ -199,7 +200,7 @@ function createPanel(snapshot = null) {
             <div id="regex-error" class="error" aria-live="polite"></div>
             </div></details>
             <details id="match-details"><summary>${t('matchDetails')}</summary><div id="match-list"></div></details>
-            <details id="history-details" ${searchHistory.length ? '' : 'hidden'}><summary>${t('recent')}</summary><div id="history-container" class="details-body"></div></details>
+            <details id="history-details"><summary>${t('recent')}</summary><div id="history-container" class="details-body"></div></details>
             <details id="settings-section"><summary>${t('settings')}</summary><div class="details-body">
                 <h3 class="section-title">${t('appearance')}</h3>
                 <label for="ui-theme">${t('colorTheme')}</label>
@@ -230,7 +231,7 @@ function createPanel(snapshot = null) {
             <details id="help-section"><summary>${t('helpTitle')}</summary><div class="details-body"><p class="hint">${t('pageHint')}</p><p class="hint">${t('navigationHelp')}</p><p id="page-shortcut-hint" class="hint"></p></div></details>
             </div>
         </div>`;
-    document.body.appendChild(panel);
+    ensureUIRoot().appendChild(panel);
     applyAppearance();
     panel.querySelector('#kw-search').value = kwFilter;
     panel.querySelector('#search-engine').value = searchEngine;
@@ -347,14 +348,14 @@ function createPanel(snapshot = null) {
                 const el = panel.querySelector('#' + id); return [id, el.type === 'checkbox' ? el.checked : el.value];
             })),
             details: [...panel.querySelectorAll('details')].filter(el => el.open).map(el => el.id),
-            edits: [...panel.querySelectorAll('.kw-item input[type=text]')].map(el => ({ index: el.dataset.i, value: el.value })),
+            edits: [...panel.querySelectorAll('.kw-item input[type=text]')].map(el => ({ index: el.dataset.i, value: el.value, color: el.closest('.kw-item').querySelector('input[type=color]').value })),
             scroll: panel.querySelector('.panel-body').scrollTop,
             status: panelStatus,
             manualCopyVisible: !panel.querySelector('#manual-copy-section').hidden,
             formInvalid: panel.querySelector('#new-kw').getAttribute('aria-invalid') === 'true'
         };
-        lang = e.target.value; composing = false; recordingShortcut = false; hideSelectionTools(); document.getElementById('slim-selection-tools')?.remove(); save();
-        const toggle = document.getElementById('slim-hl-toggle');
+        lang = e.target.value; composing = false; recordingShortcut = false; hideSelectionTools(); uiById('slim-selection-tools')?.remove(); save();
+        const toggle = uiById('slim-hl-toggle');
         if (toggle) { toggle.title = t('openPanel'); toggle.setAttribute('aria-label', t('openPanel')); }
         panel.remove(); createPanel(state);
     };
@@ -370,6 +371,7 @@ function createPanel(snapshot = null) {
             const field = panel.querySelector(`.kw-item input[type=text][data-i="${edit.index}"]`);
             if (field) {
                 field.value = edit.value;
+                if (edit.color) field.closest('.kw-item').querySelector('input[type=color]').value = edit.color;
                 setFieldError(field, panel.querySelector('#edit-error-' + edit.index), keywordError(edit.value, +edit.index));
             }
         }
@@ -393,20 +395,24 @@ function createPanel(snapshot = null) {
 
 /** Keep active edits intact while background highlighting updates counts. */
 function updateKeywordCounts() {
-    const list = document.getElementById('kw-list');
+    const list = uiById('kw-list');
     if (!list) return;
-    const filtered = keywords.filter(k => !kwFilter || k.text.toLowerCase().includes(kwFilter));
+    const filtered = siteKeywords().filter(k => !kwFilter || k.text.toLowerCase().includes(kwFilter));
     const items = list.querySelectorAll('.kw-item');
     if (items.length !== filtered.length) { renderKeywordList(); return; }
     items.forEach((el, i) => { el.querySelector('.kw-count').textContent = keywordCounts[filtered[i].text] || 0; });
 }
 
+function siteKeywords() {
+    return keywords.filter(k => !k.domains?.length || k.domains.some(domain => domainMatches(location.hostname, domain)));
+}
+
 function renderKeywordList() {
-    const list = document.getElementById('kw-list');
+    const list = uiById('kw-list');
     if (!list) return;
-    const filtered = keywords.filter(k => !kwFilter || k.text.toLowerCase().includes(kwFilter));
+    const filtered = siteKeywords().filter(k => !kwFilter || k.text.toLowerCase().includes(kwFilter));
     if (!filtered.length) {
-        list.innerHTML = `<p class="empty">${keywords.length ? t('noKwMatches') : t('noKeywords')}</p>`;
+        list.innerHTML = `<p class="empty">${siteKeywords().length ? t('noKwMatches') : t('noKeywords')}</p>`;
         return;
     }
     list.replaceChildren();
@@ -417,50 +423,46 @@ function renderKeywordList() {
         row.innerHTML = `
             <input type="color" value="${escapeHTML(k.color || DEFAULT_COLOR)}" data-i="${index}" aria-label="${escapeHTML(t('colorKeyword', k.text))}" title="${t('changeColor')}">
             <input type="text" value="${escapeHTML(k.text)}" data-i="${index}" aria-label="${escapeHTML(t('editKeyword', k.text))}">
+            <button type="button" class="icon-btn save-keyword" aria-label="${escapeHTML(t('saveKeyword', k.text))}">${icon('save')}</button>
             <span class="kw-count" title="${t('countTitle')}">${keywordCounts[k.text] || 0}</span>
-            <button type="button" class="icon-btn" data-i="${index}" aria-label="${escapeHTML(t('deleteKeyword', k.text))}" title="${t('remove')}">${icon('close')}</button>`;
+            <button type="button" class="icon-btn delete-keyword" data-i="${index}" aria-label="${escapeHTML(t('deleteKeyword', k.text))}" title="${t('remove')}">${icon('close')}</button>`;
         const error = document.createElement('div'); error.id = 'edit-error-' + index; error.className = 'error'; error.setAttribute('aria-live', 'polite');
         wrapper.append(row, error); list.appendChild(wrapper);
-        row.querySelector('input[type=color]').onchange = e => { k.color = e.target.value; save(); refreshHighlights(); };
         const field = row.querySelector('input[type=text]');
         const edit = () => {
             const text = field.value.trim(); const message = keywordError(text, index);
             setFieldError(field, error, message);
             if (message) return;
-            k.text = text; k.regex = isRegexText(text); field.value = text;
+            k.text = text; k.regex = isRegexText(text); k.color = row.querySelector('input[type=color]').value; field.value = text;
             field.setAttribute('aria-label', t('editKeyword', text));
             row.querySelector('input[type=color]').setAttribute('aria-label', t('colorKeyword', text));
-            row.querySelector('button').setAttribute('aria-label', t('deleteKeyword', text));
+            row.querySelector('.delete-keyword').setAttribute('aria-label', t('deleteKeyword', text));
+            row.querySelector('.save-keyword').setAttribute('aria-label', t('saveKeyword', text));
             save(); refreshHighlights();
         };
-        field.onchange = () => { if (!composing) edit(); };
+        row.querySelector('.save-keyword').onclick = edit;
         field.onkeydown = e => { if (e.key === 'Enter' && !e.isComposing && !composing) { e.preventDefault(); edit(); } };
-        row.querySelector('button').onclick = () => removeKeyword(index);
+        row.querySelector('.delete-keyword').onclick = () => removeKeyword(index);
     });
 }
 
 function renderHistory() {
-    const container = document.getElementById('history-container');
-    if (!container || !searchHistory.length) return;
+    const container = uiById('history-container');
+    if (!container) return;
     container.replaceChildren();
-    searchHistory.forEach(h => {
-        const btn = document.createElement('button');
-        btn.className = 'btn';
-        btn.style.margin = '4px 0';
-        btn.style.width = '100%';
-        btn.textContent = h.slice(0, 38) + (h.length > 38 ? '…' : '');
-        btn.title = h;
-        btn.onclick = () => {
-            manualTerms = h.split(/\s+/).filter(Boolean);
-            GM_setValue('hl_cross_terms', { terms: manualTerms, timestamp: Date.now() });
-            refreshHighlights();
-        };
-        container.appendChild(btn);
-    });
+    const hint = document.createElement('p'); hint.className = 'hint'; hint.textContent = t('historyManagerHint'); container.append(hint);
+}
+
+function registerHistoryMenus() {
+    searchHistory.slice(0, 8).forEach(text => GM_registerMenuCommand(t('recent') + ': ' + text, () => {
+        manualTerms = text.split(/\s+/).filter(Boolean);
+        GM_setValue('hl_cross_terms', { terms: manualTerms, timestamp: Date.now() });
+        refreshHighlights();
+    }));
 }
 
 function createToggle() {
-    if (document.getElementById('slim-hl-toggle')) return;
+    if (uiById('slim-hl-toggle')) return;
     const btn = document.createElement('button');
     btn.id = 'slim-hl-toggle';
     btn.title = t('openPanel');
@@ -469,7 +471,7 @@ function createToggle() {
     btn.setAttribute('aria-controls', 'slim-hl-panel');
     btn.setAttribute('aria-expanded', String(panelState.open));
     btn.onclick = () => setPanelOpen(!panelState.open);
-    document.body.appendChild(btn);
+    ensureUIRoot().appendChild(btn);
     applyAppearance();
 }
 

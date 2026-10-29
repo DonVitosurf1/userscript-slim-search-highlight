@@ -2,3 +2,6 @@
 * text=auto eol=lf
 *.png binary
 *.jpg binary
+
+# Historical evidence remains available in Git, outside source release archives.
+docs/archive/ export-ignore

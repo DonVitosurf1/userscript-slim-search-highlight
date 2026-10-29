@@ -18,7 +18,7 @@ Wenn **Einstellungen → Automatisch von Suche übernehmen** aktiv ist, werden d
 
 Die Übergabe hängt nicht von Suchparametern im Referrer ab. Es werden keine Suchwörter an Ergebnis-URLs angehängt. Ein lokaler Zwischenspeicher ordnet die Begriffe der angeklickten Ziel-URL zu; bis zu zwölf Zieladressen bleiben zehn Minuten gültig. Der URL-Fragmentteil wird für diese Zuordnung ignoriert. Weiterleitungen auf andere Adressen oder Speziallinks können die Zuordnung verhindern; ein vorhandener Suchmaschinen-Referrer dient als Fallback.
 
-Ein begonnenes, noch nicht abgeschicktes Suchfeld ersetzt die bereits bestätigte URL-Suchanfrage nicht. Fehlt die Anfrage in der URL, wird das Suchfeld als Fallback gelesen. Die Wortsuche filtert kurze Wörter und gängige Stoppwörter; sie ist kein vollständiger Parser für Google-Suchoperatoren. Die automatische Übernahme erzeugt keine dauerhaften Keywords und keine gespeicherten Seitenpassagen. Sie lässt sich jederzeit abschalten; vorhandene explizite `#hl`-/`#sjhl`-Links und manuell gewählte Verlaufseinträge sind davon unabhängig.
+Ein begonnenes, noch nicht abgeschicktes Suchfeld ersetzt die bereits bestätigte URL-Suchanfrage nicht. Fehlt die Anfrage in der URL, wird das Suchfeld als Fallback gelesen. Die Wortsuche filtert kurze Wörter und gängige Stoppwörter; sie ist kein vollständiger Parser für Google-Suchoperatoren. Die automatische Übernahme erzeugt keine dauerhaften Keywords und keine gespeicherten Seitenpassagen. Sie lässt sich jederzeit abschalten; vorhandene explizite `#hl`-/`#sjhl`-Links und manuell im Userscript-Manager gewählte Verlaufseinträge sind davon unabhängig.
 
 ## Farben, Löschen und Rückgängig
 
@@ -48,7 +48,7 @@ Im Auswahlmenü **Kopieren / Export** öffnen:
 - **Zitat + URL kopieren** verwendet das in den Einstellungen gewählte Format Klartext oder Markdown.
 - **Link zur Textstelle kopieren** erzeugt bei unterstützten HTTP(S)-Seiten einen `#:~:text=`-Link. Sonst wird der normale Seitenlink kopiert und der Grund angezeigt. Bei mehrfach vorkommendem Text kann der Browser zum ersten passenden Vorkommen springen. Geänderter Text, blockübergreifende Auswahlen oder fehlende Browserunterstützung können die Textverknüpfung ungültig machen.
 
-Wenn direkter Zwischenablagenzugriff scheitert, erscheint ein beschriftetes Textfeld zum manuellen Kopieren. Einstellungen bieten außerdem Markdown-Export der aktuellen Passagen und JSON-Export aller gespeicherten Seiten. Diese Dateien enthalten ausgewählten Text und vollständige URLs; sie werden nur auf ausdrückliche Aktion lokal erzeugt, nicht hochgeladen.
+Wenn direkter Zwischenablagenzugriff scheitert, erscheint ein beschriftetes Textfeld zum manuellen Kopieren. Einstellungen bieten außerdem Markdown-Export der aktuellen Passagen und JSON-Export aller gespeicherten Seiten. Diese Dateien enthalten ausgewählten Text und vollständige URLs; sie werden nur auf ausdrückliche Aktion lokal erzeugt, nicht hochgeladen. Downloads laufen über `GM_download` im Userscript-Manager; dessen Download-Berechtigung muss erlaubt sein. Fehlt diese Unterstützung, meldet das Skript die Einschränkung.
 
 ## Darstellung und Öffnen-Button
 
@@ -72,6 +72,10 @@ Escape schließt Auswahlaktionen oder Panel und gibt den Fokus zurück. Der Pane
 
 ## Dauerhafte Keywords und Grenzen
 
-**Keywords** bleibt ein eigener aufklappbarer Bereich für dauerhafte, seitenübergreifende Begriffe, Regex, Farben und Domain-Einschränkungen. Neue Begriffe mit Enter oder Hinzufügen speichern. Fehler stehen am Feld; die Eingabe bleibt erhalten. Das Ausschließen einer Domain über das Userscript-Menü deaktiviert dort Highlights.
+**Keywords** bleibt ein eigener aufklappbarer Bereich für dauerhafte, seitenübergreifende Begriffe, Regex, Farben und Domain-Einschränkungen. Das Panel zeigt nur zur aktuellen Domain passende Einträge. Neue Begriffe mit Enter oder Hinzufügen speichern; Änderungen an Text und Farbe mit **Speichern** oder Enter bestätigen. Das Verlassen eines Felds speichert nicht. Fehler stehen am Feld; die Eingabe bleibt erhalten. Das Ausschließen einer Domain über das Userscript-Menü deaktiviert dort Highlights.
+
+Der Suchverlauf wird ausschließlich im Menü des Userscript-Managers angeboten. Die Auswahl eines Eintrags wendet dessen Begriffe ausdrücklich auf die aktuelle Seite an. Global geltende Keywords sind für Seiten, auf denen sie gelten, erkennbar – auch bei geschlossenem Panel. Für vertrauliche Begriffe Domain-Einschränkungen verwenden. Weitere Grenzen erklärt das [Sicherheitsmodell](security-model.md).
+
+Automatisch übernommene Begriffe und `#hl`-/`#sjhl`-Links werden immer wörtlich gesucht. Nur ausdrücklich gespeicherte Keywords unterstützen einen begrenzten Regex-Umfang; komplexe oder riskante Muster werden abgelehnt.
 
 Seitenmarkierungen brauchen CSS Custom Highlights. Browser-/Manager-Tests auf echten Geräten, Screenreader und mobile Bildschirmtastaturen ergänzen die automatisierte Chromium-Prüfung; es wird keine vollständige WCAG-Zertifizierung behauptet.

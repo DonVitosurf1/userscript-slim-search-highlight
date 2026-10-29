@@ -17,7 +17,7 @@ The cloud environment also provides `/usr/bin/chromium`. To use it instead of a 
 CHROMIUM_PATH=/usr/bin/chromium npm test
 ```
 
-No credentials, environment file, database or separate server setup is needed. Browser tests use synthetic pages and GM-function adapters, with no live webpage traffic. The native search-navigation tests start and stop their own ephemeral HTTP server on two `.localhost` origins so normal and middle-click navigation are exercised without contacting Google or another external service.
+No credentials, environment file, database or separate server setup is needed. Browser tests use synthetic pages and GM-function adapters, with no live webpage traffic. The native search-navigation tests start and stop their own ephemeral HTTP server using local origins (including an official Google hostname mapped to loopback by the test runner) so normal and middle-click navigation are exercised without contacting Google or another external service.
 
 ## Daily workflow
 
@@ -64,6 +64,10 @@ Omit `CHROMIUM_PATH` to use the installed Playwright Chromium, as with tests. Th
 `artifacts/` is ignored by Git and safe to regenerate. Copy a deliberately chosen public screenshot to `assets/screenshot.png` when updating the README. Commit only evidence needed for a specific review; do not keep appending routine captures to the documentation. Older reports and evidence live in the [archive](archive/README.md); their scripts are historical snapshots.
 
 ## Release checks
+
+Run `npm run check:secrets` for current files and `node scripts/check-secrets.mjs --history` from a full clone for reachable history. The scanner is a documented pattern check, not proof that every secret format is absent. CI also provides CodeQL; its actual GitHub result must be verified separately.
+
+Security regressions run with `node tests/run_tests.js -k security_`. Unlike functional fixtures, UI security tests use actual isolated execution worlds and closed roots, with no open-root inspection adapter. Functional fixtures expose UI to the driver for assertions without spoofing event trust. Native navigation tests map the official Google hostname to their ephemeral local HTTP server through test-only Chromium resolver arguments; production domain recognition contains no test-host exception.
 
 Follow the [release checklist](releasing.md) for real userscript-manager/browser tests, accessibility and integration checks. Automated Chromium coverage is not a substitute for those manual checks.
 

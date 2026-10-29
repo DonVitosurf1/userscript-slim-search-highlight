@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { chromium } = require('playwright');
+const { selectionShortcutTime } = require('../tests/helpers/browser.cjs');
 
 (async () => {
   const index = process.argv.indexOf('--script');
@@ -23,13 +24,12 @@ const { chromium } = require('playwright');
         window.GM_registerMenuCommand = () => {};
       });
       await page.addScriptTag({ content: source });
-      const synchronousMs = await page.evaluate(() => {
+      await page.evaluate(() => {
         const range = document.createRange(); range.selectNodeContents(document.getElementById('choose'));
         getSelection().removeAllRanges(); getSelection().addRange(range);
         window.__benchmarkStart = performance.now();
-        document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'H', altKey: true, shiftKey: true, bubbles: true, cancelable: true }));
-        return performance.now() - window.__benchmarkStart;
       });
+      const synchronousMs = await selectionShortcutTime(page);
       await page.waitForFunction(expected => CSS.highlights.get('slim-page')?.size === expected && document.getElementById('page-list')?.getAttribute('aria-busy') !== 'true', repetitions + 1, { timeout: 15000 });
       const result = await page.evaluate(() => ({ readyMs: performance.now() - window.__benchmarkStart, matches: CSS.highlights.get('slim-page').size }));
       samples.push({ repetitions, separateNodes, synchronousMs, ...result });

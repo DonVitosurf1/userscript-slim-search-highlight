@@ -1,5 +1,5 @@
 'use strict';
-module.exports=({open,eq,ok})=>{
+module.exports=({open,eq,ok,selectionShortcutTime})=>{
   const url='https://example.test/article';
   const pageWith=(b,o={})=>open(b,{url,keywords:[],panelOpen:true,permanentOpen:false,html:'<p id="choose">Solarenergie</p><p>Solarenergie hilft.</p>',...o});
   const select=p=>p.evaluate(()=>{document.activeElement?.blur();const r=document.createRange();r.selectNodeContents(document.getElementById('choose'));getSelection().removeAllRanges();getSelection().addRange(r);});
@@ -67,21 +67,21 @@ module.exports=({open,eq,ok})=>{
     },
     async feature_unsupported_storage_is_not_overwritten_and_can_export(b){
       const p=await pageWith(b,{store:{hl_page_annotations:{version:99,pages:{future:'data'}}}});await mark(p);await p.locator('.page-save').click();eq(await p.evaluate(()=>window.__store.hl_page_annotations.version),99);
-      await p.locator('#settings-section > summary').click();const [d]=await Promise.all([p.waitForEvent('download',{timeout:2500}),p.click('#export-saved')]);const fs=require('fs');eq(JSON.parse(fs.readFileSync(await d.path(),'utf8')).version,99);
+      await p.locator('#settings-section > summary').click();await p.click('#export-saved');const data=await p.evaluate(async()=>JSON.parse(await(await fetch(window.__download.url)).text()));eq(data.version,99);
     },
     async feature_markdown_export_contains_page_passages(b){
-      const p=await pageWith(b);await mark(p);await p.locator('#settings-section > summary').click();const [d]=await Promise.all([p.waitForEvent('download'),p.click('#export-markdown')]);const fs=require('fs'),text=fs.readFileSync(await d.path(),'utf8');ok(text.includes('> Solarenergie')&&text.includes(url));
+      const p=await pageWith(b);await mark(p);await p.locator('#settings-section > summary').click();await p.click('#export-markdown');const text=await p.evaluate(async()=>await(await fetch(window.__download.url)).text());ok(text.includes('> Solarenergie')&&text.includes(url));
     },
     async feature_large_search_cancels_without_restoring_marks(b){
       const p=await pageWith(b,{html:'<p id="choose">alpha</p><p>'+('alpha '.repeat(10000))+'</p>'});
-      await p.evaluate(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('choose'));getSelection().removeAllRanges();getSelection().addRange(r);document.body.dispatchEvent(new KeyboardEvent('keydown',{key:'H',altKey:true,shiftKey:true,bubbles:true}));document.getElementById('chk-enabled').click();});
+      await p.locator('#settings-section').evaluate(el=>{el.open=true});await select(p);await p.keyboard.press('Alt+Shift+H');await p.locator('#chk-enabled').click();
       await p.waitForTimeout(350);eq(await count(p),0,'Cancelled generation cannot repaint');eq(await p.locator('#btn-next').isDisabled(),true);
     },
     async feature_fast_url_change_cannot_delete_other_page_data(b){
       const next='https://example.test/next';
       const record=text=>({terms:[{id:'p1',text,color:'#ffe082',anchor:{exact:text}}],options:{}});
       const p=await pageWith(b,{store:{hl_page_annotations:{version:1,pages:{[url]:record('Solarenergie'),[next]:record('Windkraft')}}}});
-      await p.waitForSelector('.page-save');await p.evaluate(next=>{history.pushState({},'',next);document.querySelector('.page-save').click();},next);
+      await p.waitForSelector('.page-save');await p.evaluate(next=>history.pushState({},'',next),next);await p.locator('.page-save').click();
       eq(await p.evaluate(u=>window.__store.hl_page_annotations.pages[u].terms[0].text,next),'Windkraft','Stale actions cannot touch the new URL record');
     },
     async feature_spa_navigation_restores_saved_page_from_empty_state(b){
@@ -91,7 +91,7 @@ module.exports=({open,eq,ok})=>{
     },
     async feature_normalization_of_large_whitespace_nodes_yields(b){
       const p=await pageWith(b,{html:'<p id="choose">needle</p><p>'+('alpha\n'.repeat(300000))+'</p>'});
-      const time=await p.evaluate(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('choose'));getSelection().removeAllRanges();getSelection().addRange(r);const start=performance.now();document.body.dispatchEvent(new KeyboardEvent('keydown',{key:'H',altKey:true,shiftKey:true,bubbles:true,cancelable:true}));return performance.now()-start;});
+      await p.evaluate(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('choose'));getSelection().removeAllRanges();getSelection().addRange(r);});const time=await selectionShortcutTime(p);
       ok(time<100,'Normalization blocked the handler for '+time+'ms');await p.waitForFunction(()=>CSS.highlights.get('slim-page')?.size===1,null,{timeout:10000});
     },
     async feature_failed_option_save_restores_previous_options(b){
@@ -105,7 +105,7 @@ module.exports=({open,eq,ok})=>{
     async feature_selection_tools_stay_above_panel_after_first_use(b){
       const p=await pageWith(b,{panelOpen:false,viewport:{width:390,height:844},html:'<p id="choose" style="margin-top:200px">Solarenergie</p><p>Solarenergie</p>'});
       await tools(p);await p.getByRole('button',{name:'Alle Vorkommen markieren',exact:true}).click();await select(p);await p.locator('#selection-trigger').waitFor({state:'visible'});
-      const hit=await p.locator('#selection-trigger').evaluate(el=>{const r=el.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return el.contains(top);});
+      const hit=await p.locator('#selection-trigger').evaluate(el=>{const r=el.getBoundingClientRect(),top=el.getRootNode().elementFromPoint(r.x+r.width/2,r.y+r.height/2);return el.contains(top);});
       eq(hit,true,'Selection controls must not be covered by the owned panel');
     },
     async feature_chunked_offsets_preserve_whitespace_range_boundaries(b){
@@ -119,7 +119,7 @@ module.exports=({open,eq,ok})=>{
     },
     async feature_saved_records_export_as_versioned_json(b){
       const p=await pageWith(b);await mark(p);ok(await p.locator('.page-save').count(),'Remember action');await p.locator('.page-save').click();await p.locator('#settings-section > summary').click();
-      const [download]=await Promise.all([p.waitForEvent('download'),p.click('#export-saved')]);const fs=require('fs');const data=JSON.parse(fs.readFileSync(await download.path(),'utf8'));eq(data.version,1);eq(data.pages[url].terms[0].text,'Solarenergie');
+      await p.click('#export-saved');const data=await p.evaluate(async()=>JSON.parse(await(await fetch(window.__download.url)).text()));eq(data.version,1);eq(data.pages[url].terms[0].text,'Solarenergie');
     }
   };
 };

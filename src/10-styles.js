@@ -1,4 +1,4 @@
-GM_addStyle(`
+const UI_CSS = `
     ::highlight(slim-page) { background-color: #ffe082; color: #000; }
     ::highlight(slim-page-current) { background-color: #ffca28; color: #000; text-decoration: underline; }
     #slim-selection-tools {
@@ -146,7 +146,8 @@ GM_addStyle(`
     #slim-hl-panel .kw-item { display: flex; align-items: center; gap: 6px; margin: 8px 0; }
     #slim-hl-panel .kw-item input[type=text] { flex: 1; width: 0; }
     #slim-hl-panel .kw-count { min-width: 24px; text-align: right; font-variant-numeric: tabular-nums; color: var(--hl-muted); font-size: 12px; }
-    #slim-hl-panel .kw-item button:hover { color: var(--hl-danger); }
+    #slim-hl-panel .kw-item .delete-keyword:hover { color: var(--hl-danger); }
+    #slim-hl-panel .kw-item .save-keyword:hover { color: var(--hl-accent-text); }
     #slim-hl-panel .match-item { display: flex; width: 100%; justify-content: start; text-align: left; margin: 5px 0; border-color: transparent; overflow-wrap: anywhere; }
     #slim-hl-panel .match-item.active { border-color: var(--hl-focus); }
     #slim-hl-panel .match-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
@@ -182,4 +183,5 @@ GM_addStyle(`
         #slim-hl-panel { border: 1px solid CanvasText; }
         #slim-hl-panel :focus-visible, #slim-hl-toggle:focus-visible { outline-color: Highlight; }
     }
-`);
+`;
+GM_addStyle(UI_CSS);

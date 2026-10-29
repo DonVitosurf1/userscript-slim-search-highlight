@@ -42,7 +42,7 @@ module.exports = ({ SRC, open, settled, hits, eq, ok }) => {
                     try { await Promise.race([handoff, new Promise((_, reject) => { timer = setTimeout(() => reject(Error('No native handoff')), 3000); })]); }
                     finally { clearTimeout(timer); }
                 }
-                const body = url.hostname === 'google.localhost'
+                const body = url.hostname === 'www.google.com'
                     ? '<textarea name="q">alteSuche</textarea><a id="result" href="' + targetURL + '"><h3><span>Ergebnis öffnen</span></h3></a>'
                     : '<p>Solarenergie hilft. Solarenergie spart Energie.</p>';
                 const bootstrap = `<script>
@@ -61,8 +61,8 @@ module.exports = ({ SRC, open, settled, hits, eq, ok }) => {
             const port = server.address().port;
             targetURL = 'http://article.localhost:' + port + '/energy';
             const source = await context.newPage();
-            await source.goto('http://google.localhost:' + port + '/search?q=alteSuche');
-            await source.locator('#slim-hl-toggle').waitFor();
+            await source.goto('http://www.google.com:' + port + '/search?q=alteSuche');
+            await source.locator('#slim-hl-ui').waitFor({state:'attached'});
             await source.evaluate(() => {
                 history.replaceState({}, '', '/search?q=Solarenergie');
                 document.querySelector('[name=q]').value = 'Solarenergie';

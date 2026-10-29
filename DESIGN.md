@@ -43,7 +43,7 @@ A text-marker case beside the page: dark neutral tools, yellow navigation emphas
 - Register: product utility; a nonmodal floating panel with underlying webpage remaining interactive.
 - Signature: keyword colors link saved terms, in-page marks and the position bar.
 - Restraint: system fonts, familiar native fields/selects; no marketing layout, external fonts, gradients or runtime framework.
-- Token ownership/runtime mapping: runtime source of truth is the GM_addStyle block in src/10-styles.js (assembled into userscript/slim-search-highlight.user.js). This file mirrors the --hl-* variables; update both for durable palette changes. The deterministic assembler copies the styles; no separate token adapter is involved.
+- Token ownership/runtime mapping: runtime source of truth is UI_CSS in src/10-styles.js, applied to the document and mirrored into the private UI root by src/25-private-ui.js (assembled into userscript/slim-search-highlight.user.js). This file mirrors the --hl-* variables; update both for durable palette changes. The deterministic assembler copies the styles; no separate token adapter is involved.
 
 ## Colors
 Runtime --hl-bg, --hl-surface, --hl-field, --hl-text, --hl-muted, --hl-border, --hl-accent and --hl-danger map to the correspondingly named frontmatter colors (accent = primary). Use accent for the add button, focus and navigation state. All custom highlight backgrounds get automatically selected black or white text using sRGB relative luminance. The selected panel scheme is independent of the host webpage; forced-colors restores system scrollbar colors and visible outlines.
@@ -100,6 +100,9 @@ Compact visible current/total count has a localized accessible label. Contextual
 
 ### Forms and overlays
 Labeled add form submits with click or Enter except during IME composition. Invalid/duplicate terms never overwrite stored valid values. Inline messages reference invalid fields. New-term values, active edit drafts, expanded groups and focus/scroll survive language changes. Search clears immediately and returns focus. Select popups intentionally remain OS/browser-owned. The floating palette is a named nonmodal region; Escape closes it and restores launcher focus. A separate scoped selection toolbar preserves a text/range snapshot through pointer and keyboard activation. Escape and explicit web activation restore focus. Native context menus and double-click selection remain untouched.
+
+### UI data and explicit edits
+The panel and selection toolbar live in a closed shadow root in the manager’s isolated world. Closed roots reduce DOM/CSS interference but are not a confidentiality boundary. Render only saved keywords applicable to the current domain; keep full search-history labels in manager-owned menus. Applicable global terms remain observable by the host page. Existing keyword text/color edits require Save or Enter, with a named save action distinct from Delete; blur never persists a draft. Export actions use manager downloads without document links.
 
 ### Iconography
 Authored 24-unit line SVGs, 18px rendered, 1.8 stroke. SVGs are decorative; every icon button has a localized accessible name. Existing embedded logo remains.

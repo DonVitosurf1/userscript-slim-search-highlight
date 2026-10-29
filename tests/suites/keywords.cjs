@@ -88,7 +88,8 @@ module.exports = ({ SRC, paragraphs, open, hits, settled, eq, ok }) => ({
     async disabling_restores_text_nodes(browser) {
         const page = await open(browser, { html: '<p id="t">lorem ipsum dolor</p>', panelOpen: true });
         await settled(page);
-        await page.evaluate(() => { document.getElementById('chk-enabled').click(); });
+        await page.locator('#settings-section').evaluate(el => { el.open = true; });
+        await page.locator('#chk-enabled').click();
         eq(await page.evaluate(() => document.getElementById('t').childNodes.length), 1, 'Textknoten nach Deaktivieren');
     },
 
@@ -230,11 +231,18 @@ module.exports = ({ SRC, paragraphs, open, hits, settled, eq, ok }) => ({
     },
 
     async arrow_keys_untouched_without_matches_or_on_blacklist(browser) {
-        const probe = page => page.evaluate(() => {
-            const e = new KeyboardEvent('keydown', { key: 'ArrowLeft', altKey: true, cancelable: true, bubbles: true });
-            document.dispatchEvent(e);
-            return e.defaultPrevented;
-        });
+        const probe = async page => {
+            await page.evaluate(() => {
+                const handler = event => {
+                    if(event.key !== 'ArrowLeft') return;
+                    window.__prevented = event.defaultPrevented;
+                    event.preventDefault(); document.removeEventListener('keydown',handler);
+                };
+                document.addEventListener('keydown',handler);
+            });
+            await page.keyboard.press('Alt+ArrowLeft');
+            return page.evaluate(()=>window.__prevented);
+        };
         const blacklisted = await open(browser, { html: '<p>hello</p>', keywords: [{ text: 'hello', color: '#ff0' }], url: 'http://example.test/', store: { hl_blacklist: ['example.test'] } });
         await blacklisted.waitForTimeout(500);
         eq(await probe(blacklisted), false, 'Alt+← auf Blacklist-Seite abgefangen');
@@ -290,7 +298,7 @@ module.exports = ({ SRC, paragraphs, open, hits, settled, eq, ok }) => ({
         const page = await open(browser, { html: '<p>hello world</p>', keywords: [], panelOpen: true, store: { hl_auto_search: false, hl_search_history: ['hello'] } });
         await page.waitForTimeout(400);
         await page.locator('#history-details > summary').click();
-        await page.click('#history-container .btn');
+        await page.evaluate(()=>Object.entries(window.__menus).find(([name])=>name.endsWith(': hello'))[1]());
         await page.waitForFunction(() => document.querySelectorAll('.slim-hl').length === 1, null, { timeout: 3000 });
     },
 
@@ -304,7 +312,7 @@ module.exports = ({ SRC, paragraphs, open, hits, settled, eq, ok }) => ({
         const page = await open(browser, { html: '<p id="t">abc ABC</p>', keywords: [{ text: '/abc/i', color: '#ff0', regex: true }], panelOpen: true });
         await settled(page);
         await page.fill('.kw-item input[type=text]', 'abc');
-        await page.locator('.kw-item input[type=text]').dispatchEvent('change');
+        await page.locator('.kw-item input[type=text]').press('Enter');
         await page.waitForTimeout(500);
         eq(await page.evaluate(() => window.__store.hl_keywords[0].regex), false, 'regex-Flag nach Umbenennen');
         eq(await page.evaluate(() => document.querySelectorAll('#t .slim-hl').length), 2);
@@ -325,11 +333,11 @@ module.exports = ({ SRC, paragraphs, open, hits, settled, eq, ok }) => ({
     async own_page_title_counter_keeps_page_prefix(browser) {
         const page = await open(browser, { html: '<title>x</title><p>lorem</p>', panelOpen: true });
         await page.evaluate(() => { document.title = '(3) Inbox'; });
-        await page.evaluate(() => document.getElementById('chk-enabled').click());
-        await page.evaluate(() => document.getElementById('chk-enabled').click());
+        await page.locator('#settings-section').evaluate(el => { el.open = true; }); await page.locator('#chk-enabled').click();
+        await page.locator('#settings-section').evaluate(el => { el.open = true; }); await page.locator('#chk-enabled').click();
         await settled(page);
         eq(await page.evaluate(() => document.title), '(1) (3) Inbox', 'Titel mit Zähler');
-        await page.evaluate(() => document.getElementById('chk-enabled').click());
+        await page.locator('#settings-section').evaluate(el => { el.open = true; }); await page.locator('#chk-enabled').click();
         eq(await page.evaluate(() => document.title), '(3) Inbox', 'Titel nach Deaktivieren');
     },
 

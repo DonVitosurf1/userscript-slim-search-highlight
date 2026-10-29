@@ -30,16 +30,45 @@ function save() {
     }
 }
 
-function isBlacklisted() {
-    const host = location.hostname.toLowerCase();
-    return blacklist.some(b => host.includes(b.toLowerCase()));
+/** A domain setting covers the exact hostname and its real subdomains only. */
+function domainMatches(host, domain) {
+    const normalized = domain.trim().toLowerCase().replace(/^\.+|\.+$/g, '');
+    const hostname = host.toLowerCase().replace(/\.$/, '');
+    return !!normalized && (hostname === normalized || hostname.endsWith('.' + normalized));
 }
+
+function isBlacklisted() {
+    return blacklist.some(domain => domainMatches(location.hostname, domain));
+}
+
+// Finite official domains: a brand-like label on an arbitrary suffix is not an engine.
+// Country variants are explicit; no public-suffix guessing or substring matching.
+const GOOGLE_DOMAINS = ('com ad ae com.af com.ag com.ai al am co.ao com.ar as at com.au az '
+    + 'ba com.bd be bf bg com.bh bi bj com.bn com.bo com.br bs bt co.bw by com.bz '
+    + 'ca cd cf cg ch ci co.ck cl cm cn com.co co.cr com.cu cv com.cy cz '
+    + 'de dj dk dm com.do dz com.ec ee com.eg es com.et fi com.fj fm fr ga ge gg com.gh '
+    + 'com.gi gl gm gp gr com.gt gy com.hk hn hr ht hu co.id ie co.il im co.in iq is it '
+    + 'je com.jm jo co.jp co.ke com.kh ki kg co.kr com.kw kz la com.lb li lk co.ls lt lu lv '
+    + 'com.ly co.ma md me mg mk ml mn ms com.mt mu mv mw com.mx com.my co.mz '
+    + 'com.na com.ng com.ni ne nl no com.np nr nu co.nz com.om com.pa com.pe com.pg '
+    + 'com.ph com.pk pl pn com.pr ps pt com.py com.qa ro ru rw com.sa com.sb sc se '
+    + 'com.sg sh si sk com.sl sn so sm sr st com.sv td tg co.th com.tj tl tm tn to com.tr '
+    + 'tt com.tw co.tz com.ua co.ug co.uk com.uy co.uz com.vc co.ve vg co.vi com.vn '
+    + 'vu ws rs co.za co.zm co.zw cat').split(' ').map(suffix => 'google.' + suffix);
+const OFFICIAL_SEARCH_DOMAINS = [
+    ...GOOGLE_DOMAINS, 'bing.com', 'duckduckgo.com', 'yahoo.com', 'yahoo.co.jp',
+    'yahoo.co.uk', 'yahoo.de', 'yahoo.fr', 'yahoo.it', 'yahoo.es', 'yahoo.ca',
+    'yahoo.com.au', 'yahoo.com.br', 'yahoo.com.mx', 'baidu.com', 'yandex.com',
+    'yandex.ru', 'yandex.by', 'yandex.kz', 'yandex.uz', 'yandex.com.tr',
+    'startpage.com', 'ecosia.org', 'qwant.com'
+];
 
 function isSearchEngine(urlStr) {
     if (!urlStr) return false;
     try {
-        const host = '.' + new URL(urlStr).hostname.toLowerCase() + '.';
-        return SEARCH_ENGINES.some(s => host.includes('.' + s));
+        const url = new URL(urlStr);
+        return ['http:', 'https:'].includes(url.protocol)
+            && OFFICIAL_SEARCH_DOMAINS.some(domain => domainMatches(url.hostname, domain));
     } catch { return false; }
 }
 
@@ -160,8 +189,8 @@ function getActiveKeywords() {
     const host = location.hostname.toLowerCase();
     const list = keywords.filter(k => {
         if (!k.domains || k.domains.length === 0) return true;
-        return k.domains.some(d => host.includes(d.toLowerCase()));
-    }).map(k => ({ ...k }));
+        return k.domains.some(domain => domainMatches(host, domain));
+    }).map(k => ({ ...k, sourceKeyword: k }));
 
     getCrossPageTerms().forEach((t, i) => {
         if (!IGNORE_WORDS.has(t.toLowerCase()) && !list.some(k => k.text.toLowerCase() === t.toLowerCase())) {
@@ -175,14 +204,108 @@ function isRegexText(text) { return text.startsWith('/') && text.lastIndexOf('/'
 
 function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
+const MAX_REGEX_TEXT_LENGTH = 4096;
+
+/**
+ * Conservative native-regex subset, not a general ReDoS detector. One variable
+ * repetition and one alternation scope avoid combinations of ambiguous paths.
+ * Nested/repeated alternation, backreferences and quantified assertions are
+ * rejected. The input cap below bounds the remaining unanchored scan cost.
+ */
+function explicitRegexAllowed(pattern, flags = '') {
+    if (pattern.length > 256 || !/^[dgimsuy]*$/.test(flags)) return false;
+    const scopes = [{ repeated: false, alternation: false, assertion: false }];
+    let atom = null, variableRepeats = 0, alternationScope = null, fixedWidth = 0;
+    for (let i = 0; i < pattern.length; i++) {
+        const ch = pattern[i];
+        const scope = scopes[scopes.length - 1];
+        if (ch === '\\') {
+            const next = pattern[++i];
+            if (!next || /[1-9k]/.test(next)) return false;
+            if ((next === 'p' || next === 'P') && pattern[i + 1] === '{') {
+                const end = pattern.indexOf('}', i + 2);
+                if (end < 0) return false;
+                i = end;
+            } else if (next === 'u' && pattern[i + 1] === '{') {
+                const end = pattern.indexOf('}', i + 2);
+                if (end < 0) return false;
+                i = end;
+            }
+            atom = { repeated: false, alternation: false, assertion: next === 'b' || next === 'B' };
+        } else if (ch === '[') {
+            // Character classes are one atom, including escaped closing brackets.
+            let closed = false;
+            for (++i; i < pattern.length; i++) {
+                if (pattern[i] === '\\') i++;
+                else if (pattern[i] === ']') { closed = true; break; }
+            }
+            if (!closed) return false;
+            atom = { repeated: false, alternation: false, assertion: false };
+        } else if (ch === '(') {
+            let assertion = false;
+            if (pattern[i + 1] === '?') {
+                const prefix = pattern.slice(i + 2);
+                if (prefix.startsWith(':')) i += 2;
+                else if (prefix.startsWith('=') || prefix.startsWith('!')) { assertion = true; i += 2; }
+                else if (prefix.startsWith('<=') || prefix.startsWith('<!')) { assertion = true; i += 3; }
+                else if (prefix.startsWith('<')) {
+                    const end = pattern.indexOf('>', i + 3);
+                    if (end < 0) return false;
+                    i = end;
+                } else return false;
+            }
+            scopes.push({ repeated: false, alternation: false, assertion });
+            atom = null;
+        } else if (ch === ')') {
+            if (scopes.length === 1) return false;
+            atom = scopes.pop();
+            if (atom.assertion && atom.repeated) return false;
+            const parent = scopes[scopes.length - 1];
+            parent.repeated ||= atom.repeated;
+            parent.alternation ||= atom.alternation;
+        } else if (ch === '|') {
+            if (alternationScope && alternationScope !== scope) return false;
+            alternationScope = scope;
+            scope.alternation = true;
+            atom = null;
+        } else if (ch === '*' || ch === '+' || ch === '?' || ch === '{') {
+            let variable = true, width = 0;
+            if (ch === '{') {
+                const quantifier = pattern.slice(i).match(/^\{(\d+)(?:,(\d*))?\}/);
+                if (!quantifier) return false;
+                const min = Number(quantifier[1]);
+                const max = quantifier[2] === undefined ? min : quantifier[2] === '' ? Infinity : Number(quantifier[2]);
+                if (min > 100 || (Number.isFinite(max) && max > 100)) return false;
+                variable = min !== max;
+                width = Number.isFinite(max) ? max : min;
+                i += quantifier[0].length - 1;
+            }
+            if (!atom || atom.repeated || atom.alternation || atom.assertion) return false;
+            if (variable && ++variableRepeats > 1) return false;
+            fixedWidth += width;
+            if (fixedWidth > 1000) return false;
+            scope.repeated = true;
+            atom = { repeated: true, alternation: false, assertion: false };
+            if (pattern[i + 1] === '?') i++; // Lazy quantifier, not a second repetition.
+        } else {
+            atom = { repeated: false, alternation: false, assertion: ch === '^' || ch === '$' };
+        }
+    }
+    return scopes.length === 1;
+}
+
 function buildMatchers() {
     lastErrors = [];
     return getActiveKeywords().map(k => {
         let pattern, flags = 'gi';
-        if (isRegexText(k.text)) {
+        if (!k.auto && isRegexText(k.text)) {
             const last = k.text.lastIndexOf('/');
             pattern = k.text.slice(1, last);
             flags = k.text.slice(last + 1) || 'gi';
+            if (!explicitRegexAllowed(pattern, flags)) {
+                lastErrors.push(t('unsafeRegex', k.text));
+                return null;
+            }
             if (!flags.includes('g')) flags += 'g';
         } else {
             const escaped = escapeRegExp(k.text);
@@ -195,7 +318,7 @@ function buildMatchers() {
             }
         }
         try {
-            return { re: new RegExp(pattern, flags), color: k.color || DEFAULT_COLOR, text: k.text };
+            return { re: new RegExp(pattern, flags), color: k.color || DEFAULT_COLOR, text: k.text, sourceKeyword: k.auto ? null : k.sourceKeyword, explicitRegex: !k.auto && isRegexText(k.text) };
         } catch (e) {
             lastErrors.push(t('invalidRegex', k.text));
             return null;
@@ -248,16 +371,23 @@ function highlightInTextNode(textNode, matchers) {
 
     const matches = [];
     for (const m of matchers) {
+        if (m.explicitRegex && currentText.length > MAX_REGEX_TEXT_LENGTH) continue;
         m.re.lastIndex = 0;
         let match;
         while ((match = m.re.exec(currentText)) !== null) {
-            if (match[0].length === 0) { m.re.lastIndex++; continue; }
+            if (match[0].length === 0) {
+                // AdvanceStringIndex: /u may rewind an index inside a surrogate pair.
+                const index = m.re.lastIndex;
+                const point = currentText.codePointAt(index);
+                m.re.lastIndex = index + (m.re.unicode && point > 0xffff ? 2 : 1);
+                continue;
+            }
             matches.push({
                 start: match.index,
                 end: match.index + match[0].length,
                 text: match[0],
                 color: m.color,
-                kw: m.text
+                kw: m.text, sourceKeyword: m.sourceKeyword
             });
         }
     }
@@ -286,6 +416,7 @@ function highlightInTextNode(textNode, matchers) {
             mark.style.color = highlightTextColor(m.color);
             mark.textContent = m.text;
             mark.dataset.kw = m.kw;
+            ownedMarkKeywords.set(mark, m.sourceKeyword || null);
             ownNodes.add(mark);
             middle.parentNode.replaceChild(mark, middle);
             keywordCounts[m.kw] = (keywordCounts[m.kw] || 0) + 1;

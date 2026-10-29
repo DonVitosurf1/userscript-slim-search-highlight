@@ -41,7 +41,7 @@ function updatePosBar() {
 }
 
 const SKIP_SELECTOR = 'script, style, textarea, input, noscript, code, pre, select, option, [contenteditable=""], [contenteditable="true"], [contenteditable="plaintext-only"]';
-const OWN_UI = '#slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-download';
+const OWN_UI = '#slim-hl-ui, #slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-download';
 const FRAME_BUDGET_MS = 10;
 let matchers = [];
 let ownNodes = new WeakSet(); // Markierungen und Textstücke, die dieses Skript selbst erzeugt hat
@@ -93,8 +93,8 @@ function afterHighlight() {
     isHighlighting = false;
     rebuildPageMatches();
     updateCounterAndTitle();
-    if (document.getElementById('kw-list')) updateKeywordCounts();
-    if (document.getElementById('match-list')) renderMatchList();
+    if (uiById('kw-list')) updateKeywordCounts();
+    if (uiById('match-list')) renderMatchList();
     updatePosBar();
     if (observer && enabled && !isBlacklisted()) observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['hidden', 'style', 'class', 'contenteditable'] });
     if (refreshQueued || needsFullRefresh) { refreshQueued = false; needsFullRefresh = false; refreshHighlights(); return; }
@@ -125,7 +125,7 @@ function refreshHighlights() {
     pendingNodes.clear();
 
     try { matchers = buildMatchers(); } catch (e) { matchers = []; lastErrors = [String(e && e.message || e)]; }
-    const errorEl = document.getElementById('regex-error');
+    const errorEl = uiById('regex-error');
     if (errorEl) errorEl.textContent = lastErrors.join('\n');
 
     if (!matchers.length) {
@@ -154,13 +154,13 @@ let titlePrefix = '';
 
 function updateCounterAndTitle() {
     highlightCount = navigationMatches().length;
-    const counter = document.getElementById('hl-counter');
+    const counter = uiById('hl-counter');
     if (counter) {
         counter.textContent = highlightCount ? `${Math.max(0, currentIdx) + 1} / ${highlightCount}` : '0 / 0';
         counter.setAttribute('aria-label', t('statusCount', highlightCount ? Math.max(0, currentIdx) + 1 : 0, highlightCount));
     }
     for (const id of ['btn-prev', 'btn-next']) {
-        const button = document.getElementById(id);
+        const button = uiById(id);
         if (button) button.disabled = !highlightCount || pageSearchBusy;
     }
     let baseTitle = document.title;
@@ -201,7 +201,7 @@ function goTo(delta) {
     } else {
         updatePosBar();
     }
-    const items = document.querySelectorAll('#slim-hl-panel #match-list .match-item');
+    const items = uiQueryAll('#slim-hl-panel #match-list .match-item');
     if (items.length) items.forEach((el, i) => {
         el.classList.toggle('active', i === currentIdx);
         el.setAttribute('aria-current', String(i === currentIdx));
@@ -218,9 +218,9 @@ function matchContext(el) {
 }
 
 function renderMatchList() {
-    const list = document.getElementById('match-list');
+    const list = uiById('match-list');
     if (!list) return;
-    const focused = list.contains(document.activeElement) ? +document.activeElement.dataset.index : -1;
+    const focused = list.contains(uiActiveElement()) ? +uiActiveElement().dataset.index : -1;
     const hls = navigationMatches();
     if (!hls.length) {
         const empty = document.createElement('p');

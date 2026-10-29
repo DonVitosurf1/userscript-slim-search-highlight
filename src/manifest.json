@@ -4,6 +4,7 @@
     "00-state-i18n.js",
     "10-styles.js",
     "20-utils.js",
+    "25-private-ui.js",
     "30-page-state.js",
     "40-page-search.js",
     "50-page-ui-sharing.js",

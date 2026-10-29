@@ -118,10 +118,10 @@ module.exports = ({ open, settled, eq, ok }) => {
         async review_invalid_keyword_edit_is_not_saved(browser) {
             const page=await panel(browser);await settled(page);
             const field=page.locator('.kw-item input[type=text]').first();
-            await field.fill('/[invalid/');await field.dispatchEvent('change');
+            await field.fill('/[invalid/');await field.press('Enter');
             eq(await page.evaluate(()=>window.__store.hl_keywords[0].text),'lorem');
             eq(await field.inputValue(),'/[invalid/');eq(await field.getAttribute('aria-invalid'),'true');
-            await field.fill('ipsum');await field.dispatchEvent('change');
+            await field.fill('ipsum');await field.press('Enter');
             eq(await page.evaluate(()=>window.__store.hl_keywords[0].text),'lorem','Duplikat-Edit nicht speichern');
         },
         async review_locale_preserves_draft_focus_and_disclosures(browser) {
@@ -142,7 +142,7 @@ module.exports = ({ open, settled, eq, ok }) => {
             await page.click('#clear-kw-search');eq(await page.inputValue('#kw-search'),'');
             eq(await page.evaluate(()=>document.activeElement.id),'kw-search');
             const first=await page.locator('.kw-item input[type=text]').first().inputValue();
-            await page.locator('.kw-item button').first().click();
+            await page.locator('.kw-item .delete-keyword').first().click();
             eq(await page.evaluate(()=>window.__store.hl_keywords.length),2);
             await page.click('#undo-delete');
             eq(await page.evaluate(()=>window.__store.hl_keywords.length),3);
@@ -182,10 +182,12 @@ module.exports = ({ open, settled, eq, ok }) => {
         async review_disable_during_highlight_does_not_restore_marks(browser) {
             const page=await panel(browser,{html:'<script>window.__frames=[];window.requestAnimationFrame=fn=>window.__frames.push(fn)</script><p>lorem ipsum</p>'});
             ok(await page.evaluate(()=>window.__frames.length>0),'Durchlauf wartet auf Animationframe');
-            await page.evaluate(()=>{
-                document.getElementById('chk-enabled').click();
-                while(window.__frames.length) window.__frames.shift()(performance.now());
-            });
+            await page.locator('#settings-section').evaluate(el=>{el.open=true});
+            await page.waitForFunction(()=>document.getElementById('slim-hl-panel').getBoundingClientRect().bottom<=innerHeight,null,{polling:20,timeout:2000});
+            await page.locator('#chk-enabled').evaluate(el=>el.scrollIntoView({block:'center'}));
+            const box=await page.locator('#chk-enabled').boundingBox();await page.mouse.click(box.x+box.width/2,box.y+box.height/2);
+            eq(await page.locator('#chk-enabled').isChecked(),false,'Echter Klick deaktiviert die angehaltene Suche');
+            await page.evaluate(()=>{while(window.__frames.length)window.__frames.shift()(performance.now())});
             eq(await page.locator('.slim-hl').count(),0,'Deaktivierter Durchlauf darf keine Marken nachliefern');
         },
         async review_blacklist_cancels_queued_highlighting(browser) {
