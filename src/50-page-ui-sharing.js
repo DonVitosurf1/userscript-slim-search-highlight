@@ -78,8 +78,8 @@ function quoteText(text, markdown = copyFormat === 'markdown') {
     const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return `> ${escaped}\n\n[${t('sourceLabel')}](${url.replace(/[()]/g, c => encodeURIComponent(c))})`;
 }
-let copyFeedbackTimer;
-function ensureCopyFeedback() {
+let localFeedbackTimer;
+function ensureLocalFeedback() {
     let feedback = uiById('slim-hl-feedback');
     if (!feedback) {
         feedback = document.createElement('div'); feedback.id = 'slim-hl-feedback'; feedback.hidden = true;
@@ -88,9 +88,9 @@ function ensureCopyFeedback() {
     }
     return feedback;
 }
-function showCopyFeedback(key, anchor) {
-    const feedback = ensureCopyFeedback();
-    clearTimeout(copyFeedbackTimer);
+function showLocalFeedback(key, anchor) {
+    const feedback = ensureLocalFeedback();
+    clearTimeout(localFeedbackTimer);
     feedback.dataset.message = key; feedback.lang = currentLang(); feedback.hidden = false;
     applyAppearance();
     const box = feedback.getBoundingClientRect(), viewport = window.visualViewport;
@@ -98,7 +98,7 @@ function showCopyFeedback(key, anchor) {
     const width = viewport?.width || innerWidth, height = viewport?.height || innerHeight;
     feedback.style.left = Math.max(left + 8, Math.min(anchor?.x ?? left + width - box.width - 20, left + width - box.width - 8)) + 'px';
     feedback.style.top = Math.max(top + 8, Math.min(anchor?.y ?? top + height - box.height - 20, top + height - box.height - 8)) + 'px';
-    copyFeedbackTimer = setTimeout(() => { feedback.hidden = true; feedback.textContent = ''; }, 6000);
+    localFeedbackTimer = setTimeout(() => { feedback.hidden = true; feedback.textContent = ''; }, 6000);
 }
 async function copyText(text, status = 'copied') {
     const anchor = uiById('slim-selection-tools')?.getBoundingClientRect();
@@ -111,7 +111,7 @@ async function copyText(text, status = 'copied') {
         if (typeof GM_setClipboard === 'function') await GM_setClipboard(text, 'text');
         else if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
         else throw new Error('Clipboard unavailable');
-        showCopyFeedback(status, anchor);
+        showLocalFeedback(status, anchor);
     } catch {
         setPanelOpen(true, false);
         const field = uiById('manual-copy'); field.value = text;
@@ -255,7 +255,7 @@ function createSelectionTools() {
     tools.querySelector('#selection-quote').onclick = () => selectedShare('quote');
     tools.querySelector('#selection-link').onclick = () => selectedShare('link');
     ensureUIRoot().append(tools);
-    ensureCopyFeedback();
+    ensureLocalFeedback();
     applyAppearance();
     renderShortcut();
     return tools;

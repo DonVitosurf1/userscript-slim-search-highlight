@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.8
+// @version      4.5.9
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -92,6 +92,7 @@
         en: {
             openPanel: 'Open highlight panel', minimize: 'Minimize', close: 'Close',
             togglePanel: 'Open / close highlight panel', panelShortcutHint: key => `${key}: open or close the highlight panel.`, panelShortcutConflict: key => `${key} is assigned to highlighting. Change the selection shortcut to use it for the panel.`,
+            panelStateSaveFailed: 'Panel toggled. Its open/closed state could not be saved for the next visit.',
             prev: 'Previous highlight (Alt + ←)', next: 'Next highlight (Alt + →)',
             kwSearch: 'Search keywords…', kwPlaceholder: 'Keyword or /regex/',
             wholeWords: 'Whole words only', domains: 'Only on domains (optional, comma-separated)', add: 'Add',
@@ -118,6 +119,7 @@
         de: {
             openPanel: 'Highlight-Panel öffnen', minimize: 'Minimieren', close: 'Schließen',
             togglePanel: 'Highlight-Panel öffnen / schließen', panelShortcutHint: key => `${key}: Highlight-Panel öffnen oder schließen.`, panelShortcutConflict: key => `${key} ist dem Markieren zugewiesen. Ändere den Auswahl-Shortcut, um die Kombination für das Panel zu nutzen.`,
+            panelStateSaveFailed: 'Panel umgeschaltet. Der Öffnungszustand konnte für den nächsten Besuch nicht gespeichert werden.',
             prev: 'Vorheriges Highlight (Alt + ←)', next: 'Nächstes Highlight (Alt + →)',
             kwSearch: 'Keywords suchen…', kwPlaceholder: 'Keyword oder /regex/',
             wholeWords: 'Nur ganze Wörter', domains: 'Nur auf Domains (optional, kommagetrennt)', add: 'Hinzufügen',
@@ -936,8 +938,8 @@
         const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         return `> ${escaped}\n\n[${t('sourceLabel')}](${url.replace(/[()]/g, c => encodeURIComponent(c))})`;
     }
-    let copyFeedbackTimer;
-    function ensureCopyFeedback() {
+    let localFeedbackTimer;
+    function ensureLocalFeedback() {
         let feedback = uiById('slim-hl-feedback');
         if (!feedback) {
             feedback = document.createElement('div'); feedback.id = 'slim-hl-feedback'; feedback.hidden = true;
@@ -946,9 +948,9 @@
         }
         return feedback;
     }
-    function showCopyFeedback(key, anchor) {
-        const feedback = ensureCopyFeedback();
-        clearTimeout(copyFeedbackTimer);
+    function showLocalFeedback(key, anchor) {
+        const feedback = ensureLocalFeedback();
+        clearTimeout(localFeedbackTimer);
         feedback.dataset.message = key; feedback.lang = currentLang(); feedback.hidden = false;
         applyAppearance();
         const box = feedback.getBoundingClientRect(), viewport = window.visualViewport;
@@ -956,7 +958,7 @@
         const width = viewport?.width || innerWidth, height = viewport?.height || innerHeight;
         feedback.style.left = Math.max(left + 8, Math.min(anchor?.x ?? left + width - box.width - 20, left + width - box.width - 8)) + 'px';
         feedback.style.top = Math.max(top + 8, Math.min(anchor?.y ?? top + height - box.height - 20, top + height - box.height - 8)) + 'px';
-        copyFeedbackTimer = setTimeout(() => { feedback.hidden = true; feedback.textContent = ''; }, 6000);
+        localFeedbackTimer = setTimeout(() => { feedback.hidden = true; feedback.textContent = ''; }, 6000);
     }
     async function copyText(text, status = 'copied') {
         const anchor = uiById('slim-selection-tools')?.getBoundingClientRect();
@@ -969,7 +971,7 @@
             if (typeof GM_setClipboard === 'function') await GM_setClipboard(text, 'text');
             else if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
             else throw new Error('Clipboard unavailable');
-            showCopyFeedback(status, anchor);
+            showLocalFeedback(status, anchor);
         } catch {
             setPanelOpen(true, false);
             const field = uiById('manual-copy'); field.value = text;
@@ -1113,7 +1115,7 @@
         tools.querySelector('#selection-quote').onclick = () => selectedShare('quote');
         tools.querySelector('#selection-link').onclick = () => selectedShare('link');
         ensureUIRoot().append(tools);
-        ensureCopyFeedback();
+        ensureLocalFeedback();
         applyAppearance();
         renderShortcut();
         return tools;
@@ -1929,7 +1931,11 @@
 
     function handlePanelShortcut(event) {
         if (!event.isTrusted || isBlacklisted() || event.isComposing || event.repeat || composing || recordingShortcut || editingTarget(event.target) || !panelShortcutAvailable() || !shortcutMatches(event, PANEL_SHORTCUT)) return false;
-        event.preventDefault(); hideSelectionTools(); setPanelOpen(!panelState.open);
+        event.preventDefault(); event.stopPropagation(); hideSelectionTools();
+        const feedback = uiById('slim-hl-feedback');
+        if (feedback?.dataset.message === 'panelStateSaveFailed') { feedback.hidden = true; feedback.textContent = ''; }
+        try { setPanelOpen(!panelState.open); }
+        catch { showLocalFeedback('panelStateSaveFailed', uiById('slim-hl-toggle')?.getBoundingClientRect()); }
         return true;
     }
 
@@ -2344,6 +2350,7 @@
         btn.setAttribute('aria-expanded', String(panelState.open));
         btn.onclick = () => setPanelOpen(!panelState.open);
         ensureUIRoot().appendChild(btn);
+        ensureLocalFeedback();
         applyAppearance();
         renderShortcut();
     }

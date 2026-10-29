@@ -86,6 +86,8 @@ Ohne gespeicherte Position öffnet es **rechts, vertikal mittig**, mit möglichs
 
 **Alt+Shift+P** öffnet oder schließt das Panel, auch wenn der Fokus bereits im Panel liegt. Der Hovertext am Panel-Symbol zeigt die Kombination an. In Eingabefeldern, bei IME und Tastenwiederholung greifen diese beiden Shortcuts nicht. Rechtsklick und Doppelklick bleiben nativ; Alt+H speichert keine Keywords mehr.
 
+Kann der Öffnungszustand nicht gespeichert werden, schaltet der Shortcut das Panel trotzdem für die aktuelle Sitzung um. Eine Meldung am Öffnen-Symbol erklärt den Fehler; beim nächsten Besuch kann der zuvor gespeicherte Zustand wieder gelten.
+
 Ist Alt+Shift+P bereits als eigener Markieren-Shortcut gespeichert oder wird neu dafür aufgezeichnet, hat diese Auswahl Vorrang. Die Kombination öffnet dann kein Panel; dessen Hovertext zeigt sie nicht als Panel-Shortcut an. **Hilfe & Shortcuts** erklärt den Konflikt. Durch Ändern oder Zurücksetzen des Markieren-Shortcuts wird Alt+Shift+P wieder für das Panel frei.
 
 | Taste | Aktion |

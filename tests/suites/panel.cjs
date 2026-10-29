@@ -47,6 +47,19 @@ module.exports = ({ open, settled, eq, ok }) => {
             eq(await page.locator('#shortcut-label').textContent(),'Alt + Shift + H','Malformed selection shortcut falls back safely');
             eq((page.__errors||[]).length,0,'No startup error');
         },
+        async panel_shortcut_storage_failure_toggles_once_and_explains(browser) {
+            const page=await open(browser,{keywords:[],panelOpen:true});await page.focus('#page-heading');
+            await page.evaluate(()=>{window.__write=GM_setValue;window.GM_setValue=(key,value)=>{if(key==='hl_panel_state')throw Error('quota');window.__write(key,value);};});
+            await page.keyboard.press('Alt+Shift+P');
+            eq(await page.locator('#slim-hl-panel').isVisible(),false,'Storage failure cannot toggle the panel twice');
+            const feedback=page.locator('#slim-hl-feedback');await feedback.waitFor({state:'visible'});
+            ok((await feedback.textContent()).includes('gespeichert'),'Failed persistence is explained without reopening the panel');
+            eq(await page.evaluate(()=>window.__store.hl_panel_state.open),true,'Stored state remains untouched on failure');
+            eq((page.__errors||[]).length,0,'Failure is handled');
+            await page.evaluate(()=>{window.GM_setValue=window.__write;});await page.keyboard.press('Alt+Shift+P');
+            eq(await page.locator('#slim-hl-panel').isVisible(),true,'Retry opens normally');
+            eq(await feedback.isVisible(),false,'Successful retry clears the stale failure');
+        },
         async review_panel_defaults_to_right_center_and_tracks_viewport(browser) {
             for (const viewport of [{width:1280,height:900},{width:390,height:844}]) {
                 const page=await panel(browser,{keywords:[],permanentOpen:false,viewport});
