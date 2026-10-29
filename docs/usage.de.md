@@ -58,9 +58,11 @@ Wenn direkter Zwischenablagenzugriff scheitert, erscheint ein beschriftetes Text
 
 Unter **Einstellungen → Darstellung** stehen **Hell** und **Dunkel** zur Wahl. Panel, Auswahlaktionen und Formularfelder wechseln sofort gemeinsam. Dunkel bleibt die Voreinstellung; Webseitenfarben und die gewählten Markierungsfarben werden nicht verändert.
 
+**Transparenz der Bedienelemente** lässt Text hinter Panel, Auswahlmenü und Öffnen-Button sichtbar werden. Der Regler reicht von **0 %** (vollständig deckend, Standard) bis **80 %** (stark durchsichtig), in 5-%-Schritten. Logo, Beschriftungen und Bedienelemente werden gemeinsam durchsichtig; die Markierungen im Seitentext behalten ihre Farben. Die Vorschau wirkt sofort, und der gewählte Wert bleibt für weitere Seitenaufrufe gespeichert. **Transparenz zurücksetzen** stellt nur diesen Wert auf 0 % zurück. Für möglichst gut lesbare Bedienelemente eine geringe Transparenz wählen.
+
 Der Öffnen-Button ist standardmäßig **56 px** groß. **Größe des Öffnen-Buttons** lässt sich von 44 bis 80 px verändern; **Größe zurücksetzen** stellt 56 px wieder her. **Position des Öffnen-Buttons** bietet die vier Bildschirmecken. **Abstand zum Rand** reicht von 8 bis 80 px und gilt für beide angrenzenden Ränder. Sichere Bildschirmränder, etwa an Geräten mit Aussparungen, haben Vorrang.
 
-Die Regler zeigen den aktuellen Pixelwert und lassen sich mit den Pfeiltasten in 4-px-Schritten bedienen. Änderungen gelten sofort und werden lokal für weitere Seitenaufrufe gespeichert. Bei einem Speicherfehler wird die vorherige Einstellung wiederhergestellt. Der Größen-Reset verändert weder Position noch Farbschema.
+Die Regler für Größe und Randabstand zeigen den aktuellen Pixelwert und lassen sich mit den Pfeiltasten in 4-px-Schritten bedienen. Änderungen gelten sofort und werden lokal für weitere Seitenaufrufe gespeichert. Bei einem Speicherfehler wird die vorherige Einstellung wiederhergestellt. Der Größen-Reset verändert weder Position noch Farbschema.
 
 ![Helles Farbschema mit Seitenmarkierungen](../assets/screenshot-light.png)
 

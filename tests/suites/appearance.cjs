@@ -12,6 +12,47 @@ module.exports = ({ open, eq, ok }) => {
         await page.locator('#selection-trigger').waitFor({ state: 'visible' });
     };
     return {
+        async appearance_transparency_applies_to_all_surfaces_and_restores(browser) {
+            const page = await open(browser, { panelOpen: true, keywords: [], store: { hl_launcher_size: 64 }, html: '<p id="passage">Solarenergie</p>' });
+            await selectText(page); await settings(page);
+            const slider = page.getByRole('slider', { name: 'Transparenz der Bedienelemente', exact: true });
+            await slider.focus(); await page.keyboard.press('Home');
+            for (let i=0;i<7;i++) await page.keyboard.press('ArrowRight');
+            eq(await slider.inputValue(), '35'); eq(await page.locator('#ui-transparency-value').textContent(), '35 %');
+            for (const id of ['slim-hl-panel','slim-selection-tools','slim-hl-toggle']) eq(await page.locator('#'+id).evaluate(el=>getComputedStyle(el).opacity), '0.65', id+' is translucent');
+            eq(await page.evaluate(()=>window.__store.hl_ui_transparency),35,'Preference persisted');
+            await page.selectOption('#ui-theme','light');
+            eq(await page.locator('#slim-hl-panel').evaluate(el=>getComputedStyle(el).opacity),'0.65','Theme changes preserve transparency');
+            await page.selectOption('#ui-lang','en');
+            eq(await page.getByRole('slider',{name:'Interface transparency',exact:true}).inputValue(),'35','Locale recreation retains setting');
+            const restored = await open(browser,{panelOpen:true,keywords:[],store:await page.evaluate(()=>window.__store)});
+            eq(await restored.locator('#slim-hl-toggle').evaluate(el=>getComputedStyle(el).opacity),'0.65','Restored launcher is translucent');
+            await restored.locator('#settings-section').evaluate(el=>{el.open=true;});
+            await restored.getByRole('button',{name:'Reset transparency',exact:true}).click();
+            eq(await restored.locator('#slim-hl-panel').evaluate(el=>getComputedStyle(el).opacity),'1');
+            eq(await restored.evaluate(()=>window.__store.hl_ui_transparency),0);
+            eq(await restored.locator('#slim-hl-toggle').evaluate(el=>Math.round(el.getBoundingClientRect().width)),64,'Reset only changes transparency');
+        },
+        async appearance_transparency_invalid_values_are_bounded(browser) {
+            for (const [value,expected] of [[1000,80],[-12,0],['broken',0],[37,35]]) {
+                const page=await open(browser,{panelOpen:true,keywords:[],store:{hl_ui_transparency:value}});
+                await settings(page);
+                eq(await page.locator('#ui-transparency').inputValue(),String(expected),'Stored preference normalized');
+                eq(await page.locator('#slim-hl-toggle').evaluate(el=>getComputedStyle(el).opacity),String((100-expected)/100));
+                await page.close();
+            }
+        },
+        async appearance_transparency_failed_write_restores_and_can_retry(browser) {
+            const page=await open(browser,{panelOpen:true,keywords:[],store:{hl_ui_transparency:30}});await settings(page);
+            await page.evaluate(()=>{window.__write=GM_setValue;window.GM_setValue=(key,value)=>{if(key==='hl_ui_transparency')throw Error('quota');window.__write(key,value);};});
+            await page.locator('#ui-transparency').focus();await page.keyboard.press('ArrowRight');
+            eq(await page.locator('#ui-transparency').inputValue(),'30','Failed write rolls slider back');
+            eq(await page.locator('#slim-hl-toggle').evaluate(el=>getComputedStyle(el).opacity),'0.7','Failed write rolls appearance back');
+            ok((await page.locator('#panel-status').textContent()).includes('nicht gespeichert'),'Failure is visible');
+            await page.evaluate(()=>{window.GM_setValue=window.__write;});await page.keyboard.press('ArrowRight');
+            eq(await page.evaluate(()=>window.__store.hl_ui_transparency),35,'Retry saves preference');
+            eq(await page.locator('#panel-status').textContent(),'','Successful retry clears failure');
+        },
         async appearance_logo_follows_theme_on_every_surface(browser) {
             const page = await open(browser, { panelOpen: true, keywords: [], store: { hl_ui_theme: 'dark' }, html: '<p id="passage">Solarenergie</p>' });
             await selectText(page);

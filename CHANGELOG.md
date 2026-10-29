@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.4
+
+- Unter Einstellungen → Darstellung lässt sich die Transparenz von Panel, Auswahlmenü und Öffnen-Button einschließlich Logo von 0 bis 80 % in 5-%-Schritten einstellen. Standard bleibt vollständig deckend; Seitenmarkierungen bleiben kräftig.
+- Direkte Vorschau, Prozentanzeige, Tastaturbedienung und Zurücksetzen. Die Einstellung wird lokal gespeichert; ein Speicherfehler stellt den vorherigen Wert wieder her.
+
 ## 4.5.3
 
 ### Darstellung
