@@ -10,6 +10,7 @@
 | [Usage (English)](usage.en.md) | Selection, navigation, saving, shortcuts and export |
 | [Änderungen / Changelog](../CHANGELOG.md) | Versionsverlauf und Migrationen |
 | [Sicherheit / Security](../SECURITY.md) | Sicherheitsprobleme vertraulich melden |
+| [Designrichtlinie](design-guidelines.de.md) | Helles Logo, Symbolfamilie, Farbrollen und Gestaltungsregeln |
 
 ## Entwicklung / Development
 
@@ -30,7 +31,7 @@ Die technischen Leitfäden sind auf Englisch; die Bedienungsanleitung ist zweisp
 
 ```text
 .github/       CI, dependency updates, issue and pull-request templates
-assets/        Public icon and README screenshot
+assets/        Shared logo, SVG action icons and public screenshots
 docs/          Current guides and this index
   archive/     Historical reviews, evidence, plans and specifications
   research/    Current technical research with primary-source citations

@@ -12,6 +12,21 @@ module.exports = ({ open, eq, ok }) => {
         await page.locator('#selection-trigger').waitFor({ state: 'visible' });
     };
     return {
+        async appearance_selection_action_icons_fit_narrow_viewports(browser) {
+            for (const width of [320, 390]) for (const lang of ['de', 'en']) {
+                const page = await open(browser, { viewport: { width, height: 700 }, keywords: [], store: { hl_ui_theme: 'light', hl_lang: lang }, html: '<style>body{margin:0;font:18px/1.8 system-ui;padding:24px}</style><p>Neue Wege beginnen mit Forschung. <b id="passage">Solarenergie</b> ist ein wichtiger Teil davon.</p>' });
+                await selectText(page);
+                await page.locator('#selection-trigger').hover();
+                const box = await page.locator('#slim-selection-tools').boundingBox();
+                ok(box.x >= 8 && box.x + box.width <= width - 8 + 1, 'Expanded selection actions retain viewport margins: '+JSON.stringify({width,lang,box}));
+                for (const id of ['selection-highlight', 'selection-web']) {
+                    eq(await page.locator('#'+id+' svg').getAttribute('aria-hidden'), 'true', 'Decorative action icon');
+                    const target=await page.locator('#'+id).boundingBox();
+                    ok(target.height>=44 && target.x>=box.x && target.x+target.width<=box.x+box.width, 'Labeled action stays reachable');
+                }
+                await page.close();
+            }
+        },
         async appearance_host_control_ids_are_untouched(browser) {
             const page = await open(browser, { panelOpen: true, keywords: [], store: { hl_ui_theme: 'light', hl_launcher_size: 72, hl_launcher_position: 'top-left', hl_launcher_inset: 28 }, html: '<main id="host"><select id="ui-theme"><option value="host">Host</option><option value="light">Light</option></select><input id="launcher-size" value="host"><output id="launcher-size-value">host</output><select id="launcher-position"><option value="host">Host</option><option value="top-left">Top left</option></select><input id="launcher-inset" value="host"><output id="launcher-inset-value">host</output></main>' });
             for (const id of ['ui-theme', 'launcher-size', 'launcher-size-value', 'launcher-position', 'launcher-inset', 'launcher-inset-value']) {

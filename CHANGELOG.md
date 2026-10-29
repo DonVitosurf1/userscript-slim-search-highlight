@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.5.2
+
+- Helles Logo mit weißem Grund, dunklen Textlinien und kräftigen gelben, türkisen und pinken Markierungen. Öffnen-Button, Panelkopf und Auswahl-Symbol verwenden dieselbe Gestaltung.
+- Zusätzliche SVG-Symbole für „Alle Vorkommen markieren“ und „Im Web suchen“, mit weiterhin sichtbaren und übersetzten Beschriftungen.
+- Auswahlaktionen behalten auch auf schmalen Bildschirmen ihren Randabstand; Icons bleiben neben umgebrochenen Beschriftungen sichtbar.
+- Logo und Funktions-Icons werden aus ihren Originaldateien in das Userscript eingebettet. Designrichtlinie und technisches Designsystem dokumentieren Farben, Formen, Größen und Pflege.
+
 ## 4.5.1
 
 - Neue Seitenmarkierungen erhalten automatisch unterschiedliche, kräftige Farben. Bereits belegte Farben der Seite und ihrer aktiven Keywords werden übersprungen; nach der Startpalette folgen zusätzliche helle, gesättigte Farben.

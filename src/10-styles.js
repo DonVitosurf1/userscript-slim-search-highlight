@@ -3,7 +3,7 @@ const UI_CSS = `
     ::highlight(slim-page-current) { background-color: #ffca28; color: #000; text-decoration: underline; }
     #slim-selection-tools {
         all: initial; position: fixed; z-index: 2147483647; display: flex; align-items: start; gap: 6px;
-        max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto;
+        width: max-content; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; box-sizing: border-box;
         background: var(--hl-surface); color: var(--hl-text); border-radius: 8px; padding: 4px;
         box-shadow: 0 4px 18px var(--hl-shadow); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme);
     }
@@ -13,14 +13,16 @@ const UI_CSS = `
         display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 10px;
         border: 1px solid var(--hl-border); border-radius: var(--hl-radius); cursor: pointer; background: var(--hl-field); color: var(--hl-text);
     }
-    #slim-selection-tools #selection-trigger { width: 40px; }
+    #slim-selection-tools #selection-trigger { width: 40px; padding: 6px; }
+    #slim-selection-tools #selection-trigger img { display: block; width: 26px; height: 26px; }
     #slim-selection-tools button:hover { background: var(--hl-hover); }
     #slim-selection-tools button:active { background: var(--hl-active); }
     #slim-selection-tools button:disabled { opacity: .5; cursor: default; }
     #slim-selection-tools :focus-visible { outline: 2px solid var(--hl-focus); outline-offset: -2px; }
-    #slim-selection-tools svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    #slim-selection-tools svg { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     #slim-selection-tools #selection-actions { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-    #slim-selection-tools #selection-actions button { white-space: normal; text-align: left; justify-content: start; }
+    #slim-selection-tools #selection-actions button { gap: 8px; white-space: normal; text-align: left; justify-content: start; }
+    #slim-selection-tools #selection-actions button > span { min-width: 0; overflow-wrap: anywhere; }
     #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
     #slim-hl-panel .page-item { display: block; margin: 8px 0; padding-bottom: 6px; border-bottom: 1px solid var(--hl-divider); }
     #slim-hl-panel .page-row { display: flex; align-items: center; gap: 8px; }

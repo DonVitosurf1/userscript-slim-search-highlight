@@ -4,6 +4,8 @@
 
 [Deutsch](README.md) · [Documentation](docs/README.md) · [Usage](docs/usage.en.md) · [Development](docs/development.md)
 
+A light logo and a shared icon family for selection, highlighting and web search: [design guideline (German)](docs/design-guidelines.de.md) · [technical design system](DESIGN.md).
+
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Select words, sentences or paragraphs and highlight every occurrence of the same passage. A local Tampermonkey/Violentmonkey userscript with no account, server or runtime dependencies.
@@ -54,7 +56,7 @@ scripts/      build, benchmark and screenshot capture
 tests/        browser fixtures, named suites and runner
 userscript/   generated installable userscript
 docs/         current guides and historical development archive
-assets/       logo and screenshot
+assets/       logo, SVG icons and screenshots
 artifacts/    local generated screenshots; not tracked
 ```
 

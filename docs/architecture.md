@@ -9,7 +9,8 @@ Slim Search Highlight has no production dependencies and installs as one userscr
 | Source | Responsibility |
 |---|---|
 | `src/metadata.txt` | Userscript identity, version, grants and update/install URLs |
-| `src/00-state-i18n.js` | Preferences including validated appearance values, embedded logo, German/English messages |
+| `assets/icon.svg`, `assets/icons/` | Canonical shared logo and selection-action SVG assets, embedded by the build |
+| `src/00-state-i18n.js` | Preferences including validated appearance values, German/English messages |
 | `src/10-styles.js` | Scoped panel/selection toolbar CSS and tokens |
 | `src/20-utils.js` | Icons, escaping, contrast calculation |
 | `src/25-private-ui.js` | Closed UI root, private node references and activation boundary |
@@ -24,6 +25,8 @@ Slim Search Highlight has no production dependencies and installs as one userscr
 These are ordered source sections sharing one private lexical scope, **not isolated ES modules**. Functions can reference later declarations, but initialization must finish before event handlers run. Keep side effects that start the application in the final section. Cross-cutting changes should retain regression coverage; the manifest is the composition contract.
 
 `npm run build` writes the artifact. `npm run check` compares it byte-for-byte with the source-generated result and checks JavaScript syntax. `npm test` includes this check. Do not hand-edit the generated file.
+
+The build also embeds `assets/icon.svg` as the shared `LOGO` and the SVG action icons listed in the manifest as `INLINE_ICONS` before the source sections. Assets are canonical; no duplicated base64 source or runtime icon fetch is needed. Inline action SVGs are decorative and their buttons retain localized labels.
 
 ## Two highlighting paths
 

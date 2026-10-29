@@ -7,7 +7,7 @@ const ICONS = {
     highlight: '<path d="m4 16 9-11 6 6-11 9H4v-4Z M11 7l6 6 M3 22h15"/>',
     reset: '<path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/>'
 };
-const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
+const icon = name => INLINE_ICONS[name] || `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
 const escapeHTML = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 let removedKeyword = null;
 let composing = false;
