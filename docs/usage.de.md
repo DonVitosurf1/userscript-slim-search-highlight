@@ -66,7 +66,7 @@ Wenn direkter Zwischenablagenzugriff scheitert, öffnet sich das Panel mit einem
 
 Unter **Einstellungen → Darstellung** stehen **Hell** und **Dunkel** zur Wahl. Panel, Auswahlaktionen und Formularfelder wechseln sofort gemeinsam. Dunkel bleibt die Voreinstellung; Webseitenfarben und die gewählten Markierungsfarben werden nicht verändert.
 
-**Stil des Auswahl-Symbols** bietet zwei direkt umschaltbare Varianten: **Logo-Kachel (wie Öffnen-Button)** zeigt das vollständige Logo ohne zusätzlichen Buttonrahmen und ist der Standard. **Buttonfläche** zeigt die transparenten Markierungen auf einer gemeinsamen Schaltfläche. Das Auswahlmenü passt sich dem Stil an. Die Wahl wird lokal gespeichert und bleibt auch nach einem Sprachwechsel oder Neuladen erhalten; Größe und Lage des Panel-Öffners sind davon unabhängig.
+Das Auswahl-Symbol verwendet dieselbe zum Farbschema passende **Logo-Kachel wie der Panel-Öffner**, ohne zusätzlichen Buttonrahmen. Das Auswahlmenü hat eine dazu passende ruhige Fläche. Größe und Lage des Panel-Öffners lassen sich unabhängig davon einstellen.
 
 **Transparenz der Bedienelemente** lässt Text hinter Panel, Auswahlmenü und Öffnen-Button sichtbar werden. Der Regler reicht von **0 %** (vollständig deckend, Standard) bis **80 %** (stark durchsichtig), in 5-%-Schritten. Logo, Beschriftungen und Bedienelemente werden gemeinsam durchsichtig; die Markierungen im Seitentext behalten ihre Farben. Die Vorschau wirkt sofort, und der gewählte Wert bleibt für weitere Seitenaufrufe gespeichert. **Transparenz zurücksetzen** stellt nur diesen Wert auf 0 % zurück. Für möglichst gut lesbare Bedienelemente eine geringe Transparenz wählen.
 

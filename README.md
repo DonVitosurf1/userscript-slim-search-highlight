@@ -26,7 +26,7 @@ Seitenmarkierungen benötigen **CSS Custom Highlights**. Ohne diese Browser-API 
 
 ![Panel und Seitenmarkierungen](assets/screenshot.png)
 
-Unter **Einstellungen → Darstellung** wählst du Hell/Dunkel, den Stil des Auswahl-Symbols (**Logo-Kachel** oder **Buttonfläche**), Transparenz sowie Größe und Lage des Panel-Öffners. Die Auswahl wird lokal gespeichert.
+Unter **Einstellungen → Darstellung** wählst du Hell/Dunkel, Transparenz sowie Größe und Lage des Panel-Öffners. Die Darstellungseinstellungen werden lokal gespeichert.
 
 Google-Suchwörter automatisch übernehmen, gespeicherte Passagen verwalten, zitieren und exportieren: [vollständige Bedienungsanleitung](docs/usage.de.md). Bei Problemen hilft der Abschnitt [Problemlösungen](docs/usage.de.md#problemlösungen).
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.10
+
+- Das Auswahl-Symbol verwendet ausschließlich die Logo-Kachel wie der Panel-Öffner. Die alternative Buttonfläche und ihr Einstellungsfeld sind entfernt; bisherige Stilwerte werden ignoriert.
+- Nicht mehr benötigte Logo-Ableitung, CSS-Varianten, Übersetzungen, Vergleichsbilder und Variantentests sind entfernt. Dokumentation und Screenshot-Prüfung beschreiben nur noch die Logo-Kachel in Hell/Dunkel.
+
 ## 4.5.9
 
 - Alt+Shift+P wird auch bei einem Speicherfehler nur einmal verarbeitet. Das Panel bleibt bedienbar; eine lokale Meldung erklärt, wenn sein Öffnungszustand nicht für den nächsten Besuch gespeichert werden konnte. Eine erfolgreiche Wiederholung entfernt die Fehlermeldung.

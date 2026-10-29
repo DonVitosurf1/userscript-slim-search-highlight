@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
   <title>Slim Search Highlight</title>
-  <rect id="logo-tile" x="2" y="2" width="124" height="124" rx="28" fill="#ffffff" stroke="#d9e2e7" stroke-width="2"/>
+  <rect x="2" y="2" width="124" height="124" rx="28" fill="#ffffff" stroke="#d9e2e7" stroke-width="2"/>
   <rect x="20" y="28" width="66" height="20" rx="5" fill="#ffdf00"/>
   <rect x="30" y="55" width="56" height="20" rx="5" fill="#00e5ff"/>
   <rect x="20" y="82" width="54" height="20" rx="5" fill="#ff80ab"/>
