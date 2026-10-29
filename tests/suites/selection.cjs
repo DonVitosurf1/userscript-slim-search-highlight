@@ -9,6 +9,23 @@ module.exports = ({ open, eq, ok }) => {
     const highlight = async page => {await select(page);await page.keyboard.press('Alt+Shift+H');};
     const settleCount = async (page,n) => page.waitForFunction(n=>(CSS.highlights?.get('slim-page')?.size||0)===n,n,{timeout:3000});
     return {
+        async selection_hover_hints_follow_the_configured_shortcut(browser){
+            const page=await pageWith(browser);await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});
+            ok((await page.locator('#selection-trigger').getAttribute('title')).includes('Alt + Shift + H'),'Selection hover explains the current marking shortcut');
+            await page.locator('#selection-trigger').hover();
+            eq(await page.locator('#selection-highlight').getAttribute('aria-keyshortcuts'),'Alt+Shift+H');
+            await page.locator('#settings-section').evaluate(el=>{el.open=true;});await page.click('#record-shortcut');await page.keyboard.press('Control+Shift+Y');
+            await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});await page.locator('#selection-trigger').hover();
+            ok((await page.locator('#selection-highlight').getAttribute('title')).includes('Strg + Shift + Y'),'Tooltip follows the recorded shortcut');
+            eq(await page.locator('#selection-highlight').getAttribute('aria-keyshortcuts'),'Control+Shift+Y');
+            await page.click('#disable-shortcut');await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});await page.locator('#selection-trigger').hover();
+            ok(!(await page.locator('#selection-highlight').getAttribute('title')).includes('Shift + Y'),'Disabled shortcut is no longer advertised');
+            eq(await page.locator('#selection-highlight').getAttribute('aria-keyshortcuts'),null);
+            await page.click('#reset-shortcut');await page.selectOption('#ui-lang','en');
+            await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});await page.locator('#selection-trigger').hover();
+            ok((await page.locator('#selection-trigger').getAttribute('title')).includes('Highlight all occurrences: Alt + Shift + H'),'Reset and language recreation update the hint');
+            eq(await page.locator('#selection-highlight').getAttribute('aria-keyshortcuts'),'Alt+Shift+H');
+        },
         async selection_menu_reflows_above_and_below_with_copy_actions(browser){
             for(const [width,height,top] of [[1200,800,30],[320,500,400]]){
                 const page=await pageWith(browser,{panelOpen:false,viewport:{width,height},html:`<style>body{margin:0}#choose{position:absolute;top:${top}px;left:12px}</style><p id="choose">Solarenergie</p>`});

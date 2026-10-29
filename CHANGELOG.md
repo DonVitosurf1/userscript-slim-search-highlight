@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.5.8
+
+- Unter Einstellungen → Darstellung lässt sich der Stil des Auswahl-Symbols wählen: „Logo-Kachel“ wie beim Panel-Öffner oder „Buttonfläche“ mit der transparenten Bildmarke. Beide Varianten bleiben in derselben Installation direkt vergleichbar; neuer Standard ist die Logo-Kachel.
+- Die Logo-Kachel kommt ohne äußeren Buttonrahmen aus und erhält ein optisch passendes Auswahlmenü. Hover, Tastaturfokus, Hell/Dunkel, Transparenz und kleine Bildschirmgrößen bleiben berücksichtigt.
+- Die Wahl wirkt sofort, wird lokal gespeichert und bei einem Speicherfehler zurückgenommen. Die Screenshot-Prüfung deckt beide Varianten ab.
+- **Alt+Shift+P** öffnet und schließt das Panel; der Hover-Hinweis am Öffnen-Symbol nennt die Tastenkombination. Der konfigurierte Markieren-Shortcut erscheint ebenfalls am Auswahl-Symbol und an „Alle Vorkommen markieren“ und wird beim Ändern, Zurücksetzen oder Abschalten aktualisiert.
+- Bestehende Auswahl-Belegungen haben Vorrang: Ist Alt+Shift+P bereits dem Markieren zugewiesen, bleibt diese Funktion erhalten; die Panelkombination wird dann nicht beworben und die Hilfe erklärt den Konflikt. Eingabefelder, IME, Tastenwiederholung und ausgeschlossene Seiten bleiben geschützt.
+- Deutsch-/englischsprachiger Einstieg, Bedienung, Problemlösungen, Architektur und Release-Prüfungen sind auf den aktuellen Stand gebracht.
+
 ## 4.5.7
 
 - Das Auswahl-Symbol verwendet nur noch die farbigen Markierungen und die Trefferleiste auf einer gemeinsamen Buttonfläche. Die zusätzliche innere Logo-Kachel entfällt; Hell/Dunkel, Hover, Tastaturfokus und Klickfläche bleiben erhalten.

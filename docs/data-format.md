@@ -41,12 +41,19 @@ These independent local preferences apply across pages. They are separate from p
 | Key | Values | Default |
 |---|---|---|
 | `hl_ui_theme` | `dark`, `light` | `dark` |
+| `hl_selection_style` | `logo` (standalone logo tile), `button` (transparent mark on a button) | `logo` |
 | `hl_ui_transparency` | 0–80%, steps of 5; 0 = opaque | 0 |
 | `hl_launcher_size` | 44–80 px, steps of 4 | 56 |
 | `hl_launcher_position` | `bottom-right`, `bottom-left`, `top-right`, `top-left` | `bottom-right` |
 | `hl_launcher_inset` | 8–80 px, steps of 4 | 20 |
 
-Unknown theme/position values use the default; numeric sizes/insets/transparency are rounded and bounded, and invalid types use the default. Failed writes restore the last saved appearance. Size reset affects only `hl_launcher_size`; transparency reset affects only `hl_ui_transparency`.
+Unknown theme/selection-style/position values use the default; numeric sizes/insets/transparency are rounded and bounded, and invalid types use the default. Failed writes restore the last saved appearance. Size reset affects only `hl_launcher_size`; transparency reset affects only `hl_ui_transparency`.
+
+## Keyboard preferences
+
+`hl_selection_shortcut` stores an object such as `{"key":"h","alt":true,"ctrl":false,"shift":true,"meta":false}`; `null` disables selection highlighting by shortcut. A valid key is a single letter/digit string with Alt, Ctrl or Meta; invalid records fall back to Alt+Shift+H. The explicit reset restores that default.
+
+Alt+Shift+P is the panel toggle and has no separate stored preference. If a saved selection shortcut uses that exact combination, the selection assignment wins and the panel combination is unavailable. Changing/resetting the selection shortcut restores the panel binding. Tooltip hints and accessible shortcut metadata follow the active assignment.
 
 ## Search-result context (separate from saved pages)
 

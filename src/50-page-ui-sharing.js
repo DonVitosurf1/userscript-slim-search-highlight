@@ -150,19 +150,40 @@ function exportPageMarkdown() {
     downloadLocal('slim-search-highlights.md', lines.join('\n\n---\n\n') + '\n', 'text/markdown');
 }
 
-function shortcutLabel() {
-    if (!selectionShortcut) return t('shortcutOff');
-    return [selectionShortcut.ctrl && t('controlKey'), selectionShortcut.alt && 'Alt', selectionShortcut.shift && 'Shift', selectionShortcut.meta && 'Meta', selectionShortcut.key.toUpperCase()].filter(Boolean).join(' + ');
+function shortcutLabel(shortcut = selectionShortcut) {
+    if (!shortcut) return t('shortcutOff');
+    return [shortcut.ctrl && t('controlKey'), shortcut.alt && 'Alt', shortcut.shift && 'Shift', shortcut.meta && 'Meta', shortcut.key.toUpperCase()].filter(Boolean).join(' + ');
 }
 
 function renderShortcut() {
     const label = uiById('shortcut-label'); if (label) label.textContent = shortcutLabel();
     const hint = uiById('page-shortcut-hint'); if (hint) hint.textContent = t('shortcutHint', shortcutLabel());
     const record = uiById('record-shortcut'); if (record) record.textContent = t(recordingShortcut ? 'recordingShortcut' : 'recordShortcut');
+    const panelShortcutActive = panelShortcutAvailable();
+    const toggle = uiById('slim-hl-toggle');
+    if (toggle) {
+        toggle.title = t('togglePanel') + (panelShortcutActive ? ' (' + shortcutLabel(PANEL_SHORTCUT) + ')' : '');
+        if (panelShortcutActive) toggle.setAttribute('aria-keyshortcuts', 'Alt+Shift+P');
+        else toggle.removeAttribute('aria-keyshortcuts');
+    }
+    const panelHint = uiById('panel-shortcut-hint');
+    if (panelHint) panelHint.textContent = t(panelShortcutActive ? 'panelShortcutHint' : 'panelShortcutConflict', shortcutLabel(PANEL_SHORTCUT));
+    const trigger = uiById('selection-trigger');
+    if (trigger) trigger.title = t('selectionActions') + (selectionShortcut ? '\n' + t('highlightSelection') + ': ' + shortcutLabel() : '');
+    const highlight = uiById('selection-highlight');
+    if (highlight) {
+        highlight.title = t('highlightSelectionHint') + (selectionShortcut ? ' (' + shortcutLabel() + ')' : '');
+        if (selectionShortcut) highlight.setAttribute('aria-keyshortcuts', [selectionShortcut.ctrl && 'Control', selectionShortcut.alt && 'Alt', selectionShortcut.shift && 'Shift', selectionShortcut.meta && 'Meta', selectionShortcut.key.toUpperCase()].filter(Boolean).join('+'));
+        else highlight.removeAttribute('aria-keyshortcuts');
+    }
 }
 
-function shortcutMatches(e) {
-    return selectionShortcut && e.key.toLowerCase() === selectionShortcut.key.toLowerCase() && e.altKey === !!selectionShortcut.alt && e.ctrlKey === !!selectionShortcut.ctrl && e.shiftKey === !!selectionShortcut.shift && e.metaKey === !!selectionShortcut.meta;
+function shortcutMatches(e, shortcut = selectionShortcut) {
+    return shortcut && e.key.toLowerCase() === shortcut.key.toLowerCase() && e.altKey === !!shortcut.alt && e.ctrlKey === !!shortcut.ctrl && e.shiftKey === !!shortcut.shift && e.metaKey === !!shortcut.meta;
+}
+
+function panelShortcutAvailable() {
+    return !(selectionShortcut?.key.toLowerCase() === 'p' && selectionShortcut.alt && selectionShortcut.shift && !selectionShortcut.ctrl && !selectionShortcut.meta);
 }
 
 function editingTarget(target) {
@@ -215,7 +236,7 @@ function positionSelectionTools() {
 function createSelectionTools() {
     const tools = document.createElement('div'); tools.id = 'slim-selection-tools'; tools.hidden = true;
     tools.setAttribute('role', 'toolbar'); tools.setAttribute('aria-label', t('selectionActions')); tools.lang = currentLang();
-    tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img data-hl-logo="mark" src="${LOGO_MARKS[uiTheme]}" width="26" height="26" alt="" draggable="false"></button>
+    tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img data-hl-logo="${selectionStyle === 'button' ? 'mark' : 'tile'}" src="${(selectionStyle === 'button' ? LOGO_MARKS : LOGOS)[uiTheme]}" width="26" height="26" alt="" draggable="false"></button>
         <div id="selection-actions" hidden><button type="button" id="selection-highlight" title="${t('highlightSelectionHint')}">${icon('highlightAll')}<span>${t('highlightSelection')}</span></button><button type="button" id="selection-web">${icon('searchWeb')}<span>${t('webSearch')}</span></button><details id="selection-share"><summary>${t('shareActions')}</summary><button type="button" id="selection-quote">${t('copyQuote')}</button><button type="button" id="selection-link">${t('copyLink')}</button></details><p id="selection-support" role="status" hidden>${t('highlightUnsupported')}</p></div>`;
     const expand = () => { tools.querySelector('#selection-actions').hidden = false; tools.querySelector('#selection-trigger').setAttribute('aria-expanded', 'true'); positionSelectionTools(); };
     tools.querySelector('#selection-trigger').onclick = () => {
@@ -236,6 +257,7 @@ function createSelectionTools() {
     ensureUIRoot().append(tools);
     ensureCopyFeedback();
     applyAppearance();
+    renderShortcut();
     return tools;
 }
 

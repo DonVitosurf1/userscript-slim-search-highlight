@@ -4,6 +4,10 @@ function applyAppearance() {
         if (el) {
             el.dataset.theme = uiTheme;
             el.style.opacity = String((100 - uiTransparency) / 100);
+            if (id === 'slim-selection-tools') {
+                el.dataset.symbolStyle = selectionStyle;
+                el.querySelector('#selection-trigger img').dataset.hlLogo = selectionStyle === 'button' ? 'mark' : 'tile';
+            }
             el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = (image.dataset.hlLogo === 'mark' ? LOGO_MARKS : LOGOS)[uiTheme]; });
             if (id === 'slim-hl-feedback') { el.textContent = el.hidden ? '' : t(el.dataset.message); el.lang = currentLang(); }
         }
@@ -17,6 +21,8 @@ function applyAppearance() {
     const panel = uiById('slim-hl-panel');
     const theme = panel?.querySelector('#ui-theme');
     if (theme) theme.value = uiTheme;
+    const style = panel?.querySelector('#selection-style');
+    if (style) style.value = selectionStyle;
     const transparency = panel?.querySelector('#ui-transparency');
     if (transparency) { transparency.value = uiTransparency; transparency.setAttribute('aria-valuetext', t('transparencyValue', uiTransparency)); }
     const transparencyOutput = panel?.querySelector('#ui-transparency-value');
@@ -31,6 +37,7 @@ function applyAppearance() {
     if (inset) { inset.value = launcherInset; inset.setAttribute('aria-valuetext', launcherInset + ' px'); }
     const insetOutput = panel?.querySelector('#launcher-inset-value');
     if (insetOutput) insetOutput.value = launcherInset + ' px';
+    positionSelectionTools();
 }
 
 function saveAppearance() {
@@ -40,6 +47,7 @@ function saveAppearance() {
     }
     catch {
         uiTheme = JSON.parse(lastSaved.hl_ui_theme);
+        selectionStyle = JSON.parse(lastSaved.hl_selection_style);
         uiTransparency = normalizeUITransparency(JSON.parse(lastSaved.hl_ui_transparency));
         launcherSize = normalizeLauncherSize(JSON.parse(lastSaved.hl_launcher_size));
         launcherPosition = JSON.parse(lastSaved.hl_launcher_position);
@@ -82,6 +90,12 @@ function setPanelOpen(open, focus = true) {
         if (focus) (panelState.minimized ? panel.querySelector('#btn-min') : panel.querySelector('#page-heading')).focus({ preventScroll: true });
     } else if (focus) toggle?.focus({ preventScroll: true });
     save();
+}
+
+function handlePanelShortcut(event) {
+    if (!event.isTrusted || isBlacklisted() || event.isComposing || event.repeat || composing || recordingShortcut || editingTarget(event.target) || !panelShortcutAvailable() || !shortcutMatches(event, PANEL_SHORTCUT)) return false;
+    event.preventDefault(); hideSelectionTools(); setPanelOpen(!panelState.open);
+    return true;
 }
 
 function keywordError(text, index = -1) {
@@ -216,6 +230,8 @@ function createPanel(snapshot = null) {
                 <h3 class="section-title">${t('appearance')}</h3>
                 <label for="ui-theme">${t('colorTheme')}</label>
                 <select id="ui-theme"><option value="dark">${t('themeDark')}</option><option value="light">${t('themeLight')}</option></select>
+                <label for="selection-style">${t('selectionStyle')}</label>
+                <select id="selection-style"><option value="logo">${t('selectionLogo')}</option><option value="button">${t('selectionButton')}</option></select>
                 <label for="ui-transparency" class="section-title">${t('uiTransparency')}</label>
                 <div class="launcher-size-row"><input type="range" id="ui-transparency" min="0" max="80" step="5" aria-describedby="ui-transparency-hint"><output id="ui-transparency-value" for="ui-transparency"></output></div>
                 <p class="hint" id="ui-transparency-hint">${t('transparencyHint')}</p>
@@ -243,7 +259,7 @@ function createPanel(snapshot = null) {
                 <label for="ui-lang">${t('language')}</label>
                 <select id="ui-lang"><option value="auto">${t('langAuto')}</option><option value="de">Deutsch</option><option value="en">English</option></select>
             </div></details>
-            <details id="help-section"><summary>${t('helpTitle')}</summary><div class="details-body"><p class="hint">${t('pageHint')}</p><p class="hint">${t('navigationHelp')}</p><p id="page-shortcut-hint" class="hint"></p></div></details>
+            <details id="help-section"><summary>${t('helpTitle')}</summary><div class="details-body"><p class="hint">${t('pageHint')}</p><p class="hint">${t('navigationHelp')}</p><p id="page-shortcut-hint" class="hint"></p><p id="panel-shortcut-hint" class="hint"></p></div></details>
             </div>
         </div>`;
     ensureUIRoot().appendChild(panel);
@@ -332,6 +348,7 @@ function createPanel(snapshot = null) {
         }
     };
     panel.querySelector('#ui-theme').onchange = e => { uiTheme = e.target.value === 'light' ? 'light' : 'dark'; applyAppearance(); saveAppearance(); };
+    panel.querySelector('#selection-style').onchange = e => { selectionStyle = e.target.value === 'button' ? 'button' : 'logo'; applyAppearance(); saveAppearance(); };
     panel.querySelector('#ui-transparency').oninput = e => { uiTransparency = normalizeUITransparency(+e.target.value); applyAppearance(); };
     panel.querySelector('#ui-transparency').onchange = saveAppearance;
     panel.querySelector('#reset-transparency').onclick = () => { uiTransparency = 0; applyAppearance(); saveAppearance(); };
@@ -493,6 +510,7 @@ function createToggle() {
     btn.onclick = () => setPanelOpen(!panelState.open);
     ensureUIRoot().appendChild(btn);
     applyAppearance();
+    renderShortcut();
 }
 
 /** Nur auf Seiten registrieren, auf denen das Skript aktiv ist (nicht auf der Blacklist). */

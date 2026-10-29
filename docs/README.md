@@ -2,6 +2,14 @@
 
 [Projektstart / Project home](../README.md) · [English overview](../README.en.md)
 
+## Schnell zum Ziel / Quick links
+
+- [Installieren](../README.md#installation) / [Install](../README.en.md#installation)
+- [Auswählen und markieren](usage.de.md#auswählen-und-suchen) / [Select and highlight](usage.en.md#select-and-find)
+- [Darstellung und Symbolvarianten](usage.de.md#darstellung-und-öffnen-button) / [Appearance and symbol styles](usage.en.md#appearance-and-open-button)
+- [Tastatur und Panel](usage.de.md#tastatur-und-panel) / [Keyboard and panel](usage.en.md#keyboard-and-panel)
+- [Problemlösungen](usage.de.md#problemlösungen) / [Troubleshooting](usage.en.md#troubleshooting)
+
 ## Bedienung / Using the script
 
 | Dokument | Inhalt |
@@ -10,7 +18,7 @@
 | [Usage (English)](usage.en.md) | Selection, navigation, saving, shortcuts and export |
 | [Änderungen / Changelog](../CHANGELOG.md) | Versionsverlauf und Migrationen |
 | [Sicherheit / Security](../SECURITY.md) | Sicherheitsprobleme vertraulich melden |
-| [Designrichtlinie](design/README.md) | Helles Logo, Symbolfamilie, Farbrollen und Gestaltungsregeln |
+| [Designrichtlinie](design/README.md) | Hell/Dunkel, beide Symbolvarianten, Farbrollen und Gestaltungsregeln |
 
 ## Entwicklung / Development
 

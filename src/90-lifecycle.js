@@ -36,6 +36,7 @@ function bindGlobalHandlers() {
     document.addEventListener('keydown', e => {
         if (!e.isTrusted || isBlacklisted() || e.isComposing || composing) return;
         if (e.repeat) return;
+        if (handlePanelShortcut(e)) return;
         if (e.key === 'Escape' && !uiById('slim-selection-tools')?.hidden) hideSelectionTools(true);
         if (!editingTarget(e.target) && enabled && shortcutMatches(e)) {
             const selected = selectedDocumentText();

@@ -9,6 +9,7 @@ let selectionSnapshot = null;
 let selectionTimer;
 let recordingShortcut = false;
 const DEFAULT_SHORTCUT = { key: 'h', alt: true, ctrl: false, shift: true, meta: false };
+const PANEL_SHORTCUT = { key: 'p', alt: true, ctrl: false, shift: true, meta: false };
 const storedShortcut = GM_getValue('hl_selection_shortcut', DEFAULT_SHORTCUT);
 let selectionShortcut = storedShortcut === null ? null : validShortcut(storedShortcut) ? storedShortcut : { ...DEFAULT_SHORTCUT };
 
@@ -115,7 +116,7 @@ function renderSearchState() {
 }
 
 function validShortcut(value) {
-    return value && /^[a-z0-9]$/i.test(value.key || '') && (value.alt || value.ctrl || value.meta);
+    return value && typeof value.key === 'string' && /^[a-z0-9]$/i.test(value.key) && (value.alt || value.ctrl || value.meta);
 }
 
 const normalizePassage = text => String(text).replace(/\s+/g, ' ').trim();

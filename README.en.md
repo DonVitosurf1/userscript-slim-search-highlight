@@ -6,7 +6,7 @@
 
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Select words, sentences or paragraphs on webpages and highlight every occurrence. A local Tampermonkey/Violentmonkey userscript with no account, server or runtime dependencies.
+Highlight text in your browser, find every occurrence and search the web. A local Tampermonkey/Violentmonkey userscript with no account, server or runtime dependencies.
 
 ## Installation
 
@@ -22,10 +22,13 @@ Page passages require **CSS Custom Highlights**. Without that browser API, persi
 - Each new passage gets a different vivid color. Navigate results with the arrows or **Alt+Left / Right**.
 - The **bookmark icon** saves a passage locally for this URL. Otherwise page highlights remain temporary; **Keywords** manages permanent terms separately.
 - **Search the web** explicitly starts a web search. Native right-click remains available.
+- The logo at the screen edge or **Alt+Shift+P** opens and closes the highlight panel. Hover hints show the relevant shortcuts.
 
 ![Panel and page highlights](assets/screenshot.png)
 
-Automatically capture Google search words, customize colors, undo changes, copy quotes, export and select a light/dark theme: see the [full usage guide](docs/usage.en.md).
+Under **Settings → Appearance**, choose Light/Dark, the selection symbol style (**Logo tile** or **Button surface**), transparency, and the panel opener's size and position. Your choice is saved locally.
+
+For automatic Google search words, saved passages, quotes and exports, see the [full usage guide](docs/usage.en.md). For common issues, see [Troubleshooting](docs/usage.en.md#troubleshooting).
 
 ## Further information
 

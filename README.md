@@ -6,7 +6,7 @@
 
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-blue.svg)](LICENSE)
 
-Wörter, Sätze oder Absätze auf Webseiten auswählen und alle Vorkommen markieren. Ein lokales Userscript für Tampermonkey und Violentmonkey – ohne Konto, Server oder Laufzeitabhängigkeiten.
+Texte im Browser hervorheben, alle Vorkommen finden und im Web suchen. Ein lokales Userscript für Tampermonkey und Violentmonkey – ohne Konto, Server oder Laufzeitabhängigkeiten.
 
 ## Installation
 
@@ -22,10 +22,13 @@ Seitenmarkierungen benötigen **CSS Custom Highlights**. Ohne diese Browser-API 
 - Jede neue Passage bekommt eine andere kräftige Farbe. Mit den Pfeilen oder **Alt+← / →** durch die Treffer wechseln.
 - Das **Lesezeichen-Symbol** speichert eine Passage lokal für diese URL. Ohne diese Aktion bleiben Seitenmarkierungen temporär; **Keywords** verwaltet dauerhafte Begriffe getrennt.
 - **Im Web suchen** startet ausdrücklich eine Websuche. Rechtsklick bleibt beim Browser.
+- Das Logo am Bildschirmrand oder **Alt+Shift+P** öffnet und schließt das Highlight-Panel. Hover-Hinweise zeigen die passenden Shortcuts.
 
 ![Panel und Seitenmarkierungen](assets/screenshot.png)
 
-Google-Suchwörter automatisch übernehmen, Farben ändern, rückgängig machen, zitieren, exportieren und das helle/dunkle Farbschema einstellen: [vollständige Bedienungsanleitung](docs/usage.de.md).
+Unter **Einstellungen → Darstellung** wählst du Hell/Dunkel, den Stil des Auswahl-Symbols (**Logo-Kachel** oder **Buttonfläche**), Transparenz sowie Größe und Lage des Panel-Öffners. Die Auswahl wird lokal gespeichert.
+
+Google-Suchwörter automatisch übernehmen, gespeicherte Passagen verwalten, zitieren und exportieren: [vollständige Bedienungsanleitung](docs/usage.de.md). Bei Problemen hilft der Abschnitt [Problemlösungen](docs/usage.de.md#problemlösungen).
 
 ## Weitere Informationen
 
