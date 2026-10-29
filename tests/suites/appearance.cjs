@@ -106,16 +106,12 @@ module.exports = ({ open, eq, ok }) => {
                 await page.locator('#selection-trigger').hover();
                 const box = await page.locator('#slim-selection-tools').boundingBox();
                 ok(box.x >= 8 && box.x + box.width <= width - 8 + 1, 'Expanded selection actions retain viewport margins: '+JSON.stringify({width,lang,box}));
-                for (const id of ['selection-highlight', 'selection-web', 'selection-web-new']) {
+                for (const id of ['selection-highlight', 'selection-web']) {
                     eq(await page.locator('#'+id+' svg').getAttribute('aria-hidden'), 'true', 'Decorative action icon');
                     const target=await page.locator('#'+id).boundingBox();
                     ok(target.height>=44 && target.x>=box.x && target.x+target.width<=box.x+box.width, 'Labeled action stays reachable');
                 }
-                const main=await page.locator('#selection-web').boundingBox(),secondary=await page.locator('#selection-web-new').boundingBox();
-                ok(secondary.width>=44 && secondary.x>=main.x+main.width-1 && Math.abs(secondary.y-main.y)<1,'Split search has separate non-overlapping touch targets');
-                const newWindowName=lang==='de'?'Im Web suchen – neues Fenster':'Search the web – new window';
-                eq(await page.getByRole('button',{name:newWindowName,exact:true}).count(),1,'Icon-only search explains its destination in the active language');
-                eq(await page.locator('#selection-web-new').getAttribute('title'),newWindowName,'Hover also explains the new-window action');
+                eq(await page.locator('#selection-web').getAttribute('title'),lang==='de'?'Im neuen Tab suchen':'Search the web in a new tab','Hover explains the search destination in the active language');
                 await page.close();
             }
         },

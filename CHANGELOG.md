@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.12
+
+- Die Popup-Fenster-Aktion und die Teilung der Websuche sind entfernt. „Im Web suchen“ ist wieder eine durchgehende Aktionszeile und öffnet die Suche ausschließlich in einem neuen Tab; die Leseseite bleibt offen.
+- Nicht mehr benötigte Fenster-Symbole, Übersetzungen, CSS und Popup-Tests sind entfernt. Der Hovertext erklärt weiterhin das Öffnen im neuen Tab. Dokumentation und öffentliche Screenshots sind angepasst.
+
 ## 4.5.11
 
 - „Im Web suchen“ ist eine geteilte Aktionszeile: Der beschriftete linke Teil öffnet die Suche in einem neuen Tab desselben Browserfensters, das Symbol rechts in einem separaten Browserfenster. Die Leseseite bleibt in beiden Fällen offen.

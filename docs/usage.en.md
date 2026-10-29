@@ -8,7 +8,7 @@ When upgrading from 3.x, remove “Slim Search Highlight Pro v3.10”. Settings 
 
 Select a word, sentence or paragraph. Hover or click the small logo symbol to reveal **Highlight all occurrences** and **Search the web**. Highlighting always finds the full selected passage and its other occurrences on this page. Web search and sharing require an explicit action. Hover hints on the selection symbol and highlight action show the current marking shortcut.
 
-**Search the web** has two parts: The labeled left side opens a **new tab in the same browser window**. The **arrow icon on the right** opens the same search in a **separate browser window**. Both keep the reading page and its temporary highlights open and use the selected text and your chosen search engine. A divider, hover hints and screen-reader names distinguish the destinations; reach either part with Tab and activate it with Enter or Space. The browser controls window presentation and popup permissions.
+**Search the web** opens the selected text in a **new tab** using your chosen search engine. The reading page and its temporary highlights stay open. The action uses one full-width row, with a hover hint explaining the destination. Reach it with Tab and activate it with Enter or Space.
 
 Search is literal, case-insensitive and whitespace-normalized, including line breaks and inline formatting. Invisible text does not invent visible word boundaries. Overlapping matches count once; a longer passage wins at the same start. Code, editing fields and owned controls are excluded. Frames and Shadow DOM content are not searched.
 

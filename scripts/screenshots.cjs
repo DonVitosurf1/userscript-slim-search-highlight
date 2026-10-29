@@ -46,6 +46,13 @@ async function captureReadme(browser, source) {
    await page.keyboard.press('Alt+ArrowRight');
    await select('selection');
    await page.locator('#selection-trigger').waitFor({state:'visible'});
+   // Navigation can leave an earlier trigger visible while selectionchange is
+   // still debounced. Wait until the trigger belongs to the final selection.
+   await page.waitForFunction(()=>{
+    const selection=getSelection(),trigger=document.getElementById('selection-trigger');
+    if(!selection?.rangeCount||!trigger||trigger.closest('#slim-selection-tools').hidden) return false;
+    return Math.abs(trigger.getBoundingClientRect().top-selection.getRangeAt(0).getBoundingClientRect().bottom-8)<1;
+   });
    await page.locator('#selection-trigger').hover();
    await page.getByRole('button',{name:language==='de'?'Im Web suchen':'Search the web',exact:true}).waitFor({state:'visible'});
    await page.mouse.move(800,740);
@@ -59,6 +66,7 @@ async function captureReadme(browser, source) {
    const counts=await page.locator('.page-item .kw-count').allTextContents();
    if(counts.join(',')!=='3,2,2') throw Error(`${name}: incorrect occurrence counts ${counts}`);
    if(errors.length) throw Error(`${name}: ${errors.join('; ')}`);
+   if(!await page.locator('#selection-actions').isVisible()) throw Error(`${name}: selection menu collapsed before capture`);
    await page.screenshot({path:path.join(output,`${name}.png`)});
    results.push({name,language,theme,counts,panel,menu});
   } finally {await page.close()}

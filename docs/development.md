@@ -71,7 +71,7 @@ For the public README examples, run:
 CHROMIUM_PATH=/usr/bin/chromium npm run screenshots -- --readme
 ```
 
-This mode uses the local article in `scripts/fixtures/readme.html` and the generated userscript, without changing its styles. Native keyboard and pointer interactions create three differently colored passages (seven occurrences), save one passage, and open the selection menu. It captures German/English × light/dark at 1200×800 CSS pixels with a 2× pixel density. It checks occurrence counts, page errors, viewport bounds, and that the panel and menu leave the article visible. Inspect all four captures before replacing public assets:
+This mode uses the local article in `scripts/fixtures/readme.html` and the generated userscript, without changing its styles. Native keyboard and pointer interactions create three differently colored passages (seven occurrences), save one passage, and open the selection menu. It waits for the trigger to reach the final selection before expanding, so a pending selection update cannot silently collapse the captured menu. It captures German/English × light/dark at 1200×800 CSS pixels with a 2× pixel density. It checks occurrence counts, page errors, viewport bounds, expanded-menu visibility, and that the panel and menu leave the article visible. Inspect all four captures before replacing public assets:
 
 | Generated file in `artifacts/screenshots/` | Public asset |
 |---|---|

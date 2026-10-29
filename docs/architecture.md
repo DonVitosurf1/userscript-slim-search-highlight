@@ -56,7 +56,7 @@ Known synchronous wrapper writes use `ownDOMChanges`: pending external records a
 
 A selection snapshot preserves raw text, visible selected text, URL, a cloned range and the original focus target. It is validated before use; disconnected, collapsed or changed ranges dismiss the toolbar even when it has keyboard focus. Successful copying shows a short private status surface beside the selection tools and preserves panel state. An older asynchronous clipboard success never dismisses a newer selection. Denial opens the existing manual-copy field.
 
-The split web-search row in `src/50-page-ui-sharing.js` shares one snapshot validation and URL builder. Both actions use `window.open` with `noopener,noreferrer`. The labeled main action requests a new tab; the trailing icon additionally uses `popup=yes` to request a separate browser window. Both preserve the reading page and restore launcher focus after keyboard activation. Neither path creates highlights or permanent keywords; both require trusted explicit activation. Native Chromium tests compare actual browser window IDs, rather than checking a mocked `window.open` call.
+The web-search action in `src/50-page-ui-sharing.js` validates the selection snapshot, builds a query for the configured engine, and uses `window.open` with `noopener,noreferrer` to open a new tab. It preserves the reading page and restores launcher focus after keyboard activation. Searching creates neither highlights nor permanent keywords and requires trusted explicit activation. A native Chromium test checks the search URL and browser window ID rather than a mocked `window.open` call.
 
 ## Appearance ownership
 

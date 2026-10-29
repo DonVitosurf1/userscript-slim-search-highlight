@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.11
+// @version      4.5.12
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -174,7 +174,7 @@
         pageHeading: 'On this page', pageHint: 'Select a word or passage. Use the floating highlighter to find every occurrence here.',
         pageTerms: 'Page highlights', permanentKeywords: 'Saved keywords', clearPage: 'Clear page highlights',
         deletePageTerm: text => `Remove page highlight “${text}”`,
-        selectionActions: 'Actions for selected text', highlightSelection: 'Highlight all occurrences', highlightSelectionHint: 'Highlight the selected passage and all other occurrences on this page', webSearch: 'Search the web', webSearchNewTab: 'Search the web in a new tab', webSearchNewWindow: 'Search the web – new window',
+        selectionActions: 'Actions for selected text', highlightSelection: 'Highlight all occurrences', highlightSelectionHint: 'Highlight the selected passage and all other occurrences on this page', webSearch: 'Search the web', webSearchNewTab: 'Search the web in a new tab',
         highlightUnsupported: 'Page highlighting requires a browser with CSS Custom Highlights support.',
         pageResults: 'Page highlights', allResults: 'Keywords',
         pageHintShort: 'Select text → use the highlighter symbol.', clearPageShort: 'Clear all', undoShort: 'Undo',
@@ -191,7 +191,7 @@
         pageHeading: 'Auf dieser Seite', pageHint: 'Wort oder Passage auswählen. Das schwebende Textmarker-Symbol findet alle Vorkommen hier.',
         pageTerms: 'Seitenmarkierungen', permanentKeywords: 'Dauerhafte Keywords', clearPage: 'Seitenmarkierungen löschen',
         deletePageTerm: text => `Seitenmarkierung „${text}“ entfernen`,
-        selectionActions: 'Aktionen für ausgewählten Text', highlightSelection: 'Alle Vorkommen markieren', highlightSelectionHint: 'Auswahl und alle weiteren Vorkommen auf dieser Seite hervorheben', webSearch: 'Im Web suchen', webSearchNewTab: 'Im neuen Tab suchen', webSearchNewWindow: 'Im Web suchen – neues Fenster',
+        selectionActions: 'Aktionen für ausgewählten Text', highlightSelection: 'Alle Vorkommen markieren', highlightSelectionHint: 'Auswahl und alle weiteren Vorkommen auf dieser Seite hervorheben', webSearch: 'Im Web suchen', webSearchNewTab: 'Im neuen Tab suchen',
         highlightUnsupported: 'Seitenmarkierungen benötigen einen Browser mit Unterstützung für CSS Custom Highlights.',
         pageResults: 'Seitenmarkierungen', allResults: 'Suchwörter',
         pageHintShort: 'Text auswählen → Textmarker-Symbol nutzen.', clearPageShort: 'Alle löschen', undoShort: 'Rückgängig',
@@ -299,9 +299,6 @@
         #slim-selection-tools #selection-highlight { font-weight: 600; background: var(--hl-surface); }
         #slim-selection-tools #selection-actions button { gap: 8px; white-space: normal; text-align: left; justify-content: start; }
         #slim-selection-tools #selection-actions button > span { min-width: 0; overflow-wrap: anywhere; }
-        #slim-selection-tools .selection-web-row { display: flex; align-items: stretch; min-width: 0; }
-        #slim-selection-tools #selection-web { flex: 1; min-width: 0; border-radius: var(--hl-radius) 0 0 var(--hl-radius); }
-        #slim-selection-tools #selection-actions #selection-web-new { flex: 0 0 44px; justify-content: center; border-left: 1px solid var(--hl-divider); border-radius: 0 var(--hl-radius) var(--hl-radius) 0; }
         #slim-selection-tools #selection-support { max-width: 230px; padding: 4px; }
         #slim-hl-panel .page-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         #slim-hl-panel .page-heading-row .section-title { margin: 0; }
@@ -482,7 +479,6 @@
         close: '<path d="m6 6 12 12M18 6 6 18"/>',
         minus: '<path d="M5 12h14"/>',
         expand: '<path d="M5 8h14v10H5zM5 5h14"/>',
-        newWindow: '<path d="M14 3h7v7M21 3l-10 10M10 3H3v18h18v-7"/>',
         prev: '<path d="m14 6-6 6 6 6"/>', next: '<path d="m10 6 6 6-6 6"/>',
         highlight: '<path d="m4 16 9-11 6 6-11 9H4v-4Z M11 7l6 6 M3 22h15"/>',
         reset: '<path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/>'
@@ -1091,7 +1087,7 @@
         const tools = document.createElement('div'); tools.id = 'slim-selection-tools'; tools.hidden = true;
         tools.setAttribute('role', 'toolbar'); tools.setAttribute('aria-label', t('selectionActions')); tools.lang = currentLang();
         tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img data-hl-logo src="${LOGOS[uiTheme]}" width="40" height="40" alt="" draggable="false"></button>
-            <div id="selection-actions" hidden><button type="button" id="selection-highlight" title="${t('highlightSelectionHint')}">${icon('highlightAll')}<span>${t('highlightSelection')}</span></button><div class="selection-web-row" role="group" aria-label="${t('webSearch')}"><button type="button" id="selection-web" title="${t('webSearchNewTab')}">${icon('searchWeb')}<span>${t('webSearch')}</span></button><button type="button" id="selection-web-new" title="${t('webSearchNewWindow')}" aria-label="${t('webSearchNewWindow')}">${icon('newWindow')}</button></div><details id="selection-share"><summary>${t('shareActions')}</summary><button type="button" id="selection-quote">${t('copyQuote')}</button><button type="button" id="selection-link">${t('copyLink')}</button></details><p id="selection-support" role="status" hidden>${t('highlightUnsupported')}</p></div>`;
+            <div id="selection-actions" hidden><button type="button" id="selection-highlight" title="${t('highlightSelectionHint')}">${icon('highlightAll')}<span>${t('highlightSelection')}</span></button><button type="button" id="selection-web" title="${t('webSearchNewTab')}">${icon('searchWeb')}<span>${t('webSearch')}</span></button><details id="selection-share"><summary>${t('shareActions')}</summary><button type="button" id="selection-quote">${t('copyQuote')}</button><button type="button" id="selection-link">${t('copyLink')}</button></details><p id="selection-support" role="status" hidden>${t('highlightUnsupported')}</p></div>`;
         const expand = () => { tools.querySelector('#selection-actions').hidden = false; tools.querySelector('#selection-trigger').setAttribute('aria-expanded', 'true'); positionSelectionTools(); };
         tools.querySelector('#selection-trigger').onclick = () => {
             const actions = tools.querySelector('#selection-actions');
@@ -1101,14 +1097,12 @@
         tools.querySelector('#selection-share').addEventListener('toggle', positionSelectionTools);
         tools.onpointerdown = e => { if (e.button === 0) e.preventDefault(); };
         tools.querySelector('#selection-highlight').onclick = () => { if (validSelectionSnapshot()) addPageSelection(selectionSnapshot.text); else hideSelectionTools(true); };
-        const searchSelection = newWindow => {
+        tools.querySelector('#selection-web').onclick = () => {
             if (!validSelectionSnapshot()) { hideSelectionTools(true); return; }
             const text = selectionSnapshot.text; hideSelectionTools(true);
             const url = (SEARCH_URLS[searchEngine] || SEARCH_URLS.google) + encodeURIComponent(text);
-            window.open(url, '_blank', newWindow ? 'popup=yes,noopener,noreferrer' : 'noopener,noreferrer');
+            window.open(url, '_blank', 'noopener,noreferrer');
         };
-        tools.querySelector('#selection-web').onclick = () => searchSelection(false);
-        tools.querySelector('#selection-web-new').onclick = () => searchSelection(true);
         tools.querySelector('#selection-quote').onclick = () => selectedShare('quote');
         tools.querySelector('#selection-link').onclick = () => selectedShare('link');
         ensureUIRoot().append(tools);
