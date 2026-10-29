@@ -7,7 +7,6 @@ module.exports = ({ SRC, paragraphs, open, hits, settled, eq, ok }) => ({
         }
         ok(/@name\s+Slim Search Highlight\s*\n/.test(header), '@name ohne Versionsnummer erwartet');
         ok(!header.includes('data:'), '@icon darf kein Data-URI enthalten (Logo steht schon im Skript)');
-        ok(SRC.split('data:image/svg+xml').length - 1 === 1, 'Logo genau einmal im Skript erwartet');
         ok(/@description:de /.test(header), 'Deutsche @description:de fehlt');
     },
 

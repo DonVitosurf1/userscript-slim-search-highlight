@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.2
+// @version      4.5.3
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -51,7 +51,7 @@
     'use strict';
 
     // Embedded from canonical SVG assets; no runtime asset requests.
-    const LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDllMmU3IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZmRmMDAiLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZjgwYWIiLz4KICA8ZyBmaWxsPSIjMjUzNTQwIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGZpbGw9IiNlOGVlZjIiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjYjU4OTAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzAwN2Y5NiIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNjNDNiNzAiLz4KPC9zdmc+Cg==";
+    const LOGOS = {"light":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDllMmU3IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZmRmMDAiLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZjgwYWIiLz4KICA8ZyBmaWxsPSIjMjUzNTQwIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGZpbGw9IiNlOGVlZjIiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjYjU4OTAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzAwN2Y5NiIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNjNDNiNzAiLz4KPC9zdmc+Cg==","dark":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZmlsbD0iIzI0MjQyNCIgc3Ryb2tlPSIjNTI2MDZkIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZmRmMDAiLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZjgwYWIiLz4KICA8ZyBmaWxsPSIjMjUzNTQwIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGZpbGw9IiM0NjU0NWUiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjZmZkZjAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzAwZTVmZiIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNmZjgwYWIiLz4KPC9zdmc+Cg=="};
     const INLINE_ICONS = {"highlightAll":"<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n  <rect x=\"3\" y=\"3.5\" width=\"13\" height=\"4\" rx=\"1.2\"/>\n  <rect x=\"6\" y=\"10\" width=\"10\" height=\"4\" rx=\"1.2\"/>\n  <rect x=\"3\" y=\"16.5\" width=\"10\" height=\"4\" rx=\"1.2\"/>\n  <path d=\"M20.5 4v16M19 5.5h3M19 12h3M19 18.5h3\"/>\n</svg>","searchWeb":"<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n  <path d=\"M12.5 20A8.5 8.5 0 1 1 20 11.5M3.5 8.5h16M3.5 14.5h7M11.5 3c-2.5 2.2-3.5 5-3.5 8.5 0 3.6 1 6.4 3.5 8.5M11.5 3c2 1.8 3.1 4 3.4 6.5\"/>\n  <circle cx=\"16.5\" cy=\"16\" r=\"3.5\"/>\n  <path d=\"m19 18.5 3 3\"/>\n</svg>"};
 
     // Source: src/00-state-i18n.js
@@ -303,6 +303,7 @@
         #slim-hl-panel #navigation-scope { margin: 0; }
         .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
         #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle {
+            --hl-brand-logo: url("${LOGOS.dark}");
             --hl-bg: #1a1a1a; --hl-surface: #242424; --hl-field: #222;
             --hl-text: #f0f0f0; --hl-muted: #b5b5b5; --hl-border: #666;
             --hl-accent: #ffca28; --hl-hover: #343434; --hl-danger: #ff918e;
@@ -312,6 +313,7 @@
             --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 10px;
         }
         #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light] {
+            --hl-brand-logo: url("${LOGOS.light}");
             --hl-bg: #fff; --hl-surface: #f1f4f7; --hl-field: #fff;
             --hl-text: #1e2933; --hl-muted: #52606d; --hl-border: #778391;
             --hl-hover: #e5eaf0; --hl-danger: #b42318; --hl-active: #d7dfe8;
@@ -422,7 +424,7 @@
             all: initial; position: fixed; z-index: 2147483646;
             bottom: max(var(--hl-launcher-inset, 20px), env(safe-area-inset-bottom, 0px)); right: max(var(--hl-launcher-inset, 20px), env(safe-area-inset-right, 0px));
             box-sizing: border-box; width: var(--hl-launcher-size, 56px); height: var(--hl-launcher-size, 56px); border-radius: calc(var(--hl-launcher-size, 56px) * .29); padding: 0;
-            background: url("${LOGO}") center / cover no-repeat; border: none; cursor: pointer;
+            background: var(--hl-brand-logo) center / cover no-repeat; border: none; cursor: pointer;
             box-shadow: 0 4px 18px var(--hl-shadow);
         }
         #slim-hl-toggle[data-position=bottom-left], #slim-hl-toggle[data-position=top-left] { left: max(var(--hl-launcher-inset, 20px), env(safe-area-inset-left, 0px)); right: auto; }
@@ -1005,7 +1007,7 @@
     function createSelectionTools() {
         const tools = document.createElement('div'); tools.id = 'slim-selection-tools'; tools.hidden = true;
         tools.setAttribute('role', 'toolbar'); tools.setAttribute('aria-label', t('selectionActions')); tools.lang = currentLang();
-        tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img src="${LOGO}" width="26" height="26" alt="" draggable="false"></button>
+        tools.innerHTML = `<button type="button" id="selection-trigger" aria-label="${t('selectionActions')}" title="${t('selectionActions')}" aria-expanded="false" aria-controls="selection-actions"><img data-hl-logo src="${LOGOS[uiTheme]}" width="26" height="26" alt="" draggable="false"></button>
             <div id="selection-actions" hidden><button type="button" id="selection-highlight" title="${t('highlightSelectionHint')}">${icon('highlightAll')}<span>${t('highlightSelection')}</span></button><button type="button" id="selection-web">${icon('searchWeb')}<span>${t('webSearch')}</span></button><details id="selection-share"><summary>${t('shareActions')}</summary><button type="button" id="selection-quote">${t('copyQuote')}</button><button type="button" id="selection-link">${t('copyLink')}</button></details><p id="selection-support" role="status" hidden>${t('highlightUnsupported')}</p></div>`;
         const expand = () => { tools.querySelector('#selection-actions').hidden = false; tools.querySelector('#selection-trigger').setAttribute('aria-expanded', 'true'); positionSelectionTools(); };
         tools.querySelector('#selection-trigger').onclick = () => {
@@ -1742,7 +1744,10 @@
     function applyAppearance() {
         for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle']) {
             const el = uiById(id);
-            if (el) el.dataset.theme = uiTheme;
+            if (el) {
+                el.dataset.theme = uiTheme;
+                el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = LOGOS[uiTheme]; });
+            }
         }
         const toggle = uiById('slim-hl-toggle');
         if (toggle) {
@@ -1892,7 +1897,7 @@
         if (panelState.minimized) panel.classList.add('minimized');
         panel.innerHTML = `
             <header id="slim-hl-header" tabindex="0" aria-label="${t('movePanel')}" title="${t('movePanel')}">
-                <span class="brand"><img src="${LOGO}" alt="">Highlight</span>
+                <span class="brand"><img data-hl-logo src="${LOGOS[uiTheme]}" alt="">Highlight</span>
                 <div class="header-actions">
                     <button type="button" class="icon-btn" id="btn-reset" title="${t('resetPosition')}" aria-label="${t('resetPosition')}">${icon('reset')}</button>
                     <button type="button" class="icon-btn" id="btn-min" aria-controls="slim-panel-body" aria-expanded="${!panelState.minimized}" aria-label="${t(panelState.minimized ? 'expand' : 'minimize')}" title="${t(panelState.minimized ? 'expand' : 'minimize')}">${icon(panelState.minimized ? 'expand' : 'minus')}</button>

@@ -43,6 +43,7 @@ const UI_CSS = `
     #slim-hl-panel #navigation-scope { margin: 0; }
     .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
     #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle {
+        --hl-brand-logo: url("${LOGOS.dark}");
         --hl-bg: #1a1a1a; --hl-surface: #242424; --hl-field: #222;
         --hl-text: #f0f0f0; --hl-muted: #b5b5b5; --hl-border: #666;
         --hl-accent: #ffca28; --hl-hover: #343434; --hl-danger: #ff918e;
@@ -52,6 +53,7 @@ const UI_CSS = `
         --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 10px;
     }
     #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light] {
+        --hl-brand-logo: url("${LOGOS.light}");
         --hl-bg: #fff; --hl-surface: #f1f4f7; --hl-field: #fff;
         --hl-text: #1e2933; --hl-muted: #52606d; --hl-border: #778391;
         --hl-hover: #e5eaf0; --hl-danger: #b42318; --hl-active: #d7dfe8;
@@ -162,7 +164,7 @@ const UI_CSS = `
         all: initial; position: fixed; z-index: 2147483646;
         bottom: max(var(--hl-launcher-inset, 20px), env(safe-area-inset-bottom, 0px)); right: max(var(--hl-launcher-inset, 20px), env(safe-area-inset-right, 0px));
         box-sizing: border-box; width: var(--hl-launcher-size, 56px); height: var(--hl-launcher-size, 56px); border-radius: calc(var(--hl-launcher-size, 56px) * .29); padding: 0;
-        background: url("${LOGO}") center / cover no-repeat; border: none; cursor: pointer;
+        background: var(--hl-brand-logo) center / cover no-repeat; border: none; cursor: pointer;
         box-shadow: 0 4px 18px var(--hl-shadow);
     }
     #slim-hl-toggle[data-position=bottom-left], #slim-hl-toggle[data-position=top-left] { left: max(var(--hl-launcher-inset, 20px), env(safe-area-inset-left, 0px)); right: auto; }

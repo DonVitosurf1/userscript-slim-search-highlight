@@ -1,7 +1,10 @@
 function applyAppearance() {
     for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle']) {
         const el = uiById(id);
-        if (el) el.dataset.theme = uiTheme;
+        if (el) {
+            el.dataset.theme = uiTheme;
+            el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = LOGOS[uiTheme]; });
+        }
     }
     const toggle = uiById('slim-hl-toggle');
     if (toggle) {
@@ -151,7 +154,7 @@ function createPanel(snapshot = null) {
     if (panelState.minimized) panel.classList.add('minimized');
     panel.innerHTML = `
         <header id="slim-hl-header" tabindex="0" aria-label="${t('movePanel')}" title="${t('movePanel')}">
-            <span class="brand"><img src="${LOGO}" alt="">Highlight</span>
+            <span class="brand"><img data-hl-logo src="${LOGOS[uiTheme]}" alt="">Highlight</span>
             <div class="header-actions">
                 <button type="button" class="icon-btn" id="btn-reset" title="${t('resetPosition')}" aria-label="${t('resetPosition')}">${icon('reset')}</button>
                 <button type="button" class="icon-btn" id="btn-min" aria-controls="slim-panel-body" aria-expanded="${!panelState.minimized}" aria-label="${t(panelState.minimized ? 'expand' : 'minimize')}" title="${t(panelState.minimized ? 'expand' : 'minimize')}">${icon(panelState.minimized ? 'expand' : 'minus')}</button>

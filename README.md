@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/icon.svg" width="96" alt="Slim Search Highlight Logo"></p>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/icon-dark.svg"><img src="assets/icon.svg" width="96" alt="Slim Search Highlight Logo"></picture></p>
 
 # Slim Search Highlight
 
