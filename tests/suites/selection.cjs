@@ -8,6 +8,11 @@ module.exports = ({ open, eq, ok }) => {
     const count = page => page.evaluate(()=>CSS.highlights?.get('slim-page')?.size||0);
     const highlight = async page => {await select(page);await page.keyboard.press('Alt+Shift+H');};
     const settleCount = async (page,n) => page.waitForFunction(n=>(CSS.highlights?.get('slim-page')?.size||0)===n,n,{timeout:3000});
+    const windowId = async page => {
+        const session=await page.context().newCDPSession(page);
+        try {return (await session.send('Browser.getWindowForTarget')).windowId;}
+        finally {await session.detach();}
+    };
     return {
         async selection_hover_hints_follow_the_configured_shortcut(browser){
             const page=await pageWith(browser);await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});
@@ -63,14 +68,44 @@ module.exports = ({ open, eq, ok }) => {
             eq(await page.locator('#permanent-keywords').getAttribute('open'),null,'Dauerhafte Keywords standardmäßig zu');
         },
         async selection_web_search_is_explicit_and_uses_snapshot(browser){
-            const page=await pageWith(browser,{store:{hl_search_engine:'ddg'}});
-            await page.evaluate(()=>{window.__opened=[];window.open=(...args)=>window.__opened.push(args);});
+            const page=await pageWith(browser,{url:'https://example.test/article',store:{hl_search_engine:'ddg'},html:'<p id="choose">A &amp; B + München</p>'});
+            await page.context().route('https://duckduckgo.com/**',route=>route.fulfill({contentType:'text/html',body:'<h1>Search results</h1>'}));
+            const readingWindow=await windowId(page);
             await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});
-            eq(await page.evaluate(()=>window.__opened.length),0);
+            eq(page.url(),'https://example.test/article','Selecting text never starts a search');
+            eq(page.context().pages().length,1,'Selection alone never opens another tab');
             await page.locator('#selection-trigger').focus();await page.keyboard.press('Enter');
-            await page.getByRole('button',{name:'Im Web suchen',exact:true}).click();
-            eq(await count(page),0);eq(await page.evaluate(()=>window.__opened[0][0]),'https://duckduckgo.com/?q=Solarenergie');
-            eq(await page.evaluate(()=>window.__opened[0][2]),'noopener,noreferrer');
+            const [popup]=await Promise.all([
+                page.context().waitForEvent('page',{timeout:2500}),
+                page.getByRole('button',{name:'Im Web suchen',exact:true}).click()
+            ]);
+            await popup.waitForURL('https://duckduckgo.com/?q=A%20%26%20B%20%2B%20M%C3%BCnchen');
+            eq(await windowId(popup),readingWindow,'Primary action opens a tab in the same browser window');
+            eq(page.url(),'https://example.test/article','Primary action preserves the reading tab');
+            eq(await popup.evaluate(()=>window.opener),null,'Search cannot control the reading page');
+            eq(await popup.evaluate(()=>document.referrer),'','Search does not disclose the reading URL');
+            await popup.close();
+        },
+        async selection_web_search_new_window_keeps_the_reading_page(browser){
+            const page=await pageWith(browser,{url:'https://example.test/article',store:{hl_search_engine:'ddg'},html:'<p id="choose">A &amp; B + München</p>'});
+            await page.context().route('https://duckduckgo.com/**',route=>route.fulfill({contentType:'text/html',body:'<h1>Search results</h1>'}));
+            const readingWindow=await windowId(page);
+            await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});
+            await page.locator('#selection-trigger').focus();await page.keyboard.press('Enter');
+            const secondary=page.getByRole('button',{name:'Im Web suchen – neues Fenster',exact:true});
+            await page.getByRole('button',{name:'Im Web suchen',exact:true}).focus();
+            await page.keyboard.press('Tab');
+            eq(await secondary.evaluate(el=>el===document.activeElement),true,'Both search targets are reachable in reading order');
+            const [popup]=await Promise.all([page.context().waitForEvent('page',{timeout:2500}),page.keyboard.press('Enter')]);
+            await popup.waitForURL('https://duckduckgo.com/?q=A%20%26%20B%20%2B%20M%C3%BCnchen');
+            ok(await windowId(popup)!==readingWindow,'Secondary action opens a separate browser window');
+            eq(page.url(),'https://example.test/article','Secondary action preserves the reading tab');
+            eq(await popup.evaluate(()=>window.opener),null,'Search page cannot access the reading page');
+            eq(await popup.evaluate(()=>document.referrer),'','Search does not send the reading URL');
+            eq(await count(page),0,'Searching does not create highlights');
+            eq(await page.locator('#slim-selection-tools').isVisible(),false,'Search dismisses the selection menu');
+            eq(await page.evaluate(()=>document.activeElement.id),'slim-hl-toggle','Keyboard search restores launcher focus');
+            await popup.close();
         },
         async selection_cross_node_phrase_and_whitespace(browser){
             const page=await pageWith(browser,{html:'<p id="choose">Die <b>Solarenergie</b> hilft.</p><p>Die\n <em>Solarenergie</em>\t hilft.</p><p>Die andere Energie hilft.</p>'});
@@ -135,12 +170,10 @@ module.exports = ({ open, eq, ok }) => {
             await page.evaluate(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('other'));getSelection().removeAllRanges();getSelection().addRange(r);});await page.keyboard.press('Alt+Shift+H');
             eq(await count(page),2,'Überlappende Fundstellen nicht doppelt zählen');
         },
-        async selection_toolbar_dismissal_and_web_focus(browser){
+        async selection_toolbar_escape_restores_launcher_focus(browser){
             const page=await pageWith(browser);await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});
             await page.locator('#selection-trigger').focus();await page.keyboard.press('Enter');await page.keyboard.press('Escape');
             eq(await page.locator('#slim-selection-tools').isVisible(),false);eq(await page.evaluate(()=>document.activeElement.id),'slim-hl-toggle');
-            await page.evaluate(()=>{window.open=()=>{};});await select(page);await page.locator('#selection-trigger').waitFor({state:'visible'});await page.locator('#selection-trigger').focus();await page.keyboard.press('Enter');await page.getByRole('button',{name:'Im Web suchen',exact:true}).focus();await page.keyboard.press('Enter');
-            eq(await page.evaluate(()=>document.activeElement.id),'slim-hl-toggle','Webaktion stellt Fokus wieder her');
         },
         async selection_explicit_line_breaks_match_the_original_passage(browser){
             const page=await pageWith(browser,{html:'<p id="choose">hello<br>world</p><p>hello<br>world</p>'});await highlight(page);eq(await count(page),2,'Zeilenumbruch ist normalisiertes Leerzeichen');

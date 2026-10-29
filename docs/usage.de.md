@@ -8,6 +8,8 @@ Bei einem Wechsel von 3.x das alte „Slim Search Highlight Pro v3.10“ entfern
 
 Wort, Satz oder Absatz auf der Webseite auswählen. Das kleine Logo-Symbol erscheint neben der Auswahl; darüberfahren oder anklicken öffnet **Alle Vorkommen markieren** und **Im Web suchen**. Die erste Aktion markiert immer die gewählte Passage und ihre weiteren Vorkommen auf derselben Seite. Websuche und Teilen werden nie automatisch ausgelöst. Der Hovertext am Auswahl-Symbol und an der Markieraktion nennt den aktuell eingestellten Markieren-Shortcut.
 
+**Im Web suchen** ist geteilt: Der beschriftete linke Teil öffnet die Suche in einem **neuen Tab desselben Browserfensters**. Das **Pfeil-Symbol rechts** öffnet dieselbe Suche in einem **separaten Browserfenster**. Die Leseseite mit ihren temporären Markierungen bleibt in beiden Fällen offen. Beide verwenden die eingestellte Suchmaschine und den ausgewählten Text. Die Trennlinie, Hovertexte und Screenreader-Namen unterscheiden die Ziele; beide Bereiche sind per Tab erreichbar und mit Enter oder Leertaste bedienbar. Der Browser steuert Fensterdarstellung und Popup-Berechtigungen.
+
 Die Suche ist wörtlich, ohne Beachtung der Groß-/Kleinschreibung, mit vereinheitlichten Leerzeichen und Zeilenumbrüchen. Inline-Formatierung unterbricht sie nicht. Unsichtbarer Text zählt nicht als sichtbarer Wortabstand. Überlappende Fundstellen zählen einmal; bei gleichem Beginn gewinnt die längere Passage. Code, Eingabefelder und eigene Bedienelemente werden ausgelassen. Frames und Shadow-DOM-Inhalte werden nicht durchsucht.
 
 ## Google-Suche → Ergebnisseite

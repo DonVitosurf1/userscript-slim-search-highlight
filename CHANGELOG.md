@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.5.11
+
+- „Im Web suchen“ ist eine geteilte Aktionszeile: Der beschriftete linke Teil öffnet die Suche in einem neuen Tab desselben Browserfensters, das Symbol rechts in einem separaten Browserfenster. Die Leseseite bleibt in beiden Fällen offen.
+- Eine feine Trennlinie, eindeutige deutsch-/englischsprachige Hovertexte und zugängliche Namen unterscheiden die Ziele. Beide Bereiche sind separat per Tastatur bedienbar und behalten auf schmalen Bildschirmen mindestens 44 px große Ziele.
+- Browser-Tests prüfen die tatsächlichen Suchadressen, die Zuordnung zu demselben bzw. einem neuen Browserfenster sowie den Schutz vor Zugriff auf die Ursprungsseite. Bedienungsanleitung und öffentliche Screenshots sind aktualisiert.
+
 ## 4.5.10
 
 - Das Auswahl-Symbol verwendet ausschließlich die Logo-Kachel wie der Panel-Öffner. Die alternative Buttonfläche und ihr Einstellungsfeld sind entfernt; bisherige Stilwerte werden ignoriert.

@@ -41,7 +41,7 @@ Hover hints show the available shortcuts. If Alt+Shift+P is already assigned to 
 
 ## More features
 
-- **Web searches and quotes:** Explicitly search the web from the selection menu, copy a quote with its source or a link to the selected text. Export passages as Markdown and saved pages as JSON.
+- **Web searches and quotes:** The left side of “Search the web” opens a new tab in the same browser window; the arrow on the right opens a separate window. Copy quotes with their source or links to selected text; export passages as Markdown and saved pages as JSON.
 - **Use your Google search words:** With automatic search-word transfer enabled, opening a result highlights your search terms on the destination page.
 - **Adjust the appearance:** Under **Settings → Appearance**, choose Light/Dark, transparency, and the panel opener's size and position. Preferences are saved locally.
 

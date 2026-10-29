@@ -56,6 +56,8 @@ Known synchronous wrapper writes use `ownDOMChanges`: pending external records a
 
 A selection snapshot preserves raw text, visible selected text, URL, a cloned range and the original focus target. It is validated before use; disconnected, collapsed or changed ranges dismiss the toolbar even when it has keyboard focus. Successful copying shows a short private status surface beside the selection tools and preserves panel state. An older asynchronous clipboard success never dismisses a newer selection. Denial opens the existing manual-copy field.
 
+The split web-search row in `src/50-page-ui-sharing.js` shares one snapshot validation and URL builder. Both actions use `window.open` with `noopener,noreferrer`. The labeled main action requests a new tab; the trailing icon additionally uses `popup=yes` to request a separate browser window. Both preserve the reading page and restore launcher focus after keyboard activation. Neither path creates highlights or permanent keywords; both require trusted explicit activation. Native Chromium tests compare actual browser window IDs, rather than checking a mocked `window.open` call.
+
 ## Appearance ownership
 
 The shared `data-theme` variant in `src/10-styles.js` owns dark/light tokens for the panel, selection toolbar, launcher and copy confirmation. `applyAppearance` in `src/80-panel.js` updates those surfaces in place, applies interface transparency and bounded launcher geometry. The selection trigger consistently uses the standalone logo tile; its size remains independent of launcher geometry. Generic control IDs are always resolved inside the owned panel so host-page fields remain untouched. No theme attributes or variables are written to the host document root.
