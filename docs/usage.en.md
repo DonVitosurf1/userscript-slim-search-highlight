@@ -1,5 +1,7 @@
 # Usage
 
+When upgrading from 3.x, remove “Slim Search Highlight Pro v3.10”. Settings need to be recreated once when switching to the stable script name.
+
 [Documentation index](README.md) · [Deutsch](usage.de.md)
 
 ## Select and find

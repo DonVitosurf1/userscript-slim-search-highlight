@@ -1,6 +1,6 @@
 # Architecture
 
-[Documentation index](README.md) · [Development](development.md) · [Design system](../DESIGN.md)
+[Documentation index](README.md) · [Development](development.md) · [Design system](design/DESIGN.md)
 
 Slim Search Highlight has no production dependencies and installs as one userscript. Development sources are grouped by responsibility; a small Node assembler concatenates them in the explicit order in `src/manifest.json` into the existing `userscript/slim-search-highlight.user.js` URL. There is no runtime loader, remote code import, or framework.
 
@@ -60,7 +60,7 @@ A selection snapshot preserves raw text, visible selected text, URL and a cloned
 
 The shared `data-theme` variant in `src/10-styles.js` owns dark/light tokens for the panel, selection toolbar and launcher. `applyAppearance` in `src/80-panel.js` updates those surfaces in place and applies bounded launcher size, corner and edge distance. Generic control IDs are always resolved inside the owned panel so host-page fields remain untouched. No theme attributes or variables are written to the host document root.
 
-Appearance preferences join the existing change-only persistence registry. A failed write restores the last saved appearance and reports a semantic localized status; a successful retry clears the stale failure. Native selects and ranges use the same control styles as existing settings. See [Design system](../DESIGN.md) for the token mapping and [data format](data-format.md) for preference keys.
+Appearance preferences join the existing change-only persistence registry. A failed write restores the last saved appearance and reports a semantic localized status; a successful retry clears the stale failure. Native selects and ranges use the same control styles as existing settings. See [Design system](design/DESIGN.md) for the token mapping and [data format](data-format.md) for preference keys.
 
 ## Storage and privacy
 

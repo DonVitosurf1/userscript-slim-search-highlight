@@ -1,5 +1,7 @@
 # Bedienung
 
+Bei einem Wechsel von 3.x das alte „Slim Search Highlight Pro v3.10“ entfernen. Einstellungen müssen beim Wechsel auf den stabilen Skriptnamen einmal neu angelegt werden.
+
 [Dokumentationsübersicht](README.md) · [English](usage.en.md)
 
 ## Auswählen und suchen

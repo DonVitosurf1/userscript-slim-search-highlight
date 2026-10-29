@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Repository
+- README-Dateien auf Installation, Schnellstart und weiterführende Links gekürzt. Design-Dokumentation unter `docs/design/` gebündelt, Beitragsregeln nach `.github/CONTRIBUTING.md` verschoben.
+- Historische Pläne, Reviews und Routine-Nachweise aus dem aktuellen Dateibaum entfernt; sie bleiben über die unveränderte Git-Historie erreichbar. Aktuelle Dokumentationslinks angepasst.
+
 ## 4.5.2
 
 - Helles Logo mit weißem Grund, dunklen Textlinien und kräftigen gelben, türkisen und pinken Markierungen. Öffnen-Button, Panelkopf und Auswahl-Symbol verwenden dieselbe Gestaltung.
