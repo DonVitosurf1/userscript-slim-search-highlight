@@ -65,7 +65,24 @@ CHROMIUM_PATH=/usr/bin/chromium npm run screenshots
 
 Omit `CHROMIUM_PATH` to use the installed Playwright Chromium, as with tests. The maintained capture script lives in `scripts/screenshots.cjs`. It uses a synthetic page and simulated GM bindings, creates PNGs for light/dark × desktop/narrow layouts plus `browser.json` in `artifacts/screenshots/`, and checks panel bounds, both expected matches and page errors. Names such as `light-desktop-toolbar.png` identify the theme, viewport and state. Inspect the captures visually; geometry checks alone do not establish usability.
 
-`artifacts/` is ignored by Git and safe to regenerate. Copy a deliberately chosen public screenshot to `assets/screenshot.png` when updating the README. Commit only evidence needed for a specific review; do not keep appending routine captures to the documentation. Older reports and evidence live in the [archive](https://github.com/DonVitosurf1/userscript-slim-search-highlight/blob/6007c7328b6fbc1792ea27bc3fff2c10c2afa7c3/docs/archive/README.md); their scripts are historical snapshots.
+For the public README examples, run:
+
+```sh
+CHROMIUM_PATH=/usr/bin/chromium npm run screenshots -- --readme
+```
+
+This mode uses the local article in `scripts/fixtures/readme.html` and the generated userscript, without changing its styles. Native keyboard and pointer interactions create three differently colored passages (seven occurrences), save one passage, and open the selection menu. It captures German/English × light/dark at 1200×800 CSS pixels with a 2× pixel density. It checks occurrence counts, page errors, viewport bounds, and that the panel and menu leave the article visible. Inspect all four captures before replacing public assets:
+
+| Generated file in `artifacts/screenshots/` | Public asset |
+|---|---|
+| `readme-de-light.png` | `assets/screenshot-light.png` |
+| `readme-de-dark.png` | `assets/screenshot.png` |
+| `readme-en-light.png` | `assets/screenshot-light-en.png` |
+| `readme-en-dark.png` | `assets/screenshot-en.png` |
+
+The README uses a `<picture>` element to match GitHub's light/dark preference; the userscript's theme remains an explicit user setting. The English README has English screenshots. `readme.json` records the capture geometry and match counts. No external page content, credentials or personal data are needed.
+
+`artifacts/` is ignored by Git and safe to regenerate. Commit only the selected public assets; do not keep appending routine captures to the documentation. Older reports and evidence live in the [archive](https://github.com/DonVitosurf1/userscript-slim-search-highlight/blob/6007c7328b6fbc1792ea27bc3fff2c10c2afa7c3/docs/archive/README.md); their scripts are historical snapshots.
 
 ## Release checks
 

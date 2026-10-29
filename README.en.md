@@ -6,7 +6,16 @@
 
 [![Tests](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml/badge.svg)](https://github.com/DonVitosurf1/userscript-slim-search-highlight/actions/workflows/test.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Highlight text in your browser, find every occurrence and search the web. A local Tampermonkey/Violentmonkey userscript with no account, server or runtime dependencies.
+**Select text, highlight every occurrence and keep your place.** Slim Search Highlight adds colored passages, result navigation and a small selection menu for web searches and quotes to webpages.
+
+A **browser userscript for Tampermonkey and Violentmonkey**. No account, dedicated server or runtime dependencies.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot-en.png">
+  <img src="assets/screenshot-light-en.png" width="1200" alt="Sample article with yellow, cyan and pink highlights. The selection menu offers highlighting, web search and copying; the panel on the right shows seven matches for three terms and whether they are saved.">
+</picture>
+
+*The actual interface on a local sample page: three terms, seven matches. This preview follows your GitHub color scheme; the userscript lets you choose Light or Dark yourself.*
 
 ## Installation
 
@@ -14,21 +23,31 @@ Highlight text in your browser, find every occurrence and search the web. A loca
 2. [Install the script](https://raw.githubusercontent.com/DonVitosurf1/userscript-slim-search-highlight/main/userscript/slim-search-highlight.user.js) and confirm in the manager.
 3. Reload the webpage. The userscript manager handles future updates.
 
-Page passages require **CSS Custom Highlights**. Without that browser API, persistent keywords and explicit web search remain available. File exports require the manager's download permission.
+Page passages require a browser with **CSS Custom Highlights**. Without that API, persistent keywords and web search remain available. File exports require the manager's download permission.
 
 ## Quick start
 
-- Select text → open the logo symbol → **Highlight all occurrences**. Alternatively use **Alt+Shift+H**; the shortcut is configurable.
-- Each new passage gets a different vivid color. Navigate results with the arrows or **Alt+Left / Right**.
-- The **bookmark icon** saves a passage locally for this URL. Otherwise page highlights remain temporary; **Keywords** manages permanent terms separately.
-- **Search the web** explicitly starts a web search. Native right-click remains available.
-- The logo at the screen edge or **Alt+Shift+P** opens and closes the highlight panel. Hover hints show the relevant shortcuts.
+1. **Select a word, sentence or paragraph.** A logo tile appears next to the selection. Hover over it or click to open the menu; right-click keeps the browser's context menu.
+2. Choose **Highlight all occurrences**. Each new passage gets its own vivid color. The panel shows the match count; use its arrows to jump between occurrences.
+3. **Save it for this page if needed.** The bookmark saves a passage locally for the same complete URL. Unsaved passages disappear on reload. Manage permanent terms separately under **Keywords**.
 
-![Panel and page highlights](assets/screenshot.png)
+| Action | Shortcut |
+|---|---|
+| Highlight the selection and every other occurrence | **Alt+Shift+H** · configurable |
+| Open / close the panel | **Alt+Shift+P** |
+| Previous / next match | **Alt+Left / Right** |
 
-Under **Settings → Appearance**, choose Light/Dark, transparency, and the panel opener's size and position. Your preferences are saved locally.
+Hover hints show the available shortcuts. If Alt+Shift+P is already assigned to highlighting, that assignment takes priority. The logo at the screen edge always opens the panel.
 
-For automatic Google search words, saved passages, quotes and exports, see the [full usage guide](docs/usage.en.md). For common issues, see [Troubleshooting](docs/usage.en.md#troubleshooting).
+## More features
+
+- **Web searches and quotes:** Explicitly search the web from the selection menu, copy a quote with its source or a link to the selected text. Export passages as Markdown and saved pages as JSON.
+- **Use your Google search words:** With automatic search-word transfer enabled, opening a result highlights your search terms on the destination page.
+- **Adjust the appearance:** Under **Settings → Appearance**, choose Light/Dark, transparency, and the panel opener's size and position. Preferences are saved locally.
+
+Saved passages, keywords and preferences stay local in your userscript manager. An explicit web search sends the selected text to your chosen search engine. See the [security model](docs/security-model.md) for details and limitations.
+
+The [usage guide](docs/usage.en.md) covers saving, search options and exports. For common issues, see [Troubleshooting](docs/usage.en.md#troubleshooting).
 
 ## Further information
 

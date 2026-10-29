@@ -72,7 +72,7 @@ The open button defaults to **56 px**. **Open button size** offers 44–80 px; *
 
 Size and edge-distance sliders show their pixel value and support arrow keys in 4-px steps. Changes apply immediately and are saved locally for future visits. A failed storage write restores the previous setting. Resetting size does not change position or theme.
 
-![Light theme with page highlights](../assets/screenshot-light.png)
+![Light theme with page highlights and selection actions](../assets/screenshot-light-en.png)
 
 ## Keyboard and panel
 
