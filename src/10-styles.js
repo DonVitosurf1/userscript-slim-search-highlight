@@ -15,8 +15,8 @@ const UI_CSS = `
     }
     #slim-selection-tools #selection-trigger { width: 40px; min-height: 40px; padding: 6px; background: var(--hl-field); border-color: var(--hl-border); box-shadow: 0 2px 8px var(--hl-shadow); flex-shrink: 0; }
     #slim-selection-tools #selection-trigger img { display: block; width: 26px; height: 26px; }
-    #slim-selection-tools button:not(:disabled):hover, #slim-selection-tools summary:hover { background: var(--hl-hover); }
-    #slim-selection-tools button:not(:disabled):active, #slim-selection-tools summary:active { background: var(--hl-active); }
+    #slim-selection-tools #selection-trigger:not(:disabled):hover, #slim-selection-tools button:not(:disabled):hover, #slim-selection-tools summary:hover { background: var(--hl-hover); }
+    #slim-selection-tools #selection-trigger:not(:disabled):active, #slim-selection-tools button:not(:disabled):active, #slim-selection-tools summary:active { background: var(--hl-active); }
     #slim-selection-tools button:disabled { opacity: .5; cursor: default; }
     #slim-selection-tools :focus-visible { outline: 2px solid var(--hl-focus); outline-offset: -2px; }
     #slim-selection-tools svg { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }

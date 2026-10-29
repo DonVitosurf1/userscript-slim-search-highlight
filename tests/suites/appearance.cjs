@@ -59,7 +59,16 @@ module.exports = ({ open, eq, ok }) => {
             const checkLogo = async theme => {
                 const logo = await page.locator('#slim-hl-header img').getAttribute('src');
                 ok(logo.startsWith('data:image/svg+xml;base64,'), 'Theme logo is embedded without network requests');
-                eq(await page.locator('#selection-trigger img').getAttribute('src'), logo, 'Selection and header share the current theme logo');
+                const selectionLogo = await page.locator('#selection-trigger img').getAttribute('src');
+                const selectionPixels = await page.evaluate(async source => {
+                    const image = new Image(); image.src = source; await image.decode();
+                    const canvas = document.createElement('canvas'); canvas.width = canvas.height = 128;
+                    const context = canvas.getContext('2d'); context.drawImage(image, 0, 0, 128, 128);
+                    return { background: [...context.getImageData(64, 114, 1, 1).data], track: [...context.getImageData(105, 27, 1, 1).data] };
+                }, selectionLogo);
+                eq(selectionPixels.background[3], 0, 'Selection mark has no nested logo tile');
+                const trackBrightness = selectionPixels.track.slice(0,3).reduce((a,b)=>a+b,0)/3;
+                ok(theme === 'dark' ? trackBrightness < 120 : trackBrightness > 180, 'Selection mark details follow the active theme');
                 ok((await page.locator('#slim-hl-toggle').evaluate(el => getComputedStyle(el).backgroundImage)).includes(logo), 'Launcher shares the current theme logo');
                 const brightness = await page.evaluate(async source => {
                     const image = new Image(); image.src = source; await image.decode();

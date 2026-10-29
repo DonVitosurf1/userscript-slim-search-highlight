@@ -33,7 +33,7 @@ Farbe trägt Bedeutung: Markierungsfarben verbinden Text, Farbfeld und Trefferle
 | ![Alle Vorkommen markieren](../../assets/icons/highlight-all.svg) | Alle Vorkommen markieren | Drei wiederholte Markierungen mit Trefferleiste |
 | ![Im Web suchen](../../assets/icons/search-web.svg) | Im Web suchen | Weltkugel mit Lupe |
 
-Öffnen-Button, Panelkopf und Auswahl-Symbol verwenden dieselbe Logo-Datei. Funktions-Icons ergänzen ihre sichtbaren Beschriftungen. Sie ersetzen keine Texte durch unklare Bildzeichen. Neue Funktions-Icons folgen einem 24×24-Raster, einer Strichstärke von 1,8 Einheiten und abgerundeten Linienenden. Sie verwenden die Textfarbe des aktiven Farbschemas, damit sie auch im dunklen Modus lesbar bleiben.
+Öffnen-Button und Panelkopf verwenden das vollständige Logo. Das Auswahl-Symbol zeigt dieselben Markierungen und die Trefferleiste ohne innere Kachel auf einer einzigen Buttonfläche. Der Build leitet diese transparente Bildmarke aus den Originalen ab; Hell/Dunkel, Hover und Tastaturfokus gelten für die gemeinsame Fläche. Funktions-Icons ergänzen ihre sichtbaren Beschriftungen. Sie ersetzen keine Texte durch unklare Bildzeichen. Neue Funktions-Icons folgen einem 24×24-Raster, einer Strichstärke von 1,8 Einheiten und abgerundeten Linienenden. Sie verwenden die Textfarbe des aktiven Farbschemas, damit sie auch im dunklen Modus lesbar bleiben.
 
 ![Helle Auswahlaktionen](../../assets/selection-actions-light.png)
 

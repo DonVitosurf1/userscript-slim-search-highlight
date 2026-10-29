@@ -4,7 +4,7 @@ function applyAppearance() {
         if (el) {
             el.dataset.theme = uiTheme;
             el.style.opacity = String((100 - uiTransparency) / 100);
-            el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = LOGOS[uiTheme]; });
+            el.querySelectorAll('img[data-hl-logo]').forEach(image => { image.src = (image.dataset.hlLogo === 'mark' ? LOGO_MARKS : LOGOS)[uiTheme]; });
             if (id === 'slim-hl-feedback') { el.textContent = el.hidden ? '' : t(el.dataset.message); el.lang = currentLang(); }
         }
     }

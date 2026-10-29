@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.7
+
+- Das Auswahl-Symbol verwendet nur noch die farbigen Markierungen und die Trefferleiste auf einer gemeinsamen Buttonfläche. Die zusätzliche innere Logo-Kachel entfällt; Hell/Dunkel, Hover, Tastaturfokus und Klickfläche bleiben erhalten.
+- Die transparente Bildmarke wird beim Build aus den bestehenden Logo-Dateien abgeleitet. Das vollständige Logo für Projektauftritt, Panelkopf und Öffnen-Button bleibt erhalten.
+
 ## 4.5.6
 
 - Das Auswahlmenü öffnet als eigene schmale Fläche unter oder über dem Logo-Symbol. Ruhige Aktionszeilen ersetzen einzelne Rahmen; „Alle Vorkommen markieren“ bleibt dezent hervorgehoben. Desktop-Zeilen sind mindestens 36 px, schmale Ansichten mindestens 44 px hoch.
