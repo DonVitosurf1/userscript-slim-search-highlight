@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.6.0
+// @version      4.6.1
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -310,7 +310,9 @@
         #slim-hl-panel .page-heading-row .section-title { margin: 0; }
         #slim-hl-panel .page-item { display: block; margin: 6px 0; padding-bottom: 4px; border-bottom: 1px solid var(--hl-divider); }
         #slim-hl-panel .page-row { display: flex; align-items: center; gap: 4px; }
-        #slim-hl-panel .page-row > .kw-count { min-width: 16px; flex-shrink: 0; }
+        #slim-hl-panel .page-label-line { display: flex; align-items: baseline; gap: 4px; min-width: 0; }
+        #slim-hl-panel .page-label-line > .page-term { flex: 1; min-width: 0; }
+        #slim-hl-panel .page-label-line > .kw-count { min-width: 16px; flex-shrink: 0; }
         #slim-hl-panel .page-label { flex: 1; min-width: 0; }
         #slim-hl-panel .page-label .page-state { display: block; margin: 0; font-size: 12px; line-height: 1.3; }
         #slim-hl-panel .page-save[aria-pressed=true] { color: var(--hl-accent-text); }
@@ -989,7 +991,8 @@
             visibility.setAttribute('aria-label', t('termVisibility', entry.text)); visibility.setAttribute('aria-pressed', String(!hidden));
             visibility.title = t(hidden ? 'showTermAction' : 'hideTermAction', entry.text);
             visibility.onclick = () => toggleOverviewTerm(entry.key);
-            content.append(label, state); row.append(color, content, count, visibility);
+            const labelLine = document.createElement('div'); labelLine.className = 'page-label-line'; labelLine.append(label, count);
+            content.append(labelLine, state); row.append(color, content, visibility);
             if (term) {
                 const save = document.createElement('button'); save.type = 'button'; save.className = 'icon-btn page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
                 save.innerHTML = icon(term.saved ? 'bookmarked' : 'bookmark');

@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.6.1
+
+- Herkunft und Speicherstatus nutzen die volle Breite der Beschriftung; die Trefferzahl steht neben dem Begriff in dessen eigener Zeile. Dadurch bleibt die Übersicht auch mit breiteren Linux-Systemschriften kompakt, ohne Schrift oder Bedienelemente zu verkleinern.
+- Die Kompaktheitsprüfung deckt zusätzlich DejaVu Sans und Liberation Sans in beiden Farbschemata ab.
+
 ## 4.6.0
 
 - „Auf dieser Seite“ zeigt übernommene Suchbegriffe und eigene Markierungen gemeinsam mit Farbe, aktiver Trefferzahl und Herkunft. Derselbe Begriff aus Suche und Auswahl erhält eine gemeinsame Zeile; dauerhafte Keywords bleiben separat gespeichert und bearbeitbar.

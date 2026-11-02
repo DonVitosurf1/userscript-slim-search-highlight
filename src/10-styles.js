@@ -33,7 +33,9 @@ const UI_CSS = `
     #slim-hl-panel .page-heading-row .section-title { margin: 0; }
     #slim-hl-panel .page-item { display: block; margin: 6px 0; padding-bottom: 4px; border-bottom: 1px solid var(--hl-divider); }
     #slim-hl-panel .page-row { display: flex; align-items: center; gap: 4px; }
-    #slim-hl-panel .page-row > .kw-count { min-width: 16px; flex-shrink: 0; }
+    #slim-hl-panel .page-label-line { display: flex; align-items: baseline; gap: 4px; min-width: 0; }
+    #slim-hl-panel .page-label-line > .page-term { flex: 1; min-width: 0; }
+    #slim-hl-panel .page-label-line > .kw-count { min-width: 16px; flex-shrink: 0; }
     #slim-hl-panel .page-label { flex: 1; min-width: 0; }
     #slim-hl-panel .page-label .page-state { display: block; margin: 0; font-size: 12px; line-height: 1.3; }
     #slim-hl-panel .page-save[aria-pressed=true] { color: var(--hl-accent-text); }

@@ -13,8 +13,9 @@ module.exports = ({ open, eq, ok }) => {
     };
     return {
         async compact_panel_saved_passage_uses_less_space_in_both_themes(browser) {
-            for (const theme of ['dark', 'light']) {
+            for (const theme of ['dark', 'light']) for (const font of ['system-ui', 'DejaVu Sans', 'Liberation Sans']) {
                 const page = await panel(browser, { store: { hl_ui_theme: theme }, viewport: { width: 1280, height: 900 } });
+                await page.locator('#slim-hl-panel').evaluate((node,font)=>{node.style.fontFamily=font},font);
                 await mark(page);
                 const box = await page.locator('#slim-hl-panel').boundingBox();
                 ok(box.width <= 320, 'Kompakte Breite: ' + JSON.stringify(box));
