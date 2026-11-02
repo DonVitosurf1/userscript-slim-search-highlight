@@ -2,6 +2,8 @@ const ICONS = {
     save: '<path d="m5 12 4 4L19 6"/>',
     bookmark: '<path d="M6 3h12v18l-6-4-6 4V3Z"/>',
     bookmarked: '<path d="M6 3h12v18l-6-4-6 4V3Z" fill="currentColor"/>',
+    eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+    eyeOff: '<path d="m3 3 18 18M10.5 5.1 12 5c6.5 0 10 7 10 7a21 21 0 0 1-3 3.8M6.1 6.1A21 21 0 0 0 2 12s3.5 7 10 7a12 12 0 0 0 5.8-1.6M10 10a3 3 0 0 0 4 4"/>',
     trash: '<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',
     close: '<path d="m6 6 12 12M18 6 6 18"/>',
     minus: '<path d="M5 12h14"/>',

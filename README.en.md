@@ -12,7 +12,7 @@ A **browser userscript for Tampermonkey and Violentmonkey**. No account, dedicat
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot-en.png">
-  <img src="assets/screenshot-light-en.png" width="1200" alt="Sample article with yellow, cyan and pink highlights. The selection menu offers highlighting, web search and copying; the panel on the right shows seven matches for three terms and whether they are saved.">
+  <img src="assets/screenshot-light-en.png" width="1200" alt="Sample article with differently colored highlights. The selection menu offers highlighting, web search and copying; the panel shows seven matches for three terms, their sources, saved state and eye toggles.">
 </picture>
 
 *The actual interface on a local sample page: three terms, seven matches. This preview follows your GitHub color scheme; the userscript lets you choose Light or Dark yourself.*
@@ -30,6 +30,8 @@ Page passages require a browser with **CSS Custom Highlights**. Without that API
 1. **Select a word, sentence or paragraph.** A logo tile appears next to the selection. Hover over it or click to open the menu; right-click keeps the browser's context menu.
 2. Choose **Highlight all occurrences**. Each new passage gets its own vivid color. The panel shows the match count; use its arrows to jump between occurrences.
 3. **Save it for this page if needed.** The bookmark saves a passage locally for the same complete URL. Unsaved passages disappear on reload. Manage permanent terms separately under **Keywords**.
+
+**On this page** combines search terms and your selections with colors, match counts and sources. Use the **eye toggle** to hide or show a term temporarily. Hidden rows stay in the list; visibility resets on reload or a URL change. Saved data stays intact.
 
 | Action | Shortcut |
 |---|---|

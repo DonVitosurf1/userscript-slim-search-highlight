@@ -156,11 +156,13 @@ function captureSearchNavigation(event) {
     } catch { setPanelStatus('searchTransferFailed'); }
 }
 
+const initialSearchPage = location.href;
 function automaticSearchTerms() {
     if (isSearchEngine(location.href)) return getSearchTerms();
     try {
         const handoff = readSearchHandoffs().find(entry => entry.target === searchDestination(location.href));
         if (handoff) return handoff.terms;
+        if (location.href !== initialSearchPage) return [];
         const fromSearch = isSearchEngine(document.referrer);
         if (fromSearch) {
             const query = extractQuery(document.referrer);
@@ -173,6 +175,7 @@ function automaticSearchTerms() {
 }
 
 let manualTerms = [];
+let automaticTermsSnapshot = null;
 
 function getCrossPageTerms() {
     const result = [];
@@ -182,11 +185,16 @@ function getCrossPageTerms() {
     }
 
     result.push(...manualTerms);
-    if (autoSearch) result.push(...automaticSearchTerms());
+    if (autoSearch) {
+        if (!automaticTermsSnapshot || automaticTermsSnapshot.url !== location.href || isSearchEngine(location.href)) {
+            automaticTermsSnapshot = { url: location.href, terms: automaticSearchTerms() };
+        }
+        result.push(...automaticTermsSnapshot.terms);
+    }
     return [...new Set(result)];
 }
 
-function getActiveKeywords() {
+function getActiveKeywords(includeHidden = false) {
     const host = location.hostname.toLowerCase();
     const list = keywords.filter(k => {
         if (!k.domains || k.domains.length === 0) return true;
@@ -198,7 +206,7 @@ function getActiveKeywords() {
             list.push({ text: t, color: AUTO_COLORS[i % AUTO_COLORS.length], wholeWord: true, auto: true });
         }
     });
-    return list;
+    return includeHidden ? list : list.filter(keyword => !termIsHidden(keyword.text));
 }
 
 function isRegexText(text) { return text.startsWith('/') && text.lastIndexOf('/') > 0; }

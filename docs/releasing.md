@@ -20,6 +20,7 @@ Automated tests use Chromium and simulated GM bindings. They do not replace thes
 - Install/update through Tampermonkey and Violentmonkey; verify settings and explicit page saving survive reload.
 - Select words, sentences and inline-formatted passages. Confirm every same-page occurrence, result navigation and native context menus.
 - Activate web search by pointer and keyboard: the full-width action opens a new tab and retains the reading page. Confirm the selected text, chosen engine and new-tab behavior in each supported browser.
+- Check the combined page overview with Google terms, own selections and a shared term. Toggle visibility with pointer, Enter and Space; check active counts/ticks, focus, dynamic content and all-hidden recovery. Saved passages/profile data must remain unchanged; reload/full URL changes reset visibility. Test a query duplicating a permanent keyword and navigation during an ongoing scan.
 - Check keyboard use, screen-reader labels/status, zoom, touch and mobile keyboard behavior. Check shortcut conflicts on the target OS/browser.
 - Verify Alt+Shift+P opens/closes from both page and panel focus, stays inactive in editing fields/IME/repeat, and preserves an existing marking assignment. Check shortcut hover hints after recording, disabling, resetting and changing language.
 - Switch theme and transparency; verify saved choices and rollback on write failure. Confirm the logo tile has no additional button frame and that expanded copy actions fit short/narrow viewports.

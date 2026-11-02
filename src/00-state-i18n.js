@@ -115,7 +115,10 @@ Object.assign(I18N.de, {
 
 Object.assign(I18N.en, {
     pageHeading: 'On this page', pageHint: 'Select a word or passage. Use the floating highlighter to find every occurrence here.',
-    pageTerms: 'Page highlights', permanentKeywords: 'Saved keywords', clearPage: 'Clear page highlights',
+    sourceSearch: 'Search', sourceSelection: 'Selection', sourceSavedSelection: 'Saved selection', sourceBoth: 'Search + selection',
+    termVisibility: text => `Highlight “${text}”`, hideTermAction: text => `Hide “${text}” on this page`, showTermAction: text => `Show “${text}” on this page`,
+    termHiddenState: 'Hidden', termHiddenStatus: 'Term hidden on this page.', termShownStatus: 'Term visible on this page again.',
+    pageTerms: 'Page highlights', permanentKeywords: 'Saved keywords', clearPage: 'Clear own selections',
     deletePageTerm: text => `Remove page highlight “${text}”`,
     selectionActions: 'Actions for selected text', highlightSelection: 'Highlight all occurrences', highlightSelectionHint: 'Highlight the selected passage and all other occurrences on this page', webSearch: 'Search the web', webSearchNewTab: 'Search the web in a new tab',
     highlightUnsupported: 'Page highlighting requires a browser with CSS Custom Highlights support.',
@@ -132,7 +135,10 @@ Object.assign(I18N.en, {
 });
 Object.assign(I18N.de, {
     pageHeading: 'Auf dieser Seite', pageHint: 'Wort oder Passage auswählen. Das schwebende Textmarker-Symbol findet alle Vorkommen hier.',
-    pageTerms: 'Seitenmarkierungen', permanentKeywords: 'Dauerhafte Keywords', clearPage: 'Seitenmarkierungen löschen',
+    sourceSearch: 'Suche', sourceSelection: 'Auswahl', sourceSavedSelection: 'Gemerkte Auswahl', sourceBoth: 'Suche + Auswahl',
+    termVisibility: text => `„${text}“ hervorheben`, hideTermAction: text => `„${text}“ auf dieser Seite ausblenden`, showTermAction: text => `„${text}“ auf dieser Seite einblenden`,
+    termHiddenState: 'Ausgeblendet', termHiddenStatus: 'Begriff auf dieser Seite ausgeblendet.', termShownStatus: 'Begriff auf dieser Seite wieder eingeblendet.',
+    pageTerms: 'Seitenmarkierungen', permanentKeywords: 'Dauerhafte Keywords', clearPage: 'Eigene Markierungen löschen',
     deletePageTerm: text => `Seitenmarkierung „${text}“ entfernen`,
     selectionActions: 'Aktionen für ausgewählten Text', highlightSelection: 'Alle Vorkommen markieren', highlightSelectionHint: 'Auswahl und alle weiteren Vorkommen auf dieser Seite hervorheben', webSearch: 'Im Web suchen', webSearchNewTab: 'Im neuen Tab suchen',
     highlightUnsupported: 'Seitenmarkierungen benötigen einen Browser mit Unterstützung für CSS Custom Highlights.',

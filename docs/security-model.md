@@ -32,6 +32,8 @@ Ordinary domain scopes use normalized hostname equality or a real dot-subdomain 
 
 Saved-page records, global preferences and recent searches remain local GM data. Full URL keys and exports can contain private text or query parameters. Search-handoff TTL limits use, not immediate physical deletion. See the [data format](data-format.md) for retention and concurrency details.
 
+Temporary hiding is a reading control, not a confidentiality boundary: the term remains named in the private overview and may still appear within a different highlighted passage. Only current-page query terms, own passages and applicable keyword colors enter the combined overview; the full history and other-domain profiles remain excluded. The visibility Set is memory-only, trusted row activation is required, and URL changes clear it. Accepted automatic terms stay with their current document identity after the handoff TTL; a different SPA route does not reaccept the original referrer query.
+
 ## Verification and limits
 
 `security-ui` tests use Chromium isolated worlds, real closed roots and simulated manager APIs. They cover direct DOM access, native search, native editing/blur, synthetic actions, forged/mutated marks, cross-domain automatic-mark collisions and real export clicks. The normal functional/screenshot fixture uses an explicitly open test root only for inspection; it never overrides `isTrusted`. That adapter is not included in the shipped userscript and is never used by the isolated-world security suite.

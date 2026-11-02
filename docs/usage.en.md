@@ -24,11 +24,19 @@ An unfinished search-field draft does not replace a submitted URL query. The sea
 
 ## Color, removal and undo
 
+**On this page** lists transferred search words and your own selections together. **Search** identifies transferred terms, **Selection** your temporary passages, and **Saved selection** remembered page passages. A term from both search and selection appears once with both sources. Its count covers active matches from both engines, counting identical text ranges once. Permanent-only keywords remain in the separate **Keywords** editor.
+
 Each new page passage automatically gets a different vivid color and a count. All occurrences of the same passage share its color. Assignment skips colors already used by current page passages or applicable keywords, adding further colors after the initial palette. The color field still allows manual changes. Selecting the same passage again or restoring saved passages preserves their colors.
 
-Color, passage, count, bookmark and remove share one compact row, with the saved state beneath the passage text. The cross removes one passage. The **trash icon beside “On this page”** clears the list; the **back arrow beside it** undoes the latest change, including color and saved state. Buttons retain descriptive tooltips and accessible names. The latest 20 page states stay in memory; navigation/reload ends that undo history.
+Color, passage, count, visibility and, where applicable, bookmark and removal share one compact row, with source and saved state below the text. Own passages have an editable color input; search-only terms have a passive swatch. In a shared row, the color input changes the own passage; search matches outside its scope keep their search color. The cross removes an own passage. The **trash icon beside “On this page”** clears only own selections, retaining transferred search terms. The **back arrow beside it** undoes the latest own-passage change, including color and saved state. Buttons retain descriptive tooltips and accessible names. The latest 20 page states stay in memory; navigation/reload ends that undo history.
 
-Previous/Next and **Alt+Left / Right** navigate page highlights, Google search terms and applicable saved keywords together in document order. New selections add to existing results. A page highlight and keyword covering the exact same text range count once, using the page highlight as the navigation target. Individual search words inside longer highlighted passages remain separately reachable. The counter shows **All matches**. Position ticks are aggregated to at most 500 and match details to 300 rows; every actual occurrence remains accessible through navigation. “On this page” continues to manage your own passages; adding a passage never permanently saves automatic search terms.
+Previous/Next and **Alt+Left / Right** navigate visible page highlights, Google search terms and applicable saved keywords together in document order. New selections add to existing results. A page highlight and keyword covering the exact same text range count once, using the page highlight as the navigation target. Individual search words inside longer highlighted passages remain separately reachable. The counter shows **All matches**. Position ticks are aggregated to at most 500 and match details to 300 rows; every actual occurrence remains accessible through navigation. Adding a passage never permanently saves automatic search terms.
+
+## Hide terms temporarily
+
+Use the **eye toggle** to hide or show all highlights for a term on this page, including when it comes from both search and selection or also exists as a permanent keyword. The row remains with **Hidden**, struck-through text and **0** active matches. The counter, details, navigation and position bar use visible matches only. Newly loaded content respects visibility. A different, longer highlighted passage may still cover that text; its visibility stays independent.
+
+The toggle writes no saved data and is independent of the Undo history. Reloading or changing the complete URL resets visibility. Saved passages and permanent keywords stay intact and become visible again. Selecting and highlighting a hidden term also reveals it. Keyboard: Tab to the eye toggle and use Enter or Space; focus stays with the term. Hover hints explain the available action.
 
 ## Remember for this page
 
@@ -38,7 +46,7 @@ Previous/Next and **Alt+Left / Right** navigate page highlights, Google search t
 | Remembered page passage | The same complete URL | Stored locally by the userscript manager after clicking its bookmark |
 | Persistent keyword | All applicable pages or restricted domains | Separate Keywords section |
 
-Highlights start as temporary. The **bookmark icon (Remember for this page)** explicitly stores a passage, color and quote context locally in the userscript manager. A filled bookmark and “Saved” indicate persistence. Revisiting searches the exact text again; missing text is labeled **Not found**, without silently substituting similar content.
+Own highlights start as temporary. The **bookmark icon (Remember for this page)** explicitly stores a passage, color and quote context locally in the userscript manager. A filled bookmark and **Saved selection** indicate persistence. Revisiting searches the exact text again; missing text is labeled **Not found**, without silently substituting similar content.
 
 Clicking the bookmark again (**Forget saved passage**) removes persistence but keeps temporary highlights. Removing/clearing saved passages updates stored data too; undo can restore it during the current session. Keys use the complete URL, including query and fragment. Concurrent tabs editing the same URL use the latest saved write.
 

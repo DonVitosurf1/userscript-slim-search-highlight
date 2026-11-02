@@ -47,6 +47,8 @@ For the current UI, `-k appearance_selection_` covers the logo on existing insta
 
 `-k search_handoff_selection` reproduces adding passages after Google search transfer and verifies shared counts, document order, position ticks, match details and overlap deduplication. `-k selection_mixed_navigation` covers adjacent/partial overlaps, dynamic DOM changes and disable/re-enable while both highlighting paths are active.
 
+`-k overview_` covers unified sources/counts, shared query/manual/permanent terms, temporary hide/show, storage isolation, all-hidden recovery, keyboard focus, dynamic content, query expiry and URL transitions with the panel open or closed. `-k security_ui_term_visibility` checks trusted activation in a real isolated world with a closed root.
+
 ## Performance checks
 
 `node tests/run_tests.js -k compact_panel_` checks the compact overview in both themes, narrow touch targets, and expansion/help/locale behavior. Opening a tool section may increase the panel's height within the viewport; the closed overview has its own smaller height cap.
@@ -73,7 +75,7 @@ For the public README examples, run:
 CHROMIUM_PATH=/usr/bin/chromium npm run screenshots -- --readme
 ```
 
-This mode uses the local article in `scripts/fixtures/readme.html` and the generated userscript, without changing its styles. Native keyboard and pointer interactions create three differently colored passages (seven occurrences), save one passage, and open the selection menu. It waits for the trigger to reach the final selection before expanding, so a pending selection update cannot silently collapse the captured menu. It captures German/English × light/dark at 1200×800 CSS pixels with a 2× pixel density. It checks occurrence counts, page errors, viewport bounds, expanded-menu visibility, and that the panel and menu leave the article visible. Inspect all four captures before replacing public assets:
+This mode uses the local article in `scripts/fixtures/readme.html` and the generated userscript, without changing its styles. An in-memory Google handoff supplies one search term; native keyboard and pointer interactions add two own passages, save one, and open the selection menu (three colors, seven combined occurrences). It waits for the trigger to reach the final selection before expanding, so a pending selection update cannot silently collapse the captured menu. It captures German/English × light/dark at 1200×800 CSS pixels with a 2× pixel density. It checks occurrence counts, page errors, viewport bounds, expanded-menu visibility, and that the panel and menu leave the article visible. German captures also include a separate hidden-term panel view in ignored output. Inspect all four main captures before replacing public assets:
 
 | Generated file in `artifacts/screenshots/` | Public asset |
 |---|---|

@@ -2,6 +2,9 @@
 let pageTerms = [];
 let pageMatches = [];
 let navigationCache = null;
+const hiddenTermKeys = new Set();
+const termKey = text => normalizePassage(text).toLowerCase();
+const termIsHidden = text => hiddenTermKeys.has(termKey(text));
 let pageIdentity = location.href;
 let pageTextDirty = false;
 let pageURLTimer = null;
@@ -24,7 +27,7 @@ let copyFormat = GM_getValue('hl_copy_format', 'plain') === 'markdown' ? 'markdo
 const pagePaintNames = new Set();
 
 function nextPageHighlightColor() {
-    const used = new Set([...pageTerms, ...getActiveKeywords()].map(term => String(term.color).toLowerCase()));
+    const used = new Set([...pageTerms, ...getActiveKeywords(true)].map(term => String(term.color).toLowerCase()));
     const available = PAGE_HIGHLIGHT_COLORS.find(color => !used.has(color));
     if (available) return available;
     // An odd multiplier visits every 24-bit RGB value once. Keep extra colors
@@ -94,14 +97,19 @@ function undoPageChange() {
     uiById('page-heading')?.focus({ preventScroll: true });
 }
 function watchPageIdentity() {
-    if (!pageTerms.length && !knownSavedPages && pageURLTimer) { clearInterval(pageURLTimer); pageURLTimer = null; }
-    if ((pageTerms.length || knownSavedPages) && !pageURLTimer) pageURLTimer = setInterval(() => {
-        if (pageIdentity !== location.href) { resetPageIdentity(); refreshPageResults(); }
+    if (pageURLTimer) return;
+    const watch = pageTerms.length || knownSavedPages || hiddenTermKeys.size || getCrossPageTerms().length;
+    // Keep the lightweight identity check after a termless intermediate route.
+    if (watch) pageURLTimer = setInterval(() => {
+        if (pageIdentity !== location.href) refreshPageContext();
     }, 250);
 }
 function ensurePageIdentity() {
     if (pageIdentity === location.href) return true;
-    resetPageIdentity(); refreshPageResults(); return false;
+    refreshPageContext(); return false;
+}
+function refreshPageContext() {
+    resetPageIdentity(); restartHighlights();
 }
 function searchRoot() {
     if (!pageOptions.articleOnly) return document.body;
@@ -159,5 +167,6 @@ function clearPagePaint(cancel = true) {
 function resetPageIdentity() {
     if (pageIdentity === location.href) return;
     pageIdentity = location.href; pageUndo = []; clearPagePaint(); hideSelectionTools(); currentIdx = -1;
+    hiddenTermKeys.clear(); automaticTermsSnapshot = null;
     restorePageRecord();
 }

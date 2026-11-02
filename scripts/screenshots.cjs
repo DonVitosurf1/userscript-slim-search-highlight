@@ -21,7 +21,8 @@ async function captureReadme(browser, source) {
     document.documentElement.dataset.theme=theme;
     document.querySelector(`article:not([lang="${language}"])`).remove();
     for(const node of document.querySelectorAll('[data-de]')) node.textContent=node.dataset[language];
-    const store={hl_keywords:[],hl_auto_search:false,hl_ui_theme:theme,hl_lang:language};
+    const solar=language==='de'?'Solarenergie':'Solar power';
+    const store={hl_keywords:[],hl_auto_search:true,hl_ui_theme:theme,hl_lang:language,hl_search_handoffs:{version:1,entries:[{target:location.href,source:'https://www.google.com',terms:[solar],timestamp:Date.now()}]}};
     window.GM_getValue=(key,fallback)=>structuredClone(store[key]??fallback);
     window.GM_setValue=(key,value)=>{store[key]=structuredClone(value)};
     window.GM_addStyle=css=>{const style=document.createElement('style');style.textContent=css;document.head.append(style)};
@@ -34,7 +35,7 @@ async function captureReadme(browser, source) {
     const range=document.createRange();range.selectNodeContents(node);
     getSelection().removeAllRanges();getSelection().addRange(range);
    });
-   for(const [term,expectedCount] of [['solar',3],['storage',5],['climate',7]]) {
+   for(const [term,expectedCount] of [['storage',2],['climate',4]]) {
     await select(term);
     await page.locator('#selection-trigger').waitFor({state:'visible'});
     await page.keyboard.press('Alt+Shift+H');
@@ -68,6 +69,11 @@ async function captureReadme(browser, source) {
    if(errors.length) throw Error(`${name}: ${errors.join('; ')}`);
    if(!await page.locator('#selection-actions').isVisible()) throw Error(`${name}: selection menu collapsed before capture`);
    await page.screenshot({path:path.join(output,`${name}.png`)});
+   if(language==='de') {
+    await page.locator('.page-item').first().locator('.term-visibility').click();
+    await page.waitForFunction(()=>document.getElementById('hl-counter').textContent==='1 / 4');
+    await page.locator('#slim-hl-panel').screenshot({path:path.join(output,`${name}-hidden-panel.png`)});
+   }
    results.push({name,language,theme,counts,panel,menu});
   } finally {await page.close()}
  }

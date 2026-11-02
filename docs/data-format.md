@@ -32,6 +32,10 @@ Saving one page merges the latest other-page entries. Concurrent edits to the **
 
 Unknown schema versions are not overwritten by save actions. “Export saved pages” downloads the original local data as JSON, including an unknown version, for preservation. JSON export is a data export; this version does not offer a file-import UI. Do not treat it as a round-trip import feature.
 
+## Temporary term visibility
+
+The combined page overview does not merge storage formats. Its hidden-term Set is memory-only and scoped to the complete current URL. It is absent from `hl_keywords`, `hl_page_annotations`, undo snapshots and all exports. Hiding a saved passage or a query matching a permanent keyword never modifies that record. Markdown/JSON exports still include hidden passages belonging to that export; hiding is not removal. A reload or URL transition clears hidden state; explicitly saved records remain visible again. Accepted automatic terms are also retained only in a document-local URL snapshot; handoff expiry still applies before first acceptance on a new page.
+
 ## Appearance preferences
 
 Panel placement uses `hl_panel_pos`: `null` (or an absent/invalid value) means automatic right-center placement; `{x, y}` stores a manually selected position in viewport pixels. Coordinates are kept inside the visible viewport. Reset stores `null`, so automatic placement continues to follow viewport and panel-height changes.

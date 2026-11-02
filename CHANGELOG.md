@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.6.0
+
+- „Auf dieser Seite“ zeigt übernommene Suchbegriffe und eigene Markierungen gemeinsam mit Farbe, aktiver Trefferzahl und Herkunft. Derselbe Begriff aus Suche und Auswahl erhält eine gemeinsame Zeile; dauerhafte Keywords bleiben separat gespeichert und bearbeitbar.
+- Jeder Begriff hat einen Auge-Schalter zum vorübergehenden Aus- und Einblenden. Ausgeblendete Begriffe bleiben mit Status und null aktiven Treffern in der Übersicht. Markierungen, Zähler, Navigation und Positionsleiste berücksichtigen die Sichtbarkeit gemeinsam.
+- Die Sichtbarkeit gilt nur für die aktuelle vollständige URL. Neuladen oder Navigation setzt sie zurück; gespeicherte Passagen, Keywords, Undo-Daten und Exporte erhalten keine neuen Sichtbarkeitsfelder. Eine erneute Auswahl blendet einen Begriff wieder ein.
+- Bereits übernommene Suchwörter bleiben auf ihrer Seite auch nach Ablauf des Übergabe-Zeitfensters verfügbar. Eine andere SPA-Route übernimmt den ursprünglichen Google-Referrer nicht erneut. Laufende Suchaufträge werden bei Sichtbarkeits- und Seitenwechseln verworfen.
+- Neue Browser- und Sicherheitsprüfungen decken Quellenübersicht, gemeinsame Begriffe, Tastaturfokus, Speicherung, Kontextwechsel, dynamische Inhalte und echte Aktivierung der Auge-Schalter ab.
+
 ## 4.5.14
 
 - Auch innerhalb neu markierter Sätze und Absätze bleiben die einzelnen Google-Suchbegriffe in Navigation, Trefferdetails und Positionsleiste erhalten. Nur exakt identische Textbereiche werden zusammengefasst; teilweise überlappende oder enthaltene Suchwörter bleiben eigene Treffer.

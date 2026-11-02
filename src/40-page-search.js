@@ -100,6 +100,7 @@ function* collectPageMatches(root) {
     const found = [];
     let operations = 0;
     for (const term of pageTerms) {
+        if (termIsHidden(term.text)) continue;
         const escaped = escapeRegExp(term.text);
         const pattern = pageOptions.wholeWords ? '(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])' : escaped;
         for (const match of text.matchAll(new RegExp(pattern, 'giu'))) {

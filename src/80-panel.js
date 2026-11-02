@@ -189,7 +189,7 @@ function createPanel(snapshot = null) {
                 </div>
             </div>
             <div class="page-heading-row"><h2 id="page-heading" class="section-title" tabindex="-1">${t('pageHeading')}</h2>
-            <div class="page-actions"><button type="button" class="icon-btn" id="clear-page" aria-label="${t('clearPageShort')} – ${t('pageHeading')}" title="${t('clearPage')}" hidden>${icon('trash')}</button><button type="button" class="icon-btn" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${icon('reset')}</button></div></div>
+            <div class="page-actions"><button type="button" class="icon-btn" id="clear-page" aria-label="${t('clearPage')}" title="${t('clearPage')}" hidden>${icon('trash')}</button><button type="button" class="icon-btn" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${icon('reset')}</button></div></div>
             <div id="page-search-status" class="hint" role="status"></div>
             <div id="page-list"></div>
             <div class="status-row"><span id="panel-status" class="hint" role="status"></span><button type="button" id="undo-delete" hidden>${t('undo')}</button></div>
@@ -337,7 +337,7 @@ function createPanel(snapshot = null) {
         enabled = e.target.checked; save();
         if (enabled) { if (!observer) setupObserver(); refreshHighlights(); }
         else {
-            highlightGeneration++;
+            highlightGeneration++; isHighlighting = false; refreshQueued = false;
             pendingNodes.clear(); cleanupHighlights(); clearPagePaint(); keywordCounts = {}; currentIdx = -1;
             renderPageList(); updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); hideSelectionTools(); observer?.disconnect();
         }

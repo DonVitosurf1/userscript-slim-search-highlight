@@ -18,7 +18,7 @@ function bindGlobalHandlers() {
         selectionShortcut = candidate; recordingShortcut = false;
         uiById('shortcut-error').textContent = ''; save(); renderShortcut();
     }, true);
-    const changedPage = () => { resetPageIdentity(); refreshPageResults(); };
+    const changedPage = () => refreshPageContext();
     window.addEventListener('popstate', changedPage); window.addEventListener('hashchange', changedPage);
     document.addEventListener('mousedown', e => { if (!isOwnNode(e.target)) isSelecting = true; });
     document.addEventListener('mouseup', () => { setTimeout(() => { isSelecting = false; }, 80); });
@@ -114,9 +114,9 @@ GM_registerMenuCommand(t('menuOpen'), () => {
 
 function excludeCurrentDomain() {
     blacklist.push(location.hostname);
-    highlightGeneration++;
+    highlightGeneration++; isHighlighting = false; refreshQueued = false;
     pendingNodes.clear(); observer?.disconnect(); cleanupHighlights(); clearPagePaint(); hideSelectionTools(); keywordCounts = {}; currentIdx = -1;
-    updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); save();
+    renderPageList(); updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); save();
     const status = uiById('panel-status');
     if (status) setPanelStatus('excluded');
 }

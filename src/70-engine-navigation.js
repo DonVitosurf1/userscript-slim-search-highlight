@@ -59,7 +59,8 @@ function highlightRoots(roots, done) {
     const queue = roots.slice();
     let walker = null;
     function step() {
-        if (!enabled || isBlacklisted() || generation !== highlightGeneration) return done();
+        if (generation !== highlightGeneration) return;
+        if (!enabled || isBlacklisted()) return done();
         const deadline = performance.now() + FRAME_BUDGET_MS;
         while (performance.now() < deadline) {
             if (!walker) {
@@ -89,10 +90,22 @@ function highlightRoots(roots, done) {
     requestAnimationFrame(step);
 }
 
+function restartHighlights() {
+    highlightGeneration++; isHighlighting = false; refreshQueued = false;
+    pendingNodes.clear(); needsFullRefresh = false;
+    clearTimeout(debounceTimer); clearTimeout(refreshRetryTimer);
+    clearPagePaint(); currentIdx = -1;
+    if (enabled && !isBlacklisted()) refreshHighlights();
+    else cleanupHighlights();
+    renderPageList(); updateCounterAndTitle(); renderMatchList(); updatePosBar();
+}
+
 function afterHighlight() {
+    if (pageIdentity !== location.href) { refreshPageContext(); return; }
     isHighlighting = false;
     navigationCache = null;
     rebuildPageMatches();
+    watchPageIdentity();
     updateCounterAndTitle();
     if (uiById('kw-list')) updateKeywordCounts();
     if (uiById('match-list')) renderMatchList();
@@ -107,6 +120,7 @@ function afterHighlight() {
 
 /** Vollständiger Neuaufbau, nur nötig wenn sich Keywords oder Einstellungen ändern. */
 function refreshHighlights() {
+    if (pageIdentity !== location.href) { refreshPageContext(); return; }
     if (!enabled || isBlacklisted()) return;
     if (isSelecting) {
         clearTimeout(refreshRetryTimer);

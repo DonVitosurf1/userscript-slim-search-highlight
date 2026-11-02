@@ -37,6 +37,16 @@ module.exports = ({ SRC, eq, ok }) => {
         return { page, evaluate, click };
     }
     return {
+        async security_ui_term_visibility_rejects_synthetic_private_actions(browser) {
+            const {page,evaluate,click}=await isolated(browser,true,{},'https://hostile.test/#hl=Outlook','<p>Outlook</p>');
+            await page.waitForSelector('.slim-hl');
+            const before=await evaluate('JSON.stringify(__state)');
+            await evaluate("__ownerRoot.querySelector('.term-visibility').click()");
+            eq(await page.locator('.slim-hl').count(),1,'Synthetic activation cannot change visibility');
+            await click('page-list .term-visibility');
+            await page.waitForFunction(()=>document.querySelectorAll('.slim-hl').length===0);
+            eq(await evaluate('JSON.stringify(__state)'),before,'Native temporary hide does not write profile data');
+        },
         async security_ui_automatic_mark_cannot_delete_another_domain_profile(browser) {
             const {page,evaluate}=await isolated(browser,true,{},'https://hostile.test/#hl=PRIVATE_KEYWORD','<p id="subject">PRIVATE_KEYWORD</p>');
             await page.waitForSelector('#subject .slim-hl');

@@ -32,10 +32,16 @@ const UI_CSS = `
     #slim-hl-panel .page-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     #slim-hl-panel .page-heading-row .section-title { margin: 0; }
     #slim-hl-panel .page-item { display: block; margin: 6px 0; padding-bottom: 4px; border-bottom: 1px solid var(--hl-divider); }
-    #slim-hl-panel .page-row { display: flex; align-items: center; gap: 6px; }
+    #slim-hl-panel .page-row { display: flex; align-items: center; gap: 4px; }
+    #slim-hl-panel .page-row > .kw-count { min-width: 16px; flex-shrink: 0; }
     #slim-hl-panel .page-label { flex: 1; min-width: 0; }
     #slim-hl-panel .page-label .page-state { display: block; margin: 0; font-size: 12px; line-height: 1.3; }
     #slim-hl-panel .page-save[aria-pressed=true] { color: var(--hl-accent-text); }
+    #slim-hl-panel .page-row > .icon-btn { flex-shrink: 0; }
+    #slim-hl-panel .page-row > .term-visibility { width: 32px; padding: 6px; }
+    #slim-hl-panel .term-swatch { display: block; flex: 0 0 38px; width: 38px; height: 38px; border: 1px solid var(--hl-border); border-radius: var(--hl-radius); box-shadow: inset 0 0 0 4px var(--hl-field); }
+    #slim-hl-panel .page-item.is-hidden .page-term { color: var(--hl-muted); text-decoration: line-through; }
+    #slim-hl-panel .term-visibility[aria-pressed=false] { color: var(--hl-muted); }
     #slim-hl-panel .page-actions { display: flex; flex-shrink: 0; gap: 4px; }
     #slim-hl-panel textarea { resize: none; min-height: 120px; margin-bottom: 8px; }
     #slim-selection-tools details { display: block; border-top: 1px solid var(--hl-divider); margin-top: 2px; padding-top: 2px; }
@@ -187,6 +193,7 @@ const UI_CSS = `
         #slim-hl-panel input[type=text], #slim-hl-panel select, #slim-hl-panel textarea { font-size: 16px; }
         #slim-hl-panel button, #slim-hl-panel summary, #slim-selection-tools button, #slim-selection-tools summary { min-height: 44px; }
         #slim-hl-panel .icon-btn { width: 40px; }
+        #slim-hl-panel .page-row > .term-visibility { width: 44px; }
         #slim-hl-panel input[type=range] { min-height: 44px; }
         #slim-hl-panel .panel-tools > details > summary { min-height: 44px; }
     }

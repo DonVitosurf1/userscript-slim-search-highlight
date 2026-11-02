@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.14
+// @version      4.6.0
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -172,7 +172,10 @@
 
     Object.assign(I18N.en, {
         pageHeading: 'On this page', pageHint: 'Select a word or passage. Use the floating highlighter to find every occurrence here.',
-        pageTerms: 'Page highlights', permanentKeywords: 'Saved keywords', clearPage: 'Clear page highlights',
+        sourceSearch: 'Search', sourceSelection: 'Selection', sourceSavedSelection: 'Saved selection', sourceBoth: 'Search + selection',
+        termVisibility: text => `Highlight “${text}”`, hideTermAction: text => `Hide “${text}” on this page`, showTermAction: text => `Show “${text}” on this page`,
+        termHiddenState: 'Hidden', termHiddenStatus: 'Term hidden on this page.', termShownStatus: 'Term visible on this page again.',
+        pageTerms: 'Page highlights', permanentKeywords: 'Saved keywords', clearPage: 'Clear own selections',
         deletePageTerm: text => `Remove page highlight “${text}”`,
         selectionActions: 'Actions for selected text', highlightSelection: 'Highlight all occurrences', highlightSelectionHint: 'Highlight the selected passage and all other occurrences on this page', webSearch: 'Search the web', webSearchNewTab: 'Search the web in a new tab',
         highlightUnsupported: 'Page highlighting requires a browser with CSS Custom Highlights support.',
@@ -189,7 +192,10 @@
     });
     Object.assign(I18N.de, {
         pageHeading: 'Auf dieser Seite', pageHint: 'Wort oder Passage auswählen. Das schwebende Textmarker-Symbol findet alle Vorkommen hier.',
-        pageTerms: 'Seitenmarkierungen', permanentKeywords: 'Dauerhafte Keywords', clearPage: 'Seitenmarkierungen löschen',
+        sourceSearch: 'Suche', sourceSelection: 'Auswahl', sourceSavedSelection: 'Gemerkte Auswahl', sourceBoth: 'Suche + Auswahl',
+        termVisibility: text => `„${text}“ hervorheben`, hideTermAction: text => `„${text}“ auf dieser Seite ausblenden`, showTermAction: text => `„${text}“ auf dieser Seite einblenden`,
+        termHiddenState: 'Ausgeblendet', termHiddenStatus: 'Begriff auf dieser Seite ausgeblendet.', termShownStatus: 'Begriff auf dieser Seite wieder eingeblendet.',
+        pageTerms: 'Seitenmarkierungen', permanentKeywords: 'Dauerhafte Keywords', clearPage: 'Eigene Markierungen löschen',
         deletePageTerm: text => `Seitenmarkierung „${text}“ entfernen`,
         selectionActions: 'Aktionen für ausgewählten Text', highlightSelection: 'Alle Vorkommen markieren', highlightSelectionHint: 'Auswahl und alle weiteren Vorkommen auf dieser Seite hervorheben', webSearch: 'Im Web suchen', webSearchNewTab: 'Im neuen Tab suchen',
         highlightUnsupported: 'Seitenmarkierungen benötigen einen Browser mit Unterstützung für CSS Custom Highlights.',
@@ -303,10 +309,16 @@
         #slim-hl-panel .page-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         #slim-hl-panel .page-heading-row .section-title { margin: 0; }
         #slim-hl-panel .page-item { display: block; margin: 6px 0; padding-bottom: 4px; border-bottom: 1px solid var(--hl-divider); }
-        #slim-hl-panel .page-row { display: flex; align-items: center; gap: 6px; }
+        #slim-hl-panel .page-row { display: flex; align-items: center; gap: 4px; }
+        #slim-hl-panel .page-row > .kw-count { min-width: 16px; flex-shrink: 0; }
         #slim-hl-panel .page-label { flex: 1; min-width: 0; }
         #slim-hl-panel .page-label .page-state { display: block; margin: 0; font-size: 12px; line-height: 1.3; }
         #slim-hl-panel .page-save[aria-pressed=true] { color: var(--hl-accent-text); }
+        #slim-hl-panel .page-row > .icon-btn { flex-shrink: 0; }
+        #slim-hl-panel .page-row > .term-visibility { width: 32px; padding: 6px; }
+        #slim-hl-panel .term-swatch { display: block; flex: 0 0 38px; width: 38px; height: 38px; border: 1px solid var(--hl-border); border-radius: var(--hl-radius); box-shadow: inset 0 0 0 4px var(--hl-field); }
+        #slim-hl-panel .page-item.is-hidden .page-term { color: var(--hl-muted); text-decoration: line-through; }
+        #slim-hl-panel .term-visibility[aria-pressed=false] { color: var(--hl-muted); }
         #slim-hl-panel .page-actions { display: flex; flex-shrink: 0; gap: 4px; }
         #slim-hl-panel textarea { resize: none; min-height: 120px; margin-bottom: 8px; }
         #slim-selection-tools details { display: block; border-top: 1px solid var(--hl-divider); margin-top: 2px; padding-top: 2px; }
@@ -458,6 +470,7 @@
             #slim-hl-panel input[type=text], #slim-hl-panel select, #slim-hl-panel textarea { font-size: 16px; }
             #slim-hl-panel button, #slim-hl-panel summary, #slim-selection-tools button, #slim-selection-tools summary { min-height: 44px; }
             #slim-hl-panel .icon-btn { width: 40px; }
+            #slim-hl-panel .page-row > .term-visibility { width: 44px; }
             #slim-hl-panel input[type=range] { min-height: 44px; }
             #slim-hl-panel .panel-tools > details > summary { min-height: 44px; }
         }
@@ -475,6 +488,8 @@
         save: '<path d="m5 12 4 4L19 6"/>',
         bookmark: '<path d="M6 3h12v18l-6-4-6 4V3Z"/>',
         bookmarked: '<path d="M6 3h12v18l-6-4-6 4V3Z" fill="currentColor"/>',
+        eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+        eyeOff: '<path d="m3 3 18 18M10.5 5.1 12 5c6.5 0 10 7 10 7a21 21 0 0 1-3 3.8M6.1 6.1A21 21 0 0 0 2 12s3.5 7 10 7a12 12 0 0 0 5.8-1.6M10 10a3 3 0 0 0 4 4"/>',
         trash: '<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',
         close: '<path d="m6 6 12 12M18 6 6 18"/>',
         minus: '<path d="M5 12h14"/>',
@@ -539,6 +554,9 @@
     let pageTerms = [];
     let pageMatches = [];
     let navigationCache = null;
+    const hiddenTermKeys = new Set();
+    const termKey = text => normalizePassage(text).toLowerCase();
+    const termIsHidden = text => hiddenTermKeys.has(termKey(text));
     let pageIdentity = location.href;
     let pageTextDirty = false;
     let pageURLTimer = null;
@@ -561,7 +579,7 @@
     const pagePaintNames = new Set();
 
     function nextPageHighlightColor() {
-        const used = new Set([...pageTerms, ...getActiveKeywords()].map(term => String(term.color).toLowerCase()));
+        const used = new Set([...pageTerms, ...getActiveKeywords(true)].map(term => String(term.color).toLowerCase()));
         const available = PAGE_HIGHLIGHT_COLORS.find(color => !used.has(color));
         if (available) return available;
         // An odd multiplier visits every 24-bit RGB value once. Keep extra colors
@@ -631,14 +649,19 @@
         uiById('page-heading')?.focus({ preventScroll: true });
     }
     function watchPageIdentity() {
-        if (!pageTerms.length && !knownSavedPages && pageURLTimer) { clearInterval(pageURLTimer); pageURLTimer = null; }
-        if ((pageTerms.length || knownSavedPages) && !pageURLTimer) pageURLTimer = setInterval(() => {
-            if (pageIdentity !== location.href) { resetPageIdentity(); refreshPageResults(); }
+        if (pageURLTimer) return;
+        const watch = pageTerms.length || knownSavedPages || hiddenTermKeys.size || getCrossPageTerms().length;
+        // Keep the lightweight identity check after a termless intermediate route.
+        if (watch) pageURLTimer = setInterval(() => {
+            if (pageIdentity !== location.href) refreshPageContext();
         }, 250);
     }
     function ensurePageIdentity() {
         if (pageIdentity === location.href) return true;
-        resetPageIdentity(); refreshPageResults(); return false;
+        refreshPageContext(); return false;
+    }
+    function refreshPageContext() {
+        resetPageIdentity(); restartHighlights();
     }
     function searchRoot() {
         if (!pageOptions.articleOnly) return document.body;
@@ -696,6 +719,7 @@
     function resetPageIdentity() {
         if (pageIdentity === location.href) return;
         pageIdentity = location.href; pageUndo = []; clearPagePaint(); hideSelectionTools(); currentIdx = -1;
+        hiddenTermKeys.clear(); automaticTermsSnapshot = null;
         restorePageRecord();
     }
 
@@ -802,6 +826,7 @@
         const found = [];
         let operations = 0;
         for (const term of pageTerms) {
+            if (termIsHidden(term.text)) continue;
             const escaped = escapeRegExp(term.text);
             const pattern = pageOptions.wholeWords ? '(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])' : escaped;
             for (const match of text.matchAll(new RegExp(pattern, 'giu'))) {
@@ -884,10 +909,13 @@
             rememberPageChange();
             pageTerms.push({ id: newPageId(), text: value, color: nextPageHighlightColor(), saved: false, anchor: null });
         }
+        const reveal = hiddenTermKeys.delete(termKey(value));
         watchPageIdentity(); currentIdx = -1; isSelecting = false;
         const focusPanel = uiById('slim-selection-tools')?.contains(uiActiveElement());
         hideSelectionTools(); getSelection()?.removeAllRanges();
-        setPanelOpen(true, !!focusPanel); refreshPageResults();
+        setPanelOpen(true, !!focusPanel);
+        if (reveal) { restartHighlights(); setPanelStatus('termShownStatus'); }
+        else refreshPageResults();
         return true;
     }
     function changePageTerm(term, action) {
@@ -900,44 +928,91 @@
         currentIdx = -1; watchPageIdentity(); refreshPageResults();
         return saved;
     }
+    function overviewTerms() {
+        const rows = new Map(), applicable = new Map(getActiveKeywords(true).map(keyword => [termKey(keyword.text), keyword]));
+        for (const text of getCrossPageTerms()) {
+            const key = termKey(text), keyword = applicable.get(key);
+            if (!keyword || !key || IGNORE_WORDS.has(key)) continue;
+            if (!rows.has(key)) rows.set(key, { key, text, keyword, page: null });
+        }
+        for (const page of pageTerms) {
+            const key = termKey(page.text), entry = rows.get(key) || { key, text: page.text, keyword: null };
+            entry.page = page; entry.text = page.text; rows.set(key, entry);
+        }
+        return [...rows.values()];
+    }
+    function toggleOverviewTerm(key) {
+        if (!ensurePageIdentity() || !overviewTerms().some(entry => entry.key === key)) return;
+        const showing = hiddenTermKeys.delete(key);
+        if (!showing) hiddenTermKeys.add(key);
+        isSelecting = false; hideSelectionTools(); restartHighlights();
+        setPanelStatus(showing ? 'termShownStatus' : 'termHiddenStatus');
+    }
     function renderPageList() {
-        watchPageIdentity(); renderSearchState();
+        renderSearchState();
         const list = uiById('page-list');
         if (!list) return;
-        const focused = list.contains(uiActiveElement());
+        const active = uiActiveElement(), focused = list.contains(active);
+        const focusedKey = focused && active.classList.contains('term-visibility') ? active.dataset.termKey : null;
+        const entries = overviewTerms(), counts = new Map();
+        for (const match of navigationMatches()) {
+            const key = termKey(match.range ? match.term : match.dataset.kw || match.textContent);
+            counts.set(key, (counts.get(key) || 0) + 1);
+        }
+        watchPageIdentity();
         list.replaceChildren();
-        if (!pageTerms.length) {
+        if (!entries.length) {
             const empty = document.createElement('p'); empty.className = 'hint'; empty.textContent = t('pageHintShort'); list.append(empty);
         }
-        for (const term of pageTerms) {
-            const item = document.createElement('div'); item.className = 'page-item';
+        for (const entry of entries) {
+            const term = entry.page, hidden = hiddenTermKeys.has(entry.key);
+            const item = document.createElement('div'); item.className = 'page-item' + (hidden ? ' is-hidden' : ''); item.dataset.termKey = entry.key;
             const row = document.createElement('div'); row.className = 'page-row';
-            const color = document.createElement('input'); color.type = 'color'; color.value = term.color;
-            color.setAttribute('aria-label', t('pageColor', term.text));
-            color.onchange = () => changePageTerm(term, () => { term.color = color.value; });
-            const label = document.createElement('span'); label.className = 'page-term'; label.textContent = term.text; label.title = term.text;
-            const count = document.createElement('span'); count.className = 'kw-count'; count.textContent = pageCounts.get(term.id) || 0;
-            const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'icon-btn page-remove'; remove.innerHTML = icon('close'); remove.title = t('remove');
-            remove.setAttribute('aria-label', t('deletePageTerm', term.text));
-            remove.onclick = () => { changePageTerm(term, () => { pageTerms = pageTerms.filter(item => item.id !== term.id); }); uiById('undo-page')?.focus({ preventScroll: true }); };
+            const color = document.createElement(term ? 'input' : 'span');
+            if (term) {
+                color.type = 'color'; color.value = term.color; color.setAttribute('aria-label', t('pageColor', term.text));
+                color.onchange = () => changePageTerm(term, () => { term.color = color.value; });
+            } else {
+                color.className = 'term-swatch'; color.style.backgroundColor = entry.keyword.color || DEFAULT_COLOR; color.setAttribute('aria-hidden', 'true');
+            }
+            const label = document.createElement('span'); label.className = 'page-term'; label.textContent = entry.text; label.title = entry.text;
+            const count = document.createElement('span'); count.className = 'kw-count'; count.textContent = counts.get(entry.key) || 0; count.title = t('countTitle');
             const content = document.createElement('div'); content.className = 'page-label';
             const state = document.createElement('span'); state.className = 'hint page-state';
-            state.textContent = term.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled ? t('savedMissing') : t(term.saved ? 'pageSavedShort' : 'pageTemporary');
-            const save = document.createElement('button'); save.type = 'button'; save.className = 'icon-btn page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
-            save.innerHTML = icon(term.saved ? 'bookmarked' : 'bookmark');
-            save.setAttribute('aria-label', t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm'));
-            save.title = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
-            save.onclick = () => {
-                if (!readSavedPages()) { setPanelStatus('storageUnsupported'); return; }
-                if (!changePageTerm(term, () => { term.saved = !term.saved; })) return;
-                setPanelStatus(term.saved ? 'pageRemembered' : 'pageForgotten');
-            };
-            content.append(label, state); row.append(color, content, count, save, remove); item.append(row); list.append(item);
+            const captions = [t(entry.keyword ? term ? 'sourceBoth' : 'sourceSearch' : term.saved ? 'sourceSavedSelection' : 'sourceSelection')];
+            if (entry.keyword && term?.saved) captions.push(t('pageSavedShort'));
+            if (hidden) captions.push(t('termHiddenState'));
+            else if (term?.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled) captions.push(t('savedMissing'));
+            state.textContent = captions.join(' · ');
+            const visibility = document.createElement('button'); visibility.type = 'button'; visibility.className = 'icon-btn term-visibility';
+            visibility.dataset.termKey = entry.key; visibility.innerHTML = icon(hidden ? 'eyeOff' : 'eye');
+            visibility.setAttribute('aria-label', t('termVisibility', entry.text)); visibility.setAttribute('aria-pressed', String(!hidden));
+            visibility.title = t(hidden ? 'showTermAction' : 'hideTermAction', entry.text);
+            visibility.onclick = () => toggleOverviewTerm(entry.key);
+            content.append(label, state); row.append(color, content, count, visibility);
+            if (term) {
+                const save = document.createElement('button'); save.type = 'button'; save.className = 'icon-btn page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
+                save.innerHTML = icon(term.saved ? 'bookmarked' : 'bookmark');
+                save.setAttribute('aria-label', t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm')); save.title = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
+                save.onclick = () => {
+                    if (!ensurePageIdentity()) return;
+                    if (!readSavedPages()) { setPanelStatus('storageUnsupported'); return; }
+                    if (!changePageTerm(term, () => { term.saved = !term.saved; })) return;
+                    setPanelStatus(term.saved ? 'pageRemembered' : 'pageForgotten');
+                };
+                const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'icon-btn page-remove'; remove.innerHTML = icon('close'); remove.title = t('remove');
+                remove.setAttribute('aria-label', t('deletePageTerm', term.text));
+                remove.onclick = () => { changePageTerm(term, () => { pageTerms = pageTerms.filter(item => item.id !== term.id); }); uiById('undo-page')?.focus({ preventScroll: true }); };
+                row.append(save, remove);
+            }
+            item.append(row); list.append(item);
         }
         const clear = uiById('clear-page'); if (clear) clear.hidden = !pageTerms.length;
         const undo = uiById('undo-page'); if (undo) undo.hidden = !pageUndo.length;
         const scope = uiById('navigation-scope'); if (scope) scope.textContent = t('allResults');
-        if (focused) uiById('page-heading')?.focus({ preventScroll: true });
+        const nextFocus = focusedKey == null ? null : [...list.querySelectorAll('.term-visibility')].find(button => button.dataset.termKey === focusedKey);
+        if (nextFocus) nextFocus.focus({ preventScroll: true });
+        else if (focused) uiById('page-heading')?.focus({ preventScroll: true });
     }
 
     function safePageURL() {
@@ -1309,11 +1384,13 @@
         } catch { setPanelStatus('searchTransferFailed'); }
     }
 
+    const initialSearchPage = location.href;
     function automaticSearchTerms() {
         if (isSearchEngine(location.href)) return getSearchTerms();
         try {
             const handoff = readSearchHandoffs().find(entry => entry.target === searchDestination(location.href));
             if (handoff) return handoff.terms;
+            if (location.href !== initialSearchPage) return [];
             const fromSearch = isSearchEngine(document.referrer);
             if (fromSearch) {
                 const query = extractQuery(document.referrer);
@@ -1326,6 +1403,7 @@
     }
 
     let manualTerms = [];
+    let automaticTermsSnapshot = null;
 
     function getCrossPageTerms() {
         const result = [];
@@ -1335,11 +1413,16 @@
         }
 
         result.push(...manualTerms);
-        if (autoSearch) result.push(...automaticSearchTerms());
+        if (autoSearch) {
+            if (!automaticTermsSnapshot || automaticTermsSnapshot.url !== location.href || isSearchEngine(location.href)) {
+                automaticTermsSnapshot = { url: location.href, terms: automaticSearchTerms() };
+            }
+            result.push(...automaticTermsSnapshot.terms);
+        }
         return [...new Set(result)];
     }
 
-    function getActiveKeywords() {
+    function getActiveKeywords(includeHidden = false) {
         const host = location.hostname.toLowerCase();
         const list = keywords.filter(k => {
             if (!k.domains || k.domains.length === 0) return true;
@@ -1351,7 +1434,7 @@
                 list.push({ text: t, color: AUTO_COLORS[i % AUTO_COLORS.length], wholeWord: true, auto: true });
             }
         });
-        return list;
+        return includeHidden ? list : list.filter(keyword => !termIsHidden(keyword.text));
     }
 
     function isRegexText(text) { return text.startsWith('/') && text.lastIndexOf('/') > 0; }
@@ -1642,7 +1725,8 @@
         const queue = roots.slice();
         let walker = null;
         function step() {
-            if (!enabled || isBlacklisted() || generation !== highlightGeneration) return done();
+            if (generation !== highlightGeneration) return;
+            if (!enabled || isBlacklisted()) return done();
             const deadline = performance.now() + FRAME_BUDGET_MS;
             while (performance.now() < deadline) {
                 if (!walker) {
@@ -1672,10 +1756,22 @@
         requestAnimationFrame(step);
     }
 
+    function restartHighlights() {
+        highlightGeneration++; isHighlighting = false; refreshQueued = false;
+        pendingNodes.clear(); needsFullRefresh = false;
+        clearTimeout(debounceTimer); clearTimeout(refreshRetryTimer);
+        clearPagePaint(); currentIdx = -1;
+        if (enabled && !isBlacklisted()) refreshHighlights();
+        else cleanupHighlights();
+        renderPageList(); updateCounterAndTitle(); renderMatchList(); updatePosBar();
+    }
+
     function afterHighlight() {
+        if (pageIdentity !== location.href) { refreshPageContext(); return; }
         isHighlighting = false;
         navigationCache = null;
         rebuildPageMatches();
+        watchPageIdentity();
         updateCounterAndTitle();
         if (uiById('kw-list')) updateKeywordCounts();
         if (uiById('match-list')) renderMatchList();
@@ -1690,6 +1786,7 @@
 
     /** Vollständiger Neuaufbau, nur nötig wenn sich Keywords oder Einstellungen ändern. */
     function refreshHighlights() {
+        if (pageIdentity !== location.href) { refreshPageContext(); return; }
         if (!enabled || isBlacklisted()) return;
         if (isSelecting) {
             clearTimeout(refreshRetryTimer);
@@ -2040,7 +2137,7 @@
                     </div>
                 </div>
                 <div class="page-heading-row"><h2 id="page-heading" class="section-title" tabindex="-1">${t('pageHeading')}</h2>
-                <div class="page-actions"><button type="button" class="icon-btn" id="clear-page" aria-label="${t('clearPageShort')} – ${t('pageHeading')}" title="${t('clearPage')}" hidden>${icon('trash')}</button><button type="button" class="icon-btn" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${icon('reset')}</button></div></div>
+                <div class="page-actions"><button type="button" class="icon-btn" id="clear-page" aria-label="${t('clearPage')}" title="${t('clearPage')}" hidden>${icon('trash')}</button><button type="button" class="icon-btn" id="undo-page" aria-label="${t('undoShort')} – ${t('pageHeading')}" title="${t('undoPage')}" hidden>${icon('reset')}</button></div></div>
                 <div id="page-search-status" class="hint" role="status"></div>
                 <div id="page-list"></div>
                 <div class="status-row"><span id="panel-status" class="hint" role="status"></span><button type="button" id="undo-delete" hidden>${t('undo')}</button></div>
@@ -2188,7 +2285,7 @@
             enabled = e.target.checked; save();
             if (enabled) { if (!observer) setupObserver(); refreshHighlights(); }
             else {
-                highlightGeneration++;
+                highlightGeneration++; isHighlighting = false; refreshQueued = false;
                 pendingNodes.clear(); cleanupHighlights(); clearPagePaint(); keywordCounts = {}; currentIdx = -1;
                 renderPageList(); updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); hideSelectionTools(); observer?.disconnect();
             }
@@ -2382,7 +2479,7 @@
             selectionShortcut = candidate; recordingShortcut = false;
             uiById('shortcut-error').textContent = ''; save(); renderShortcut();
         }, true);
-        const changedPage = () => { resetPageIdentity(); refreshPageResults(); };
+        const changedPage = () => refreshPageContext();
         window.addEventListener('popstate', changedPage); window.addEventListener('hashchange', changedPage);
         document.addEventListener('mousedown', e => { if (!isOwnNode(e.target)) isSelecting = true; });
         document.addEventListener('mouseup', () => { setTimeout(() => { isSelecting = false; }, 80); });
@@ -2478,9 +2575,9 @@
 
     function excludeCurrentDomain() {
         blacklist.push(location.hostname);
-        highlightGeneration++;
+        highlightGeneration++; isHighlighting = false; refreshQueued = false;
         pendingNodes.clear(); observer?.disconnect(); cleanupHighlights(); clearPagePaint(); hideSelectionTools(); keywordCounts = {}; currentIdx = -1;
-        updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); save();
+        renderPageList(); updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); save();
         const status = uiById('panel-status');
         if (status) setPanelStatus('excluded');
     }

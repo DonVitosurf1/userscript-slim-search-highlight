@@ -11,10 +11,13 @@ function addPageSelection(text) {
         rememberPageChange();
         pageTerms.push({ id: newPageId(), text: value, color: nextPageHighlightColor(), saved: false, anchor: null });
     }
+    const reveal = hiddenTermKeys.delete(termKey(value));
     watchPageIdentity(); currentIdx = -1; isSelecting = false;
     const focusPanel = uiById('slim-selection-tools')?.contains(uiActiveElement());
     hideSelectionTools(); getSelection()?.removeAllRanges();
-    setPanelOpen(true, !!focusPanel); refreshPageResults();
+    setPanelOpen(true, !!focusPanel);
+    if (reveal) { restartHighlights(); setPanelStatus('termShownStatus'); }
+    else refreshPageResults();
     return true;
 }
 function changePageTerm(term, action) {
@@ -27,44 +30,91 @@ function changePageTerm(term, action) {
     currentIdx = -1; watchPageIdentity(); refreshPageResults();
     return saved;
 }
+function overviewTerms() {
+    const rows = new Map(), applicable = new Map(getActiveKeywords(true).map(keyword => [termKey(keyword.text), keyword]));
+    for (const text of getCrossPageTerms()) {
+        const key = termKey(text), keyword = applicable.get(key);
+        if (!keyword || !key || IGNORE_WORDS.has(key)) continue;
+        if (!rows.has(key)) rows.set(key, { key, text, keyword, page: null });
+    }
+    for (const page of pageTerms) {
+        const key = termKey(page.text), entry = rows.get(key) || { key, text: page.text, keyword: null };
+        entry.page = page; entry.text = page.text; rows.set(key, entry);
+    }
+    return [...rows.values()];
+}
+function toggleOverviewTerm(key) {
+    if (!ensurePageIdentity() || !overviewTerms().some(entry => entry.key === key)) return;
+    const showing = hiddenTermKeys.delete(key);
+    if (!showing) hiddenTermKeys.add(key);
+    isSelecting = false; hideSelectionTools(); restartHighlights();
+    setPanelStatus(showing ? 'termShownStatus' : 'termHiddenStatus');
+}
 function renderPageList() {
-    watchPageIdentity(); renderSearchState();
+    renderSearchState();
     const list = uiById('page-list');
     if (!list) return;
-    const focused = list.contains(uiActiveElement());
+    const active = uiActiveElement(), focused = list.contains(active);
+    const focusedKey = focused && active.classList.contains('term-visibility') ? active.dataset.termKey : null;
+    const entries = overviewTerms(), counts = new Map();
+    for (const match of navigationMatches()) {
+        const key = termKey(match.range ? match.term : match.dataset.kw || match.textContent);
+        counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    watchPageIdentity();
     list.replaceChildren();
-    if (!pageTerms.length) {
+    if (!entries.length) {
         const empty = document.createElement('p'); empty.className = 'hint'; empty.textContent = t('pageHintShort'); list.append(empty);
     }
-    for (const term of pageTerms) {
-        const item = document.createElement('div'); item.className = 'page-item';
+    for (const entry of entries) {
+        const term = entry.page, hidden = hiddenTermKeys.has(entry.key);
+        const item = document.createElement('div'); item.className = 'page-item' + (hidden ? ' is-hidden' : ''); item.dataset.termKey = entry.key;
         const row = document.createElement('div'); row.className = 'page-row';
-        const color = document.createElement('input'); color.type = 'color'; color.value = term.color;
-        color.setAttribute('aria-label', t('pageColor', term.text));
-        color.onchange = () => changePageTerm(term, () => { term.color = color.value; });
-        const label = document.createElement('span'); label.className = 'page-term'; label.textContent = term.text; label.title = term.text;
-        const count = document.createElement('span'); count.className = 'kw-count'; count.textContent = pageCounts.get(term.id) || 0;
-        const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'icon-btn page-remove'; remove.innerHTML = icon('close'); remove.title = t('remove');
-        remove.setAttribute('aria-label', t('deletePageTerm', term.text));
-        remove.onclick = () => { changePageTerm(term, () => { pageTerms = pageTerms.filter(item => item.id !== term.id); }); uiById('undo-page')?.focus({ preventScroll: true }); };
+        const color = document.createElement(term ? 'input' : 'span');
+        if (term) {
+            color.type = 'color'; color.value = term.color; color.setAttribute('aria-label', t('pageColor', term.text));
+            color.onchange = () => changePageTerm(term, () => { term.color = color.value; });
+        } else {
+            color.className = 'term-swatch'; color.style.backgroundColor = entry.keyword.color || DEFAULT_COLOR; color.setAttribute('aria-hidden', 'true');
+        }
+        const label = document.createElement('span'); label.className = 'page-term'; label.textContent = entry.text; label.title = entry.text;
+        const count = document.createElement('span'); count.className = 'kw-count'; count.textContent = counts.get(entry.key) || 0; count.title = t('countTitle');
         const content = document.createElement('div'); content.className = 'page-label';
         const state = document.createElement('span'); state.className = 'hint page-state';
-        state.textContent = term.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled ? t('savedMissing') : t(term.saved ? 'pageSavedShort' : 'pageTemporary');
-        const save = document.createElement('button'); save.type = 'button'; save.className = 'icon-btn page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
-        save.innerHTML = icon(term.saved ? 'bookmarked' : 'bookmark');
-        save.setAttribute('aria-label', t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm'));
-        save.title = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
-        save.onclick = () => {
-            if (!readSavedPages()) { setPanelStatus('storageUnsupported'); return; }
-            if (!changePageTerm(term, () => { term.saved = !term.saved; })) return;
-            setPanelStatus(term.saved ? 'pageRemembered' : 'pageForgotten');
-        };
-        content.append(label, state); row.append(color, content, count, save, remove); item.append(row); list.append(item);
+        const captions = [t(entry.keyword ? term ? 'sourceBoth' : 'sourceSearch' : term.saved ? 'sourceSavedSelection' : 'sourceSelection')];
+        if (entry.keyword && term?.saved) captions.push(t('pageSavedShort'));
+        if (hidden) captions.push(t('termHiddenState'));
+        else if (term?.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled) captions.push(t('savedMissing'));
+        state.textContent = captions.join(' · ');
+        const visibility = document.createElement('button'); visibility.type = 'button'; visibility.className = 'icon-btn term-visibility';
+        visibility.dataset.termKey = entry.key; visibility.innerHTML = icon(hidden ? 'eyeOff' : 'eye');
+        visibility.setAttribute('aria-label', t('termVisibility', entry.text)); visibility.setAttribute('aria-pressed', String(!hidden));
+        visibility.title = t(hidden ? 'showTermAction' : 'hideTermAction', entry.text);
+        visibility.onclick = () => toggleOverviewTerm(entry.key);
+        content.append(label, state); row.append(color, content, count, visibility);
+        if (term) {
+            const save = document.createElement('button'); save.type = 'button'; save.className = 'icon-btn page-save'; save.setAttribute('aria-pressed', String(!!term.saved));
+            save.innerHTML = icon(term.saved ? 'bookmarked' : 'bookmark');
+            save.setAttribute('aria-label', t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm')); save.title = t(term.saved ? 'forgetPageTerm' : 'rememberPageTerm');
+            save.onclick = () => {
+                if (!ensurePageIdentity()) return;
+                if (!readSavedPages()) { setPanelStatus('storageUnsupported'); return; }
+                if (!changePageTerm(term, () => { term.saved = !term.saved; })) return;
+                setPanelStatus(term.saved ? 'pageRemembered' : 'pageForgotten');
+            };
+            const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'icon-btn page-remove'; remove.innerHTML = icon('close'); remove.title = t('remove');
+            remove.setAttribute('aria-label', t('deletePageTerm', term.text));
+            remove.onclick = () => { changePageTerm(term, () => { pageTerms = pageTerms.filter(item => item.id !== term.id); }); uiById('undo-page')?.focus({ preventScroll: true }); };
+            row.append(save, remove);
+        }
+        item.append(row); list.append(item);
     }
     const clear = uiById('clear-page'); if (clear) clear.hidden = !pageTerms.length;
     const undo = uiById('undo-page'); if (undo) undo.hidden = !pageUndo.length;
     const scope = uiById('navigation-scope'); if (scope) scope.textContent = t('allResults');
-    if (focused) uiById('page-heading')?.focus({ preventScroll: true });
+    const nextFocus = focusedKey == null ? null : [...list.querySelectorAll('.term-visibility')].find(button => button.dataset.termKey === focusedKey);
+    if (nextFocus) nextFocus.focus({ preventScroll: true });
+    else if (focused) uiById('page-heading')?.focus({ preventScroll: true });
 }
 
 function safePageURL() {

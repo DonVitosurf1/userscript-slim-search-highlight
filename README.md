@@ -12,7 +12,7 @@ Ein **Browser-Userscript für Tampermonkey und Violentmonkey**. Kein Konto, kein
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot.png">
-  <img src="assets/screenshot-light.png" width="1200" alt="Beispielartikel mit gelben, türkisen und pinken Markierungen. Das Auswahlmenü bietet Markieren, Websuche und Kopieren an; rechts zeigt das Panel sieben Treffer für drei Begriffe und deren Speicherstatus.">
+  <img src="assets/screenshot-light.png" width="1200" alt="Beispielartikel mit verschiedenfarbigen Markierungen. Das Auswahlmenü bietet Markieren, Websuche und Kopieren an; rechts zeigt das Panel sieben Treffer für drei Begriffe mit Herkunft, Speicherstatus und Auge-Schaltern.">
 </picture>
 
 *Echte Oberfläche auf einer lokalen Beispielseite: drei Begriffe, sieben Treffer. Die Vorschau folgt deinem GitHub-Farbschema; im Userscript wählst du Hell oder Dunkel selbst.*
@@ -30,6 +30,8 @@ Seitenmarkierungen benötigen einen Browser mit **CSS Custom Highlights**. Ohne 
 1. **Wort, Satz oder Absatz auswählen.** Die Logo-Kachel erscheint neben der Auswahl. Darüberfahren oder anklicken öffnet das Menü; Rechtsklick bleibt beim Browser.
 2. **Alle Vorkommen markieren** wählen. Jede neue Passage erhält eine eigene kräftige Farbe. Das Panel zeigt die Trefferzahl; mit den Pfeilen springst du von Fundstelle zu Fundstelle.
 3. **Bei Bedarf für diese Seite merken.** Das Lesezeichen speichert eine Passage lokal für dieselbe vollständige URL. Ohne Speichern verschwindet sie beim Neuladen. Dauerhafte Begriffe verwaltest du getrennt unter **Keywords**.
+
+Unter **Auf dieser Seite** stehen Suchbegriffe und eigene Auswahlen gemeinsam mit Farbe, Trefferzahl und Herkunft. Der **Auge-Schalter** blendet einen Begriff vorübergehend aus und wieder ein. Ausgeblendete Einträge bleiben in der Liste; beim Neuladen oder Wechsel der URL sind sie wieder sichtbar. Gespeicherte Daten bleiben erhalten.
 
 | Aktion | Tastenkombination |
 |---|---|
