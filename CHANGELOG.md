@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.8.1
+
+- Die gewählte helle Variante „Klares Weiß“ ersetzt den Beigestich: weißer Panel-/Logo-Grund und weiße Eingaben, hellgraue Bedienelemente sowie neutrale Trennlinien und Hover-/Druckzustände. Panel, Schnellsuche, Auswahlmenü und lokale Meldungen verwenden die gemeinsamen Tokens.
+- Helles Logo, Dokumentation und Beispielbilder sind aktualisiert; Mint und die Markierungspalette bleiben erhalten.
+
 ## 4.8.0
 
 - Neue Schnellsuche mit `Strg+Shift+F` und Lupe im Panelkopf: Live-Vorschau, eigene Trefferanzeige, Enter/Shift+Enter, Ganze Wörter, Groß-/Kleinschreibung, sofortiges Leeren und Escape mit Fokus-Rückgabe. Schließen entfernt nur die Vorschau; „+ Markieren“ übernimmt den Text als Seitenmarkierung. Der Such-Shortcut ist einstellbar und abschaltbar.

@@ -15,11 +15,11 @@
       "shadow": "rgba(0,0,0,.4)", "scheme": "dark"
     },
     "light": {
-      "bg": "#fffaf0", "surface": "#f2f4eb", "field": "#fffdf8",
+      "bg": "#ffffff", "surface": "#f3f5f6", "field": "#ffffff",
       "text": "#343b3a", "muted": "#52665f", "border": "#718781",
-      "accent": "#147d83", "on-accent": "#fffaf0", "accent-hover": "#116a70", "accent-active": "#0d595e",
+      "accent": "#147d83", "on-accent": "#ffffff", "accent-hover": "#116a70", "accent-active": "#0d595e",
       "accent-text": "#147d83", "focus": "#147d83", "danger": "#b53e35",
-      "hover": "#e1efe8", "active": "#cee5dc", "divider": "#d5dfd6",
+      "hover": "#e7edee", "active": "#d9e3e5", "divider": "#dce3e4",
       "scroll-thumb": "#718781", "scroll-hover": "#52665f",
       "shadow": "rgba(32,43,41,.18)", "scheme": "light"
     }

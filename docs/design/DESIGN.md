@@ -34,7 +34,7 @@ components:
 ## Overview
 
 ### Creative North Star
-A marked page beside the page: a cream-paper identity, dark ink lines and mint, sun-yellow and coral highlights with a narrow occurrence rail. Keep surrounding tools quiet and concentrate the selection workflow at the top. The same mark links the logo, launcher, panel header and selection trigger; functional icons describe the action rather than replacing its label. The [German design guideline](README.md) explains the identity and usage rules.
+A marked page beside the page: a white-paper identity, dark ink lines and mint, sun-yellow and coral highlights with a narrow occurrence rail. Keep surrounding tools quiet and concentrate the selection workflow at the top. The same mark links the logo, launcher, panel header and selection trigger; functional icons describe the action rather than replacing its label. The [German design guideline](README.md) explains the identity and usage rules.
 
 ### Product context and register
 - Audience/job: people reading and researching across webpages; add terms and move between occurrences.
@@ -50,28 +50,28 @@ Runtime --hl-bg, --hl-surface, --hl-field, --hl-text, --hl-muted, --hl-border, -
 
 ## Appearance tokens and launcher (4.4.0)
 
-The user-supplied reference combines cream, yellow, coral, mint, sky blue and charcoal. **Sunlit Mint** uses quiet cream or green-charcoal surfaces, teal/mint for controls, coral for danger and a single shared highlighter family. Dark remains the default; Light is chosen explicitly. The host webpage keeps its own colors.
+The user-supplied reference combines cream, yellow, coral, mint, sky blue and charcoal. **Sunlit Mint** uses neutral white or green-charcoal surfaces, teal/mint for controls, coral for danger and a single shared highlighter family. Dark remains the default; Light is chosen explicitly. The host webpage keeps its own colors.
 
 Color ownership is **Model B**, consolidated from scattered runtime literals into `src/colors.json` as part of this system-wide update. The builder embeds that source as `COLORS`; `themeDeclarations` creates scoped CSS variables. SVG geometry remains canonical in `assets/icon.svg` and `assets/icon-dark.svg`; their `data-fill`/`data-stroke` paths identify JSON-owned color roles. Build updates those attributes and `--check` rejects stale logos or userscript output. No runtime assets or dependencies are fetched.
 
 | Token | Dark | Light | Consumers |
 |---|---|---|---|
-| `--hl-bg` | `#202b29` | `#fffaf0` | Panel, selection menu |
-| `--hl-surface` | `#2a3935` | `#f2f4eb` | Header, buttons, local feedback |
-| `--hl-field` | `#18231f` | `#fffdf8` | Inputs, scrollbar track |
+| `--hl-bg` | `#202b29` | `#ffffff` | Panel, selection menu |
+| `--hl-surface` | `#2a3935` | `#f3f5f6` | Header, buttons, local feedback |
+| `--hl-field` | `#18231f` | `#ffffff` | Inputs, scrollbar track |
 | `--hl-text` | `#fffaf0` | `#343b3a` | Text, icon strokes |
 | `--hl-muted` | `#b7cbc4` | `#52665f` | Hints, counts, placeholders |
 | `--hl-border` | `#78958b` | `#718781` | Control boundaries |
 | `--hl-accent` | `#7ee3cc` | `#147d83` | Primary action, text selection |
-| `--hl-on-accent` | `#193b37` | `#fffaf0` | Primary/selection foreground |
+| `--hl-on-accent` | `#193b37` | `#ffffff` | Primary/selection foreground |
 | `--hl-accent-hover` | `#a1ecd9` | `#116a70` | Primary hover |
 | `--hl-accent-active` | `#62cbb4` | `#0d595e` | Primary pressed |
 | `--hl-accent-text` | `#7ee3cc` | `#147d83` | Counter, saved state |
 | `--hl-focus` | `#7ee3cc` | `#147d83` | Keyboard focus, active list item, native control accents |
 | `--hl-danger` | `#ff9e91` | `#b53e35` | Inline errors, destructive hover |
-| `--hl-hover` | `#354a43` | `#e1efe8` | Neutral hover |
-| `--hl-active` | `#405c53` | `#cee5dc` | Neutral pressed |
-| `--hl-divider` | `#425950` | `#d5dfd6` | Sections, panel boundary |
+| `--hl-hover` | `#354a43` | `#e7edee` | Neutral hover |
+| `--hl-active` | `#405c53` | `#d9e3e5` | Neutral pressed |
+| `--hl-divider` | `#425950` | `#dce3e4` | Sections, panel boundary |
 | `--hl-scroll-thumb` | `#78958b` | `#718781` | Scrollbar thumb |
 | `--hl-scroll-hover` | `#a4cabe` | `#52665f` | Scrollbar hover |
 | `--hl-shadow` | `rgba(0,0,0,.4)` | `rgba(32,43,41,.18)` | Overlay shadows |
@@ -96,7 +96,7 @@ Closely related peach, second pink, second mint and cyan/blue starters were remo
 
 The default for new keywords, the first automatic/own highlight and the active native result use mint (`#7ee3cc`); the active result adds an underline; DOM result outlines use the shared deep teal navigation token. Position ticks and match dots always inherit their term's actual color. Function icons use `currentColor`; no separate icon palette exists.
 
-Settings uses the existing native select pattern for theme and corner selection; platform-owned popups are intentional. Labeled native ranges control launcher size (44–80px, default 56) and edge distance (8–80px, default 20), both in 4px steps, with visible associated outputs. All four screen corners are supported, respecting device safe-area insets. Size reset changes only size. The logo follows the selected theme: a cream tile (`#fffaf0`) in light mode and a green-charcoal tile (`#2a3935`) in dark mode, with the same geometry and highlight colors. Launcher, panel header and selection trigger switch together in place; the fine contour keeps each variant visible against surrounding surfaces.
+Settings uses the existing native select pattern for theme and corner selection; platform-owned popups are intentional. Labeled native ranges control launcher size (44–80px, default 56) and edge distance (8–80px, default 20), both in 4px steps, with visible associated outputs. All four screen corners are supported, respecting device safe-area insets. Size reset changes only size. The logo follows the selected theme: a white tile (`#ffffff`) in light mode and a green-charcoal tile (`#2a3935`) in dark mode, with the same geometry and highlight colors. Launcher, panel header and selection trigger switch together in place; the fine contour keeps each variant visible against surrounding surfaces.
 
 `applyAppearance` in `src/80-panel.js` updates existing surfaces in place; changing appearance must not discard drafts, collapse groups, move focus or invalidate page highlights. The shared local preference registry owns persistence. A failed write restores the last saved appearance and uses the semantic status region; a successful retry clears that error. Language changes recreate translated controls with the same saved appearance. Verification lives in `tests/suites/appearance.cjs`, including contrast, keyboard, narrow geometry and failure recovery.
 
@@ -189,3 +189,7 @@ The finder is an independent, nonmodal top-center bar up to 480px wide with 12px
 Preview gets a free shared-palette color, stable while typing. Its underline identifies the active match, and its counter/navigation remain independent of saved/manual sources. Escape closes only the preview and restores the original focus; language changes retain query/options and remap owned focus targets. No preview history is saved. Adoption uses existing page-selection search options, which can differ from preview options; the tooltip/Help explain this boundary.
 
 Site-search opt-in follows the settings checkbox pattern, with a concise current-site label and associated explanation. Source captions distinguish Website search, Search and Selection, grouping shared terms once. Only the current site's enabled state appears; the complete origin registry stays in manager data. Unsupported browser highlighting produces a localized disabled-query reason.
+
+## Clear White light scheme (4.8.1)
+
+The selected light variant removes the cream cast across every owned surface: pure white panel/field/logo and on-accent foreground, neutral gray `#f3f5f6` controls, `#dce3e4` dividers, `#e7edee` hover and `#d9e3e5` pressed feedback. Mint/teal, all eight highlight colors and the dark scheme retain their roles. The values are authored only in `src/colors.json`; CSS and tagged logo attributes derive from that owner.

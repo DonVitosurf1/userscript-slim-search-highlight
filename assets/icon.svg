@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
   <title>Slim Search Highlight</title>
-  <rect x="2" y="2" width="124" height="124" rx="28" data-fill="themes.light.bg" fill="#fffaf0" data-stroke="themes.light.divider" stroke="#d5dfd6" stroke-width="2"/>
+  <rect x="2" y="2" width="124" height="124" rx="28" data-fill="themes.light.bg" fill="#ffffff" data-stroke="themes.light.divider" stroke="#dce3e4" stroke-width="2"/>
   <rect x="20" y="28" width="66" height="20" rx="5" data-fill="highlights.0" fill="#7ee3cc"/>
   <rect x="30" y="55" width="56" height="20" rx="5" data-fill="highlights.1" fill="#ffd447"/>
   <rect x="20" y="82" width="54" height="20" rx="5" data-fill="highlights.2" fill="#ff7969"/>
@@ -9,7 +9,7 @@
     <rect x="36" y="62" width="38" height="6" rx="3"/>
     <rect x="26" y="89" width="36" height="6" rx="3"/>
   </g>
-  <rect x="101" y="24" width="7" height="80" rx="3.5" data-fill="themes.light.divider" fill="#d5dfd6"/>
+  <rect x="101" y="24" width="7" height="80" rx="3.5" data-fill="themes.light.divider" fill="#dce3e4"/>
   <rect x="98" y="34" width="13" height="7" rx="3.5" data-fill="logo.lightTicks.0" fill="#147d83"/>
   <rect x="98" y="61" width="13" height="7" rx="3.5" data-fill="logo.lightTicks.1" fill="#906600"/>
   <rect x="98" y="88" width="13" height="7" rx="3.5" data-fill="logo.lightTicks.2" fill="#b53e35"/>

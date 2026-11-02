@@ -4,7 +4,7 @@
 
 ## Leitidee: eine markierte Seite
 
-Slim Search Highlight ist ein Lesewerkzeug. Die Gestaltung erinnert an markierten Text auf cremefarbenem Papier: ruhig im Umfeld, kräftig an den Fundstellen. Das Logo zeigt drei farbige Textzeilen und eine schmale Trefferleiste. Diese Formen verbinden die Marke mit den tatsächlichen Funktionen.
+Slim Search Highlight ist ein Lesewerkzeug. Die Gestaltung erinnert an markierten Text auf weißem Papier: ruhig im Umfeld, kräftig an den Fundstellen. Das Logo zeigt drei farbige Textzeilen und eine schmale Trefferleiste. Diese Formen verbinden die Marke mit den tatsächlichen Funktionen.
 
 ![Helles Logo](../../assets/icon.svg) ![Dunkles Logo](../../assets/icon-dark.svg)
 
@@ -12,7 +12,7 @@ Slim Search Highlight ist ein Lesewerkzeug. Die Gestaltung erinnert an markierte
 
 | Rolle | Farbe | Verwendung |
 |---|---|---|
-| Papier | `#fffaf0` | Helle Arbeitsflächen und helles Logo |
+| Papier | `#ffffff` | Helle Arbeitsflächen und helles Logo |
 | Tinte | `#343b3a` | Heller Textmodus und Logo-Linien |
 | Mint | `#7ee3cc` | Standardfarbe, erste Markierung, aktiver Seitenfund und Bedienakzent in Dunkel |
 | Sonnengelb | `#ffd447` | Zweite Markierung |
@@ -25,7 +25,7 @@ Das gemeinsame Farbsystem heißt **Sunlit Mint** und folgt der vom Nutzer gelief
 
 Suchbegriffe und eigene Markierungen verwenden dieselbe Palette mit acht klar getrennten Grundfarben: Mint, Sonnengelb, Koralle, Himmelblau, Aprikose, Orchidee, Limette und Lavendel. Ab dem neunten Begriff wählt die gemeinsame Vergabe passende hellere/dunklere Abstufungen mit möglichst großem wahrgenommenem Abstand zu bereits verwendeten Farben (OKLab). Erst wenn alle Familientöne belegt sind, wird eine weitere eindeutige RGB-Farbe mit großem Abstand aus einer begrenzten Auswahl gewählt. Die Farbzuordnung der Suchbegriffe bleibt beim Hinzufügen eigener Markierungen stabil. Mit sehr vielen Begriffen werden Ähnlichkeiten unvermeidbar; Begriffe und Trefferzahlen bleiben deshalb zusätzlich sichtbar. Bereits gespeicherte oder selbst gewählte Farben bleiben unverändert. Die Herkunft steht als Text an der Zeile und wird nicht über eine zweite Farbpalette erklärt.
 
-Das Logo folgt dem gewählten Farbschema: cremefarbener Grund in Hell, Grün-Anthrazit (`#2a3935`) in Dunkel. Die Logo-Markierungen stehen von oben nach unten in der Reihenfolge Mint, Sonnengelb und Koralle. Öffnen-Button, Panelkopf und Auswahl-Symbol wechseln sofort gemeinsam, auch ohne Neuladen. Webseitenfarben bleiben davon unabhängig.
+Das Logo folgt dem gewählten Farbschema: weißer Grund in Hell, Grün-Anthrazit (`#2a3935`) in Dunkel. Die Logo-Markierungen stehen von oben nach unten in der Reihenfolge Mint, Sonnengelb und Koralle. Öffnen-Button, Panelkopf und Auswahl-Symbol wechseln sofort gemeinsam, auch ohne Neuladen. Webseitenfarben bleiben davon unabhängig.
 
 Die optionale Transparenz gilt gemeinsam für Panel, Auswahlmenü und Öffnen-Button einschließlich Logo und Beschriftung. Standard ist 0 %; der Regler bietet 0–80 % in 5-%-Schritten, direkte Vorschau und einen eigenen Reset. Hohe Werte machen den Seitentext dahinter sichtbarer und verringern zugleich den Kontrast der Bedienelemente. Seitenmarkierungen werden davon nicht beeinflusst.
 
@@ -70,3 +70,5 @@ Nach Änderungen: `npm run build`, `npm run check`, Browser-Tests und `npm run s
 ## Schnellsuche
 
 Die Lupe im Panelkopf öffnet die eigenständige Suchleiste, ebenso `Strg+Shift+F`. Eingabe/Leeren, feste Trefferanzeige, Pfeile und Schließen stehen kompakt zusammen; Optionen und „+ Markieren“ bilden die zweite Zeile. Die Leiste teilt Hell/Dunkel, Transparenz, Fokus und Farbpalette mit dem Panel. Wenn beide sich horizontal überschneiden, bleibt das Panel unter der Suchleiste erreichbar. Eine Vorschau verändert keine bestehenden Markierungen; die eigentliche Übernahme ist ausdrücklich. Die Lupe bedeutet Seitensuche, das Weltkugel-Symbol weiterhin Websuche.
+
+Das helle Farbschema verwendet die gewählte Variante **Klares Weiß**: `#ffffff` für Panel, Logo und Eingaben, `#f3f5f6` für Kopfbereich und Bedienelemente. Neutrale Trennlinien sowie Hover-/Druckzustände ersetzen die früheren warmen Flächen. Panel, Schnellsuche, Auswahlmenü, lokale Meldungen und Logo folgen derselben zentralen Definition.

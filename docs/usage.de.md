@@ -102,7 +102,7 @@ Wenn direkter Zwischenablagenzugriff scheitert, öffnet sich das Panel mit einem
 
 ## Darstellung und Öffnen-Button
 
-Das Farbsystem **Sunlit Mint** verbindet Creme und Grün-Anthrazit mit Türkis/Mint für die Bedienung. Die Markierungspalette enthält Mint, Gelb, Koralle, Blau und verwandte Töne. Gespeicherte oder selbst gewählte Farben bleiben erhalten.
+Das Farbsystem **Sunlit Mint** verbindet Weiß und Grün-Anthrazit mit Türkis/Mint für die Bedienung. Die Markierungspalette enthält Mint, Gelb, Koralle, Blau und verwandte Töne. Gespeicherte oder selbst gewählte Farben bleiben erhalten.
 
 Unter **Einstellungen → Darstellung** stehen **Hell** und **Dunkel** zur Wahl. Panel, Auswahlaktionen und Formularfelder wechseln sofort gemeinsam. Dunkel bleibt die Voreinstellung; Webseitenfarben und die gewählten Markierungsfarben werden nicht verändert.
 

@@ -102,7 +102,7 @@ If clipboard access fails, the panel opens with a labeled manual-copy field. Set
 
 Under **Settings → Appearance**, choose **Light** or **Dark**. The panel, selection actions and native form fields switch together immediately. Dark remains the default; webpage colors and chosen highlight colors stay unchanged.
 
-The **Sunlit Mint** color system uses cream/light and green-charcoal/dark surfaces, teal/mint controls and a shared mint, yellow, coral and blue highlight family. Existing custom keyword and saved passage colors remain intact.
+The **Sunlit Mint** color system uses white/light and green-charcoal/dark surfaces, teal/mint controls and a shared mint, yellow, coral and blue highlight family. Existing custom keyword and saved passage colors remain intact.
 
 The selection symbol uses the same theme-matched **logo tile as the panel opener**, without an additional button frame. Its menu uses a matching quiet surface. The panel opener’s size and position remain independently configurable.
 
