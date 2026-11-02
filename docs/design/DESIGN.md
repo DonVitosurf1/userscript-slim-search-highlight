@@ -3,14 +3,14 @@ version: alpha
 name: Slim Search Highlight
 description: A compact floating highlighter palette for reading and researching on arbitrary webpages.
 colors:
-  primary: '#ffca28'
-  background: '#1a1a1a'
-  surface: '#242424'
-  field: '#222222'
-  text: '#f0f0f0'
-  muted: '#b5b5b5'
-  border: '#666666'
-  danger: '#ff918e'
+  primary: '#7ee3cc'
+  background: '#202b29'
+  surface: '#2a3935'
+  field: '#18231f'
+  text: '#fffaf0'
+  muted: '#b7cbc4'
+  border: '#78958b'
+  danger: '#ff9e91'
 typography:
   sans:
     fontFamily: 'system-ui, -apple-system, sans-serif'
@@ -34,7 +34,7 @@ components:
 ## Overview
 
 ### Creative North Star
-A marked page beside the page: a white paper identity, dark ink lines and vivid yellow/cyan/pink highlights with a narrow occurrence rail. Keep surrounding tools quiet and concentrate the selection workflow at the top. The same mark links the logo, launcher, panel header and selection trigger; functional icons describe the action rather than replacing its label. The [German design guideline](README.md) explains the identity and usage rules.
+A marked page beside the page: a cream-paper identity, dark ink lines and sun-yellow, mint and coral highlights with a narrow occurrence rail. Keep surrounding tools quiet and concentrate the selection workflow at the top. The same mark links the logo, launcher, panel header and selection trigger; functional icons describe the action rather than replacing its label. The [German design guideline](README.md) explains the identity and usage rules.
 
 ### Product context and register
 - Audience/job: people reading and researching across webpages; add terms and move between occurrences.
@@ -43,35 +43,47 @@ A marked page beside the page: a white paper identity, dark ink lines and vivid 
 - Register: product utility; a nonmodal floating panel with underlying webpage remaining interactive.
 - Signature: keyword colors link saved terms, in-page marks and the position bar.
 - Restraint: system fonts, familiar native fields/selects; no marketing layout, external fonts, gradients or runtime framework.
-- Token ownership/runtime mapping: runtime source of truth is UI_CSS in src/10-styles.js, applied to the document and mirrored into the private UI root by src/25-private-ui.js (assembled into userscript/slim-search-highlight.user.js). This file mirrors the --hl-* variables; update both for durable palette changes. The deterministic assembler copies the styles; no separate token adapter is involved.
+- Token ownership/runtime mapping: `src/colors.json` is canonical for all built-in colors. `scripts/build.mjs` embeds `COLORS` and synchronizes tagged SVG color attributes; `src/10-styles.js` maps semantic theme roles into scoped `--hl-*` variables. Both highlight engines, the position rail and navigation use this same source. This document mirrors accepted values and intent; geometry remains owned by CSS/SVG sources.
 
 ## Colors
 Runtime --hl-bg, --hl-surface, --hl-field, --hl-text, --hl-muted, --hl-border, --hl-accent and --hl-danger map to the correspondingly named frontmatter colors (accent = primary). Use accent for the add button, focus and navigation state. All custom highlight backgrounds get automatically selected black or white text using sRGB relative luminance. The selected panel scheme is independent of the host webpage; forced-colors restores system scrollbar colors and visible outlines.
 
 ## Appearance tokens and launcher (4.4.0)
 
-Runtime token ownership remains **Model B**: `src/10-styles.js` is canonical; this document mirrors the accepted values and explains their roles. The deterministic build copies these values into the installable userscript. The existing dark scheme remains the default. Light is an additional user-selected scheme, not inferred from or applied to the host webpage.
+The user-supplied reference combines cream, yellow, coral, mint, sky blue and charcoal. **Sunlit Mint** uses quiet cream or green-charcoal surfaces, teal/mint for controls, coral for danger and a single shared highlighter family. Dark remains the default; Light is chosen explicitly. The host webpage keeps its own colors.
+
+Color ownership is **Model B**, consolidated from scattered runtime literals into `src/colors.json` as part of this system-wide update. The builder embeds that source as `COLORS`; `themeDeclarations` creates scoped CSS variables. SVG geometry remains canonical in `assets/icon.svg` and `assets/icon-dark.svg`; their `data-fill`/`data-stroke` paths identify JSON-owned color roles. Build updates those attributes and `--check` rejects stale logos or userscript output. No runtime assets or dependencies are fetched.
 
 | Token | Dark | Light | Consumers |
 |---|---|---|---|
-| `--hl-bg` | `#1a1a1a` | `#ffffff` | Panel |
-| `--hl-surface` | `#242424` | `#f1f4f7` | Header, buttons, selection toolbar |
-| `--hl-field` | `#222222` | `#ffffff` | Inputs, selects, scrollbar track |
-| `--hl-text` | `#f0f0f0` | `#1e2933` | Owned text and icon strokes |
-| `--hl-muted` | `#b5b5b5` | `#52606d` | Hints, counts, placeholders |
-| `--hl-border` | `#666666` | `#778391` | Form/button boundaries |
-| `--hl-accent` | `#ffca28` | `#ffca28` | Primary action/selection background |
-| `--hl-accent-text`, `--hl-focus` | `#ffca28` | `#805500` | Counter, focus and active-result border |
-| `--hl-danger` | `#ff918e` | `#b42318` | Inline errors and destructive hover |
-| `--hl-hover`, `--hl-active` | `#343434`, `#484848` | `#e5eaf0`, `#d7dfe8` | Button feedback |
-| `--hl-divider` | `#444444` | `#d9dee3` | Panel boundary and section dividers |
-| `--hl-scroll-thumb`, `--hl-scroll-hover` | `#777777`, `#aaaaaa` | `#7a8694`, `#5b6673` | Owned scrollbars |
-| `--hl-shadow` | `rgba(0,0,0,.4)` | `rgba(20,35,50,.18)` | Panel, toolbar and launcher shadows |
-| `--hl-scheme` | `dark` | `light` | Native control color-scheme |
+| `--hl-bg` | `#202b29` | `#fffaf0` | Panel, selection menu |
+| `--hl-surface` | `#2a3935` | `#f2f4eb` | Header, buttons, local feedback |
+| `--hl-field` | `#18231f` | `#fffdf8` | Inputs, scrollbar track |
+| `--hl-text` | `#fffaf0` | `#343b3a` | Text, icon strokes |
+| `--hl-muted` | `#b7cbc4` | `#52665f` | Hints, counts, placeholders |
+| `--hl-border` | `#78958b` | `#718781` | Control boundaries |
+| `--hl-accent` | `#7ee3cc` | `#147d83` | Primary action, text selection |
+| `--hl-on-accent` | `#193b37` | `#fffaf0` | Primary/selection foreground |
+| `--hl-accent-hover` | `#a1ecd9` | `#116a70` | Primary hover |
+| `--hl-accent-active` | `#62cbb4` | `#0d595e` | Primary pressed |
+| `--hl-accent-text` | `#7ee3cc` | `#147d83` | Counter, saved state |
+| `--hl-focus` | `#7ee3cc` | `#147d83` | Keyboard focus, active list item, native control accents |
+| `--hl-danger` | `#ff9e91` | `#b53e35` | Inline errors, destructive hover |
+| `--hl-hover` | `#354a43` | `#e1efe8` | Neutral hover |
+| `--hl-active` | `#405c53` | `#cee5dc` | Neutral pressed |
+| `--hl-divider` | `#425950` | `#d5dfd6` | Sections, panel boundary |
+| `--hl-scroll-thumb` | `#78958b` | `#718781` | Scrollbar thumb |
+| `--hl-scroll-hover` | `#a4cabe` | `#52665f` | Scrollbar hover |
+| `--hl-shadow` | `rgba(0,0,0,.4)` | `rgba(32,43,41,.18)` | Overlay shadows |
+| `--hl-scheme` | `dark` | `light` | Native controls |
 
-The same `data-theme` variant owns panel, selection toolbar and launcher tokens. Yellow remains the highlighter signature; amber text/focus in the light scheme provides contrast rather than reusing pale yellow as text. No second per-component palette is introduced.
+The same semantic role changes tone between themes, never meaning. The primary action has explicit idle/hover/pressed colors and an on-accent foreground; teal in light mode and mint in dark mode keep contrast. Native selects remain browser-owned. Text and focus are tested at the opaque default; higher user-selected transparency intentionally lowers contrast.
 
-Settings uses the existing native select pattern for theme and corner selection; platform-owned popups are intentional. Labeled native ranges control launcher size (44–80px, default 56) and edge distance (8–80px, default 20), both in 4px steps, with visible associated outputs. All four screen corners are supported, respecting device safe-area insets. Size reset changes only size. The logo follows the selected theme: a white tile in light mode and a #242424 tile in dark mode, with the same geometry and highlight colors. Launcher, panel header and selection trigger switch together in place; the fine contour keeps each variant visible against surrounding surfaces.
+Both automatic search words and own selections start from the same 12-color `highlights` array, in the same order. New own passages skip colors occupied by current passages or applicable keywords. After the starters, the allocator tries 10% tint/shade steps from that family before a unique RGB fallback if all family tones are occupied. Already saved and custom colors are never migrated. Shared color means a term, while source captions explain where it came from. Native and DOM marks retain contrast-selected pure black/white text.
+
+The active native result uses the same sun-yellow family color with an underline; DOM result outlines use the shared deep teal navigation token. Position ticks and match dots always inherit their term's actual color. Function icons use `currentColor`; no separate icon palette exists.
+
+Settings uses the existing native select pattern for theme and corner selection; platform-owned popups are intentional. Labeled native ranges control launcher size (44–80px, default 56) and edge distance (8–80px, default 20), both in 4px steps, with visible associated outputs. All four screen corners are supported, respecting device safe-area insets. Size reset changes only size. The logo follows the selected theme: a cream tile (`#fffaf0`) in light mode and a green-charcoal tile (`#2a3935`) in dark mode, with the same geometry and highlight colors. Launcher, panel header and selection trigger switch together in place; the fine contour keeps each variant visible against surrounding surfaces.
 
 `applyAppearance` in `src/80-panel.js` updates existing surfaces in place; changing appearance must not discard drafts, collapse groups, move focus or invalidate page highlights. The shared local preference registry owns persistence. A failed write restores the last saved appearance and uses the semantic status region; a successful retry clears that error. Language changes recreate translated controls with the same saved appearance. Verification lives in `tests/suites/appearance.cjs`, including contrast, keyboard, narrow geometry and failure recovery.
 
@@ -94,10 +106,10 @@ One soft panel shadow (0 10px 32px, black at 40% for dark or slate at 18% for li
 ## Components
 
 ### Foundational visual states
-Shared hover/active colors, visible yellow keyboard focus, disabled arrows without matches, associated coral inline errors and muted empty instructions. Live regions announce counter/status/error changes. Native details summaries expose expanded/collapsed state; no fabricated modal state. No skeletons are needed.
+Shared hover/active colors, visible teal/mint keyboard focus, disabled arrows without matches, associated coral inline errors and muted empty instructions. Live regions announce counter/status/error changes. Native details summaries expose expanded/collapsed state; no fabricated modal state. No skeletons are needed.
 
 ### Buttons and actions
-Add is the high-emphasis yellow action. Other actions use neutral surfaces. Desktop buttons are at least 36px tall; narrow buttons at least 44px tall, icon widths 40px. Delete is explicitly named for its term and offers undo rather than routine confirmation. Trigger and action geometry stays stable.
+Add is the high-emphasis teal action in Light and mint action in Dark. Other actions use neutral surfaces. Desktop buttons are at least 36px tall; narrow buttons at least 44px tall, icon widths 40px. Delete is explicitly named for its term and offers undo rather than routine confirmation. Trigger and action geometry stays stable.
 
 ### Navigation and data display
 Compact visible current/total count has a localized accessible label. Contextual match buttons use one roving tab stop with ArrowUp/Down/Home/End. All marks remain available with Alt+Left/Right, even beyond the 300-item rendered list limit. Underlying browser controls remain usable.
@@ -111,7 +123,7 @@ The panel and selection toolbar live in a closed shadow root in the manager’s 
 ### Iconography
 Authored 24-unit line SVGs with 1.8 stroke and rounded ends, rendered at 18px in the panel and 20px beside selection-action labels. Icons never shrink beside wrapping text. SVGs are decorative; every icon button has a localized accessible name.
 
-Canonical brand assets: `assets/icon.svg` and `assets/icon-dark.svg` (128-unit theme-specific tiles, ink `#253540`, yellow `#ffdf00`, cyan `#00e5ff`, pink `#ff80ab`, contour `#d9e2e7`), `assets/icons/highlight-all.svg` (repeated marks and occurrence rail) and `assets/icons/search-web.svg` (globe and magnifier). The deterministic build embeds the complete logos in `LOGOS`. The selection trigger shows the logo at 40px without an additional button border/background, with a soft shadow and visible focus/hover/active feedback. Its menu uses a 10px radius, the shared page-background token and the surface token for its primary action. Narrow targets remain at least 44px tall and wide. Launcher and header use the same complete theme-specific logo. Source code never maintains a second SVG/base64 copy. Action SVGs inherit the active theme text color and retain visible localized labels.
+Canonical brand assets: `assets/icon.svg` and `assets/icon-dark.svg` (128-unit theme-specific tiles; ink `#343b3a`, sun `#ffd447`, mint `#7ee3cc`, coral `#ff7969`, theme-specific tile/contour/rail roles from `src/colors.json`), `assets/icons/highlight-all.svg` (repeated marks and occurrence rail) and `assets/icons/search-web.svg` (globe and magnifier). The deterministic build embeds the complete logos in `LOGOS`. The selection trigger shows the logo at 40px without an additional button border/background, with a soft shadow and visible focus/hover/active feedback. Its menu uses a 10px radius, the shared page-background token and the surface token for its primary action. Narrow targets remain at least 44px tall and wide. Launcher and header use the same complete theme-specific logo. Source code never maintains a second SVG/base64 copy. Action SVGs inherit the active theme text color and retain visible localized labels.
 
 `applyAppearance` updates all existing logo images from the same theme asset. There is no separate symbol-style control or active symbol-style preference; an old stored choice cannot restore the removed button appearance. The selection snapshot and highlight data remain independent of appearance.
 
@@ -145,7 +157,7 @@ The page overview groups transferred search terms and own passages by normalized
 
 Each overview row has a native eye toggle with a constant localized accessible name and `aria-pressed=true` when visible; changing tooltips name Hide/Show. Hidden rows remain operable with a crossed-eye icon, struck-through text, Hidden caption and zero active matches. Focus follows the row key through rendering. The 32px-wide desktop eye retains a 36px minimum height; narrow targets are 44px wide/high. Rows use 4px gaps and non-shrinking actions. Count and term share the first label line; the source/saved caption gets its full width below, keeping a typical saved passage compact across system fonts without reducing text size. Hidden state is a memory-only per-URL Set shared by both engines, separate from undo/save/export. Reselecting reveals a term; reload/URL changes reset it. Different longer passages remain independently visible.
 
-New page passages use the vivid `PAGE_HIGHLIGHT_COLORS` palette in `src/00-state-i18n.js`; `nextPageHighlightColor` in `src/30-page-state.js` skips colors occupied by current passages or applicable keywords. After the initial palette it allocates unused bright, saturated RGB colors. Existing, saved and manually chosen colors are stable; every occurrence of a passage shares its assigned color. Text labels/counts and black/white contrast-selected foregrounds keep color from being the only identifying cue.
+New page passages use the vivid `PAGE_HIGHLIGHT_COLORS` alias of the shared palette in `src/colors.json`; `nextPageHighlightColor` in `src/30-page-state.js` skips colors occupied by current passages or applicable keywords. After the initial palette it allocates related tints/shades, retaining a unique RGB fallback when those are occupied. Existing, saved and manually chosen colors are stable; every occurrence of a passage shares its assigned color. Text labels/counts and black/white contrast-selected foregrounds keep color from being the only identifying cue.
 
 Page search options are a disclosure with a labeled native scope select and whole-word checkbox. Missing article scope gets an inline explanation; searches are never silently broadened. Search progress uses aria-busy and a stable status area, with navigation disabled until commit.
 

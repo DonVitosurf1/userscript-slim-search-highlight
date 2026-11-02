@@ -194,9 +194,9 @@ function t(key, ...args) {
     const v = (I18N[currentLang()] || I18N.en)[key] ?? I18N.en[key] ?? key;
     return typeof v === 'function' ? v(...args) : v;
 }
-const DEFAULT_COLOR = '#ffe082';
-const PAGE_HIGHLIGHT_COLORS = ['#ffdf00', '#00e5ff', '#ff80ab', '#76ff03', '#b388ff', '#ff9100', '#448aff', '#ff5252', '#1de9b6', '#ea80fc', '#c6ff00', '#ff6e40'];
-const AUTO_COLORS = ['#90caf9', '#a5d6a7', '#ef9a9a', '#ffcc80', '#ce93d8', '#80cbc4', '#fff176', '#b0bec5'];
+const DEFAULT_COLOR = COLORS.highlights[0];
+const PAGE_HIGHLIGHT_COLORS = COLORS.highlights;
+const AUTO_COLORS = COLORS.highlights;
 const SEARCH_ENGINES = ['google.', 'bing.', 'duckduckgo.', 'yahoo.', 'baidu.', 'yandex.', 'startpage.', 'ecosia.', 'qwant.'];
 const CROSS_TTL = 10 * 60 * 1000;
 const IGNORE_WORDS = new Set(['the','and','for','with','von','der','die','das','und','für','in','on','at','to','of','a','an','or','as','by','is','it','be','are','was','were','this','that','these','those','from','into','about','under','over']);

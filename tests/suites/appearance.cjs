@@ -1,4 +1,6 @@
 'use strict';
+const fs = require('fs'), path = require('path'), os = require('os');
+const { execFileSync } = require('child_process');
 
 module.exports = ({ open, eq, ok }) => {
     const settings = async page => page.locator('#settings-section').evaluate(el => { el.open = true; });
@@ -13,6 +15,59 @@ module.exports = ({ open, eq, ok }) => {
         await page.locator('#selection-trigger').waitFor({ state: 'visible' });
     };
     return {
+        async appearance_build_synchronizes_reformatted_logo_roles() {
+            const root=path.resolve(__dirname,'../..'),temporary=fs.mkdtempSync(path.join(os.tmpdir(),'slim-color-build-'));
+            try {
+                for(const directory of ['scripts','userscript','assets/icons'])fs.mkdirSync(path.join(temporary,directory),{recursive:true});
+                fs.cpSync(path.join(root,'src'),path.join(temporary,'src'),{recursive:true});
+                for(const file of ['scripts/build.mjs','LICENSE','assets/icon.svg','assets/icon-dark.svg','assets/icons/highlight-all.svg','assets/icons/search-web.svg'])fs.copyFileSync(path.join(root,file),path.join(temporary,file));
+                const filename=path.join(temporary,'assets/icon.svg');
+                fs.writeFileSync(filename,fs.readFileSync(filename,'utf8').replace('data-fill="highlights.0" fill=', 'data-fill="highlights.0"\n    fill='));
+                const colors=JSON.parse(fs.readFileSync(path.join(temporary,'src/colors.json'),'utf8'));colors.highlights[0]='#123456';
+                fs.writeFileSync(path.join(temporary,'src/colors.json'),JSON.stringify(colors));
+                const build=path.join(temporary,'scripts/build.mjs');
+                execFileSync(process.execPath,[build]);
+                const rendered=fs.readFileSync(filename,'utf8');
+                ok(/data-fill="highlights.0"\s+fill="#123456"/.test(rendered),'Reformatted logo consumes the changed canonical color');
+                execFileSync(process.execPath,[build,'--check']);
+                fs.writeFileSync(filename,rendered.replace('#123456','#abcdef'));
+                let rejected=false;try{execFileSync(process.execPath,[build,'--check'],{stdio:'pipe'});}catch{rejected=true;}
+                ok(rejected,'Check rejects stale tagged colors even after reformatting');
+                eq(fs.readFileSync(filename,'utf8'),rendered.replace('#123456','#abcdef'),'Check never mutates SVG sources');
+            } finally {fs.rmSync(temporary,{recursive:true,force:true});}
+        },
+        async appearance_unified_search_and_selection_color_family(browser) {
+            const page=await open(browser,{url:'https://example.test/article#hl=Solarenergie',keywords:[],panelOpen:true,permanentOpen:false,html:'<p>Solarenergie</p><p id="passage">Windkraft</p><p>Windkraft</p>'});
+            await page.waitForSelector('.slim-hl');
+            const queryColor=await page.locator('.slim-hl').first().evaluate(el=>getComputedStyle(el).backgroundColor);
+            await selectText(page);await page.keyboard.press('Alt+Shift+H');
+            const ownColor=await page.locator('.page-item input[type=color]').inputValue();
+            // These are consumer-visible assignments from the accepted reference family.
+            eq(queryColor,'rgb(255, 212, 71)','Transferred search starts with the shared sun color');
+            eq(ownColor,'#7ee3cc','A new selection takes mint, skipping occupied sun');
+            const rowColor=await page.locator('.term-swatch').evaluate(el=>getComputedStyle(el).backgroundColor);
+            eq(rowColor,queryColor,'Query overview uses the actual paint color');
+            const tickColors=await page.locator('#slim-pos-bar .mark').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).backgroundColor));
+            ok(tickColors.includes(queryColor),'Position rail retains the search color');
+        },
+        async appearance_primary_states_and_both_themes_have_contrast(browser) {
+            for(const theme of ['light','dark']) {
+                const page=await open(browser,{panelOpen:true,store:{hl_ui_theme:theme}});
+                const action=page.locator('#add-kw-btn');
+                const read=()=>action.evaluate(el=>{
+                    const s=getComputedStyle(el);
+                    const luminance=c=>{const [r,g,b]=c.match(/[\d.]+/g).slice(0,3).map(Number).map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);return r*.2126+g*.7152+b*.0722;};
+                    const a=luminance(s.color),b=luminance(s.backgroundColor);
+                    return {color:s.color,bg:s.backgroundColor,ratio:(Math.max(a,b)+.05)/(Math.min(a,b)+.05)};
+                });
+                const idle=await read();await action.hover();
+                await page.waitForTimeout(180);const hover=await read();
+                await page.mouse.down();await page.waitForTimeout(180);const active=await read();await page.mouse.up();
+                ok(idle.bg!==hover.bg && hover.bg!==active.bg,'Primary has distinct idle, hover and pressed tones');
+                for(const [state,value] of Object.entries({idle,hover,active}))ok(value.ratio>=4.5,theme+' primary '+state+' contrast: '+JSON.stringify(value));
+                await page.close();
+            }
+        },
         async appearance_selection_logo_replaces_retired_button_preference(browser) {
             const page=await open(browser,{panelOpen:true,keywords:[],store:{hl_selection_style:'button'},html:'<p id="passage">Solarenergie</p>'});
             await selectText(page);
@@ -201,24 +256,27 @@ module.exports = ({ open, eq, ok }) => {
             await page.selectOption('#ui-theme', 'dark');
             eq(await page.locator('#new-kw').inputValue(), 'Unfertiger Entwurf', 'Farbumschaltung baut Panel nicht neu auf');
         },
-        async appearance_light_text_and_keyboard_focus_have_contrast(browser) {
-            const page = await open(browser, { panelOpen: true, store: { hl_ui_theme: 'light' } });
-            await settings(page);
-            await page.locator('#ui-theme').focus();
-            const ratios = await page.evaluate(() => {
-                const luminance = color => {
-                    const rgb = color.match(/[\d.]+/g).slice(0, 3).map(Number).map(x => x / 255).map(x => x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4);
-                    return rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722;
-                };
-                const ratio = (a, b) => (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
-                const panel = getComputedStyle(document.getElementById('slim-hl-panel'));
-                const background = luminance(panel.backgroundColor);
-                const text = ['#page-heading', '#navigation-scope', '#hl-counter', '#form-error'].map(selector => ratio(luminance(getComputedStyle(document.querySelector(selector)).color), background));
-                const focus = getComputedStyle(document.getElementById('ui-theme'));
-                return { text, focus: ratio(luminance(focus.outlineColor), luminance(focus.backgroundColor)), style: focus.outlineStyle };
-            });
-            ok(ratios.text.every(value => value >= 4.5), 'Helle Texte einschließlich Status/Fehler: ' + JSON.stringify(ratios));
-            ok(ratios.focus >= 3 && ratios.style !== 'none', 'Fokus sichtbar: ' + JSON.stringify(ratios));
+        async appearance_both_themes_text_and_keyboard_focus_have_contrast(browser) {
+            for (const theme of ['light','dark']) {
+                const page = await open(browser, { panelOpen: true, store: { hl_ui_theme: theme } });
+                await settings(page);
+                await page.locator('#ui-theme').focus();
+                const ratios = await page.evaluate(() => {
+                    const luminance = color => {
+                        const rgb = color.match(/[\d.]+/g).slice(0, 3).map(Number).map(x => x / 255).map(x => x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4);
+                        return rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722;
+                    };
+                    const ratio = (a, b) => (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+                    const panel = getComputedStyle(document.getElementById('slim-hl-panel'));
+                    const background = luminance(panel.backgroundColor);
+                    const text = ['#page-heading', '#navigation-scope', '#hl-counter', '#form-error'].map(selector => ratio(luminance(getComputedStyle(document.querySelector(selector)).color), background));
+                    const focus = getComputedStyle(document.getElementById('ui-theme'));
+                    return { text, focus: ratio(luminance(focus.outlineColor), luminance(focus.backgroundColor)), style: focus.outlineStyle };
+                });
+                ok(ratios.text.every(value => value >= 4.5), theme+' Texte einschließlich Status/Fehler: ' + JSON.stringify(ratios));
+                ok(ratios.focus >= 3 && ratios.style !== 'none', theme+' Fokus sichtbar: ' + JSON.stringify(ratios));
+                await page.close();
+            }
         },
         async appearance_failed_preference_write_restores_controls(browser) {
             const page = await open(browser, { panelOpen: true });

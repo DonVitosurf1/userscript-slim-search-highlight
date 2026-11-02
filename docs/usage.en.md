@@ -26,7 +26,7 @@ An unfinished search-field draft does not replace a submitted URL query. The sea
 
 **On this page** lists transferred search words and your own selections together. **Search** identifies transferred terms, **Selection** your temporary passages, and **Saved selection** remembered page passages. A term from both search and selection appears once with both sources. Its count covers active matches from both engines, counting identical text ranges once. Permanent-only keywords remain in the separate **Keywords** editor.
 
-Each new page passage automatically gets a different vivid color and a count. All occurrences of the same passage share its color. Assignment skips colors already used by current page passages or applicable keywords, adding further colors after the initial palette. The color field still allows manual changes. Selecting the same passage again or restoring saved passages preserves their colors.
+Each new page passage automatically gets a different vivid color and a count. All occurrences of the same passage share its color. Assignment skips colors already used by current page passages or applicable keywords, adding related tints/shades after the initial palette. Search terms and selections share the same palette; their captions identify their source. The color field still allows manual changes. Selecting the same passage again or restoring saved passages preserves their colors.
 
 Color, passage, count, visibility and, where applicable, bookmark and removal share one compact row, with source and saved state below the text. Own passages have an editable color input; search-only terms have a passive swatch. In a shared row, the color input changes the own passage; search matches outside its scope keep their search color. The cross removes an own passage. The **trash icon beside “On this page”** clears only own selections, retaining transferred search terms. The **back arrow beside it** undoes the latest own-passage change, including color and saved state. Buttons retain descriptive tooltips and accessible names. The latest 20 page states stay in memory; navigation/reload ends that undo history.
 
@@ -73,6 +73,8 @@ If clipboard access fails, the panel opens with a labeled manual-copy field. Set
 ## Appearance and open button
 
 Under **Settings → Appearance**, choose **Light** or **Dark**. The panel, selection actions and native form fields switch together immediately. Dark remains the default; webpage colors and chosen highlight colors stay unchanged.
+
+The **Sunlit Mint** color system uses cream/light and green-charcoal/dark surfaces, teal/mint controls and a shared yellow, mint, coral and blue highlight family. Existing custom keyword and saved passage colors remain intact.
 
 The selection symbol uses the same theme-matched **logo tile as the panel opener**, without an additional button frame. Its menu uses a matching quiet surface. The panel opener’s size and position remain independently configurable.
 

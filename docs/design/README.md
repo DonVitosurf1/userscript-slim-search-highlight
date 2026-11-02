@@ -4,7 +4,7 @@
 
 ## Leitidee: eine markierte Seite
 
-Slim Search Highlight ist ein Lesewerkzeug. Die Gestaltung erinnert an markierten Text auf weißem Papier: ruhig im Umfeld, kräftig an den Fundstellen. Das Logo zeigt drei farbige Textzeilen und eine schmale Trefferleiste. Diese Formen verbinden die Marke mit den tatsächlichen Funktionen.
+Slim Search Highlight ist ein Lesewerkzeug. Die Gestaltung erinnert an markierten Text auf cremefarbenem Papier: ruhig im Umfeld, kräftig an den Fundstellen. Das Logo zeigt drei farbige Textzeilen und eine schmale Trefferleiste. Diese Formen verbinden die Marke mit den tatsächlichen Funktionen.
 
 ![Helles Logo](../../assets/icon.svg) ![Dunkles Logo](../../assets/icon-dark.svg)
 
@@ -12,14 +12,20 @@ Slim Search Highlight ist ein Lesewerkzeug. Die Gestaltung erinnert an markierte
 
 | Rolle | Farbe | Verwendung |
 |---|---|---|
-| Papier | `#ffffff` | Heller Logo-Grund und helle Arbeitsflächen |
-| Tinte | `#253540` | Textlinien im Logo; Bedienelemente verwenden die Textfarbe ihres Farbschemas |
-| Gelb | `#ffdf00` | Erste Logo-Markierung; Gelb ist die Signalfarbe für Hervorheben |
-| Türkis | `#00e5ff` | Zweite Logo-Markierung |
-| Pink | `#ff80ab` | Dritte Logo-Markierung |
-| Kontur | `#d9e2e7` | Dezente Begrenzung des weißen Logos |
+| Papier | `#fffaf0` | Helle Arbeitsflächen und helles Logo |
+| Tinte | `#343b3a` | Heller Textmodus und Logo-Linien |
+| Sonnengelb | `#ffd447` | Erste Markierung, aktiver Seitenfund |
+| Mint | `#7ee3cc` | Zweite Markierung, Bedienakzent in Dunkel |
+| Koralle | `#ff7969` | Dritte Markierung; dunklere/hellere Verwandte kennzeichnen Fehler |
+| Himmelblau | `#49c6e5` | Weitere Markierungen |
+| Tiefes Türkis | `#147d83` | Bedienakzent und Tastaturfokus in Hell |
+| Grün-Anthrazit | `#202b29` / `#2a3935` | Dunkler Hintergrund und dunkle Bedienelemente |
 
-Die UI-Farben für Hintergrund, Text, Fokus und Fehler stehen als `--hl-*`-Tokens im [Designsystem](DESIGN.md). Das Logo folgt dem gewählten Farbschema: weißer Grund in Hell, dunkelgrauer Grund (`#242424`) in Dunkel. Die drei Markierungsfarben und die Geometrie bleiben identisch. Öffnen-Button, Panelkopf und Auswahl-Symbol wechseln sofort gemeinsam, auch ohne Neuladen. Webseitenfarben bleiben davon unabhängig.
+Das gemeinsame Farbsystem heißt **Sunlit Mint** und folgt der vom Nutzer gelieferten Referenz mit warmem Gelb, Koralle, Mint und Blau. Alle eingebauten Farben stehen zentral in [`src/colors.json`](../../src/colors.json). Das [technische Designsystem](DESIGN.md) dokumentiert die semantischen `--hl-*`-Rollen samt Hell-/Dunkelwerten. Panel, Auswahlmenü, Eingaben, Scrollleisten, Hinweise, Fokus und Hover-/Druckzustände verwenden diese Rollen. Die primäre Aktion ist in Hell tief türkis mit heller Schrift und in Dunkel mint mit dunkler Schrift.
+
+Suchbegriffe und eigene Markierungen verwenden dieselbe Palette mit zwölf Grundfarben. Weitere eigene Begriffe erhalten passende hellere/dunklere Abstufungen; erst wenn alle Familientöne belegt sind, greift eine weitere eindeutige RGB-Farbe. Bereits gespeicherte oder selbst gewählte Farben bleiben unverändert. Die Herkunft steht als Text an der Zeile und wird nicht über eine zweite Farbpalette erklärt.
+
+Das Logo folgt dem gewählten Farbschema: cremefarbener Grund in Hell, Grün-Anthrazit (`#2a3935`) in Dunkel. Die drei Markierungen sind Sonnengelb, Mint und Koralle. Öffnen-Button, Panelkopf und Auswahl-Symbol wechseln sofort gemeinsam, auch ohne Neuladen. Webseitenfarben bleiben davon unabhängig.
 
 Die optionale Transparenz gilt gemeinsam für Panel, Auswahlmenü und Öffnen-Button einschließlich Logo und Beschriftung. Standard ist 0 %; der Regler bietet 0–80 % in 5-%-Schritten, direkte Vorschau und einen eigenen Reset. Hohe Werte machen den Seitentext dahinter sichtbarer und verringern zugleich den Kontrast der Bedienelemente. Seitenmarkierungen werden davon nicht beeinflusst.
 
@@ -57,6 +63,6 @@ Farbe trägt Bedeutung: Markierungsfarben verbinden Text, Farbfeld und Trefferle
 
 ## Pflege und Prüfung
 
-`assets/icon.svg` und `assets/icon-dark.svg` sind die Originale der hellen und dunklen Logo-Variante. Die Funktions-Icons liegen unter `assets/icons/`; ihre Zuordnung steht in `src/manifest.json`. Der Build bettet diese Dateien in das einzelne Userscript ein. Keine separat gepflegten Base64-Kopien und keine externen Icon-Bibliotheken.
+`assets/icon.svg` und `assets/icon-dark.svg` enthalten die Geometrie der hellen und dunklen Logo-Variante. Ihre mit `data-fill`/`data-stroke` benannten Farbrollen werden beim Build aus `src/colors.json` aktualisiert; `npm run check` erkennt veraltete Ausgaben. Farben daher in der JSON-Datei ändern, nicht separat im SVG. Die Funktions-Icons liegen unter `assets/icons/`; ihre Zuordnung steht in `src/manifest.json`. Der Build bettet diese Dateien in das einzelne Userscript ein. Keine separat gepflegten Base64-Kopien und keine externen Icon-Bibliotheken.
 
 Nach Änderungen: `npm run build`, `npm run check`, Browser-Tests und `npm run screenshots`. Logo und Auswahlaktionen im hellen und dunklen Farbschema sowie auf einem schmalen Bildschirm ansehen. Tastaturbedienung, lesbare Namen, Umbruch und unveränderte Funktionen mitprüfen.

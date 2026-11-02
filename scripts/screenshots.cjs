@@ -99,7 +99,7 @@ for(const theme of ['dark','light']) for(const [viewport,width,height] of [['des
  await select();await p.locator('#selection-trigger').waitFor({state:'visible'});await p.screenshot({path:path.join(output,name+'-symbol.png')});
  await p.locator('#selection-trigger').hover();await p.locator('#slim-selection-tools').screenshot({path:path.join(output,name+'-toolbar.png')});await p.locator('#selection-share > summary').click();await p.screenshot({path:path.join(output,name+'-actions.png')});
  await p.getByRole('button',{name:'Alle Vorkommen markieren',exact:true}).click();
- await p.locator('.page-item input[type=color]').fill('#90caf9');await p.locator('.page-item input[type=color]').dispatchEvent('change');await p.locator('.page-save').click();
+ await p.locator('.page-item input[type=color]').fill('#7ee3cc');await p.locator('.page-item input[type=color]').dispatchEvent('change');await p.locator('.page-save').click();
  await p.screenshot({path:path.join(output,name+'-panel.png')});
  const panel=await p.locator('#slim-hl-panel').boundingBox();if(panel.x<0||panel.y<0||panel.x+panel.width>width+1||panel.y+panel.height>height+1)throw Error('Panel out of viewport');
  await p.locator('#page-options > summary').click();await p.check('#page-whole');await p.selectOption('#page-scope','article');await p.screenshot({path:path.join(output,name+'-options.png')});

@@ -23,7 +23,7 @@ The test runner explicitly uses Playwright's full Chromium channel in new headle
 
 ## Daily workflow
 
-1. Change the appropriate source section under `src/`.
+1. Change the appropriate source section under `src/`. For built-in colors, edit `src/colors.json`; the build maps its roles into all UI themes, highlights and tagged logo colors. SVG geometry stays in `assets/`; keep each `data-fill`/`data-stroke` role immediately before its corresponding paint attribute (whitespace/line breaks are supported).
 2. For behavior changes, first add a failing browser regression in `tests/suites/`.
 3. Run `npm run build`, then focused tests and the full suite.
 4. Update `src/metadata.txt` version, CHANGELOG and relevant documentation when behavior changes.
@@ -32,7 +32,7 @@ The test runner explicitly uses Playwright's full Chromium channel in new headle
 | Command | Purpose |
 |---|---|
 | `npm run build` | Deterministically regenerate the installable userscript |
-| `npm run check` | Detect stale generated output and syntax errors |
+| `npm run check` | Detect stale userscript/logo colors, invalid logo roles and syntax errors |
 | `npm test` | Build check and every browser suite |
 | `npm run test:selection` | Existing selection regressions |
 | `npm run test:features` | Page color/undo/storage/sharing/options regressions |

@@ -202,7 +202,7 @@ function goTo(delta) {
     globalThis.CSS?.highlights?.delete('slim-page-current');
     clearTimeout(outlineTimer); outlined = target;
     if (target.range) { const active = new Highlight(target.range); active.priority = 10; CSS.highlights.set('slim-page-current', active); }
-    else target.style.outline = '2px solid #ffca28';
+    else target.style.outline = '2px solid ' + COLORS.navigation.outline;
     outlineTimer = setTimeout(() => {
         if (target.range) globalThis.CSS?.highlights?.delete('slim-page-current'); else target.style.outline = '';
         outlined = null;

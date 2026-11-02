@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.7.0
+
+- Einheitliches Farbsystem „Sunlit Mint“ nach der gelieferten Referenz: Creme und Grün-Anthrazit als Flächen, Türkis/Mint für Aktionen und Fokus, Koralle für Fehler. Alle Oberflächen einschließlich Auswahlmenü, Logo, Formulare, Scrollleisten und lokale Meldungen teilen die semantischen Farben.
+- Suchbegriffe und eigene Markierungen verwenden dieselben zwölf Grundfarben. Weitere eigene Markierungen erhalten passende Abstufungen; gespeicherte und manuell gewählte Farben bleiben erhalten. Navigation, Farbfelder und Positionsleiste beziehen ihre Farben aus derselben Quelle.
+- `src/colors.json` ist die zentrale Farbdefinition; der deterministische Build synchronisiert die Logo-Farbrollen und bettet die Definition ein. Hover und gedrückter Zustand der Hauptaktion haben eigene kontrastgeprüfte Farben.
+- Designrichtlinien, Architektur, README-Beispiele und Screenshots sind aktualisiert. Browserprüfungen decken gemeinsame Farbzuordnung und primäre Interaktionszustände in beiden Themes ab.
+
 ## 4.6.1
 
 - Herkunft und Speicherstatus nutzen die volle Breite der Beschriftung; die Trefferzahl steht neben dem Begriff in dessen eigener Zeile. Dadurch bleibt die Übersicht auch mit breiteren Linux-Systemschriften kompakt, ohne Schrift oder Bedienelemente zu verkleinern.

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.6.1
+// @version      4.7.0
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -51,7 +51,8 @@
     'use strict';
 
     // Embedded from canonical SVG assets; no runtime asset requests.
-    const LOGOS = {"light":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDllMmU3IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZmRmMDAiLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZjgwYWIiLz4KICA8ZyBmaWxsPSIjMjUzNTQwIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGZpbGw9IiNlOGVlZjIiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjYjU4OTAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzAwN2Y5NiIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNjNDNiNzAiLz4KPC9zdmc+Cg==","dark":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZmlsbD0iIzI0MjQyNCIgc3Ryb2tlPSIjNTI2MDZkIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZmRmMDAiLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiMwMGU1ZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iODIiIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNmZjgwYWIiLz4KICA8ZyBmaWxsPSIjMjUzNTQwIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGZpbGw9IiM0NjU0NWUiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjZmZkZjAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzAwZTVmZiIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNmZjgwYWIiLz4KPC9zdmc+Cg=="};
+    const COLORS = {"name":"Sunlit Mint","highlights":["#ffd447","#7ee3cc","#ff7969","#49c6e5","#ffb579","#ff82aa","#b4e66c","#b28aee","#6eaeff","#ffc596","#60dfaa","#f487bd"],"contrast":{"dark":"#000000","light":"#ffffff"},"navigation":{"background":"#ffd447","outline":"#147d83"},"logo":{"ink":"#343b3a","lightTicks":["#906600","#147d83","#b53e35"]},"themes":{"dark":{"bg":"#202b29","surface":"#2a3935","field":"#18231f","text":"#fffaf0","muted":"#b7cbc4","border":"#78958b","accent":"#7ee3cc","on-accent":"#193b37","accent-hover":"#a1ecd9","accent-active":"#62cbb4","accent-text":"#7ee3cc","focus":"#7ee3cc","danger":"#ff9e91","hover":"#354a43","active":"#405c53","divider":"#425950","scroll-thumb":"#78958b","scroll-hover":"#a4cabe","shadow":"rgba(0,0,0,.4)","scheme":"dark"},"light":{"bg":"#fffaf0","surface":"#f2f4eb","field":"#fffdf8","text":"#343b3a","muted":"#52665f","border":"#718781","accent":"#147d83","on-accent":"#fffaf0","accent-hover":"#116a70","accent-active":"#0d595e","accent-text":"#147d83","focus":"#147d83","danger":"#b53e35","hover":"#e1efe8","active":"#cee5dc","divider":"#d5dfd6","scroll-thumb":"#718781","scroll-hover":"#52665f","shadow":"rgba(32,43,41,.18)","scheme":"light"}}};
+    const LOGOS = {"light":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZGF0YS1maWxsPSJ0aGVtZXMubGlnaHQuYmciIGZpbGw9IiNmZmZhZjAiIGRhdGEtc3Ryb2tlPSJ0aGVtZXMubGlnaHQuZGl2aWRlciIgc3Ryb2tlPSIjZDVkZmQ2IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjgiIHdpZHRoPSI2NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGRhdGEtZmlsbD0iaGlnaGxpZ2h0cy4wIiBmaWxsPSIjZmZkNDQ3Ii8+CiAgPHJlY3QgeD0iMzAiIHk9IjU1IiB3aWR0aD0iNTYiIGhlaWdodD0iMjAiIHJ4PSI1IiBkYXRhLWZpbGw9ImhpZ2hsaWdodHMuMSIgZmlsbD0iIzdlZTNjYyIvPgogIDxyZWN0IHg9IjIwIiB5PSI4MiIgd2lkdGg9IjU0IiBoZWlnaHQ9IjIwIiByeD0iNSIgZGF0YS1maWxsPSJoaWdobGlnaHRzLjIiIGZpbGw9IiNmZjc5NjkiLz4KICA8ZyBkYXRhLWZpbGw9ImxvZ28uaW5rIiBmaWxsPSIjMzQzYjNhIj4KICAgIDxyZWN0IHg9IjI2IiB5PSIzNSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIzNiIgeT0iNjIiIHdpZHRoPSIzOCIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iMjYiIHk9Ijg5IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiLz4KICA8L2c+CiAgPHJlY3QgeD0iMTAxIiB5PSIyNCIgd2lkdGg9IjciIGhlaWdodD0iODAiIHJ4PSIzLjUiIGRhdGEtZmlsbD0idGhlbWVzLmxpZ2h0LmRpdmlkZXIiIGZpbGw9IiNkNWRmZDYiLz4KICA8cmVjdCB4PSI5OCIgeT0iMzQiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBkYXRhLWZpbGw9ImxvZ28ubGlnaHRUaWNrcy4wIiBmaWxsPSIjOTA2NjAwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjYxIiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZGF0YS1maWxsPSJsb2dvLmxpZ2h0VGlja3MuMSIgZmlsbD0iIzE0N2Q4MyIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGRhdGEtZmlsbD0ibG9nby5saWdodFRpY2tzLjIiIGZpbGw9IiNiNTNlMzUiLz4KPC9zdmc+Cg==","dark":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+CiAgPHRpdGxlPlNsaW0gU2VhcmNoIEhpZ2hsaWdodDwvdGl0bGU+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjEyNCIgaGVpZ2h0PSIxMjQiIHJ4PSIyOCIgZGF0YS1maWxsPSJ0aGVtZXMuZGFyay5zdXJmYWNlIiBmaWxsPSIjMmEzOTM1IiBkYXRhLXN0cm9rZT0idGhlbWVzLmRhcmsuYm9yZGVyIiBzdHJva2U9IiM3ODk1OGIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxyZWN0IHg9IjIwIiB5PSIyOCIgd2lkdGg9IjY2IiBoZWlnaHQ9IjIwIiByeD0iNSIgZGF0YS1maWxsPSJoaWdobGlnaHRzLjAiIGZpbGw9IiNmZmQ0NDciLz4KICA8cmVjdCB4PSIzMCIgeT0iNTUiIHdpZHRoPSI1NiIgaGVpZ2h0PSIyMCIgcng9IjUiIGRhdGEtZmlsbD0iaGlnaGxpZ2h0cy4xIiBmaWxsPSIjN2VlM2NjIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjgyIiB3aWR0aD0iNTQiIGhlaWdodD0iMjAiIHJ4PSI1IiBkYXRhLWZpbGw9ImhpZ2hsaWdodHMuMiIgZmlsbD0iI2ZmNzk2OSIvPgogIDxnIGRhdGEtZmlsbD0ibG9nby5pbmsiIGZpbGw9IiMzNDNiM2EiPgogICAgPHJlY3QgeD0iMjYiIHk9IjM1IiB3aWR0aD0iNDgiIGhlaWdodD0iNiIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjM2IiB5PSI2MiIgd2lkdGg9IjM4IiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIyNiIgeT0iODkiIHdpZHRoPSIzNiIgaGVpZ2h0PSI2IiByeD0iMyIvPgogIDwvZz4KICA8cmVjdCB4PSIxMDEiIHk9IjI0IiB3aWR0aD0iNyIgaGVpZ2h0PSI4MCIgcng9IjMuNSIgZGF0YS1maWxsPSJ0aGVtZXMuZGFyay5kaXZpZGVyIiBmaWxsPSIjNDI1OTUwIi8+CiAgPHJlY3QgeD0iOTgiIHk9IjM0IiB3aWR0aD0iMTMiIGhlaWdodD0iNyIgcng9IjMuNSIgZGF0YS1maWxsPSJoaWdobGlnaHRzLjAiIGZpbGw9IiNmZmQ0NDciLz4KICA8cmVjdCB4PSI5OCIgeT0iNjEiIHdpZHRoPSIxMyIgaGVpZ2h0PSI3IiByeD0iMy41IiBkYXRhLWZpbGw9ImhpZ2hsaWdodHMuMSIgZmlsbD0iIzdlZTNjYyIvPgogIDxyZWN0IHg9Ijk4IiB5PSI4OCIgd2lkdGg9IjEzIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGRhdGEtZmlsbD0iaGlnaGxpZ2h0cy4yIiBmaWxsPSIjZmY3OTY5Ii8+Cjwvc3ZnPgo="};
     const INLINE_ICONS = {"highlightAll":"<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n  <rect x=\"3\" y=\"3.5\" width=\"13\" height=\"4\" rx=\"1.2\"/>\n  <rect x=\"6\" y=\"10\" width=\"10\" height=\"4\" rx=\"1.2\"/>\n  <rect x=\"3\" y=\"16.5\" width=\"10\" height=\"4\" rx=\"1.2\"/>\n  <path d=\"M20.5 4v16M19 5.5h3M19 12h3M19 18.5h3\"/>\n</svg>","searchWeb":"<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n  <path d=\"M12.5 20A8.5 8.5 0 1 1 20 11.5M3.5 8.5h16M3.5 14.5h7M11.5 3c-2.5 2.2-3.5 5-3.5 8.5 0 3.6 1 6.4 3.5 8.5M11.5 3c2 1.8 3.1 4 3.4 6.5\"/>\n  <circle cx=\"16.5\" cy=\"16\" r=\"3.5\"/>\n  <path d=\"m19 18.5 3 3\"/>\n</svg>"};
 
     // Source: src/00-state-i18n.js
@@ -251,9 +252,9 @@
         const v = (I18N[currentLang()] || I18N.en)[key] ?? I18N.en[key] ?? key;
         return typeof v === 'function' ? v(...args) : v;
     }
-    const DEFAULT_COLOR = '#ffe082';
-    const PAGE_HIGHLIGHT_COLORS = ['#ffdf00', '#00e5ff', '#ff80ab', '#76ff03', '#b388ff', '#ff9100', '#448aff', '#ff5252', '#1de9b6', '#ea80fc', '#c6ff00', '#ff6e40'];
-    const AUTO_COLORS = ['#90caf9', '#a5d6a7', '#ef9a9a', '#ffcc80', '#ce93d8', '#80cbc4', '#fff176', '#b0bec5'];
+    const DEFAULT_COLOR = COLORS.highlights[0];
+    const PAGE_HIGHLIGHT_COLORS = COLORS.highlights;
+    const AUTO_COLORS = COLORS.highlights;
     const SEARCH_ENGINES = ['google.', 'bing.', 'duckduckgo.', 'yahoo.', 'baidu.', 'yandex.', 'startpage.', 'ecosia.', 'qwant.'];
     const CROSS_TTL = 10 * 60 * 1000;
     const IGNORE_WORDS = new Set(['the','and','for','with','von','der','die','das','und','für','in','on','at','to','of','a','an','or','as','by','is','it','be','are','was','were','this','that','these','those','from','into','about','under','over']);
@@ -275,9 +276,11 @@
     let kwFilter = '';
 
     // Source: src/10-styles.js
+    // All owned surfaces share the semantic theme from src/colors.json.
+    const themeDeclarations = theme => Object.entries(COLORS.themes[theme]).map(([key, value]) => `--hl-${key}: ${value};`).join('\n        ');
     const UI_CSS = `
-        ::highlight(slim-page) { background-color: #ffe082; color: #000; }
-        ::highlight(slim-page-current) { background-color: #ffca28; color: #000; text-decoration: underline; }
+        ::highlight(slim-page) { background-color: ${DEFAULT_COLOR}; color: ${COLORS.contrast.dark}; }
+        ::highlight(slim-page-current) { background-color: ${COLORS.navigation.background}; color: ${COLORS.contrast.dark}; text-decoration: underline; }
         #slim-selection-tools {
             all: initial; position: fixed; z-index: 2147483647; display: flex; flex-direction: column; align-items: start; gap: 4px;
             width: max-content; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); box-sizing: border-box;
@@ -337,22 +340,12 @@
         .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
         #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle, #slim-hl-feedback {
             --hl-brand-logo: url("${LOGOS.dark}");
-            --hl-bg: #1a1a1a; --hl-surface: #242424; --hl-field: #222;
-            --hl-text: #f0f0f0; --hl-muted: #b5b5b5; --hl-border: #666;
-            --hl-accent: #ffca28; --hl-hover: #343434; --hl-danger: #ff918e;
-            --hl-accent-text: #ffca28; --hl-focus: #ffca28; --hl-divider: #444;
-            --hl-active: #484848; --hl-scroll-thumb: #777; --hl-scroll-hover: #aaa;
-            --hl-shadow: rgba(0,0,0,.4); --hl-scheme: dark;
+            ${themeDeclarations('dark')}
             --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 10px;
         }
         #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light], #slim-hl-feedback[data-theme=light] {
             --hl-brand-logo: url("${LOGOS.light}");
-            --hl-bg: #fff; --hl-surface: #f1f4f7; --hl-field: #fff;
-            --hl-text: #1e2933; --hl-muted: #52606d; --hl-border: #778391;
-            --hl-hover: #e5eaf0; --hl-danger: #b42318; --hl-active: #d7dfe8;
-            --hl-accent-text: #805500; --hl-focus: #805500; --hl-divider: #d9dee3;
-            --hl-scroll-thumb: #7a8694; --hl-scroll-hover: #5b6673;
-            --hl-shadow: rgba(20,35,50,.18); --hl-scheme: light;
+            ${themeDeclarations('light')}
         }
         #slim-hl-panel {
             all: initial;
@@ -376,7 +369,7 @@
         #slim-hl-panel ::-webkit-scrollbar-track { background: var(--hl-field); }
         #slim-hl-panel ::-webkit-scrollbar-thumb { background: var(--hl-scroll-thumb); border: 2px solid var(--hl-field); border-radius: 6px; }
         #slim-hl-panel ::-webkit-scrollbar-thumb:hover { background: var(--hl-scroll-hover); }
-        #slim-hl-panel ::selection { background: var(--hl-accent); color: #111; }
+        #slim-hl-panel ::selection { background: var(--hl-accent); color: var(--hl-on-accent); }
         #slim-hl-panel :focus-visible, #slim-hl-toggle:focus-visible {
             outline: 2px solid var(--hl-focus); outline-offset: 2px;
         }
@@ -418,16 +411,17 @@
         #slim-hl-panel input[type=text], #slim-hl-panel select, #slim-hl-panel textarea {
             display: block; width: 100%; min-width: 0; background: var(--hl-field); color: var(--hl-text);
             border: 1px solid var(--hl-border); border-radius: var(--hl-radius);
-            padding: 8px 10px; font: inherit; min-height: 38px; caret-color: var(--hl-accent);
+            padding: 8px 10px; font: inherit; min-height: 38px; caret-color: var(--hl-focus);
         }
         #slim-hl-panel input::placeholder { color: var(--hl-muted); opacity: 1; }
-        #slim-hl-panel input[type=checkbox] { width: 18px; height: 18px; flex-shrink: 0; margin: 0; accent-color: var(--hl-accent); }
+        #slim-hl-panel input[type=checkbox] { width: 18px; height: 18px; flex-shrink: 0; margin: 0; accent-color: var(--hl-focus); }
         #slim-hl-panel input[type=color] { display: block; width: 38px; min-width: 38px; height: 38px; padding: 3px; border: 1px solid var(--hl-border); border-radius: var(--hl-radius); background: var(--hl-field); cursor: pointer; }
         #slim-hl-panel .entry-row { display: flex; gap: var(--hl-gap); align-items: end; }
         #slim-hl-panel .entry-main { flex: 1; min-width: 0; }
         #slim-hl-panel .color-label { font-size: 12px; }
-        #slim-hl-panel #add-kw-btn { width: 100%; margin-top: 10px; background: var(--hl-accent); border-color: var(--hl-accent); color: #171717; font-weight: 650; }
-        #slim-hl-panel #add-kw-btn:hover { background: #ffdb63; }
+        #slim-hl-panel #add-kw-btn { width: 100%; margin-top: 10px; background: var(--hl-accent); border-color: var(--hl-accent); color: var(--hl-on-accent); font-weight: 650; }
+        #slim-hl-panel #add-kw-btn:hover { background: var(--hl-accent-hover); }
+        #slim-hl-panel #add-kw-btn:active { background: var(--hl-accent-active); }
         #slim-hl-panel .preview { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 12px; margin-top: 6px; }
         #slim-hl-panel details { display: block; margin-top: 14px; border-top: 1px solid var(--hl-divider); }
         #slim-hl-panel summary { display: list-item; cursor: pointer; padding: 10px 2px; font-weight: 600; }
@@ -511,11 +505,11 @@
     function highlightTextColor(color) {
         const hex = String(color).replace('#', '');
         const normalized = hex.length === 3 ? hex.split('').map(c => c + c).join('') : hex;
-        if (!/^[0-9a-f]{6}$/i.test(normalized)) return '#000';
+        if (!/^[0-9a-f]{6}$/i.test(normalized)) return COLORS.contrast.dark;
         const rgb = [0, 2, 4].map(i => parseInt(normalized.slice(i, i + 2), 16) / 255)
             .map(c => c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4);
         const luminance = rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722;
-        return (luminance + .05) / .05 >= 1.05 / (luminance + .05) ? '#000' : '#fff';
+        return (luminance + .05) / .05 >= 1.05 / (luminance + .05) ? COLORS.contrast.dark : COLORS.contrast.light;
     }
 
     // Source: src/25-private-ui.js
@@ -584,6 +578,17 @@
         const used = new Set([...pageTerms, ...getActiveKeywords(true)].map(term => String(term.color).toLowerCase()));
         const available = PAGE_HIGHLIGHT_COLORS.find(color => !used.has(color));
         if (available) return available;
+        // Extend the reference family with tints/shades before using unrelated hues.
+        for (let level = 1; level < 10; level++) {
+            for (const endpoint of [255, 0]) {
+                for (const base of PAGE_HIGHLIGHT_COLORS) {
+                    const channels = base.slice(1).match(/../g).map(value => parseInt(value, 16));
+                    const color = '#' + channels.map(value => Math.round(value + (endpoint - value) * level / 10).toString(16).padStart(2, '0')).join('');
+                    if (!used.has(color)) return color;
+                }
+            }
+        }
+        // If the complete tone family is occupied, keep assigning unique colors.
         // An odd multiplier visits every 24-bit RGB value once. Keep extra colors
         // bright/saturated and skip occupied colors rather than wrapping the palette.
         for (let step = 1; step <= 0xffffff; step++) {
@@ -1871,7 +1876,7 @@
         globalThis.CSS?.highlights?.delete('slim-page-current');
         clearTimeout(outlineTimer); outlined = target;
         if (target.range) { const active = new Highlight(target.range); active.priority = 10; CSS.highlights.set('slim-page-current', active); }
-        else target.style.outline = '2px solid #ffca28';
+        else target.style.outline = '2px solid ' + COLORS.navigation.outline;
         outlineTimer = setTimeout(() => {
             if (target.range) globalThis.CSS?.highlights?.delete('slim-page-current'); else target.style.outline = '';
             outlined = null;

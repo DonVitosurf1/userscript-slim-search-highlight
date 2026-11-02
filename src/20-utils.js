@@ -23,9 +23,9 @@ let ownedMarkKeywords = new WeakMap();
 function highlightTextColor(color) {
     const hex = String(color).replace('#', '');
     const normalized = hex.length === 3 ? hex.split('').map(c => c + c).join('') : hex;
-    if (!/^[0-9a-f]{6}$/i.test(normalized)) return '#000';
+    if (!/^[0-9a-f]{6}$/i.test(normalized)) return COLORS.contrast.dark;
     const rgb = [0, 2, 4].map(i => parseInt(normalized.slice(i, i + 2), 16) / 255)
         .map(c => c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4);
     const luminance = rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722;
-    return (luminance + .05) / .05 >= 1.05 / (luminance + .05) ? '#000' : '#fff';
+    return (luminance + .05) / .05 >= 1.05 / (luminance + .05) ? COLORS.contrast.dark : COLORS.contrast.light;
 }

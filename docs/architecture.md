@@ -9,9 +9,10 @@ Slim Search Highlight has no production dependencies and installs as one userscr
 | Source | Responsibility |
 |---|---|
 | `src/metadata.txt` | Userscript identity, version, grants and update/install URLs |
-| `assets/icon.svg`, `assets/icon-dark.svg`, `assets/icons/` | Canonical shared logo and selection-action SVG assets, embedded by the build |
+| `assets/icon.svg`, `assets/icon-dark.svg`, `assets/icons/` | Canonical shared SVG geometry; tagged logo color roles synchronize from `src/colors.json` before embedding |
 | `src/00-state-i18n.js` | Preferences including validated appearance values, German/English messages |
-| `src/10-styles.js` | Scoped panel/selection toolbar CSS and tokens |
+| `src/colors.json` | Canonical semantic themes, highlight family, logo and navigation colors, embedded as `COLORS` by the build |
+| `src/10-styles.js` | Scoped panel/selection toolbar CSS; maps `COLORS.themes` to `--hl-*` variables |
 | `src/20-utils.js` | Icons, escaping, contrast calculation |
 | `src/25-private-ui.js` | Closed UI root, private node references and activation boundary |
 | `src/30-page-state.js` | Page records, undo, explicit storage and search options |
@@ -64,7 +65,7 @@ The web-search action in `src/50-page-ui-sharing.js` validates the selection sna
 
 ## Appearance ownership
 
-The shared `data-theme` variant in `src/10-styles.js` owns dark/light tokens for the panel, selection toolbar, launcher and copy confirmation. `applyAppearance` in `src/80-panel.js` updates those surfaces in place, applies interface transparency and bounded launcher geometry. The selection trigger consistently uses the standalone logo tile; its size remains independent of launcher geometry. Generic control IDs are always resolved inside the owned panel so host-page fields remain untouched. No theme attributes or variables are written to the host document root.
+`src/colors.json` owns the Sunlit Mint color system. The assembler embeds it as `COLORS`, synchronizes tagged logo fill/stroke attributes, and rejects stale outputs in check mode. The shared `data-theme` variant in `src/10-styles.js` maps its dark/light roles to scoped CSS tokens for the panel, selection toolbar, launcher and copy confirmation. `applyAppearance` in `src/80-panel.js` updates those surfaces in place, applies interface transparency and bounded launcher geometry. The selection trigger consistently uses the standalone logo tile; its size remains independent of launcher geometry. Generic control IDs are always resolved inside the owned panel so host-page fields remain untouched. No theme attributes or variables are written to the host document root.
 
 Appearance preferences join the existing change-only persistence registry. A failed write restores the last saved appearance and reports a semantic localized status; a successful retry clears the stale failure. Native selects and ranges use the same control styles as existing settings. See [Design system](design/DESIGN.md) for the token mapping and [data format](data-format.md) for preference keys.
 

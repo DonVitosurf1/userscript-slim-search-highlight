@@ -1,0 +1,27 @@
+{
+  "name": "Sunlit Mint",
+  "highlights": ["#ffd447", "#7ee3cc", "#ff7969", "#49c6e5", "#ffb579", "#ff82aa", "#b4e66c", "#b28aee", "#6eaeff", "#ffc596", "#60dfaa", "#f487bd"],
+  "contrast": { "dark": "#000000", "light": "#ffffff" },
+  "navigation": { "background": "#ffd447", "outline": "#147d83" },
+  "logo": { "ink": "#343b3a", "lightTicks": ["#906600", "#147d83", "#b53e35"] },
+  "themes": {
+    "dark": {
+      "bg": "#202b29", "surface": "#2a3935", "field": "#18231f",
+      "text": "#fffaf0", "muted": "#b7cbc4", "border": "#78958b",
+      "accent": "#7ee3cc", "on-accent": "#193b37", "accent-hover": "#a1ecd9", "accent-active": "#62cbb4",
+      "accent-text": "#7ee3cc", "focus": "#7ee3cc", "danger": "#ff9e91",
+      "hover": "#354a43", "active": "#405c53", "divider": "#425950",
+      "scroll-thumb": "#78958b", "scroll-hover": "#a4cabe",
+      "shadow": "rgba(0,0,0,.4)", "scheme": "dark"
+    },
+    "light": {
+      "bg": "#fffaf0", "surface": "#f2f4eb", "field": "#fffdf8",
+      "text": "#343b3a", "muted": "#52665f", "border": "#718781",
+      "accent": "#147d83", "on-accent": "#fffaf0", "accent-hover": "#116a70", "accent-active": "#0d595e",
+      "accent-text": "#147d83", "focus": "#147d83", "danger": "#b53e35",
+      "hover": "#e1efe8", "active": "#cee5dc", "divider": "#d5dfd6",
+      "scroll-thumb": "#718781", "scroll-hover": "#52665f",
+      "shadow": "rgba(32,43,41,.18)", "scheme": "light"
+    }
+  }
+}

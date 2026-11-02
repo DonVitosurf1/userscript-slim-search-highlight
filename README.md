@@ -17,6 +17,8 @@ Ein **Browser-Userscript für Tampermonkey und Violentmonkey**. Kein Konto, kein
 
 *Echte Oberfläche auf einer lokalen Beispielseite: drei Begriffe, sieben Treffer. Die Vorschau folgt deinem GitHub-Farbschema; im Userscript wählst du Hell oder Dunkel selbst.*
 
+**Farbschema:** „Sunlit Mint“ verbindet Creme und Grün-Anthrazit mit Türkis/Mint als Bedienakzent. Suchbegriffe und eigene Markierungen teilen eine Palette aus Gelb, Mint, Koralle, Blau und verwandten Tönen. Unter **Einstellungen → Darstellung → Farbschema** wählst du Hell oder Dunkel; gespeicherte Wunschfarben bleiben erhalten.
+
 ## Installation
 
 1. [Tampermonkey](https://www.tampermonkey.net/) oder [Violentmonkey](https://violentmonkey.github.io/) installieren.

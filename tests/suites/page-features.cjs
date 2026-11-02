@@ -7,7 +7,7 @@ module.exports=({open,eq,ok,selectionShortcutTime})=>{
   const count=p=>p.evaluate(()=>CSS.highlights.get('slim-page')?.size||0);
   const tools=async p=>{await select(p);await p.locator('#selection-trigger').waitFor({state:'visible'});await p.locator('#selection-trigger').hover();};
   return {
-    async feature_new_page_highlights_get_distinct_vivid_colors(b){
+    async feature_new_page_highlights_get_distinct_palette_colors(b){
       const words=Array.from({length:14},(_,i)=>'Begriff-'+String.fromCharCode(65+i));
       const p=await pageWith(b,{keywords:[{text:'Permanent',color:'#ffdf00'}],html:'<p>Permanent</p>'+words.map((word,i)=>`<p id="word-${i}">${word}</p><p>${word}</p>`).join('')});
       for(let i=0;i<words.length;i++){
@@ -18,9 +18,11 @@ module.exports=({open,eq,ok,selectionShortcutTime})=>{
       const colors=await p.locator('.page-item input[type=color]').evaluateAll(inputs=>inputs.map(input=>input.value));
       eq(colors.length,words.length);eq(new Set(colors).size,words.length,'Each new passage gets an unused color, including after the initial palette');
       ok(!colors.includes('#ffdf00'),'Avoid colors of applicable permanent keywords too');
+      const channels=color=>color.match(/\w\w/g).map(channel=>parseInt(channel,16));
+      for(const color of colors.slice(12))ok(colors.slice(0,12).some(base=>channels(base).every((channel,index)=>Math.abs(channel-channels(color)[index])<=26)),'Extra marks retain a tone from the shared family: '+color);
       for(const color of colors){
         const rgb=color.match(/\w\w/g).map(channel=>parseInt(channel,16));
-        ok(Math.max(...rgb)-Math.min(...rgb)>=100&&Math.max(...rgb)>=220,'Highlight color is bright and saturated: '+color);
+        ok(Math.max(...rgb)-Math.min(...rgb)>=80&&Math.max(...rgb)>=220,'Highlight color is bright and saturated: '+color);
       }
       const paints=await p.evaluate(()=>[...CSS.highlights.entries()].filter(([name])=>name.startsWith('slim-page-term-')).map(([name,ranges])=>{
         const rule=[...document.getElementById('slim-page-colors').sheet.cssRules].find(rule=>rule.selectorText===`::highlight(${name})`);
