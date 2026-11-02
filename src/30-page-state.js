@@ -1,6 +1,7 @@
 // Page passages stay separate from global keywords; only explicitly saved records enter GM storage.
 let pageTerms = [];
 let pageMatches = [];
+let navigationCache = null;
 let pageIdentity = location.href;
 let pageTextDirty = false;
 let pageURLTimer = null;
@@ -121,12 +122,31 @@ function validShortcut(value) {
 
 const normalizePassage = text => String(text).replace(/\s+/g, ' ').trim();
 const supportsPageHighlights = () => !!globalThis.CSS?.highlights && typeof globalThis.Highlight === 'function';
-const navigationMatches = () => pageTerms.length ? pageMatches : document.getElementsByClassName('slim-hl');
+function navigationMatches() {
+    const keywords = document.getElementsByClassName('slim-hl');
+    if (!pageMatches.length) return keywords;
+    if (!keywords.length) return pageMatches;
+    if (navigationCache) return navigationCache;
+    const entries = pageMatches.map(match => ({ match, range: match.range }));
+    let pageIndex = 0;
+    for (const keyword of keywords) {
+        const range = document.createRange(); range.selectNodeContents(keyword);
+        // Native passage ranges and keyword wrappers are each in document order.
+        // Prefer the selected passage where the two paint the same occurrence.
+        while (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.START_TO_END, range) <= 0) pageIndex++;
+        if (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.END_TO_START, range) < 0) continue;
+        entries.push({ match: keyword, range });
+    }
+    entries.sort((a, b) => a.range.compareBoundaryPoints(Range.START_TO_START, b.range));
+    navigationCache = entries.map(entry => entry.match);
+    return navigationCache;
+}
 const matchText = match => match.range ? match.text : match.textContent;
 const matchColor = match => match.range ? match.color || DEFAULT_COLOR : match.style.backgroundColor || DEFAULT_COLOR;
 const matchRect = match => (match.range || match).getBoundingClientRect();
 
 function clearPagePaint(cancel = true) {
+    navigationCache = null;
     if (cancel) { pageSearchGeneration++; pageSearchBusy = false; }
     globalThis.CSS?.highlights?.delete('slim-page');
     globalThis.CSS?.highlights?.delete('slim-page-current');

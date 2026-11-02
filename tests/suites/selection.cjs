@@ -53,6 +53,31 @@ module.exports = ({ open, eq, ok }) => {
             eq(await page.evaluate(()=>Object.keys(window.__store).some(k=>/cross_terms|page_terms|page_selections/.test(k))),false,'Kein persistierter Auswahltext');
             eq(await page.locator('#hl-counter').textContent(),'1 / 2');
         },
+        async selection_mixed_navigation_handles_boundaries_and_dom_changes(browser){
+            const page=await pageWith(browser,{
+                keywords:[{text:'Outlook',color:'#ff80ab',wholeWord:false},{text:'Apple',color:'#76ff03'}],
+                html:'<p id="word">Outlook</p><p><span id="choose">Open</span>Outlook</p><p>Apple</p>'
+            });
+            await page.waitForFunction(()=>document.querySelectorAll('.slim-hl').length===3);
+            await highlight(page);
+            eq((await page.locator('#slim-pos-bar .mark').evaluateAll(nodes=>nodes.map(node=>node.title))).join('|'),'Outlook|Open|Outlook|Apple','Adjacent ranges are distinct and follow document order');
+            await page.locator('#word .slim-hl').evaluate(node=>{
+                document.activeElement?.blur();const range=document.createRange();range.setStart(node.firstChild,3);range.setEnd(node.firstChild,7);
+                getSelection().removeAllRanges();getSelection().addRange(range);
+            });
+            await page.keyboard.press('Alt+Shift+H');
+            eq(await page.locator('#slim-pos-bar .mark').count(),4,'Partially overlapping keyword and page ranges count once');
+            await page.evaluate(()=>document.body.insertAdjacentHTML('beforeend','<p id="added">Apple Open</p>'));
+            await page.waitForFunction(()=>document.querySelectorAll('#slim-pos-bar .mark').length===6);
+            eq((await page.locator('#slim-pos-bar .mark').evaluateAll(nodes=>nodes.map(node=>node.title))).join('|'),'look|Open|look|Apple|Apple|Open','New keyword wrappers invalidate the merged navigation');
+            await page.locator('#added').evaluate(node=>node.remove());
+            await page.waitForFunction(()=>document.querySelectorAll('#slim-pos-bar .mark').length===4);
+            await page.locator('#settings-section > summary').click();await page.uncheck('#chk-enabled');
+            eq(await page.locator('#slim-pos-bar').count(),0);
+            await page.check('#chk-enabled');
+            await page.waitForFunction(()=>document.querySelectorAll('#slim-pos-bar .mark').length===4);
+            eq(await page.locator('#hl-counter').textContent(),'1 / 4','Re-enabling rebuilds all result sources');
+        },
         async selection_old_shortcut_and_right_click_are_native(browser){
             const page=await pageWith(browser);await select(page);await page.keyboard.press('Alt+h');
             eq(await count(page),0);eq(await page.evaluate(()=>window.__store.hl_keywords.length),0,'Alt+H speichert nichts');

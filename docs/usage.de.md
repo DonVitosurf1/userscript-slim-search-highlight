@@ -30,7 +30,7 @@ Unter **Auf dieser Seite** bekommt jede neue Passage automatisch eine andere, kr
 
 Farbe, Begriff, Trefferzahl, Lesezeichen und Entfernen stehen in einer kompakten Zeile; der Speicherstatus steht direkt unter dem Begriff. Das Kreuz entfernt eine Passage und ihre Markierungen. Das **Papierkorb-Symbol neben „Auf dieser Seite“** leert die Liste; der **Zurück-Pfeil daneben** macht die letzte Änderung rückgängig, einschließlich Farbe und Speicherstatus. Die Buttons haben erklärende Tooltips und zugängliche Namen. Die letzten 20 Seitenzustände bleiben während der Sitzung erhalten; Navigation oder Neuladen beendet diesen Verlauf.
 
-Solange Seitenpassagen existieren, steuern Vor/Zurück und **Alt+← / →** deren Treffer. Andernfalls werden die gespeicherten/automatischen Keyword-Treffer navigiert. Die Positionsleiste bündelt bei vielen Treffern bis zu 500 Markierungen; die Trefferdetails zeigen bis zu 300 Einträge. Alle tatsächlichen Treffer bleiben über die Navigation erreichbar.
+Vor/Zurück und **Alt+← / →** navigieren gemeinsam durch Seitenmarkierungen, Google-Suchbegriffe und passende gespeicherte Keywords, in ihrer Reihenfolge auf der Seite. Neue Markierungen ergänzen die bisherigen Treffer. Überlappen sich eine eigene Markierung und ein Keyword an derselben Stelle, zählt diese Fundstelle einmal; die eigene Markierung ist dort das Navigationsziel. Der Zähler zeigt **Alle Treffer**. Die Positionsleiste bündelt bei vielen Treffern bis zu 500 Markierungen; die Trefferdetails zeigen bis zu 300 Einträge. Alle tatsächlichen Treffer bleiben über die Navigation erreichbar. Unter „Auf dieser Seite“ verwaltest du weiterhin deine eigenen Passagen; Suchbegriffe werden durch das Ergänzen einer Passage nicht dauerhaft gespeichert.
 
 ## Für diese Seite merken
 

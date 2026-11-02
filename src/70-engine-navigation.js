@@ -91,6 +91,7 @@ function highlightRoots(roots, done) {
 
 function afterHighlight() {
     isHighlighting = false;
+    navigationCache = null;
     rebuildPageMatches();
     updateCounterAndTitle();
     if (uiById('kw-list')) updateKeywordCounts();

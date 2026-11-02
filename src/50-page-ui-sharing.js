@@ -63,7 +63,7 @@ function renderPageList() {
     }
     const clear = uiById('clear-page'); if (clear) clear.hidden = !pageTerms.length;
     const undo = uiById('undo-page'); if (undo) undo.hidden = !pageUndo.length;
-    const scope = uiById('navigation-scope'); if (scope) scope.textContent = t(pageTerms.length ? 'pageResults' : 'allResults');
+    const scope = uiById('navigation-scope'); if (scope) scope.textContent = t('allResults');
     if (focused) uiById('page-heading')?.focus({ preventScroll: true });
 }
 

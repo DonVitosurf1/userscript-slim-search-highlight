@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.5.13
+
+- Neue Seitenmarkierungen verdrängen Google-Suchbegriffe und gespeicherte Keyword-Treffer nicht mehr aus Zähler, Navigation, Trefferdetails und farbiger Positionsleiste. Alle Treffer werden gemeinsam in Seitenreihenfolge angezeigt; die Beschriftung lautet „Alle Treffer“.
+- Überlappende Markierungen derselben Fundstelle zählen einmal. Die eigene Seitenmarkierung bestimmt dort das Navigationsziel. Dynamische Seitenänderungen und erneutes Aktivieren aktualisieren die gemeinsame Trefferliste; Google-Begriffe werden dadurch nicht dauerhaft gespeichert.
+- Browser-Tests decken die Google-Übergabe mit zusätzlichen Markierungen, doppelt markierte Suchwörter, angrenzende/teilweise überlappende Fundstellen und dynamische Änderungen ab.
+
 ## 4.5.12
 
 - Die Popup-Fenster-Aktion und die Teilung der Websuche sind entfernt. „Im Web suchen“ ist wieder eine durchgehende Aktionszeile und öffnet die Suche ausschließlich in einem neuen Tab; die Leseseite bleibt offen.

@@ -89,6 +89,40 @@ module.exports = ({ SRC, open, settled, hits, eq, ok }) => {
         }
     };
     return {
+        async search_handoff_selection_keeps_all_search_results_in_navigation(browser) {
+            const source=await google(browser,{url:'https://www.google.com/search?q=Outlook+Apple+iPhone+calendar'});
+            await activate(source);
+            const page=await destination(browser,await store(source),{
+                panelOpen:true,permanentOpen:false,
+                html:'<p>Outlook Apple iPhone calendar</p><p id="choose">Open</p><p id="phone">iPhone</p><p id="last">Open Outlook</p>'
+            });
+            await settled(page,2500);
+            eq(await hits(page),6,'Search terms are present before selecting another word');
+            const mark=async id=>{
+                await page.locator('#'+id).evaluate(node=>{
+                    document.activeElement?.blur();const range=document.createRange();range.selectNodeContents(node);
+                    getSelection().removeAllRanges();getSelection().addRange(range);
+                });
+                await page.keyboard.press('Alt+Shift+H');
+            };
+            await mark('choose');
+            await page.waitForFunction(()=>CSS.highlights.get('slim-page')?.size===2);
+            eq(await page.locator('#hl-counter').textContent(),'1 / 8','Page selections add to Google results');
+            eq(await page.locator('#slim-pos-bar .mark').count(),8,'All results stay in the position bar');
+            await page.locator('#match-details > summary').click();
+            eq(await page.locator('#match-list .match-item').count(),8,'Match details contain both sources');
+            eq((await page.locator('#slim-pos-bar .mark').evaluateAll(nodes=>nodes.map(node=>node.title))).join('|'),'Outlook|Apple|iPhone|calendar|Open|iPhone|Open|Outlook','Mixed matches follow document order');
+            await page.locator('#btn-next').click();
+            eq(await page.locator('#hl-counter').textContent(),'2 / 8');
+            eq(await page.locator('.slim-hl').filter({hasText:'Apple'}).evaluate(node=>node.style.outline.length>0),true,'Next reaches the inherited Google result');
+            await mark('phone');
+            await page.waitForFunction(()=>CSS.highlights.get('slim-page')?.size===4);
+            eq(await page.locator('#slim-pos-bar .mark').count(),8,'Selecting a Google word does not duplicate its occurrences');
+            eq(await page.locator('#match-list .match-item').count(),8);
+            await page.locator('#clear-page').click();
+            eq(await page.locator('#slim-pos-bar .mark').count(),6,'Clearing manual selections retains Google results');
+            eq(await page.evaluate(()=>window.__store.hl_keywords.length),0,'Selections never persist automatic terms as keywords');
+        },
         async search_handoff_native_cross_origin_navigation(browser) {
             await realNavigation(browser, false);
         },

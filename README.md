@@ -42,7 +42,7 @@ Die Hover-Hinweise zeigen die verfügbaren Shortcuts. Ist Alt+Shift+P bereits al
 ## Weitere Funktionen
 
 - **Websuche und Zitate:** „Im Web suchen“ öffnet die Suche in einem neuen Tab und lässt die Leseseite offen. Außerdem Zitate mit Quelle oder Links zur Textstelle kopieren; Passagen als Markdown und gespeicherte Seiten als JSON exportieren.
-- **Google-Suchwörter übernehmen:** Bei aktivierter automatischer Übernahme werden die Suchwörter nach dem Öffnen eines Ergebnisses auf der Zielseite hervorgehoben.
+- **Google-Suchwörter übernehmen:** Bei aktivierter automatischer Übernahme werden die Suchwörter nach dem Öffnen eines Ergebnisses hervorgehoben. Eigene Markierungen ergänzen diese Treffer; Zähler, Navigation und Seitenleiste zeigen beide gemeinsam.
 - **Darstellung anpassen:** Unter **Einstellungen → Darstellung** Hell/Dunkel, Transparenz sowie Größe und Lage des Panel-Öffners wählen. Die Einstellungen bleiben lokal gespeichert.
 
 Gespeicherte Passagen, Keywords und Einstellungen liegen lokal im Userscript-Manager. Eine ausdrücklich gestartete Websuche übergibt den ausgewählten Text an die gewählte Suchmaschine. Details und Grenzen erklärt das [Sicherheitsmodell](docs/security-model.md).

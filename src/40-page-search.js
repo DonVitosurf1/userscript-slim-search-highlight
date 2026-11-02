@@ -146,7 +146,8 @@ function paintPageMatches(matches) {
     let style = document.getElementById('slim-page-colors');
     if (!style) { style = document.createElement('style'); style.id = 'slim-page-colors'; document.head.append(style); }
     style.textContent = rules.join('\n');
-    if (pageMatches.length && (currentIdx < 0 || currentIdx >= pageMatches.length)) currentIdx = 0;
+    const total = navigationMatches().length;
+    if (total && (currentIdx < 0 || currentIdx >= total)) currentIdx = 0;
 }
 function rebuildPageMatches() {
     resetPageIdentity(); pageTextDirty = false;

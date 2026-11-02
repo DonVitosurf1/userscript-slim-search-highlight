@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.12
+// @version      4.5.13
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -176,10 +176,10 @@
         deletePageTerm: text => `Remove page highlight “${text}”`,
         selectionActions: 'Actions for selected text', highlightSelection: 'Highlight all occurrences', highlightSelectionHint: 'Highlight the selected passage and all other occurrences on this page', webSearch: 'Search the web', webSearchNewTab: 'Search the web in a new tab',
         highlightUnsupported: 'Page highlighting requires a browser with CSS Custom Highlights support.',
-        pageResults: 'Page highlights', allResults: 'Keywords',
+        allResults: 'All matches',
         pageHintShort: 'Select text → use the highlighter symbol.', clearPageShort: 'Clear all', undoShort: 'Undo',
         pageOptionsShort: 'Search options', permanentKeywordsShort: 'Keywords', helpTitle: 'Help & shortcuts',
-        navigationHelp: 'Use the arrows to move between matches. Page highlights take priority over saved and automatic keywords.',
+        navigationHelp: 'Use the arrows to move between all matches: page highlights, saved keywords and automatic search terms. Overlapping occurrences count once.',
         rememberShort: 'Remember', forgetShort: 'Forget', pageSavedShort: 'Saved',
         shortcutTitle: 'Highlight selection shortcut', shortcutOff: 'Disabled', shortcutHint: key => `Shortcut: ${key}. Page highlights are cleared on navigation or reload.`,
         recordShortcut: 'Change shortcut', recordingShortcut: 'Press a shortcut…', disableShortcut: 'Disable shortcut', resetShortcut: 'Reset shortcut',
@@ -193,10 +193,10 @@
         deletePageTerm: text => `Seitenmarkierung „${text}“ entfernen`,
         selectionActions: 'Aktionen für ausgewählten Text', highlightSelection: 'Alle Vorkommen markieren', highlightSelectionHint: 'Auswahl und alle weiteren Vorkommen auf dieser Seite hervorheben', webSearch: 'Im Web suchen', webSearchNewTab: 'Im neuen Tab suchen',
         highlightUnsupported: 'Seitenmarkierungen benötigen einen Browser mit Unterstützung für CSS Custom Highlights.',
-        pageResults: 'Seitenmarkierungen', allResults: 'Suchwörter',
+        allResults: 'Alle Treffer',
         pageHintShort: 'Text auswählen → Textmarker-Symbol nutzen.', clearPageShort: 'Alle löschen', undoShort: 'Rückgängig',
         pageOptionsShort: 'Suchoptionen', permanentKeywordsShort: 'Keywords', helpTitle: 'Hilfe & Shortcuts',
-        navigationHelp: 'Mit den Pfeilen zwischen Treffern wechseln. Seitenmarkierungen haben Vorrang vor gespeicherten und automatischen Suchwörtern.',
+        navigationHelp: 'Mit den Pfeilen zwischen allen Treffern wechseln: Seitenmarkierungen, gespeicherte Keywords und automatische Suchwörter. Überlappende Fundstellen zählen einmal.',
         rememberShort: 'Merken', forgetShort: 'Vergessen', pageSavedShort: 'Gespeichert',
         shortcutTitle: 'Shortcut zum Hervorheben der Auswahl', shortcutOff: 'Deaktiviert', shortcutHint: key => `Shortcut: ${key}. Seitenmarkierungen werden bei Navigation oder Neuladen entfernt.`,
         recordShortcut: 'Shortcut ändern', recordingShortcut: 'Tastenkombination drücken…', disableShortcut: 'Shortcut deaktivieren', resetShortcut: 'Shortcut zurücksetzen',
@@ -538,6 +538,7 @@
     // Page passages stay separate from global keywords; only explicitly saved records enter GM storage.
     let pageTerms = [];
     let pageMatches = [];
+    let navigationCache = null;
     let pageIdentity = location.href;
     let pageTextDirty = false;
     let pageURLTimer = null;
@@ -658,12 +659,31 @@
 
     const normalizePassage = text => String(text).replace(/\s+/g, ' ').trim();
     const supportsPageHighlights = () => !!globalThis.CSS?.highlights && typeof globalThis.Highlight === 'function';
-    const navigationMatches = () => pageTerms.length ? pageMatches : document.getElementsByClassName('slim-hl');
+    function navigationMatches() {
+        const keywords = document.getElementsByClassName('slim-hl');
+        if (!pageMatches.length) return keywords;
+        if (!keywords.length) return pageMatches;
+        if (navigationCache) return navigationCache;
+        const entries = pageMatches.map(match => ({ match, range: match.range }));
+        let pageIndex = 0;
+        for (const keyword of keywords) {
+            const range = document.createRange(); range.selectNodeContents(keyword);
+            // Native passage ranges and keyword wrappers are each in document order.
+            // Prefer the selected passage where the two paint the same occurrence.
+            while (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.START_TO_END, range) <= 0) pageIndex++;
+            if (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.END_TO_START, range) < 0) continue;
+            entries.push({ match: keyword, range });
+        }
+        entries.sort((a, b) => a.range.compareBoundaryPoints(Range.START_TO_START, b.range));
+        navigationCache = entries.map(entry => entry.match);
+        return navigationCache;
+    }
     const matchText = match => match.range ? match.text : match.textContent;
     const matchColor = match => match.range ? match.color || DEFAULT_COLOR : match.style.backgroundColor || DEFAULT_COLOR;
     const matchRect = match => (match.range || match).getBoundingClientRect();
 
     function clearPagePaint(cancel = true) {
+        navigationCache = null;
         if (cancel) { pageSearchGeneration++; pageSearchBusy = false; }
         globalThis.CSS?.highlights?.delete('slim-page');
         globalThis.CSS?.highlights?.delete('slim-page-current');
@@ -826,7 +846,8 @@
         let style = document.getElementById('slim-page-colors');
         if (!style) { style = document.createElement('style'); style.id = 'slim-page-colors'; document.head.append(style); }
         style.textContent = rules.join('\n');
-        if (pageMatches.length && (currentIdx < 0 || currentIdx >= pageMatches.length)) currentIdx = 0;
+        const total = navigationMatches().length;
+        if (total && (currentIdx < 0 || currentIdx >= total)) currentIdx = 0;
     }
     function rebuildPageMatches() {
         resetPageIdentity(); pageTextDirty = false;
@@ -913,7 +934,7 @@
         }
         const clear = uiById('clear-page'); if (clear) clear.hidden = !pageTerms.length;
         const undo = uiById('undo-page'); if (undo) undo.hidden = !pageUndo.length;
-        const scope = uiById('navigation-scope'); if (scope) scope.textContent = t(pageTerms.length ? 'pageResults' : 'allResults');
+        const scope = uiById('navigation-scope'); if (scope) scope.textContent = t('allResults');
         if (focused) uiById('page-heading')?.focus({ preventScroll: true });
     }
 
@@ -1651,6 +1672,7 @@
 
     function afterHighlight() {
         isHighlighting = false;
+        navigationCache = null;
         rebuildPageMatches();
         updateCounterAndTitle();
         if (uiById('kw-list')) updateKeywordCounts();

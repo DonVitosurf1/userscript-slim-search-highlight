@@ -42,7 +42,7 @@ Hover hints show the available shortcuts. If Alt+Shift+P is already assigned to 
 ## More features
 
 - **Web searches and quotes:** “Search the web” opens a new tab and keeps the reading page open. Copy quotes with their source or links to selected text; export passages as Markdown and saved pages as JSON.
-- **Use your Google search words:** With automatic search-word transfer enabled, opening a result highlights your search terms on the destination page.
+- **Use your Google search words:** With automatic search-word transfer enabled, opening a result highlights your search terms. Your own selections add to these results; the counter, navigation and position bar show both together.
 - **Adjust the appearance:** Under **Settings → Appearance**, choose Light/Dark, transparency, and the panel opener's size and position. Preferences are saved locally.
 
 Saved passages, keywords and preferences stay local in your userscript manager. An explicit web search sends the selected text to your chosen search engine. See the [security model](docs/security-model.md) for details and limitations.

@@ -45,6 +45,8 @@ The `-k` filter matches names; zero selected tests is an error. `tests/run_tests
 
 For the current UI, `-k appearance_selection_` covers the logo on existing installations and narrow actions; `-k panel_shortcut_` covers native panel toggling and assignment conflicts; `-k selection_hover_hints` covers tooltip/accessible shortcut updates after recording, disabling, resetting and locale changes. Keep synthetic-event rejection intact: native keyboard input must exercise privileged actions.
 
+`-k search_handoff_selection` reproduces adding passages after Google search transfer and verifies shared counts, document order, position ticks, match details and overlap deduplication. `-k selection_mixed_navigation` covers adjacent/partial overlaps, dynamic DOM changes and disable/re-enable while both highlighting paths are active.
+
 ## Performance checks
 
 `node tests/run_tests.js -k compact_panel_` checks the compact overview in both themes, narrow touch targets, and expansion/help/locale behavior. Opening a tool section may increase the panel's height within the viewport; the closed overview has its own smaller height cap.
