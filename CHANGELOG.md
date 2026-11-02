@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.14
+
+- Auch innerhalb neu markierter Sätze und Absätze bleiben die einzelnen Google-Suchbegriffe in Navigation, Trefferdetails und Positionsleiste erhalten. Nur exakt identische Textbereiche werden zusammengefasst; teilweise überlappende oder enthaltene Suchwörter bleiben eigene Treffer.
+- Ein zusätzlicher Regressionstest prüft das Markieren eines ganzen Absatzes mit mehreren vorhandenen Suchbegriffen.
+
 ## 4.5.13
 
 - Neue Seitenmarkierungen verdrängen Google-Suchbegriffe und gespeicherte Keyword-Treffer nicht mehr aus Zähler, Navigation, Trefferdetails und farbiger Positionsleiste. Alle Treffer werden gemeinsam in Seitenreihenfolge angezeigt; die Beschriftung lautet „Alle Treffer“.

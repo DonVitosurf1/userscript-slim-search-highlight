@@ -66,17 +66,17 @@ module.exports = ({ open, eq, ok }) => {
                 getSelection().removeAllRanges();getSelection().addRange(range);
             });
             await page.keyboard.press('Alt+Shift+H');
-            eq(await page.locator('#slim-pos-bar .mark').count(),4,'Partially overlapping keyword and page ranges count once');
+            eq(await page.locator('#slim-pos-bar .mark').count(),6,'Partial selections preserve the original keyword targets');
             await page.evaluate(()=>document.body.insertAdjacentHTML('beforeend','<p id="added">Apple Open</p>'));
-            await page.waitForFunction(()=>document.querySelectorAll('#slim-pos-bar .mark').length===6);
-            eq((await page.locator('#slim-pos-bar .mark').evaluateAll(nodes=>nodes.map(node=>node.title))).join('|'),'look|Open|look|Apple|Apple|Open','New keyword wrappers invalidate the merged navigation');
+            await page.waitForFunction(()=>document.querySelectorAll('#slim-pos-bar .mark').length===8);
+            eq((await page.locator('#slim-pos-bar .mark').evaluateAll(nodes=>nodes.map(node=>node.title))).join('|'),'Outlook|look|Open|Outlook|look|Apple|Apple|Open','New keyword wrappers invalidate the merged navigation');
             await page.locator('#added').evaluate(node=>node.remove());
-            await page.waitForFunction(()=>document.querySelectorAll('#slim-pos-bar .mark').length===4);
+            await page.waitForFunction(()=>document.querySelectorAll('#slim-pos-bar .mark').length===6);
             await page.locator('#settings-section > summary').click();await page.uncheck('#chk-enabled');
             eq(await page.locator('#slim-pos-bar').count(),0);
             await page.check('#chk-enabled');
-            await page.waitForFunction(()=>document.querySelectorAll('#slim-pos-bar .mark').length===4);
-            eq(await page.locator('#hl-counter').textContent(),'1 / 4','Re-enabling rebuilds all result sources');
+            await page.waitForFunction(()=>document.querySelectorAll('#slim-pos-bar .mark').length===6);
+            eq(await page.locator('#hl-counter').textContent(),'1 / 6','Re-enabling rebuilds all result sources');
         },
         async selection_old_shortcut_and_right_click_are_native(browser){
             const page=await pageWith(browser);await select(page);await page.keyboard.press('Alt+h');

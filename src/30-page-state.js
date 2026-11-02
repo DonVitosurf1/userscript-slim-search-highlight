@@ -130,11 +130,13 @@ function navigationMatches() {
     const entries = pageMatches.map(match => ({ match, range: match.range }));
     let pageIndex = 0;
     for (const keyword of keywords) {
-        const range = document.createRange(); range.selectNodeContents(keyword);
+        const range = document.createRange();
+        const text = keyword.firstChild;
+        range.selectNodeContents(text?.nodeType === Node.TEXT_NODE && text === keyword.lastChild ? text : keyword);
         // Native passage ranges and keyword wrappers are each in document order.
-        // Prefer the selected passage where the two paint the same occurrence.
+        // Deduplicate identical text bounds, retaining distinct words inside a passage.
         while (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.START_TO_END, range) <= 0) pageIndex++;
-        if (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.END_TO_START, range) < 0) continue;
+        if (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.START_TO_START, range) === 0 && pageMatches[pageIndex].range.compareBoundaryPoints(Range.END_TO_END, range) === 0) continue;
         entries.push({ match: keyword, range });
     }
     entries.sort((a, b) => a.range.compareBoundaryPoints(Range.START_TO_START, b.range));

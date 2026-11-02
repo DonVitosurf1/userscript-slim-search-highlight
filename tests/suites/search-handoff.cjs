@@ -94,7 +94,7 @@ module.exports = ({ SRC, open, settled, hits, eq, ok }) => {
             await activate(source);
             const page=await destination(browser,await store(source),{
                 panelOpen:true,permanentOpen:false,
-                html:'<p>Outlook Apple iPhone calendar</p><p id="choose">Open</p><p id="phone">iPhone</p><p id="last">Open Outlook</p>'
+                html:'<p id="sentence">Outlook Apple iPhone calendar</p><p id="choose">Open</p><p id="phone">iPhone</p><p id="last">Open Outlook</p>'
             });
             await settled(page,2500);
             eq(await hits(page),6,'Search terms are present before selecting another word');
@@ -119,6 +119,10 @@ module.exports = ({ SRC, open, settled, hits, eq, ok }) => {
             await page.waitForFunction(()=>CSS.highlights.get('slim-page')?.size===4);
             eq(await page.locator('#slim-pos-bar .mark').count(),8,'Selecting a Google word does not duplicate its occurrences');
             eq(await page.locator('#match-list .match-item').count(),8);
+            await mark('sentence');
+            await page.waitForFunction(()=>CSS.highlights.get('slim-page')?.size===4);
+            eq(await page.locator('#slim-pos-bar .mark').count(),9,'A selected paragraph retains distinct Google terms inside it');
+            eq(await page.locator('#match-list .match-item').count(),9);
             await page.locator('#clear-page').click();
             eq(await page.locator('#slim-pos-bar .mark').count(),6,'Clearing manual selections retains Google results');
             eq(await page.evaluate(()=>window.__store.hl_keywords.length),0,'Selections never persist automatic terms as keywords');

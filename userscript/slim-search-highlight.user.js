@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.5.13
+// @version      4.5.14
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -179,7 +179,7 @@
         allResults: 'All matches',
         pageHintShort: 'Select text → use the highlighter symbol.', clearPageShort: 'Clear all', undoShort: 'Undo',
         pageOptionsShort: 'Search options', permanentKeywordsShort: 'Keywords', helpTitle: 'Help & shortcuts',
-        navigationHelp: 'Use the arrows to move between all matches: page highlights, saved keywords and automatic search terms. Overlapping occurrences count once.',
+        navigationHelp: 'Use the arrows to move between all matches: page highlights, saved keywords and automatic search terms. The exact same text range counts once; search words inside longer passages remain reachable.',
         rememberShort: 'Remember', forgetShort: 'Forget', pageSavedShort: 'Saved',
         shortcutTitle: 'Highlight selection shortcut', shortcutOff: 'Disabled', shortcutHint: key => `Shortcut: ${key}. Page highlights are cleared on navigation or reload.`,
         recordShortcut: 'Change shortcut', recordingShortcut: 'Press a shortcut…', disableShortcut: 'Disable shortcut', resetShortcut: 'Reset shortcut',
@@ -196,7 +196,7 @@
         allResults: 'Alle Treffer',
         pageHintShort: 'Text auswählen → Textmarker-Symbol nutzen.', clearPageShort: 'Alle löschen', undoShort: 'Rückgängig',
         pageOptionsShort: 'Suchoptionen', permanentKeywordsShort: 'Keywords', helpTitle: 'Hilfe & Shortcuts',
-        navigationHelp: 'Mit den Pfeilen zwischen allen Treffern wechseln: Seitenmarkierungen, gespeicherte Keywords und automatische Suchwörter. Überlappende Fundstellen zählen einmal.',
+        navigationHelp: 'Mit den Pfeilen zwischen allen Treffern wechseln: Seitenmarkierungen, gespeicherte Keywords und automatische Suchwörter. Genau derselbe Textbereich zählt einmal; Suchwörter innerhalb längerer Passagen bleiben erreichbar.',
         rememberShort: 'Merken', forgetShort: 'Vergessen', pageSavedShort: 'Gespeichert',
         shortcutTitle: 'Shortcut zum Hervorheben der Auswahl', shortcutOff: 'Deaktiviert', shortcutHint: key => `Shortcut: ${key}. Seitenmarkierungen werden bei Navigation oder Neuladen entfernt.`,
         recordShortcut: 'Shortcut ändern', recordingShortcut: 'Tastenkombination drücken…', disableShortcut: 'Shortcut deaktivieren', resetShortcut: 'Shortcut zurücksetzen',
@@ -667,11 +667,13 @@
         const entries = pageMatches.map(match => ({ match, range: match.range }));
         let pageIndex = 0;
         for (const keyword of keywords) {
-            const range = document.createRange(); range.selectNodeContents(keyword);
+            const range = document.createRange();
+            const text = keyword.firstChild;
+            range.selectNodeContents(text?.nodeType === Node.TEXT_NODE && text === keyword.lastChild ? text : keyword);
             // Native passage ranges and keyword wrappers are each in document order.
-            // Prefer the selected passage where the two paint the same occurrence.
+            // Deduplicate identical text bounds, retaining distinct words inside a passage.
             while (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.START_TO_END, range) <= 0) pageIndex++;
-            if (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.END_TO_START, range) < 0) continue;
+            if (pageIndex < pageMatches.length && pageMatches[pageIndex].range.compareBoundaryPoints(Range.START_TO_START, range) === 0 && pageMatches[pageIndex].range.compareBoundaryPoints(Range.END_TO_END, range) === 0) continue;
             entries.push({ match: keyword, range });
         }
         entries.sort((a, b) => a.range.compareBoundaryPoints(Range.START_TO_START, b.range));
