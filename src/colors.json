@@ -1,9 +1,9 @@
 {
   "name": "Sunlit Mint",
-  "highlights": ["#ffd447", "#7ee3cc", "#ff7969", "#49c6e5", "#ffb579", "#ff82aa", "#b4e66c", "#b28aee", "#6eaeff", "#ffc596", "#60dfaa", "#f487bd"],
+  "highlights": ["#7ee3cc", "#ffd447", "#ff7969", "#6eaeff", "#ffac66", "#ec81c5", "#9fdb62", "#b28aee"],
   "contrast": { "dark": "#000000", "light": "#ffffff" },
-  "navigation": { "background": "#ffd447", "outline": "#147d83" },
-  "logo": { "ink": "#343b3a", "lightTicks": ["#906600", "#147d83", "#b53e35"] },
+  "navigation": { "background": "#7ee3cc", "outline": "#147d83" },
+  "logo": { "ink": "#343b3a", "lightTicks": ["#147d83", "#906600", "#b53e35"] },
   "themes": {
     "dark": {
       "bg": "#202b29", "surface": "#2a3935", "field": "#18231f",

@@ -194,6 +194,7 @@ function getCrossPageTerms() {
     return [...new Set(result)];
 }
 
+let automaticColorCache = null;
 function getActiveKeywords(includeHidden = false) {
     const host = location.hostname.toLowerCase();
     const list = keywords.filter(k => {
@@ -201,11 +202,21 @@ function getActiveKeywords(includeHidden = false) {
         return k.domains.some(domain => domainMatches(host, domain));
     }).map(k => ({ ...k, sourceKeyword: k }));
 
-    getCrossPageTerms().forEach((t, i) => {
-        if (!IGNORE_WORDS.has(t.toLowerCase()) && !list.some(k => k.text.toLowerCase() === t.toLowerCase())) {
-            list.push({ text: t, color: AUTO_COLORS[i % AUTO_COLORS.length], wholeWord: true, auto: true });
-        }
+    const seen = new Set(list.map(keyword => keyword.text.toLowerCase()));
+    const automaticTerms = getCrossPageTerms().filter(text => {
+        const key = text.toLowerCase();
+        if (IGNORE_WORDS.has(key) || seen.has(key)) return false;
+        seen.add(key); return true;
     });
+    if (automaticTerms.length) {
+        const occupiedColors = list.map(keyword => keyword.color);
+        const signature = JSON.stringify([automaticTerms, occupiedColors]);
+        if (automaticColorCache?.signature !== signature) {
+            const allocate = createHighlightColorAllocator(occupiedColors);
+            automaticColorCache = { signature, colors: automaticTerms.map(() => allocate()) };
+        }
+        automaticTerms.forEach((text, index) => list.push({ text, color: automaticColorCache.colors[index], wholeWord: true, auto: true }));
+    }
     return includeHidden ? list : list.filter(keyword => !termIsHidden(keyword.text));
 }
 

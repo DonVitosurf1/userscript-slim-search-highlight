@@ -19,10 +19,12 @@ module.exports=({open,eq,ok,selectionShortcutTime})=>{
       eq(colors.length,words.length);eq(new Set(colors).size,words.length,'Each new passage gets an unused color, including after the initial palette');
       ok(!colors.includes('#ffdf00'),'Avoid colors of applicable permanent keywords too');
       const channels=color=>color.match(/\w\w/g).map(channel=>parseInt(channel,16));
-      for(const color of colors.slice(12))ok(colors.slice(0,12).some(base=>channels(base).every((channel,index)=>Math.abs(channel-channels(color)[index])<=26)),'Extra marks retain a tone from the shared family: '+color);
+      const distance=(a,b)=>Math.hypot(...channels(a).map((channel,index)=>channel-channels(b)[index]));
+      for(let i=0;i<colors.length;i++)for(let j=0;j<i;j++)ok(distance(colors[i],colors[j])>=40,'Marks remain visibly separated after the starter palette: '+colors[i]+' / '+colors[j]);
+      for(let i=0;i<8;i++)for(let j=0;j<i;j++)ok(distance(colors[i],colors[j])>=50,'Starter colors avoid near-duplicates: '+colors[i]+' / '+colors[j]);
       for(const color of colors){
-        const rgb=color.match(/\w\w/g).map(channel=>parseInt(channel,16));
-        ok(Math.max(...rgb)-Math.min(...rgb)>=80&&Math.max(...rgb)>=220,'Highlight color is bright and saturated: '+color);
+        const rgb=channels(color);
+        ok(Math.max(...rgb)-Math.min(...rgb)>=40&&Math.max(...rgb)>=140,'Extended colors retain a recognizable hue: '+color);
       }
       const paints=await p.evaluate(()=>[...CSS.highlights.entries()].filter(([name])=>name.startsWith('slim-page-term-')).map(([name,ranges])=>{
         const rule=[...document.getElementById('slim-page-colors').sheet.cssRules].find(rule=>rule.selectorText===`::highlight(${name})`);
@@ -37,6 +39,38 @@ module.exports=({open,eq,ok,selectionShortcutTime})=>{
         const contrast=paint.foreground==='rgb(0, 0, 0)'?(luminance+0.05)/0.05:1.05/(luminance+0.05);
         ok(contrast>=4.5,'Actual highlight text meets 4.5:1 contrast');
       }
+    },
+    async feature_search_terms_get_distinct_palette_colors(b){
+      const words=Array.from({length:14},(_,i)=>'Farbwort'+String.fromCharCode(65+i));
+      const p=await pageWith(b,{url:url+'#hl='+encodeURIComponent(words.join(',')),html:words.map(word=>`<p>${word}</p>`).join('')});
+      await p.waitForFunction(()=>document.querySelectorAll('.slim-hl').length===14);
+      const colors=await p.locator('.slim-hl').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).backgroundColor));
+      eq(new Set(colors).size,14,'Search words do not recycle colors after the eighth word');
+      const before=colors.join();
+      await p.locator('.term-visibility').first().click();await p.locator('.term-visibility').first().click();
+      await p.waitForFunction(()=>document.querySelectorAll('.slim-hl').length===14);
+      eq((await p.locator('.slim-hl').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).backgroundColor))).join(),before,'Hide/show preserves search color assignments');
+      await p.evaluate(()=>{document.activeElement?.blur();const range=document.createRange();range.selectNodeContents(document.querySelector('p'));getSelection().removeAllRanges();getSelection().addRange(range);});
+      await p.keyboard.press('Alt+Shift+H');await p.waitForFunction(()=>CSS.highlights.get('slim-page')?.size===1);
+      eq((await p.locator('.slim-hl').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).backgroundColor))).join(),before,'Own selection never recolors earlier search results');
+    },
+    async feature_search_palette_cache_follows_saved_keyword_colors(b){
+      const p=await pageWith(b,{url:url+'#hl=Solarenergie',keywords:[{text:'Permanent',color:'#7ee3cc'}],permanentOpen:true,html:'<p>Permanent</p><p id="query">Solarenergie</p>'});
+      await p.waitForSelector('#query .slim-hl');
+      const queryColor=()=>p.locator('#query .slim-hl').evaluate(node=>getComputedStyle(node).backgroundColor);
+      eq(await queryColor(),'rgb(255, 212, 71)','Automatic color skips occupied mint');
+      await p.locator('.kw-item input[type=color]').fill('#123456');await p.locator('.save-keyword').click();
+      await p.waitForFunction(()=>{const node=document.querySelector('#query .slim-hl');return node&&getComputedStyle(node).backgroundColor==='rgb(126, 227, 204)';},null,{timeout:2000});
+      eq(await queryColor(),'rgb(126, 227, 204)','Saved color change invalidates the cached assignment');
+    },
+    async feature_many_search_colors_remain_responsive_when_toggling(b){
+      const words=Array.from({length:750},(_,i)=>'Farbsuche'+String(i).padStart(3,'0'));
+      const p=await pageWith(b,{url:url+'#hl='+encodeURIComponent(words.join(',')),html:words.map(word=>`<p>${word}</p>`).join('')});
+      await p.waitForFunction(()=>document.querySelectorAll('.slim-hl').length===750);
+      const start=Date.now();await p.locator('.term-visibility').first().click();
+      await p.waitForFunction(()=>document.querySelectorAll('.slim-hl').length===749);
+      const elapsed=Date.now()-start;
+      ok(elapsed<1500,'Hide remains responsive for 750 search terms: '+elapsed+'ms');
     },
     async feature_new_page_colors_preserve_custom_saved_and_duplicate_terms(b){
       const store={hl_page_annotations:{version:1,pages:{[url]:{terms:[{id:'saved',text:'Solarenergie',color:'#FFDF00',anchor:{exact:'Solarenergie'}}],options:{}}}}};

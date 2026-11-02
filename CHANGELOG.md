@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.7.1
+
+- Die gemeinsame Grundpalette ist auf acht deutlicher unterscheidbare Farben reduziert. Sehr ähnliche Orange-, Rosa-, Mint- und Blautöne sind entfernt oder abgestimmt. Weitere Farben werden über ihren wahrgenommenen OKLab-Abstand ausgewählt, statt unmittelbar fast gleiche Abstufungen zu vergeben.
+- Die gemeinsame Farbvergabe gilt auch für mehr als acht Suchbegriffe: Farben werden nicht zyklisch wiederholt. Eigene Markierungen verändern vorhandene Suchwortfarben nicht; Sichtbarkeit und gespeicherte Wunschfarben bleiben erhalten. Die automatische Farbfolge wird wiederverwendet; ein Browser-Test schützt die Reaktionszeit beim Ausblenden in einer Liste mit 750 Begriffen.
+- Mint (`#7ee3cc`) ersetzt Gelb als Standardfarbe für neue Keywords, erste Suchbegriffe/eigene Markierungen und den aktiven Seitenfund. Bestehende gespeicherte Farben bleiben erhalten.
+- Beide Logo-Varianten und ihre Trefferleisten zeigen von oben nach unten Mint, Sonnengelb und Koralle. Dokumentation und Screenshots folgen dieser Reihenfolge.
+
 ## 4.7.0
 
 - Einheitliches Farbsystem „Sunlit Mint“ nach der gelieferten Referenz: Creme und Grün-Anthrazit als Flächen, Türkis/Mint für Aktionen und Fokus, Koralle für Fehler. Alle Oberflächen einschließlich Auswahlmenü, Logo, Formulare, Scrollleisten und lokale Meldungen teilen die semantischen Farben.

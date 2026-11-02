@@ -195,8 +195,6 @@ function t(key, ...args) {
     return typeof v === 'function' ? v(...args) : v;
 }
 const DEFAULT_COLOR = COLORS.highlights[0];
-const PAGE_HIGHLIGHT_COLORS = COLORS.highlights;
-const AUTO_COLORS = COLORS.highlights;
 const SEARCH_ENGINES = ['google.', 'bing.', 'duckduckgo.', 'yahoo.', 'baidu.', 'yandex.', 'startpage.', 'ecosia.', 'qwant.'];
 const CROSS_TTL = 10 * 60 * 1000;
 const IGNORE_WORDS = new Set(['the','and','for','with','von','der','die','das','und','für','in','on','at','to','of','a','an','or','as','by','is','it','be','are','was','were','this','that','these','those','from','into','about','under','over']);

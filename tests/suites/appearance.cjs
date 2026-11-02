@@ -43,8 +43,8 @@ module.exports = ({ open, eq, ok }) => {
             await selectText(page);await page.keyboard.press('Alt+Shift+H');
             const ownColor=await page.locator('.page-item input[type=color]').inputValue();
             // These are consumer-visible assignments from the accepted reference family.
-            eq(queryColor,'rgb(255, 212, 71)','Transferred search starts with the shared sun color');
-            eq(ownColor,'#7ee3cc','A new selection takes mint, skipping occupied sun');
+            eq(queryColor,'rgb(126, 227, 204)','Transferred search starts with the shared mint default');
+            eq(ownColor,'#ffd447','A new selection takes sun, skipping occupied mint');
             const rowColor=await page.locator('.term-swatch').evaluate(el=>getComputedStyle(el).backgroundColor);
             eq(rowColor,queryColor,'Query overview uses the actual paint color');
             const tickColors=await page.locator('#slim-pos-bar .mark').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).backgroundColor));

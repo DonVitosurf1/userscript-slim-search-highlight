@@ -14,18 +14,18 @@ Slim Search Highlight ist ein Lesewerkzeug. Die Gestaltung erinnert an markierte
 |---|---|---|
 | Papier | `#fffaf0` | Helle Arbeitsflächen und helles Logo |
 | Tinte | `#343b3a` | Heller Textmodus und Logo-Linien |
-| Sonnengelb | `#ffd447` | Erste Markierung, aktiver Seitenfund |
-| Mint | `#7ee3cc` | Zweite Markierung, Bedienakzent in Dunkel |
+| Mint | `#7ee3cc` | Standardfarbe, erste Markierung, aktiver Seitenfund und Bedienakzent in Dunkel |
+| Sonnengelb | `#ffd447` | Zweite Markierung |
 | Koralle | `#ff7969` | Dritte Markierung; dunklere/hellere Verwandte kennzeichnen Fehler |
-| Himmelblau | `#49c6e5` | Weitere Markierungen |
+| Himmelblau | `#6eaeff` | Weitere Markierungen |
 | Tiefes Türkis | `#147d83` | Bedienakzent und Tastaturfokus in Hell |
 | Grün-Anthrazit | `#202b29` / `#2a3935` | Dunkler Hintergrund und dunkle Bedienelemente |
 
 Das gemeinsame Farbsystem heißt **Sunlit Mint** und folgt der vom Nutzer gelieferten Referenz mit warmem Gelb, Koralle, Mint und Blau. Alle eingebauten Farben stehen zentral in [`src/colors.json`](../../src/colors.json). Das [technische Designsystem](DESIGN.md) dokumentiert die semantischen `--hl-*`-Rollen samt Hell-/Dunkelwerten. Panel, Auswahlmenü, Eingaben, Scrollleisten, Hinweise, Fokus und Hover-/Druckzustände verwenden diese Rollen. Die primäre Aktion ist in Hell tief türkis mit heller Schrift und in Dunkel mint mit dunkler Schrift.
 
-Suchbegriffe und eigene Markierungen verwenden dieselbe Palette mit zwölf Grundfarben. Weitere eigene Begriffe erhalten passende hellere/dunklere Abstufungen; erst wenn alle Familientöne belegt sind, greift eine weitere eindeutige RGB-Farbe. Bereits gespeicherte oder selbst gewählte Farben bleiben unverändert. Die Herkunft steht als Text an der Zeile und wird nicht über eine zweite Farbpalette erklärt.
+Suchbegriffe und eigene Markierungen verwenden dieselbe Palette mit acht klar getrennten Grundfarben: Mint, Sonnengelb, Koralle, Himmelblau, Aprikose, Orchidee, Limette und Lavendel. Ab dem neunten Begriff wählt die gemeinsame Vergabe passende hellere/dunklere Abstufungen mit möglichst großem wahrgenommenem Abstand zu bereits verwendeten Farben (OKLab). Erst wenn alle Familientöne belegt sind, wird eine weitere eindeutige RGB-Farbe mit großem Abstand aus einer begrenzten Auswahl gewählt. Die Farbzuordnung der Suchbegriffe bleibt beim Hinzufügen eigener Markierungen stabil. Mit sehr vielen Begriffen werden Ähnlichkeiten unvermeidbar; Begriffe und Trefferzahlen bleiben deshalb zusätzlich sichtbar. Bereits gespeicherte oder selbst gewählte Farben bleiben unverändert. Die Herkunft steht als Text an der Zeile und wird nicht über eine zweite Farbpalette erklärt.
 
-Das Logo folgt dem gewählten Farbschema: cremefarbener Grund in Hell, Grün-Anthrazit (`#2a3935`) in Dunkel. Die drei Markierungen sind Sonnengelb, Mint und Koralle. Öffnen-Button, Panelkopf und Auswahl-Symbol wechseln sofort gemeinsam, auch ohne Neuladen. Webseitenfarben bleiben davon unabhängig.
+Das Logo folgt dem gewählten Farbschema: cremefarbener Grund in Hell, Grün-Anthrazit (`#2a3935`) in Dunkel. Die Logo-Markierungen stehen von oben nach unten in der Reihenfolge Mint, Sonnengelb und Koralle. Öffnen-Button, Panelkopf und Auswahl-Symbol wechseln sofort gemeinsam, auch ohne Neuladen. Webseitenfarben bleiben davon unabhängig.
 
 Die optionale Transparenz gilt gemeinsam für Panel, Auswahlmenü und Öffnen-Button einschließlich Logo und Beschriftung. Standard ist 0 %; der Regler bietet 0–80 % in 5-%-Schritten, direkte Vorschau und einen eigenen Reset. Hohe Werte machen den Seitentext dahinter sichtbarer und verringern zugleich den Kontrast der Bedienelemente. Seitenmarkierungen werden davon nicht beeinflusst.
 

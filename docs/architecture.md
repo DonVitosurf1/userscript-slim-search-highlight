@@ -13,7 +13,7 @@ Slim Search Highlight has no production dependencies and installs as one userscr
 | `src/00-state-i18n.js` | Preferences including validated appearance values, German/English messages |
 | `src/colors.json` | Canonical semantic themes, highlight family, logo and navigation colors, embedded as `COLORS` by the build |
 | `src/10-styles.js` | Scoped panel/selection toolbar CSS; maps `COLORS.themes` to `--hl-*` variables |
-| `src/20-utils.js` | Icons, escaping, contrast calculation |
+| `src/20-utils.js` | Icons, escaping, contrast calculation and shared perceptual color allocation |
 | `src/25-private-ui.js` | Closed UI root, private node references and activation boundary |
 | `src/30-page-state.js` | Page records, undo, explicit storage and search options |
 | `src/40-page-search.js` | Rendered-text index, normalized offset mapping, range collection and painting |

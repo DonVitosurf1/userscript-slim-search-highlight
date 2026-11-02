@@ -17,7 +17,7 @@ A **browser userscript for Tampermonkey and Violentmonkey**. No account, dedicat
 
 *The actual interface on a local sample page: three terms, seven matches. This preview follows your GitHub color scheme; the userscript lets you choose Light or Dark yourself.*
 
-**Color system:** “Sunlit Mint” combines cream and green-charcoal surfaces with teal/mint controls. Search terms and your selections share yellow, mint, coral, blue and related highlights. Choose Light or Dark under **Settings → Appearance → Color theme**; saved custom colors stay intact.
+**Color system:** “Sunlit Mint” combines cream and green-charcoal surfaces with teal/mint controls. Search terms and your selections share eight distinct starter colors in mint, yellow, coral, blue and related hues. Choose Light or Dark under **Settings → Appearance → Color theme**; saved custom colors stay intact.
 
 ## Installation
 

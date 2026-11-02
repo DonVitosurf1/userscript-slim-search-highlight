@@ -27,30 +27,7 @@ let copyFormat = GM_getValue('hl_copy_format', 'plain') === 'markdown' ? 'markdo
 const pagePaintNames = new Set();
 
 function nextPageHighlightColor() {
-    const used = new Set([...pageTerms, ...getActiveKeywords(true)].map(term => String(term.color).toLowerCase()));
-    const available = PAGE_HIGHLIGHT_COLORS.find(color => !used.has(color));
-    if (available) return available;
-    // Extend the reference family with tints/shades before using unrelated hues.
-    for (let level = 1; level < 10; level++) {
-        for (const endpoint of [255, 0]) {
-            for (const base of PAGE_HIGHLIGHT_COLORS) {
-                const channels = base.slice(1).match(/../g).map(value => parseInt(value, 16));
-                const color = '#' + channels.map(value => Math.round(value + (endpoint - value) * level / 10).toString(16).padStart(2, '0')).join('');
-                if (!used.has(color)) return color;
-            }
-        }
-    }
-    // If the complete tone family is occupied, keep assigning unique colors.
-    // An odd multiplier visits every 24-bit RGB value once. Keep extra colors
-    // bright/saturated and skip occupied colors rather than wrapping the palette.
-    for (let step = 1; step <= 0xffffff; step++) {
-        const value = Math.imul(step, 0x9e3779) & 0xffffff;
-        const rgb = [value >>> 16, (value >>> 8) & 255, value & 255];
-        if (Math.max(...rgb) < 240 || Math.max(...rgb) - Math.min(...rgb) < 128) continue;
-        const color = '#' + value.toString(16).padStart(6, '0');
-        if (!used.has(color)) return color;
-    }
-    return PAGE_HIGHLIGHT_COLORS[0]; // All available vivid RGB colors are occupied.
+    return chooseHighlightColor([...pageTerms, ...getActiveKeywords(true)].map(term => term.color));
 }
 
 function newPageId() {
