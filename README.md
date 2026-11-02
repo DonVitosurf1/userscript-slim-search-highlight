@@ -31,7 +31,7 @@ Seitenmarkierungen benötigen einen Browser mit **CSS Custom Highlights**. Ohne 
 2. **Alle Vorkommen markieren** wählen. Jede neue Passage erhält eine eigene kräftige Farbe. Das Panel zeigt die Trefferzahl; mit den Pfeilen springst du von Fundstelle zu Fundstelle.
 3. **Bei Bedarf für diese Seite merken.** Das Lesezeichen speichert eine Passage lokal für dieselbe vollständige URL. Ohne Speichern verschwindet sie beim Neuladen. Dauerhafte Begriffe verwaltest du getrennt unter **Keywords**.
 
-Unter **Auf dieser Seite** stehen Suchbegriffe und eigene Auswahlen gemeinsam mit Farbe, Trefferzahl und Herkunft. Der **Auge-Schalter** blendet einen Begriff vorübergehend aus und wieder ein. Ausgeblendete Einträge bleiben in der Liste; beim Neuladen oder Wechsel der URL sind sie wieder sichtbar. Gespeicherte Daten bleiben erhalten.
+Unter **Auf dieser Seite** stehen Suchbegriffe und eigene Auswahlen gemeinsam mit Farbe, Trefferzahl und Herkunft. Der **Auge-Schalter** blendet einen Begriff vorübergehend aus und wieder ein. Ausgeblendete Einträge bleiben in der Liste. Beim Neuladen oder Wechsel der URL wird die Sichtbarkeit zurückgesetzt; ungespeicherte eigene Passagen verschwinden wie gewohnt. Gespeicherte Daten bleiben erhalten.
 
 | Aktion | Tastenkombination |
 |---|---|
