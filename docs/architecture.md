@@ -18,6 +18,8 @@ Slim Search Highlight has no production dependencies and installs as one userscr
 | `src/30-page-state.js` | Page records, undo, explicit storage and search options |
 | `src/40-page-search.js` | Rendered-text index, normalized offset mapping, range collection and painting |
 | `src/50-page-ui-sharing.js` | Page list, selection actions, clipboard and local exports |
+| `src/55-quick-find.js` | Transient finder, configurable shortcut, private bar, cancellation and native preview groups |
+| `src/62-site-search.js` | Opted-in exact-origin search capture, submit intent, bounded same-origin handoffs |
 | `src/60-keywords.js` | Keyword preferences, search-query capture/handoff, matchers and owned DOM writes |
 | `src/70-engine-navigation.js` | Incremental keyword engine, positions, counters and result navigation |
 | `src/80-panel.js` | Panel controls, shared appearance application, layout, focus, keyword editing and language restoration |
@@ -87,3 +89,11 @@ Appearance preferences join the existing change-only persistence registry. A fai
 See [data format](data-format.md) and [development](development.md) for validation and extension guidance.
 
 SPA URL monitoring remains active while current page terms or known saved page records exist, so navigation from an empty page can restore saved passages. Every mutating page action validates URL identity before writing; stale old-page controls cannot delete or overwrite another URL record. Large single-node whitespace normalization is chunked as well as the DOM walk.
+
+## Finder and site-search integration
+
+`collectPageMatches(root, terms, options)` shares the visible-text index and literal matching seam with page passages. Defaults preserve the existing page behavior; finder options enable case-sensitive/whole-word preview without changing page options or hidden-term state. The finder owns separate `slim-find`/`slim-find-current` groups, generation/URL cancellation and its own counter. Preview never calls save; adoption explicitly delegates to `addPageSelection`. Input is debounced 120ms, work yields after a 10ms frame budget, clear/close cancels immediately, and host changes trigger a fresh preview. Keyword wrapper refresh suspends previews and schedules them again after DOM work commits.
+
+Finder and panel share the closed UI root, theme/transparency tokens and trusted shortcut routing. A narrow/overlapping panel reserves space below the bar; temporary avoidance does not overwrite a custom anchor. Locale recreation remaps an owned return-focus target. The finder shortcut works from editable fields; marking/panel shortcuts keep their existing editing guards.
+
+Site-search rules are exact origins, independent from the official search-provider allowlist. The automatic snapshot records `source: site` for website terms; overview source labels use snapshot membership, including permanent-keyword duplicates. Confirmed URL/form changes replace only automatic context. URL tracking starts on an opted-in origin even when it has no terms. Submit intent is recorded from trusted native button/Enter events and invalidated by editing; a trusted `requestSubmit` event alone cannot read a draft. Same-origin handoffs are versioned, bounded and generation-scoped. No generic history capture or host History monkeypatch is added.

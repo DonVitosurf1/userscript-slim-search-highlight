@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.8.0
+
+- Neue Schnellsuche mit `Strg+Shift+F` und Lupe im Panelkopf: Live-Vorschau, eigene Trefferanzeige, Enter/Shift+Enter, Ganze Wörter, Groß-/Kleinschreibung, sofortiges Leeren und Escape mit Fokus-Rückgabe. Schließen entfernt nur die Vorschau; „+ Markieren“ übernimmt den Text als Seitenmarkierung. Der Such-Shortcut ist einstellbar und abschaltbar.
+- Interne Website-Suchen lassen sich pro exakter Origin aktivieren. Übliche URL-Suchparameter, bestätigte Suchformulare, dynamische Suchen und gleich-originige Ergebnislinks einschließlich neuer Tabs werden unterstützt. Das Panel nennt die Herkunft „Website-Suche“.
+- Formularübernahme benötigt einen echten Absende-Klick oder eine Tastaturbestätigung; ein durch JavaScript erzeugtes vertrauenswürdiges Submit-Ereignis reicht nicht. Übergaben sind zeitlich/bezüglich Größe begrenzt und an die aktuelle Freigabe gebunden. Bestehende Keywords, eigene Markierungen und privater Suchverlauf bleiben getrennt.
+- Neue Browser-/Sicherheitsregressionen, zweisprachige Dokumentation, To-do-Liste und Beispiele für beide Farbschemata.
+
 ## 4.7.1
 
 - Die gemeinsame Grundpalette ist auf acht deutlicher unterscheidbare Farben reduziert. Sehr ähnliche Orange-, Rosa-, Mint- und Blautöne sind entfernt oder abgestimmt. Weitere Farben werden über ihren wahrgenommenen OKLab-Abstand ausgewählt, statt unmittelbar fast gleiche Abstufungen zu vergeben.

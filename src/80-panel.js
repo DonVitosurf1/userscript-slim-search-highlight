@@ -1,5 +1,5 @@
 function applyAppearance() {
-    for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle', 'slim-hl-feedback']) {
+    for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle', 'slim-hl-feedback', 'slim-find-bar']) {
         const el = uiById(id);
         if (el) {
             el.dataset.theme = uiTheme;
@@ -53,20 +53,28 @@ function clampPanelPosition(panel, persist = false) {
     if (!panel || panel.style.display === 'none') return;
     const viewport = window.visualViewport;
     const width = viewport?.width || innerWidth, height = viewport?.height || innerHeight;
-    const left = viewport?.offsetLeft || 0, top = viewport?.offsetTop || 0;
+    const left = viewport?.offsetLeft || 0;
+    let top = viewport?.offsetTop || 0;
+    const finder = uiById('slim-find-bar');
+    const findBox = finder && !finder.hidden ? finder.getBoundingClientRect() : null;
+    const panelWidth = Math.max(0, Math.min(320, width - 24));
+    const panelLeft = Math.max(left + 12, Math.min(panelPos?.x ?? left + width - panelWidth - 20, left + width - panelWidth - 12));
+    const reserved = findBox && panelLeft < findBox.right && panelLeft + panelWidth > findBox.left ? Math.max(0, findBox.bottom + 8 - top) : 0;
+    top += reserved;
+    const availableHeight = Math.max(80, height - reserved);
     panel.style.width = Math.max(0, Math.min(320, width - 24)) + 'px';
-    panel.style.setProperty('--hl-panel-collapsed-height', Math.max(0, Math.min(560, height * .8, height - 24)) + 'px');
-    panel.style.setProperty('--hl-panel-expanded-height', Math.max(0, height - 24) + 'px');
+    panel.style.setProperty('--hl-panel-collapsed-height', Math.max(0, Math.min(560, height * .8, availableHeight - 24)) + 'px');
+    panel.style.setProperty('--hl-panel-expanded-height', Math.max(0, availableHeight - 24) + 'px');
     const box = panel.getBoundingClientRect();
     const custom = Number.isFinite(panelPos?.x) && Number.isFinite(panelPos?.y);
     const x = custom ? panelPos.x : left + width - box.width - 20;
-    const y = custom ? panelPos.y : top + (height - box.height) / 2;
+    const y = custom ? panelPos.y : top + (availableHeight - box.height) / 2;
     const next = {
         x: Math.max(left + 12, Math.min(x, left + width - box.width - 12)),
-        y: Math.max(top + 12, Math.min(y, top + height - box.height - 12))
+        y: Math.max(top + 12, Math.min(y, top + availableHeight - box.height - 12))
     };
     panel.style.left = next.x + 'px'; panel.style.top = next.y + 'px';
-    if (custom) panelPos = next;
+    if (custom && !reserved) panelPos = next;
     if (persist) save();
 }
 
@@ -86,7 +94,7 @@ function setPanelOpen(open, focus = true) {
 }
 
 function handlePanelShortcut(event) {
-    if (!event.isTrusted || isBlacklisted() || event.isComposing || event.repeat || composing || recordingShortcut || editingTarget(event.target) || !panelShortcutAvailable() || !shortcutMatches(event, PANEL_SHORTCUT)) return false;
+    if (!event.isTrusted || isBlacklisted() || event.isComposing || event.repeat || composing || recordingShortcut || recordingFindShortcut || editingTarget(event.target) || !panelShortcutAvailable() || !shortcutMatches(event, PANEL_SHORTCUT)) return false;
     event.preventDefault(); event.stopPropagation(); hideSelectionTools();
     const feedback = uiById('slim-hl-feedback');
     if (feedback?.dataset.message === 'panelStateSaveFailed') { feedback.hidden = true; feedback.textContent = ''; }
@@ -175,6 +183,7 @@ function createPanel(snapshot = null) {
         <header id="slim-hl-header" tabindex="0" aria-label="${t('movePanel')}" title="${t('movePanel')}">
             <span class="brand"><img data-hl-logo src="${LOGOS[uiTheme]}" alt="">Highlight</span>
             <div class="header-actions">
+                <button type="button" class="icon-btn" id="open-find" title="${t('findTitle')}" aria-label="${t('findTitle')}">${icon('find')}</button>
                 <button type="button" class="icon-btn" id="btn-reset" title="${t('resetPosition')}" aria-label="${t('resetPosition')}">${icon('reset')}</button>
                 <button type="button" class="icon-btn" id="btn-min" aria-controls="slim-panel-body" aria-expanded="${!panelState.minimized}" aria-label="${t(panelState.minimized ? 'expand' : 'minimize')}" title="${t(panelState.minimized ? 'expand' : 'minimize')}">${icon(panelState.minimized ? 'expand' : 'minus')}</button>
                 <button type="button" class="icon-btn" id="btn-close" title="${t('close')}" aria-label="${t('close')}">${icon('close')}</button>
@@ -241,12 +250,15 @@ function createPanel(snapshot = null) {
                 <div class="launcher-size-row"><input type="range" id="launcher-inset" min="8" max="80" step="4"><output id="launcher-inset-value" for="launcher-inset"></output></div>
                 <label class="check-label"><input type="checkbox" id="chk-enabled" ${enabled ? 'checked' : ''}> ${t('enabled')}</label>
                 <label class="check-label"><input type="checkbox" id="chk-auto" ${autoSearch ? 'checked' : ''}> ${t('autoSearch')}</label>
+                <label class="check-label"><input type="checkbox" id="site-search-enabled" ${siteSearchEnabled() ? 'checked' : ''}> ${t('siteSearchEnabled')}</label><p class="hint">${t('siteSearchHint')}</p>
                 <label class="check-label"><input type="checkbox" id="chk-posbar" ${showPosBar ? 'checked' : ''}> ${t('posBar')}</label>
                 <h3 class="section-title">${t('shortcutTitle')}</h3>
                 <output id="shortcut-label" aria-live="polite"></output>
                 <p class="hint">${t('shortcutHelp')}</p>
                 <div class="shortcut-actions"><button type="button" id="record-shortcut">${t('recordShortcut')}</button><button type="button" id="disable-shortcut">${t('disableShortcut')}</button><button type="button" id="reset-shortcut">${t('resetShortcut')}</button></div>
                 <p id="shortcut-error" class="error" role="status"></p>
+                <h3 class="section-title">${t('findShortcutTitle')}</h3><output id="find-shortcut-label" aria-live="polite"></output>
+                <div class="shortcut-actions"><button type="button" id="record-find-shortcut">${t('recordShortcut')}</button><button type="button" id="disable-find-shortcut">${t('disableShortcut')}</button><button type="button" id="reset-find-shortcut">${t('resetShortcut')}</button></div><p id="find-shortcut-error" class="error" role="status"></p>
                 <label for="copy-format">${t('copyFormat')}</label><select id="copy-format"><option value="plain">${t('plainFormat')}</option><option value="markdown">${t('markdownFormat')}</option></select>
                 <button type="button" id="export-markdown" class="btn">${t('exportMarkdown')}</button><button type="button" id="export-saved" class="btn">${t('exportSaved')}</button>
                 <label for="search-engine">${t('engine')}</label>
@@ -254,7 +266,7 @@ function createPanel(snapshot = null) {
                 <label for="ui-lang">${t('language')}</label>
                 <select id="ui-lang"><option value="auto">${t('langAuto')}</option><option value="de">Deutsch</option><option value="en">English</option></select>
             </div></details>
-            <details id="help-section"><summary>${t('helpTitle')}</summary><div class="details-body"><p class="hint">${t('pageHint')}</p><p class="hint">${t('navigationHelp')}</p><p id="page-shortcut-hint" class="hint"></p><p id="panel-shortcut-hint" class="hint"></p></div></details>
+            <details id="help-section"><summary>${t('helpTitle')}</summary><div class="details-body"><p class="hint">${t('pageHint')}</p><p class="hint">${t('navigationHelp')}</p><p id="page-shortcut-hint" class="hint"></p><p id="panel-shortcut-hint" class="hint"></p><p id="find-shortcut-hint" class="hint"></p></div></details>
             </div>
         </div>`;
     ensureUIRoot().appendChild(panel);
@@ -301,6 +313,12 @@ function createPanel(snapshot = null) {
         button.innerHTML = icon(panelState.minimized ? 'expand' : 'minus');
         clampPanelPosition(panel, true);
     };
+    panel.querySelector('#open-find').onclick = openQuickFind;
+    panel.querySelector('#site-search-enabled').onchange = event => { setSiteSearchEnabled(event.target.checked); event.target.checked = siteSearchEnabled(); };
+    panel.querySelector('#record-find-shortcut').onclick = () => { recordingShortcut = false; recordingFindShortcut = !recordingFindShortcut; renderFindShortcut(); };
+    panel.querySelector('#record-find-shortcut').onblur = () => { recordingFindShortcut = false; renderFindShortcut(); };
+    panel.querySelector('#disable-find-shortcut').onclick = () => saveFindShortcut(null);
+    panel.querySelector('#reset-find-shortcut').onclick = () => saveFindShortcut({ ...DEFAULT_FIND_SHORTCUT });
     panel.querySelector('#btn-close').onclick = () => setPanelOpen(false);
     panel.onkeydown = e => { if (e.key === 'Escape' && !e.isComposing && !composing) { e.preventDefault(); e.stopPropagation(); setPanelOpen(false); } };
     panel.querySelector('#btn-prev').onclick = () => goTo(-1);
@@ -337,6 +355,7 @@ function createPanel(snapshot = null) {
         enabled = e.target.checked; save();
         if (enabled) { if (!observer) setupObserver(); refreshHighlights(); }
         else {
+            closeQuickFind();
             highlightGeneration++; isHighlighting = false; refreshQueued = false;
             pendingNodes.clear(); cleanupHighlights(); clearPagePaint(); keywordCounts = {}; currentIdx = -1;
             renderPageList(); updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); hideSelectionTools(); observer?.disconnect();
@@ -352,7 +371,7 @@ function createPanel(snapshot = null) {
     panel.querySelector('#launcher-position').onchange = e => { launcherPosition = e.target.value; applyAppearance(); saveAppearance(); };
     panel.querySelector('#launcher-inset').oninput = e => { launcherInset = normalizeLauncherInset(+e.target.value); applyAppearance(); };
     panel.querySelector('#launcher-inset').onchange = saveAppearance;
-    panel.querySelector('#chk-auto').onchange = e => { autoSearch = e.target.checked; save(); refreshHighlights(); };
+    panel.querySelector('#chk-auto').onchange = e => { autoSearch = e.target.checked; automaticTermsSnapshot = null; save(); restartHighlights(); };
     panel.querySelector('#chk-posbar').onchange = e => { showPosBar = e.target.checked; save(); updatePosBar(); };
     panel.querySelector('#search-engine').onchange = e => { searchEngine = e.target.value; save(); };
     panel.querySelector('#clear-page').onclick = () => { if (!ensurePageIdentity()) return; rememberPageChange(); const before = pageUndo.at(-1); pageTerms = []; if (!savePageRecord(before.terms.some(term => term.saved))) { pageTerms = before.terms; pageUndo.pop(); renderPageList(); return; } currentIdx = -1; refreshPageResults(); panel.querySelector('#undo-page').focus({ preventScroll: true }); };
@@ -369,7 +388,7 @@ function createPanel(snapshot = null) {
     panel.querySelector('#export-markdown').onclick = exportPageMarkdown;
     panel.querySelector('#export-saved').onclick = exportSavedPages;
     panel.querySelector('#close-manual-copy').onclick = () => { panel.querySelector('#manual-copy-section').hidden = true; panel.querySelector('#page-heading').focus(); };
-    panel.querySelector('#record-shortcut').onclick = () => { recordingShortcut = !recordingShortcut; renderShortcut(); };
+    panel.querySelector('#record-shortcut').onclick = () => { recordingFindShortcut = false; recordingShortcut = !recordingShortcut; renderShortcut(); };
     panel.querySelector('#record-shortcut').onblur = () => { recordingShortcut = false; renderShortcut(); };
     panel.querySelector('#disable-shortcut').onclick = () => { recordingShortcut = false; selectionShortcut = null; save(); renderShortcut(); };
     panel.querySelector('#reset-shortcut').onclick = () => { recordingShortcut = false; selectionShortcut = { ...DEFAULT_SHORTCUT }; save(); renderShortcut(); };
@@ -385,10 +404,13 @@ function createPanel(snapshot = null) {
             manualCopyVisible: !panel.querySelector('#manual-copy-section').hidden,
             formInvalid: panel.querySelector('#new-kw').getAttribute('aria-invalid') === 'true'
         };
-        lang = e.target.value; composing = false; recordingShortcut = false; hideSelectionTools(); uiById('slim-selection-tools')?.remove(); save();
+        const findReturnId = panel.contains(quickFind.returnFocus) ? quickFind.returnFocus.id : null;
+        lang = e.target.value; composing = false; recordingShortcut = false; recordingFindShortcut = false; hideSelectionTools(); uiById('slim-selection-tools')?.remove(); save();
         const toggle = uiById('slim-hl-toggle');
         if (toggle) { toggle.title = t('openPanel'); toggle.setAttribute('aria-label', t('openPanel')); }
         panel.remove(); createPanel(state);
+        if (findReturnId) quickFind.returnFocus = uiById(findReturnId) || uiById('slim-hl-header');
+        renderQuickFind();
     };
     renderPageList(); renderShortcut(); renderKeywordList(); renderHistory(); updateUndo(); renderPanelStatus();
     updateCounterAndTitle(); renderMatchList(); updatePreview();

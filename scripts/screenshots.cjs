@@ -81,9 +81,46 @@ async function captureReadme(browser, source) {
  console.log('Captured README examples in German/English and light/dark in artifacts/screenshots/');
 }
 
+// Captures the live finder and opt-in website source on the local article fixture.
+async function captureSearchFeatures(browser, source) {
+ const html=fs.readFileSync(path.join(__dirname,'fixtures/readme.html'),'utf8')+'<style>@media(max-width:700px){header{margin:0 20px}.example{display:none}main{width:auto;margin:150px 20px 0}h1{font-size:30px}}</style>';
+ const results=[];
+ for(const language of ['de','en']) for(const theme of ['light','dark']) for(const width of [1200,390]) {
+  const name=`search-${language}-${theme}-${width}`;
+  const page=await browser.newPage({viewport:{width,height:width===1200?800:844},deviceScaleFactor:2,locale:language==='de'?'de-DE':'en-US'});
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  try {
+   await page.route('**/*',route=>route.fulfill({contentType:'text/html; charset=utf-8',body:html}));
+   await page.goto('https://example.test/reading/energy?search='+encodeURIComponent(language==='de'?'Solarenergie':'Solar power'));
+   await page.evaluate(({language,theme})=>{
+    document.documentElement.lang=language;document.documentElement.dataset.theme=theme;
+    document.querySelector(`article:not([lang="${language}"])`).remove();
+    for(const node of document.querySelectorAll('[data-de]'))node.textContent=node.dataset[language];
+    const store={hl_keywords:[],hl_auto_search:true,hl_ui_theme:theme,hl_lang:language,hl_site_search_origins:{version:1,origins:[{origin:location.origin,generation:'preview'}]}};
+    window.GM_getValue=(key,fallback)=>structuredClone(store[key]??fallback);window.GM_setValue=(key,value)=>{store[key]=structuredClone(value)};
+    window.GM_addStyle=css=>{const style=document.createElement('style');style.textContent=css;document.head.append(style)};window.GM_registerMenuCommand=()=>{};
+   },{language,theme});
+   await page.evaluate(require('../tests/helpers/ui-driver.cjs'));await page.addScriptTag({content:source});
+   await page.waitForSelector('.slim-hl');
+   await page.locator('[data-term="climate"]').evaluate(node=>{const range=document.createRange();range.selectNodeContents(node);getSelection().removeAllRanges();getSelection().addRange(range)});
+   await page.keyboard.press('Alt+Shift+H');await page.waitForFunction(()=>CSS.highlights.get('slim-page')?.size===2);
+   await page.keyboard.press('Control+Shift+f');await page.locator('#find-query').fill(language==='de'?'Energiespeicher':'Energy storage');
+   await page.waitForFunction(()=>CSS.highlights.get('slim-find')?.size===2);
+   await page.evaluate(()=>document.fonts.ready);
+   const finder=await page.locator('#slim-find-bar').boundingBox(),panel=await page.locator('#slim-hl-panel').boundingBox();
+   for(const box of [finder,panel])if(!box||box.x<0||box.y<0||box.x+box.width>width+1||box.y+box.height>(width===1200?800:844)+1)throw Error(name+': overlay outside viewport');
+   if(finder.x<panel.x+panel.width&&finder.x+finder.width>panel.x&&finder.y<panel.y+panel.height&&finder.y+finder.height>panel.y)throw Error(name+': finder overlaps panel');
+   if(errors.length)throw Error(errors.join('; '));
+   await page.screenshot({path:path.join(output,name+'.png')});results.push({name,finder,panel});
+  } finally {await page.close()}
+ }
+ fs.writeFileSync(path.join(output,'search.json'),JSON.stringify(results,null,2));console.log('Captured website search and live finder in artifacts/screenshots/');
+}
+
 (async()=>{
 const browser=await chromium.launch(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{channel:'chromium'}),results=[],errors=[];
 const source=fs.readFileSync(path.resolve(__dirname,'../userscript/slim-search-highlight.user.js'),'utf8');
+if(process.argv.includes('--search')) {try {await captureSearchFeatures(browser,source)} finally {await browser.close()} return}
 if(process.argv.includes('--readme')) {try {await captureReadme(browser,source)} finally {await browser.close()} return}
 for(const theme of ['dark','light']) for(const [viewport,width,height] of [['desktop',1280,900],['narrow',390,844]]){
  const name=theme+'-'+viewport;

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.7.1
+// @version      4.8.0
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -273,6 +273,29 @@
     let observer = null;
     let kwFilter = '';
 
+    Object.assign(I18N.de, {
+        findTitle: 'Auf Seite suchen', findPlaceholder: 'Seite durchsuchen …', findWhole: 'Ganze Wörter', findCase: 'Groß-/Kleinschreibung beachten', findCaseShort: 'Aa',
+        findClear: 'Suchfeld leeren', findAdd: '+ Markieren', findAddHint: 'Als Seitenmarkierung übernehmen (Suchoptionen im Panel)',
+        findEmpty: 'Suchtext eingeben. Enter: weiter · Shift+Enter: zurück', findNoResults: 'Keine Treffer', findDisabled: 'Highlights zum Suchen aktivieren.',
+        findShortcutTitle: 'Shortcut: Auf Seite suchen', findShortcutHint: value => `Auf Seite suchen: ${value}. Die Vorschau endet beim Schließen. „+ Markieren“ übernimmt den Text mit den Suchoptionen der Seitenmarkierungen.`,
+        findShortcutConflict: 'Dieser Shortcut wird bereits für Markieren oder das Panel verwendet. Bitte eine andere Kombination wählen.',
+        findShortcutSaveFailed: 'Der Such-Shortcut konnte nicht gespeichert werden. Die vorherige Einstellung bleibt erhalten.',
+        siteSearchEnabled: 'Website-Suche hier übernehmen', siteSearchHint: 'Nur bestätigte Suchanfragen dieser Website übernehmen und auf ihren Ergebnislinks markieren. Muss pro Website aktiviert werden.',
+        siteSearchSaveFailed: 'Website-Suche konnte nicht gespeichert werden. Die vorherige Einstellung bleibt erhalten.', siteSearchTransferFailed: 'Die Website-Suche konnte nicht für den Ergebnislink übernommen werden.',
+        sourceSiteSearch: 'Website-Suche', sourceSiteBoth: 'Website-Suche + Auswahl'
+    });
+    Object.assign(I18N.en, {
+        findTitle: 'Find on page', findPlaceholder: 'Find on this page …', findWhole: 'Whole words', findCase: 'Match case', findCaseShort: 'Aa',
+        findClear: 'Clear search', findAdd: '+ Highlight', findAddHint: 'Add a page selection (using the panel search options)',
+        findEmpty: 'Enter text. Enter: next · Shift+Enter: previous', findNoResults: 'No matches', findDisabled: 'Enable highlights to search.',
+        findShortcutTitle: 'Shortcut: Find on page', findShortcutHint: value => `Find on page: ${value}. Closing clears the preview. “+ Highlight” adopts the text using page-selection search options.`,
+        findShortcutConflict: 'This shortcut is already assigned to highlighting or the panel. Choose another combination.',
+        findShortcutSaveFailed: 'The search shortcut could not be saved. The previous setting is retained.',
+        siteSearchEnabled: 'Capture this website’s search', siteSearchHint: 'Capture only submitted searches on this website and highlight their result links. Enable separately for each website.',
+        siteSearchSaveFailed: 'Website search could not be saved. The previous setting is retained.', siteSearchTransferFailed: 'Website search could not be transferred to the result link.',
+        sourceSiteSearch: 'Website search', sourceSiteBoth: 'Website search + selection'
+    });
+
     // Source: src/10-styles.js
     // All owned surfaces share the semantic theme from src/colors.json.
     const themeDeclarations = theme => Object.entries(COLORS.themes[theme]).map(([key, value]) => `--hl-${key}: ${value};`).join('\n        ');
@@ -336,12 +359,12 @@
         #slim-hl-panel #shortcut-label { display: block; font-weight: 600; margin: 6px 0; }
         #slim-hl-panel #navigation-scope { margin: 0; }
         .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
-        #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle, #slim-hl-feedback {
+        #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle, #slim-hl-feedback, #slim-find-bar {
             --hl-brand-logo: url("${LOGOS.dark}");
             ${themeDeclarations('dark')}
             --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 10px;
         }
-        #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light], #slim-hl-feedback[data-theme=light] {
+        #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light], #slim-hl-feedback[data-theme=light], #slim-find-bar[data-theme=light] {
             --hl-brand-logo: url("${LOGOS.light}");
             ${themeDeclarations('light')}
         }
@@ -474,11 +497,34 @@
             #slim-hl-panel { border: 1px solid CanvasText; }
             #slim-hl-panel :focus-visible, #slim-hl-toggle:focus-visible { outline-color: Highlight; }
         }
+        #slim-find-bar { all: initial; position: fixed; z-index: 2147483647; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: min(480px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: 8px; border: 1px solid var(--hl-divider); border-radius: 10px; background: var(--hl-bg); color: var(--hl-text); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme); box-sizing: border-box; pointer-events: auto; box-shadow: 0 6px 20px var(--hl-shadow); scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
+        #slim-find-bar :where(:not(svg, svg *)) { all: revert; font: inherit; color: inherit; box-sizing: border-box; }
+        #slim-find-bar[hidden], #slim-find-bar [hidden] { display: none !important; }
+        #slim-find-bar .find-row, #slim-find-bar .find-options { display: flex; align-items: center; gap: 4px; min-width: 0; }
+        #slim-find-bar .find-field { display: flex; align-items: center; flex: 1; min-width: 64px; border: 1px solid var(--hl-border); border-radius: 6px; background: var(--hl-field); }
+        #slim-find-bar #find-query { width: 100%; min-width: 0; border: 0; background: transparent; padding: 7px 8px; color: var(--hl-text); caret-color: var(--hl-focus); outline-offset: -2px; }
+        #slim-find-bar #find-query::placeholder { color: var(--hl-muted); }
+        #slim-find-bar button { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-width: 32px; min-height: 36px; padding: 5px; border: 0; border-radius: 6px; color: var(--hl-text); background: transparent; cursor: pointer; }
+        #slim-find-bar button:hover:not(:disabled) { background: var(--hl-hover); }
+        #slim-find-bar button:active:not(:disabled) { background: var(--hl-active); }
+        #slim-find-bar button:disabled { opacity: .5; cursor: default; }
+        #slim-find-bar :focus-visible { outline: 2px solid var(--hl-focus); outline-offset: -2px; }
+        #slim-find-bar svg { display: block; width: 18px; height: 18px; flex-shrink: 0; }
+        #slim-find-bar #find-counter { white-space: nowrap; min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; font-size: 12px; color: var(--hl-accent-text); }
+        #slim-find-bar .find-options { flex-wrap: wrap; margin-top: 4px; gap: 8px; }
+        #slim-find-bar label { display: inline-flex; gap: 4px; align-items: center; min-height: 32px; font-size: 12px; cursor: pointer; }
+        #slim-find-bar input[type=checkbox] { accent-color: var(--hl-focus); width: 16px; height: 16px; margin: 0; }
+        #slim-find-bar #find-add { margin-left: auto; padding: 5px 8px; background: var(--hl-surface); font-size: 12px; }
+        #slim-find-bar #find-status { margin: 2px 0 0; min-height: 17px; color: var(--hl-muted); font-size: 12px; }
+        @media (max-width: 600px) { #slim-find-bar button, #slim-find-bar label { min-height: 44px; } #slim-find-bar #find-query { font-size: 16px; } #slim-find-bar .find-row > button { min-width: 36px; } }
+        @media (forced-colors: active) { #slim-find-bar { border-color: CanvasText; scrollbar-color: auto; } #slim-find-bar :focus-visible { outline-color: Highlight; } }
+
     `;
     GM_addStyle(UI_CSS);
 
     // Source: src/20-utils.js
     const ICONS = {
+        find: '<circle cx="10" cy="10" r="6"/><path d="m14.5 14.5 6 6"/>',
         save: '<path d="m5 12 4 4L19 6"/>',
         bookmark: '<path d="M6 3h12v18l-6-4-6 4V3Z"/>',
         bookmarked: '<path d="M6 3h12v18l-6-4-6 4V3Z" fill="currentColor"/>',
@@ -601,7 +647,7 @@
         }
         for (const type of ['pointerdown', 'mousedown', 'mouseup', 'click', 'keydown', 'input', 'change', 'submit']) {
             privateUIRoot.addEventListener(type, event => {
-                if (type === 'keydown' && handlePanelShortcut(event)) { event.stopPropagation(); return; }
+                if (type === 'keydown' && (handleQuickFindShortcut(event) || handlePanelShortcut(event))) { event.stopPropagation(); return; }
                 if (type === 'keydown' && event.key === 'Escape' && event.target.closest?.('#slim-selection-tools')) {
                     hideSelectionTools(true); event.preventDefault();
                 }
@@ -704,7 +750,7 @@
     }
     function watchPageIdentity() {
         if (pageURLTimer) return;
-        const watch = pageTerms.length || knownSavedPages || hiddenTermKeys.size || getCrossPageTerms().length;
+        const watch = pageTerms.length || knownSavedPages || hiddenTermKeys.size || getCrossPageTerms().length || siteSearchEnabled() || quickFind.open;
         // Keep the lightweight identity check after a termless intermediate route.
         if (watch) pageURLTimer = setInterval(() => {
             if (pageIdentity !== location.href) refreshPageContext();
@@ -772,6 +818,7 @@
     }
     function resetPageIdentity() {
         if (pageIdentity === location.href) return;
+        closeQuickFind(true, true);
         pageIdentity = location.href; pageUndo = []; clearPagePaint(); hideSelectionTools(); currentIdx = -1;
         hiddenTermKeys.clear(); automaticTermsSnapshot = null;
         restorePageRecord();
@@ -875,15 +922,15 @@
         return { text, point };
     }
 
-    function* collectPageMatches(root) {
+    function* collectPageMatches(root, terms = pageTerms, options = pageOptions) {
         const { text, point } = yield* pageTextIndex(root);
         const found = [];
         let operations = 0;
-        for (const term of pageTerms) {
-            if (termIsHidden(term.text)) continue;
+        for (const term of terms) {
+            if (!options.includeHidden && termIsHidden(term.text)) continue;
             const escaped = escapeRegExp(term.text);
-            const pattern = pageOptions.wholeWords ? '(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])' : escaped;
-            for (const match of text.matchAll(new RegExp(pattern, 'giu'))) {
+            const pattern = options.wholeWords ? '(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])' : escaped;
+            for (const match of text.matchAll(new RegExp(pattern, options.caseSensitive ? 'gu' : 'giu'))) {
                 found.push({ start: match.index, end: match.index + match[0].length, term });
                 if (++operations % 128 === 0) yield;
             }
@@ -1033,7 +1080,8 @@
             const count = document.createElement('span'); count.className = 'kw-count'; count.textContent = counts.get(entry.key) || 0; count.title = t('countTitle');
             const content = document.createElement('div'); content.className = 'page-label';
             const state = document.createElement('span'); state.className = 'hint page-state';
-            const captions = [t(entry.keyword ? term ? 'sourceBoth' : 'sourceSearch' : term.saved ? 'sourceSavedSelection' : 'sourceSelection')];
+            const site = entry.keyword && automaticTermsSnapshot?.source === 'site' && automaticTermsSnapshot.terms.some(text => termKey(text) === entry.key);
+            const captions = [t(entry.keyword ? term ? site ? 'sourceSiteBoth' : 'sourceBoth' : site ? 'sourceSiteSearch' : 'sourceSearch' : term.saved ? 'sourceSavedSelection' : 'sourceSelection')];
             if (entry.keyword && term?.saved) captions.push(t('pageSavedShort'));
             if (hidden) captions.push(t('termHiddenState'));
             else if (term?.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled) captions.push(t('savedMissing'));
@@ -1159,6 +1207,7 @@
     }
 
     function renderShortcut() {
+        renderFindShortcut();
         const label = uiById('shortcut-label'); if (label) label.textContent = shortcutLabel();
         const hint = uiById('page-shortcut-hint'); if (hint) hint.textContent = t('shortcutHint', shortcutLabel());
         const record = uiById('record-shortcut'); if (record) record.textContent = t(recordingShortcut ? 'recordingShortcut' : 'recordShortcut');
@@ -1280,6 +1329,157 @@
         positionSelectionTools();
     }
 
+    // Source: src/55-quick-find.js
+    // The finder is a transient preview: it never enters page records or keyword storage.
+    const DEFAULT_FIND_SHORTCUT = { key: 'f', ctrl: true, shift: true, alt: false, meta: false };
+    const storedFindShortcut = GM_getValue('hl_find_shortcut', DEFAULT_FIND_SHORTCUT);
+    let findShortcut = storedFindShortcut === null ? null : validShortcut(storedFindShortcut) ? storedFindShortcut : { ...DEFAULT_FIND_SHORTCUT };
+    let recordingFindShortcut = false;
+    const quickFind = { open: false, query: '', wholeWords: false, caseSensitive: false, matches: [], index: -1, generation: 0, timer: null, color: null, busy: false, composing: false, returnFocus: null, scrollPending: false };
+    function findShortcutAvailable() {
+        if (!findShortcut) return false;
+        const same = other => other && ['key', 'ctrl', 'alt', 'shift', 'meta'].every(key => key === 'key' ? other.key.toLowerCase() === findShortcut.key.toLowerCase() : !!other[key] === !!findShortcut[key]);
+        return !same(selectionShortcut) && !same(PANEL_SHORTCUT);
+    }
+    function renderFindShortcut() {
+        const available = findShortcutAvailable();
+        const label = uiById('find-shortcut-label'); if (label) label.textContent = shortcutLabel(findShortcut);
+        const record = uiById('record-find-shortcut'); if (record) record.textContent = t(recordingFindShortcut ? 'recordingShortcut' : 'recordShortcut');
+        const hint = uiById('find-shortcut-hint'); if (hint) hint.textContent = findShortcut && !available ? t('findShortcutConflict') : t('findShortcutHint', shortcutLabel(findShortcut));
+        const button = uiById('open-find');
+        if (button) {
+            button.title = t('findTitle') + (available ? ' (' + shortcutLabel(findShortcut) + ')' : '');
+            if (available) button.setAttribute('aria-keyshortcuts', [findShortcut.ctrl && 'Control', findShortcut.alt && 'Alt', findShortcut.shift && 'Shift', findShortcut.meta && 'Meta', findShortcut.key.toUpperCase()].filter(Boolean).join('+'));
+            else button.removeAttribute('aria-keyshortcuts');
+        }
+    }
+    function saveFindShortcut(value) {
+        const previous = findShortcut;
+        try {
+            GM_setValue('hl_find_shortcut', value); findShortcut = value;
+            lastSaved.hl_find_shortcut = JSON.stringify(value);
+            const error = uiById('find-shortcut-error'); if (error) error.textContent = '';
+        } catch {
+            findShortcut = previous;
+            const error = uiById('find-shortcut-error'); if (error) error.textContent = t('findShortcutSaveFailed');
+        }
+        recordingFindShortcut = false; renderFindShortcut();
+    }
+    function handleQuickFindShortcut(event) {
+        if (!event.isTrusted || event.isComposing || composing || event.repeat || recordingShortcut || recordingFindShortcut || isBlacklisted()) return false;
+        if (!findShortcutAvailable() || !shortcutMatches(event, findShortcut)) return false;
+        event.preventDefault(); event.stopPropagation(); openQuickFind(); return true;
+    }
+    function clearQuickFindPaint() {
+        globalThis.CSS?.highlights?.delete('slim-find'); globalThis.CSS?.highlights?.delete('slim-find-current');
+    }
+    function suspendQuickFind() {
+        clearTimeout(quickFind.timer); quickFind.generation++; clearQuickFindPaint(); quickFind.matches = []; quickFind.index = -1;
+    }
+    function renderQuickFind() {
+        const bar = uiById('slim-find-bar'); if (!bar) return;
+        bar.lang = currentLang(); bar.setAttribute('aria-label', t('findTitle'));
+        const input = uiById('find-query'); input.setAttribute('aria-label', t('findTitle')); input.placeholder = t('findPlaceholder');
+        input.disabled = !enabled || !supportsPageHighlights();
+        uiById('find-whole-label').textContent = t('findWhole');
+        uiById('find-case').setAttribute('aria-label', t('findCase')); uiById('find-case-label').title = t('findCase');
+        uiById('find-case-text').textContent = t('findCaseShort');
+        for (const [id, key] of [['find-clear', 'findClear'], ['find-prev', 'prev'], ['find-next', 'next'], ['find-close', 'close']]) {
+            const button = uiById(id); button.title = t(key); button.setAttribute('aria-label', t(key));
+        }
+        uiById('find-add').textContent = t('findAdd'); uiById('find-add').title = t('findAddHint');
+        uiById('find-clear').hidden = !input.value;
+        const count = quickFind.matches.length, current = count ? quickFind.index + 1 : 0;
+        const counter = uiById('find-counter'); counter.textContent = `${current} / ${count}`; counter.setAttribute('aria-label', t('statusCount', current, count));
+        uiById('find-prev').disabled = uiById('find-next').disabled = quickFind.busy || !count;
+        uiById('find-add').disabled = quickFind.busy || !count || !enabled;
+        bar.setAttribute('aria-busy', String(quickFind.busy));
+        uiById('find-status').textContent = !supportsPageHighlights() ? t('highlightUnsupported') : !enabled ? t('findDisabled') : quickFind.busy ? t('searching') : !normalizePassage(quickFind.query) ? t('findEmpty') : !count ? t('findNoResults') : '';
+    }
+    function paintQuickFindCurrent(scroll = false) {
+        globalThis.CSS?.highlights?.delete('slim-find-current');
+        const match = quickFind.matches[quickFind.index];
+        if (match) {
+            const active = new Highlight(match.range); active.priority = 101; CSS.highlights.set('slim-find-current', active);
+            if (scroll) { const box = match.range.getBoundingClientRect(); window.scrollBy({ top: box.top + box.height / 2 - innerHeight / 2, behavior: 'instant' }); }
+        }
+        renderQuickFind();
+    }
+    function navigateQuickFind(delta) {
+        if (!quickFind.matches.length || quickFind.busy) return;
+        quickFind.index = (quickFind.index + delta + quickFind.matches.length) % quickFind.matches.length;
+        paintQuickFindCurrent(true);
+    }
+    function scheduleQuickFind(delay = 120, scroll = false) {
+        quickFind.scrollPending ||= scroll;
+        if (!quickFind.open) return;
+        suspendQuickFind();
+        const query = normalizePassage(quickFind.query), generation = quickFind.generation, identity = location.href;
+        quickFind.busy = !!query && enabled && supportsPageHighlights(); renderQuickFind();
+        if (!quickFind.busy || isBlacklisted()) return;
+        quickFind.timer = setTimeout(() => {
+            if (generation !== quickFind.generation || !quickFind.open || identity !== location.href) return;
+            if (isHighlighting) { scheduleQuickFind(80); return; }
+            const terms = [{ id: 'find', text: query, color: quickFind.color }];
+            const work = collectPageMatches(document.body, terms, { wholeWords: quickFind.wholeWords, caseSensitive: quickFind.caseSensitive, includeHidden: true });
+            const step = () => {
+                if (generation !== quickFind.generation || !quickFind.open || identity !== location.href || !enabled || isBlacklisted()) return;
+                if (isHighlighting) { scheduleQuickFind(80); return; }
+                const deadline = performance.now() + 10; let result;
+                do { result = work.next(); } while (!result.done && performance.now() < deadline);
+                if (!result.done) { requestAnimationFrame(step); return; }
+                quickFind.matches = result.value; quickFind.index = result.value.length ? 0 : -1; quickFind.busy = false;
+                const highlight = new Highlight(); for (const match of result.value) highlight.add(match.range); highlight.priority = 100; CSS.highlights.set('slim-find', highlight);
+                let style = document.getElementById('slim-find-colors');
+                if (!style) { style = document.createElement('style'); style.id = 'slim-find-colors'; document.head.append(style); }
+                style.textContent = `::highlight(slim-find), ::highlight(slim-find-current) { background-color: ${quickFind.color}; color: ${highlightTextColor(quickFind.color)}; } ::highlight(slim-find-current) { text-decoration: underline; }`;
+                const reveal = quickFind.scrollPending; quickFind.scrollPending = false; paintQuickFindCurrent(reveal);
+            };
+            step();
+        }, delay);
+    }
+    function closeQuickFind(restoreFocus = true, reset = false) {
+        const bar = uiById('slim-find-bar'), focused = bar?.contains(uiActiveElement());
+        quickFind.open = false; quickFind.scrollPending = false; quickFind.busy = false; quickFind.composing = false; suspendQuickFind();
+        if (bar) bar.hidden = true;
+        if (reset) { quickFind.query = ''; quickFind.color = null; if (uiById('find-query')) uiById('find-query').value = ''; }
+        if (focused) {
+            if (restoreFocus && quickFind.returnFocus?.isConnected) quickFind.returnFocus.focus({ preventScroll: true });
+            else uiActiveElement()?.blur();
+        }
+        clampPanelPosition(uiById('slim-hl-panel'));
+    }
+    function openQuickFind() {
+        if (isBlacklisted()) return;
+        const selected = selectedDocumentText();
+        let bar = uiById('slim-find-bar');
+        if (!bar) {
+            bar = document.createElement('section'); bar.id = 'slim-find-bar'; bar.setAttribute('role', 'search');
+            bar.innerHTML = `<div class="find-row"><div class="find-field"><input type="text" id="find-query" autocomplete="off" spellcheck="false"><button type="button" id="find-clear">${icon('close')}</button></div><output id="find-counter" aria-live="polite" aria-atomic="true">0 / 0</output><button type="button" id="find-prev">${icon('prev')}</button><button type="button" id="find-next">${icon('next')}</button><button type="button" id="find-close">${icon('close')}</button></div><div class="find-options"><label><input type="checkbox" id="find-whole"><span id="find-whole-label"></span></label><label id="find-case-label"><input type="checkbox" id="find-case"><span id="find-case-text"></span></label><button type="button" id="find-add"></button></div><p id="find-status" role="status"></p>`;
+            ensureUIRoot().append(bar);
+            bar.querySelector('#find-query').oninput = event => { quickFind.query = event.target.value; if (!quickFind.composing) scheduleQuickFind(120, true); };
+            bar.oncompositionstart = () => { quickFind.composing = true; };
+            bar.oncompositionend = () => { quickFind.composing = false; quickFind.query = uiById('find-query').value; scheduleQuickFind(120, true); };
+            for (const [id, key] of [['find-whole', 'wholeWords'], ['find-case', 'caseSensitive']]) bar.querySelector('#' + id).onchange = event => { quickFind[key] = event.target.checked; scheduleQuickFind(0, true); };
+            bar.querySelector('#find-clear').onclick = () => { quickFind.query = ''; uiById('find-query').value = ''; scheduleQuickFind(0); uiById('find-query').focus(); };
+            bar.querySelector('#find-close').onclick = () => closeQuickFind();
+            bar.querySelector('#find-prev').onclick = () => navigateQuickFind(-1); bar.querySelector('#find-next').onclick = () => navigateQuickFind(1);
+            bar.querySelector('#find-add').onclick = () => { if (addPageSelection(quickFind.query)) scheduleQuickFind(0); };
+            bar.onkeydown = event => {
+                if (event.isComposing || quickFind.composing) return;
+                if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeQuickFind(); }
+                else if (event.key === 'Enter' && event.target.id === 'find-query') { event.preventDefault(); navigateQuickFind(event.shiftKey ? -1 : 1); }
+            };
+        }
+        if (!quickFind.open) { quickFind.returnFocus = uiActiveElement(); quickFind.color = chooseHighlightColor([...pageTerms, ...getActiveKeywords(true)].map(term => term.color)); }
+        quickFind.open = true; bar.hidden = false;
+        if (selected) { quickFind.query = normalizePassage(selected.text); getSelection()?.removeAllRanges(); }
+        uiById('find-query').value = quickFind.query; uiById('find-whole').checked = quickFind.wholeWords; uiById('find-case').checked = quickFind.caseSensitive;
+        applyAppearance(); renderQuickFind(); watchPageIdentity(); scheduleQuickFind(0, true);
+        uiById('find-query').focus({ preventScroll: true }); uiById('find-query').select();
+        clampPanelPosition(uiById('slim-hl-panel'));
+    }
+
     // Source: src/60-keywords.js
     const PERSISTED = {
         hl_keywords: () => keywords,
@@ -1293,6 +1493,7 @@
         hl_show_posbar: () => showPosBar,
         hl_lang: () => lang,
         hl_selection_shortcut: () => selectionShortcut,
+        hl_find_shortcut: () => findShortcut,
         hl_copy_format: () => copyFormat,
         hl_ui_theme: () => uiTheme,
         hl_ui_transparency: () => uiTransparency,
@@ -1440,8 +1641,12 @@
     }
 
     const initialSearchPage = location.href;
+    let currentAutomaticSource = 'search';
     function automaticSearchTerms() {
+        currentAutomaticSource = 'search';
         if (isSearchEngine(location.href)) return getSearchTerms();
+        const site = getSiteSearchContext();
+        if (site) { currentAutomaticSource = 'site'; return site.terms; }
         try {
             const handoff = readSearchHandoffs().find(entry => entry.target === searchDestination(location.href));
             if (handoff) return handoff.terms;
@@ -1470,7 +1675,7 @@
         result.push(...manualTerms);
         if (autoSearch) {
             if (!automaticTermsSnapshot || automaticTermsSnapshot.url !== location.href || isSearchEngine(location.href)) {
-                automaticTermsSnapshot = { url: location.href, terms: automaticSearchTerms() };
+                automaticTermsSnapshot = { url: location.href, terms: automaticSearchTerms(), source: currentAutomaticSource };
             }
             result.push(...automaticTermsSnapshot.terms);
         }
@@ -1729,6 +1934,213 @@
         });
     }
 
+    // Source: src/62-site-search.js
+    // Site queries are opt-in for an exact origin. No query is added to keyword/history storage.
+    const SITE_SEARCH_REGISTRY_KEY = 'hl_site_search_origins';
+    const SITE_SEARCH_HANDOFF_KEY = 'hl_site_search_handoffs';
+    const SITE_SEARCH_TTL = 5 * 60 * 1000;
+    const SITE_SEARCH_KEYS = ['q', 'query', 'search', 's', 'search_query', 'term', 'terms', 'keyword', 'keywords', 'searchTerm', 'searchterm', 'searchtext', 'search_text'];
+    let submittedSiteSearch = null;
+
+    function siteSearchOrigin(value = location.href) {
+        try {
+            const url = new URL(value);
+            return ['http:', 'https:'].includes(url.protocol) ? url.origin : '';
+        } catch { return ''; }
+    }
+
+    function siteSearchDestination(value) {
+        const target = searchDestination(value);
+        return target.length <= 8192 ? target : '';
+    }
+
+    function readSiteSearchRegistry() {
+        const data = GM_getValue(SITE_SEARCH_REGISTRY_KEY, null);
+        if (data == null) return { version: 1, origins: [] };
+        if (data.version !== 1 || !Array.isArray(data.origins) || data.origins.length > 128
+            || !data.origins.every(entry => entry && typeof entry.origin === 'string' && entry.origin.length > 0 && entry.origin.length <= 512
+                && siteSearchOrigin(entry.origin) === entry.origin
+                && typeof entry.generation === 'string' && entry.generation.length <= 100)) throw Error('Unknown site-search registry');
+        return data;
+    }
+
+    function siteSearchPreference() {
+        const origin = siteSearchOrigin();
+        if (!origin) return null;
+        try { return readSiteSearchRegistry().origins.find(entry => entry.origin === origin) || null; }
+        catch { return null; }
+    }
+
+    function siteSearchEnabled() { return !!siteSearchPreference(); }
+
+    function refreshSiteSearchContext() {
+        automaticTermsSnapshot = null;
+        restartHighlights();
+        // Watching must begin even when an opted-in SPA has not searched yet.
+        watchPageIdentity();
+    }
+
+    function setSiteSearchEnabled(value) {
+        const origin = siteSearchOrigin();
+        if (!origin) return false;
+        try {
+            const registry = readSiteSearchRegistry();
+            const current = registry.origins.find(entry => entry.origin === origin);
+            if (!!current === !!value) return true;
+            const origins = registry.origins.filter(entry => entry.origin !== origin);
+            if (value) {
+                if (origins.length >= 128) throw Error('Site-search registry is full');
+                // New generations prevent a previous opt-in's handoffs from returning after revocation.
+                origins.push({ origin, generation: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2) });
+            }
+            GM_setValue(SITE_SEARCH_REGISTRY_KEY, { version: 1, origins });
+        } catch { setPanelStatus('siteSearchSaveFailed'); return false; }
+        submittedSiteSearch = null;
+        refreshSiteSearchContext();
+        return true;
+    }
+
+    function siteSearchTerms(value) {
+        return splitSearchTerms(String(value).slice(0, 4096)).filter(term => term.length <= 256).slice(0, 64);
+    }
+
+    function siteSearchURLContext(value) {
+        try {
+            const url = new URL(value);
+            for (const key of SITE_SEARCH_KEYS) {
+                if (url.searchParams.has(key)) return { terms: siteSearchTerms(url.searchParams.get(key) || '') };
+            }
+        } catch {}
+        return null;
+    }
+
+    function readSiteSearchHandoffs() {
+        const data = GM_getValue(SITE_SEARCH_HANDOFF_KEY, null);
+        if (data == null) return [];
+        if (data.version !== 1 || !Array.isArray(data.entries)) throw Error('Unknown site-search handoffs');
+        return data.entries.slice(0, 48).filter(entry => {
+            const age = Date.now() - entry?.timestamp;
+            return Number.isFinite(entry?.timestamp) && age >= 0 && age < SITE_SEARCH_TTL
+                && typeof entry.origin === 'string' && entry.origin.length > 0 && entry.origin.length <= 512
+                && typeof entry.target === 'string' && entry.target.length <= 8192
+                && siteSearchOrigin(entry.origin) === entry.origin && siteSearchOrigin(entry.target) === entry.origin
+                && typeof entry.generation === 'string' && entry.generation.length <= 100
+                && Array.isArray(entry.terms) && entry.terms.length <= 64
+                && entry.terms.every(term => typeof term === 'string' && term.length > 1 && term.length <= 256)
+                && entry.terms.join(' ').length <= 4096
+                && (!entry.query || (typeof entry.query.name === 'string' && entry.query.name.length > 0
+                    && entry.query.name.length <= 128 && typeof entry.query.value === 'string' && entry.query.value.length <= 4096));
+        }).slice(0, 12);
+    }
+
+    function getSiteSearchContext() {
+        if (!autoSearch) return null;
+        const preference = siteSearchPreference();
+        if (!preference) { submittedSiteSearch = null; return null; }
+        if (submittedSiteSearch?.url === location.href && submittedSiteSearch.generation === preference.generation) {
+            return { terms: [...submittedSiteSearch.terms] };
+        }
+        submittedSiteSearch = null;
+        // Presence matters: an explicitly empty query overrides any earlier handoff.
+        const fromURL = siteSearchURLContext(location.href);
+        if (fromURL) return fromURL;
+        try {
+            const target = siteSearchDestination(location.href);
+            const currentURL = new URL(location.href);
+            const entries = readSiteSearchHandoffs().filter(entry => entry.origin === preference.origin
+                && entry.generation === preference.generation);
+            const entry = entries.find(entry => !entry.query && entry.target === target) || entries.find(entry => entry.query
+                && new URL(entry.target).pathname === currentURL.pathname
+                && currentURL.searchParams.get(entry.query.name) === entry.query.value);
+            return entry ? { terms: [...entry.terms] } : null;
+        } catch { return null; }
+    }
+
+    function storeSiteSearchHandoff(target, terms, preference, query = null) {
+        if (!target || siteSearchOrigin(target) !== preference.origin) return;
+        try {
+            const entries = readSiteSearchHandoffs().filter(entry => entry.target !== target || entry.origin !== preference.origin
+                || JSON.stringify(entry.query || null) !== JSON.stringify(query));
+            if (terms.length) entries.unshift({ origin: preference.origin, generation: preference.generation,
+                target, terms: [...terms], timestamp: Date.now(), ...(query ? { query } : {}) });
+            GM_setValue(SITE_SEARCH_HANDOFF_KEY, { version: 1, entries: entries.slice(0, 12) });
+        } catch { setPanelStatus('siteSearchTransferFailed'); }
+    }
+
+    function captureSiteSearchNavigation(event) {
+        if (!event.isTrusted || !enabled || !autoSearch || isBlacklisted()) return;
+        if (!['click', 'auxclick', 'contextmenu'].includes(event.type)
+            || (event.type === 'click' && event.button !== 0) || (event.type === 'auxclick' && event.button !== 1)) return;
+        const preference = siteSearchPreference();
+        if (!preference) return;
+        const link = event.target?.closest?.('a[href]');
+        if (!link || isOwnNode(link) || link.closest(OWN_UI) || link.hasAttribute('download')) return;
+        const target = siteSearchDestination(link.href);
+        if (!target || siteSearchOrigin(target) !== preference.origin) return;
+        const context = getSiteSearchContext();
+        if (context) storeSiteSearchHandoff(target, context.terms, preference);
+    }
+
+    // requestSubmit() emits isTrusted submit events too; require a preceding user submit gesture.
+    const siteSubmitActivations = new WeakMap();
+    function recordSiteSearchActivation(event) {
+        if (!event.isTrusted || !enabled || !autoSearch || isBlacklisted()) return;
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        if (event.type === 'input') { if (target.form) siteSubmitActivations.delete(target.form); return; }
+        if (event.isComposing || event.repeat) return;
+        const button = target.closest('button, input[type="submit"], input[type="image"]');
+        const submitButton = button && ['submit', 'image'].includes(button.type) ? button : null;
+        let form = null;
+        if (event.type === 'pointerdown' && event.button === 0 && submitButton) form = submitButton.form;
+        if (event.type === 'keydown' && (event.key === 'Enter' || (event.key === ' ' && submitButton))) {
+            form = submitButton?.form || (target instanceof HTMLInputElement ? target.form : null);
+        }
+        const preference = form && siteSearchPreference();
+        if (preference) siteSubmitActivations.set(form, { time: Date.now(), url: location.href, generation: preference.generation });
+    }
+
+    function captureSiteSearchSubmit(event) {
+        if (!event.isTrusted || event.type !== 'submit' || !enabled || !autoSearch || isBlacklisted()) return;
+        const preference = siteSearchPreference();
+        const form = event.target;
+        if (!preference || !(form instanceof HTMLFormElement) || isOwnNode(form) || form.closest(OWN_UI)
+            || [...form.elements].some(control => control instanceof HTMLInputElement && control.type === 'password')) return;
+        const intent = siteSubmitActivations.get(form);
+        siteSubmitActivations.delete(form);
+        if (!intent || intent.generation !== preference.generation || intent.url !== location.href || Date.now() - intent.time < 0 || Date.now() - intent.time > 2000) return;
+        const submitter = event.submitter;
+        const action = siteSearchDestination(submitter?.hasAttribute('formaction') ? submitter.formAction : form.action);
+        if (!action || siteSearchOrigin(action) !== preference.origin) return;
+        // Only actual search controls are read, and only following native confirmed submission.
+        const controls = [...form.elements].filter(control => control instanceof HTMLInputElement
+            && ['search', 'text'].includes(control.type) && !control.disabled
+            && !control.closest('[contenteditable]') && control.getClientRects().length
+            && (control.type === 'search' || SITE_SEARCH_KEYS.includes(control.name)));
+        if (controls.length !== 1) return;
+        const input = controls[0];
+        const terms = siteSearchTerms(input.value);
+        submittedSiteSearch = { url: location.href, generation: preference.generation, terms };
+        // POST/AJAX searches can keep their URL; exact action matching also covers normal POST results.
+        const method = submitter?.hasAttribute('formmethod') ? submitter.formMethod : form.method;
+        const query = method === 'get' && input.name && input.name.length <= 128 && input.value.length <= 4096
+            ? { name: input.name, value: input.value } : null;
+        // A GET form may carry hidden routing fields. Match only its confirmed query on the exact
+        // action path; unrelated field values are never read or copied into storage.
+        storeSiteSearchHandoff(action, terms, preference, query);
+        // MediaWiki can redirect a submitted search directly to a title, removing the query entirely.
+        // Only Wikipedia's known same-origin /w/index.php -> /wiki/Title route is inferred.
+        const actionURL = new URL(action);
+        if (domainMatches(actionURL.hostname, 'wikipedia.org') && actionURL.pathname === '/w/index.php'
+            && input.name === 'search' && input.value.length <= 4096 && input.value.trim()) {
+            const title = input.value.trim().replace(/ /g, '_');
+            const canonical = title[0].toUpperCase() + title.slice(1);
+            const target = new URL('/wiki/' + encodeURIComponent(canonical).replace(/%2F/gi, '/'), actionURL.origin);
+            storeSiteSearchHandoff(siteSearchDestination(target.href), terms, preference);
+        }
+        refreshSiteSearchContext();
+    }
+
     // Source: src/70-engine-navigation.js
     function updatePosBar() {
         let bar = document.getElementById('slim-pos-bar');
@@ -1773,7 +2185,7 @@
     }
 
     const SKIP_SELECTOR = 'script, style, textarea, input, noscript, code, pre, select, option, [contenteditable=""], [contenteditable="true"], [contenteditable="plaintext-only"]';
-    const OWN_UI = '#slim-hl-ui, #slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-hl-feedback, #slim-download';
+    const OWN_UI = '#slim-hl-ui, #slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-hl-feedback, #slim-find-bar, #slim-find-colors, #slim-download';
     const FRAME_BUDGET_MS = 10;
     let matchers = [];
     let ownNodes = new WeakSet(); // Markierungen und Textstücke, die dieses Skript selbst erzeugt hat
@@ -1823,6 +2235,7 @@
     }
 
     function restartHighlights() {
+        suspendQuickFind();
         highlightGeneration++; isHighlighting = false; refreshQueued = false;
         pendingNodes.clear(); needsFullRefresh = false;
         clearTimeout(debounceTimer); clearTimeout(refreshRetryTimer);
@@ -1837,6 +2250,7 @@
         isHighlighting = false;
         navigationCache = null;
         rebuildPageMatches();
+        scheduleQuickFind(0);
         watchPageIdentity();
         updateCounterAndTitle();
         if (uiById('kw-list')) updateKeywordCounts();
@@ -1852,6 +2266,7 @@
 
     /** Vollständiger Neuaufbau, nur nötig wenn sich Keywords oder Einstellungen ändern. */
     function refreshHighlights() {
+        suspendQuickFind();
         if (pageIdentity !== location.href) { refreshPageContext(); return; }
         if (!enabled || isBlacklisted()) return;
         if (isSelecting) {
@@ -2013,7 +2428,7 @@
 
     // Source: src/80-panel.js
     function applyAppearance() {
-        for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle', 'slim-hl-feedback']) {
+        for (const id of ['slim-hl-panel', 'slim-selection-tools', 'slim-hl-toggle', 'slim-hl-feedback', 'slim-find-bar']) {
             const el = uiById(id);
             if (el) {
                 el.dataset.theme = uiTheme;
@@ -2067,20 +2482,28 @@
         if (!panel || panel.style.display === 'none') return;
         const viewport = window.visualViewport;
         const width = viewport?.width || innerWidth, height = viewport?.height || innerHeight;
-        const left = viewport?.offsetLeft || 0, top = viewport?.offsetTop || 0;
+        const left = viewport?.offsetLeft || 0;
+        let top = viewport?.offsetTop || 0;
+        const finder = uiById('slim-find-bar');
+        const findBox = finder && !finder.hidden ? finder.getBoundingClientRect() : null;
+        const panelWidth = Math.max(0, Math.min(320, width - 24));
+        const panelLeft = Math.max(left + 12, Math.min(panelPos?.x ?? left + width - panelWidth - 20, left + width - panelWidth - 12));
+        const reserved = findBox && panelLeft < findBox.right && panelLeft + panelWidth > findBox.left ? Math.max(0, findBox.bottom + 8 - top) : 0;
+        top += reserved;
+        const availableHeight = Math.max(80, height - reserved);
         panel.style.width = Math.max(0, Math.min(320, width - 24)) + 'px';
-        panel.style.setProperty('--hl-panel-collapsed-height', Math.max(0, Math.min(560, height * .8, height - 24)) + 'px');
-        panel.style.setProperty('--hl-panel-expanded-height', Math.max(0, height - 24) + 'px');
+        panel.style.setProperty('--hl-panel-collapsed-height', Math.max(0, Math.min(560, height * .8, availableHeight - 24)) + 'px');
+        panel.style.setProperty('--hl-panel-expanded-height', Math.max(0, availableHeight - 24) + 'px');
         const box = panel.getBoundingClientRect();
         const custom = Number.isFinite(panelPos?.x) && Number.isFinite(panelPos?.y);
         const x = custom ? panelPos.x : left + width - box.width - 20;
-        const y = custom ? panelPos.y : top + (height - box.height) / 2;
+        const y = custom ? panelPos.y : top + (availableHeight - box.height) / 2;
         const next = {
             x: Math.max(left + 12, Math.min(x, left + width - box.width - 12)),
-            y: Math.max(top + 12, Math.min(y, top + height - box.height - 12))
+            y: Math.max(top + 12, Math.min(y, top + availableHeight - box.height - 12))
         };
         panel.style.left = next.x + 'px'; panel.style.top = next.y + 'px';
-        if (custom) panelPos = next;
+        if (custom && !reserved) panelPos = next;
         if (persist) save();
     }
 
@@ -2100,7 +2523,7 @@
     }
 
     function handlePanelShortcut(event) {
-        if (!event.isTrusted || isBlacklisted() || event.isComposing || event.repeat || composing || recordingShortcut || editingTarget(event.target) || !panelShortcutAvailable() || !shortcutMatches(event, PANEL_SHORTCUT)) return false;
+        if (!event.isTrusted || isBlacklisted() || event.isComposing || event.repeat || composing || recordingShortcut || recordingFindShortcut || editingTarget(event.target) || !panelShortcutAvailable() || !shortcutMatches(event, PANEL_SHORTCUT)) return false;
         event.preventDefault(); event.stopPropagation(); hideSelectionTools();
         const feedback = uiById('slim-hl-feedback');
         if (feedback?.dataset.message === 'panelStateSaveFailed') { feedback.hidden = true; feedback.textContent = ''; }
@@ -2189,6 +2612,7 @@
             <header id="slim-hl-header" tabindex="0" aria-label="${t('movePanel')}" title="${t('movePanel')}">
                 <span class="brand"><img data-hl-logo src="${LOGOS[uiTheme]}" alt="">Highlight</span>
                 <div class="header-actions">
+                    <button type="button" class="icon-btn" id="open-find" title="${t('findTitle')}" aria-label="${t('findTitle')}">${icon('find')}</button>
                     <button type="button" class="icon-btn" id="btn-reset" title="${t('resetPosition')}" aria-label="${t('resetPosition')}">${icon('reset')}</button>
                     <button type="button" class="icon-btn" id="btn-min" aria-controls="slim-panel-body" aria-expanded="${!panelState.minimized}" aria-label="${t(panelState.minimized ? 'expand' : 'minimize')}" title="${t(panelState.minimized ? 'expand' : 'minimize')}">${icon(panelState.minimized ? 'expand' : 'minus')}</button>
                     <button type="button" class="icon-btn" id="btn-close" title="${t('close')}" aria-label="${t('close')}">${icon('close')}</button>
@@ -2255,12 +2679,15 @@
                     <div class="launcher-size-row"><input type="range" id="launcher-inset" min="8" max="80" step="4"><output id="launcher-inset-value" for="launcher-inset"></output></div>
                     <label class="check-label"><input type="checkbox" id="chk-enabled" ${enabled ? 'checked' : ''}> ${t('enabled')}</label>
                     <label class="check-label"><input type="checkbox" id="chk-auto" ${autoSearch ? 'checked' : ''}> ${t('autoSearch')}</label>
+                    <label class="check-label"><input type="checkbox" id="site-search-enabled" ${siteSearchEnabled() ? 'checked' : ''}> ${t('siteSearchEnabled')}</label><p class="hint">${t('siteSearchHint')}</p>
                     <label class="check-label"><input type="checkbox" id="chk-posbar" ${showPosBar ? 'checked' : ''}> ${t('posBar')}</label>
                     <h3 class="section-title">${t('shortcutTitle')}</h3>
                     <output id="shortcut-label" aria-live="polite"></output>
                     <p class="hint">${t('shortcutHelp')}</p>
                     <div class="shortcut-actions"><button type="button" id="record-shortcut">${t('recordShortcut')}</button><button type="button" id="disable-shortcut">${t('disableShortcut')}</button><button type="button" id="reset-shortcut">${t('resetShortcut')}</button></div>
                     <p id="shortcut-error" class="error" role="status"></p>
+                    <h3 class="section-title">${t('findShortcutTitle')}</h3><output id="find-shortcut-label" aria-live="polite"></output>
+                    <div class="shortcut-actions"><button type="button" id="record-find-shortcut">${t('recordShortcut')}</button><button type="button" id="disable-find-shortcut">${t('disableShortcut')}</button><button type="button" id="reset-find-shortcut">${t('resetShortcut')}</button></div><p id="find-shortcut-error" class="error" role="status"></p>
                     <label for="copy-format">${t('copyFormat')}</label><select id="copy-format"><option value="plain">${t('plainFormat')}</option><option value="markdown">${t('markdownFormat')}</option></select>
                     <button type="button" id="export-markdown" class="btn">${t('exportMarkdown')}</button><button type="button" id="export-saved" class="btn">${t('exportSaved')}</button>
                     <label for="search-engine">${t('engine')}</label>
@@ -2268,7 +2695,7 @@
                     <label for="ui-lang">${t('language')}</label>
                     <select id="ui-lang"><option value="auto">${t('langAuto')}</option><option value="de">Deutsch</option><option value="en">English</option></select>
                 </div></details>
-                <details id="help-section"><summary>${t('helpTitle')}</summary><div class="details-body"><p class="hint">${t('pageHint')}</p><p class="hint">${t('navigationHelp')}</p><p id="page-shortcut-hint" class="hint"></p><p id="panel-shortcut-hint" class="hint"></p></div></details>
+                <details id="help-section"><summary>${t('helpTitle')}</summary><div class="details-body"><p class="hint">${t('pageHint')}</p><p class="hint">${t('navigationHelp')}</p><p id="page-shortcut-hint" class="hint"></p><p id="panel-shortcut-hint" class="hint"></p><p id="find-shortcut-hint" class="hint"></p></div></details>
                 </div>
             </div>`;
         ensureUIRoot().appendChild(panel);
@@ -2315,6 +2742,12 @@
             button.innerHTML = icon(panelState.minimized ? 'expand' : 'minus');
             clampPanelPosition(panel, true);
         };
+        panel.querySelector('#open-find').onclick = openQuickFind;
+        panel.querySelector('#site-search-enabled').onchange = event => { setSiteSearchEnabled(event.target.checked); event.target.checked = siteSearchEnabled(); };
+        panel.querySelector('#record-find-shortcut').onclick = () => { recordingShortcut = false; recordingFindShortcut = !recordingFindShortcut; renderFindShortcut(); };
+        panel.querySelector('#record-find-shortcut').onblur = () => { recordingFindShortcut = false; renderFindShortcut(); };
+        panel.querySelector('#disable-find-shortcut').onclick = () => saveFindShortcut(null);
+        panel.querySelector('#reset-find-shortcut').onclick = () => saveFindShortcut({ ...DEFAULT_FIND_SHORTCUT });
         panel.querySelector('#btn-close').onclick = () => setPanelOpen(false);
         panel.onkeydown = e => { if (e.key === 'Escape' && !e.isComposing && !composing) { e.preventDefault(); e.stopPropagation(); setPanelOpen(false); } };
         panel.querySelector('#btn-prev').onclick = () => goTo(-1);
@@ -2351,6 +2784,7 @@
             enabled = e.target.checked; save();
             if (enabled) { if (!observer) setupObserver(); refreshHighlights(); }
             else {
+                closeQuickFind();
                 highlightGeneration++; isHighlighting = false; refreshQueued = false;
                 pendingNodes.clear(); cleanupHighlights(); clearPagePaint(); keywordCounts = {}; currentIdx = -1;
                 renderPageList(); updateCounterAndTitle(); updateKeywordCounts(); renderMatchList(); updatePosBar(); hideSelectionTools(); observer?.disconnect();
@@ -2366,7 +2800,7 @@
         panel.querySelector('#launcher-position').onchange = e => { launcherPosition = e.target.value; applyAppearance(); saveAppearance(); };
         panel.querySelector('#launcher-inset').oninput = e => { launcherInset = normalizeLauncherInset(+e.target.value); applyAppearance(); };
         panel.querySelector('#launcher-inset').onchange = saveAppearance;
-        panel.querySelector('#chk-auto').onchange = e => { autoSearch = e.target.checked; save(); refreshHighlights(); };
+        panel.querySelector('#chk-auto').onchange = e => { autoSearch = e.target.checked; automaticTermsSnapshot = null; save(); restartHighlights(); };
         panel.querySelector('#chk-posbar').onchange = e => { showPosBar = e.target.checked; save(); updatePosBar(); };
         panel.querySelector('#search-engine').onchange = e => { searchEngine = e.target.value; save(); };
         panel.querySelector('#clear-page').onclick = () => { if (!ensurePageIdentity()) return; rememberPageChange(); const before = pageUndo.at(-1); pageTerms = []; if (!savePageRecord(before.terms.some(term => term.saved))) { pageTerms = before.terms; pageUndo.pop(); renderPageList(); return; } currentIdx = -1; refreshPageResults(); panel.querySelector('#undo-page').focus({ preventScroll: true }); };
@@ -2383,7 +2817,7 @@
         panel.querySelector('#export-markdown').onclick = exportPageMarkdown;
         panel.querySelector('#export-saved').onclick = exportSavedPages;
         panel.querySelector('#close-manual-copy').onclick = () => { panel.querySelector('#manual-copy-section').hidden = true; panel.querySelector('#page-heading').focus(); };
-        panel.querySelector('#record-shortcut').onclick = () => { recordingShortcut = !recordingShortcut; renderShortcut(); };
+        panel.querySelector('#record-shortcut').onclick = () => { recordingFindShortcut = false; recordingShortcut = !recordingShortcut; renderShortcut(); };
         panel.querySelector('#record-shortcut').onblur = () => { recordingShortcut = false; renderShortcut(); };
         panel.querySelector('#disable-shortcut').onclick = () => { recordingShortcut = false; selectionShortcut = null; save(); renderShortcut(); };
         panel.querySelector('#reset-shortcut').onclick = () => { recordingShortcut = false; selectionShortcut = { ...DEFAULT_SHORTCUT }; save(); renderShortcut(); };
@@ -2399,10 +2833,13 @@
                 manualCopyVisible: !panel.querySelector('#manual-copy-section').hidden,
                 formInvalid: panel.querySelector('#new-kw').getAttribute('aria-invalid') === 'true'
             };
-            lang = e.target.value; composing = false; recordingShortcut = false; hideSelectionTools(); uiById('slim-selection-tools')?.remove(); save();
+            const findReturnId = panel.contains(quickFind.returnFocus) ? quickFind.returnFocus.id : null;
+            lang = e.target.value; composing = false; recordingShortcut = false; recordingFindShortcut = false; hideSelectionTools(); uiById('slim-selection-tools')?.remove(); save();
             const toggle = uiById('slim-hl-toggle');
             if (toggle) { toggle.title = t('openPanel'); toggle.setAttribute('aria-label', t('openPanel')); }
             panel.remove(); createPanel(state);
+            if (findReturnId) quickFind.returnFocus = uiById(findReturnId) || uiById('slim-hl-header');
+            renderQuickFind();
         };
         renderPageList(); renderShortcut(); renderKeywordList(); renderHistory(); updateUndo(); renderPanelStatus();
         updateCounterAndTitle(); renderMatchList(); updatePreview();
@@ -2528,6 +2965,9 @@
     function bindGlobalHandlers() {
         // Refresh the query at native link activation, not just once at page load.
         for (const type of ['click', 'auxclick', 'contextmenu']) document.addEventListener(type, captureSearchNavigation, true);
+        for (const type of ['click', 'auxclick', 'contextmenu']) document.addEventListener(type, captureSiteSearchNavigation, true);
+        document.addEventListener('submit', captureSiteSearchSubmit, true);
+        for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, recordSiteSearchActivation, true);
         document.addEventListener('selectionchange', () => {
             clearTimeout(selectionTimer); selectionTimer = setTimeout(updateSelectionTools, 80);
         });
@@ -2536,12 +2976,13 @@
         });
         window.addEventListener('scroll', () => hideSelectionTools(), { passive: true });
         document.addEventListener('keydown', e => {
-            if (!e.isTrusted || !recordingShortcut || uiActiveElement()?.id !== 'record-shortcut' || e.isComposing || e.repeat || composing) return;
+            if (!e.isTrusted || !(recordingShortcut || recordingFindShortcut) || uiActiveElement()?.id !== (recordingFindShortcut ? 'record-find-shortcut' : 'record-shortcut') || e.isComposing || e.repeat || composing) return;
             e.preventDefault(); e.stopImmediatePropagation();
-            if (e.key === 'Escape') { recordingShortcut = false; renderShortcut(); return; }
+            if (e.key === 'Escape') { recordingShortcut = false; recordingFindShortcut = false; renderShortcut(); return; }
             if (['Alt', 'Control', 'Shift', 'Meta'].includes(e.key)) return;
             const candidate = { key: e.key.toLowerCase(), alt: e.altKey, ctrl: e.ctrlKey, shift: e.shiftKey, meta: e.metaKey };
-            if (!validShortcut(candidate)) { uiById('shortcut-error').textContent = t('shortcutInvalid'); return; }
+            if (!validShortcut(candidate)) { uiById(recordingFindShortcut ? 'find-shortcut-error' : 'shortcut-error').textContent = t('shortcutInvalid'); return; }
+            if (recordingFindShortcut) { saveFindShortcut(candidate); return; }
             selectionShortcut = candidate; recordingShortcut = false;
             uiById('shortcut-error').textContent = ''; save(); renderShortcut();
         }, true);
@@ -2563,7 +3004,7 @@
         document.addEventListener('keydown', e => {
             if (!e.isTrusted || isBlacklisted() || e.isComposing || composing) return;
             if (e.repeat) return;
-            if (handlePanelShortcut(e)) return;
+            if (handleQuickFindShortcut(e) || handlePanelShortcut(e)) return;
             if (e.key === 'Escape' && !uiById('slim-selection-tools')?.hidden) hideSelectionTools(true);
             if (!editingTarget(e.target) && enabled && shortcutMatches(e)) {
                 const selected = selectedDocumentText();
@@ -2584,11 +3025,13 @@
     function handleMutations(records) {
         if (isBlacklisted()) return;
         if (selectionSnapshot && !validSelectionSnapshot()) hideSelectionTools(true);
+        let findDirty = false;
         for (const r of records) {
             const target = r.target.nodeType === 1 ? r.target : r.target.parentElement;
             if (!target || target.closest(OWN_UI)) continue;
             const changed = [...r.addedNodes, ...r.removedNodes];
             if (changed.length && changed.every(n => (n.nodeType === 1 ? n : n.parentElement)?.closest(OWN_UI))) continue;
+            findDirty = true;
             if (r.type === 'attributes' && !pageTerms.length) continue;
             if (pageTerms.length) { pageTextDirty = true; pageSearchGeneration++; pageSearchBusy = false; }
             if (target.closest('.slim-hl')) { needsFullRefresh = true; continue; }
@@ -2597,6 +3040,7 @@
                 if ((n.nodeType === 1 || n.nodeType === 3) && !isOwnNode(n)) pendingNodes.add(n);
             });
         }
+        if (findDirty && quickFind.open) scheduleQuickFind(180);
         if ((!pendingNodes.size && !pageTextDirty && !needsFullRefresh) || isHighlighting) return;
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
@@ -2640,6 +3084,7 @@
     });
 
     function excludeCurrentDomain() {
+        closeQuickFind();
         blacklist.push(location.hostname);
         highlightGeneration++; isHighlighting = false; refreshQueued = false;
         pendingNodes.clear(); observer?.disconnect(); cleanupHighlights(); clearPagePaint(); hideSelectionTools(); keywordCounts = {}; currentIdx = -1;

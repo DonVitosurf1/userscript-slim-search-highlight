@@ -10,6 +10,7 @@ const PERSISTED = {
     hl_show_posbar: () => showPosBar,
     hl_lang: () => lang,
     hl_selection_shortcut: () => selectionShortcut,
+    hl_find_shortcut: () => findShortcut,
     hl_copy_format: () => copyFormat,
     hl_ui_theme: () => uiTheme,
     hl_ui_transparency: () => uiTransparency,
@@ -157,8 +158,12 @@ function captureSearchNavigation(event) {
 }
 
 const initialSearchPage = location.href;
+let currentAutomaticSource = 'search';
 function automaticSearchTerms() {
+    currentAutomaticSource = 'search';
     if (isSearchEngine(location.href)) return getSearchTerms();
+    const site = getSiteSearchContext();
+    if (site) { currentAutomaticSource = 'site'; return site.terms; }
     try {
         const handoff = readSearchHandoffs().find(entry => entry.target === searchDestination(location.href));
         if (handoff) return handoff.terms;
@@ -187,7 +192,7 @@ function getCrossPageTerms() {
     result.push(...manualTerms);
     if (autoSearch) {
         if (!automaticTermsSnapshot || automaticTermsSnapshot.url !== location.href || isSearchEngine(location.href)) {
-            automaticTermsSnapshot = { url: location.href, terms: automaticSearchTerms() };
+            automaticTermsSnapshot = { url: location.href, terms: automaticSearchTerms(), source: currentAutomaticSource };
         }
         result.push(...automaticTermsSnapshot.terms);
     }

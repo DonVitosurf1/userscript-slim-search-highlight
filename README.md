@@ -39,11 +39,14 @@ Unter **Auf dieser Seite** stehen Suchbegriffe und eigene Auswahlen gemeinsam mi
 |---|---|
 | Auswahl und alle weiteren Vorkommen markieren | **Alt+Shift+H** · einstellbar |
 | Panel öffnen / schließen | **Alt+Shift+P** |
+| Seite durchsuchen | **Strg+Shift+F** · einstellbar |
 | Vorheriger / nächster Treffer | **Alt+← / →** |
 
 Die Hover-Hinweise zeigen die verfügbaren Shortcuts. Ist Alt+Shift+P bereits als Markieren-Shortcut vergeben, behält diese Belegung Vorrang. Das Logo am Bildschirmrand öffnet das Panel jederzeit.
 
 ## Weitere Funktionen
+
+**Neu: Schnellsuche und Website-Suche.** Mit **Strg+Shift+F** oder der Lupe im Panel suchst du direkt auf der Seite. Die Vorschau markiert alle Treffer; **+ Markieren** übernimmt den Text in die Seitenmarkierungen. Interne Suchanfragen lassen sich unter Einstellungen pro Website aktivieren. [Bedienung und Grenzen](docs/usage.de.md#schnellsuche).
 
 - **Websuche und Zitate:** „Im Web suchen“ öffnet die Suche in einem neuen Tab und lässt die Leseseite offen. Außerdem Zitate mit Quelle oder Links zur Textstelle kopieren; Passagen als Markdown und gespeicherte Seiten als JSON exportieren.
 - **Google-Suchwörter übernehmen:** Bei aktivierter automatischer Übernahme werden die Suchwörter nach dem Öffnen eines Ergebnisses hervorgehoben. Eigene Markierungen ergänzen diese Treffer; Zähler, Navigation und Seitenleiste zeigen beide gemeinsam.

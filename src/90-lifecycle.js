@@ -1,6 +1,9 @@
 function bindGlobalHandlers() {
     // Refresh the query at native link activation, not just once at page load.
     for (const type of ['click', 'auxclick', 'contextmenu']) document.addEventListener(type, captureSearchNavigation, true);
+    for (const type of ['click', 'auxclick', 'contextmenu']) document.addEventListener(type, captureSiteSearchNavigation, true);
+    document.addEventListener('submit', captureSiteSearchSubmit, true);
+    for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, recordSiteSearchActivation, true);
     document.addEventListener('selectionchange', () => {
         clearTimeout(selectionTimer); selectionTimer = setTimeout(updateSelectionTools, 80);
     });
@@ -9,12 +12,13 @@ function bindGlobalHandlers() {
     });
     window.addEventListener('scroll', () => hideSelectionTools(), { passive: true });
     document.addEventListener('keydown', e => {
-        if (!e.isTrusted || !recordingShortcut || uiActiveElement()?.id !== 'record-shortcut' || e.isComposing || e.repeat || composing) return;
+        if (!e.isTrusted || !(recordingShortcut || recordingFindShortcut) || uiActiveElement()?.id !== (recordingFindShortcut ? 'record-find-shortcut' : 'record-shortcut') || e.isComposing || e.repeat || composing) return;
         e.preventDefault(); e.stopImmediatePropagation();
-        if (e.key === 'Escape') { recordingShortcut = false; renderShortcut(); return; }
+        if (e.key === 'Escape') { recordingShortcut = false; recordingFindShortcut = false; renderShortcut(); return; }
         if (['Alt', 'Control', 'Shift', 'Meta'].includes(e.key)) return;
         const candidate = { key: e.key.toLowerCase(), alt: e.altKey, ctrl: e.ctrlKey, shift: e.shiftKey, meta: e.metaKey };
-        if (!validShortcut(candidate)) { uiById('shortcut-error').textContent = t('shortcutInvalid'); return; }
+        if (!validShortcut(candidate)) { uiById(recordingFindShortcut ? 'find-shortcut-error' : 'shortcut-error').textContent = t('shortcutInvalid'); return; }
+        if (recordingFindShortcut) { saveFindShortcut(candidate); return; }
         selectionShortcut = candidate; recordingShortcut = false;
         uiById('shortcut-error').textContent = ''; save(); renderShortcut();
     }, true);
@@ -36,7 +40,7 @@ function bindGlobalHandlers() {
     document.addEventListener('keydown', e => {
         if (!e.isTrusted || isBlacklisted() || e.isComposing || composing) return;
         if (e.repeat) return;
-        if (handlePanelShortcut(e)) return;
+        if (handleQuickFindShortcut(e) || handlePanelShortcut(e)) return;
         if (e.key === 'Escape' && !uiById('slim-selection-tools')?.hidden) hideSelectionTools(true);
         if (!editingTarget(e.target) && enabled && shortcutMatches(e)) {
             const selected = selectedDocumentText();
@@ -57,11 +61,13 @@ let needsFullRefresh = false;
 function handleMutations(records) {
     if (isBlacklisted()) return;
     if (selectionSnapshot && !validSelectionSnapshot()) hideSelectionTools(true);
+    let findDirty = false;
     for (const r of records) {
         const target = r.target.nodeType === 1 ? r.target : r.target.parentElement;
         if (!target || target.closest(OWN_UI)) continue;
         const changed = [...r.addedNodes, ...r.removedNodes];
         if (changed.length && changed.every(n => (n.nodeType === 1 ? n : n.parentElement)?.closest(OWN_UI))) continue;
+        findDirty = true;
         if (r.type === 'attributes' && !pageTerms.length) continue;
         if (pageTerms.length) { pageTextDirty = true; pageSearchGeneration++; pageSearchBusy = false; }
         if (target.closest('.slim-hl')) { needsFullRefresh = true; continue; }
@@ -70,6 +76,7 @@ function handleMutations(records) {
             if ((n.nodeType === 1 || n.nodeType === 3) && !isOwnNode(n)) pendingNodes.add(n);
         });
     }
+    if (findDirty && quickFind.open) scheduleQuickFind(180);
     if ((!pendingNodes.size && !pageTextDirty && !needsFullRefresh) || isHighlighting) return;
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
@@ -113,6 +120,7 @@ GM_registerMenuCommand(t('menuOpen'), () => {
 });
 
 function excludeCurrentDomain() {
+    closeQuickFind();
     blacklist.push(location.hostname);
     highlightGeneration++; isHighlighting = false; refreshQueued = false;
     pendingNodes.clear(); observer?.disconnect(); cleanupHighlights(); clearPagePaint(); hideSelectionTools(); keywordCounts = {}; currentIdx = -1;

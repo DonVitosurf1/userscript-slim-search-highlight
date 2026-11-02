@@ -97,3 +97,9 @@ Security regressions run with `node tests/run_tests.js -k security_`. Unlike fun
 Follow the [release checklist](releasing.md) for real userscript-manager/browser tests, accessibility and integration checks. Automated Chromium coverage is not a substitute for those manual checks.
 
 CI runs the deterministic check, frozen installation and the full browser suite. Do not disable TLS/checksums or weaken assertions to make environment failures pass.
+
+## Search-feature captures
+
+`CHROMIUM_PATH=/usr/bin/chromium npm run screenshots -- --search` captures the actual website-search source and live finder in German/English, light/dark, 1200px desktop and 390px narrow views. The fixture opts in only example.test, uses native shortcuts and checks viewport bounds, non-overlap, preview counts and page errors. Desktop `search-{de,en}-{light,dark}-1200.png` files map to `assets/find-light.png`, `find.png`, `find-light-en.png`, `find-en.png`; narrow captures stay in ignored artifacts. Host-fixture responsive styles do not change owned UI styles.
+
+Focused suites: `-k quick_find_`, `-k site_search_`, `-k security_ui_website_submit`. The isolated-world security suite never loads the functional UI adapter. Search tests include script-generated trusted `requestSubmit`, real Enter/Space/button submission, exact-origin handoffs, new tabs, URL cancellation, preview focus and storage rollback.

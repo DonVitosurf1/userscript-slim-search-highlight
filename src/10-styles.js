@@ -60,12 +60,12 @@ const UI_CSS = `
     #slim-hl-panel #shortcut-label { display: block; font-weight: 600; margin: 6px 0; }
     #slim-hl-panel #navigation-scope { margin: 0; }
     .slim-hl { border-radius: 3px; padding: 0 2px; cursor: pointer; }
-    #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle, #slim-hl-feedback {
+    #slim-hl-panel, #slim-selection-tools, #slim-hl-toggle, #slim-hl-feedback, #slim-find-bar {
         --hl-brand-logo: url("${LOGOS.dark}");
         ${themeDeclarations('dark')}
         --hl-radius: 6px; --hl-gap: 8px; --hl-pad: 10px;
     }
-    #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light], #slim-hl-feedback[data-theme=light] {
+    #slim-hl-panel[data-theme=light], #slim-selection-tools[data-theme=light], #slim-hl-toggle[data-theme=light], #slim-hl-feedback[data-theme=light], #slim-find-bar[data-theme=light] {
         --hl-brand-logo: url("${LOGOS.light}");
         ${themeDeclarations('light')}
     }
@@ -198,5 +198,27 @@ const UI_CSS = `
         #slim-hl-panel { border: 1px solid CanvasText; }
         #slim-hl-panel :focus-visible, #slim-hl-toggle:focus-visible { outline-color: Highlight; }
     }
+    #slim-find-bar { all: initial; position: fixed; z-index: 2147483647; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: min(480px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: 8px; border: 1px solid var(--hl-divider); border-radius: 10px; background: var(--hl-bg); color: var(--hl-text); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme); box-sizing: border-box; pointer-events: auto; box-shadow: 0 6px 20px var(--hl-shadow); scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
+    #slim-find-bar :where(:not(svg, svg *)) { all: revert; font: inherit; color: inherit; box-sizing: border-box; }
+    #slim-find-bar[hidden], #slim-find-bar [hidden] { display: none !important; }
+    #slim-find-bar .find-row, #slim-find-bar .find-options { display: flex; align-items: center; gap: 4px; min-width: 0; }
+    #slim-find-bar .find-field { display: flex; align-items: center; flex: 1; min-width: 64px; border: 1px solid var(--hl-border); border-radius: 6px; background: var(--hl-field); }
+    #slim-find-bar #find-query { width: 100%; min-width: 0; border: 0; background: transparent; padding: 7px 8px; color: var(--hl-text); caret-color: var(--hl-focus); outline-offset: -2px; }
+    #slim-find-bar #find-query::placeholder { color: var(--hl-muted); }
+    #slim-find-bar button { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-width: 32px; min-height: 36px; padding: 5px; border: 0; border-radius: 6px; color: var(--hl-text); background: transparent; cursor: pointer; }
+    #slim-find-bar button:hover:not(:disabled) { background: var(--hl-hover); }
+    #slim-find-bar button:active:not(:disabled) { background: var(--hl-active); }
+    #slim-find-bar button:disabled { opacity: .5; cursor: default; }
+    #slim-find-bar :focus-visible { outline: 2px solid var(--hl-focus); outline-offset: -2px; }
+    #slim-find-bar svg { display: block; width: 18px; height: 18px; flex-shrink: 0; }
+    #slim-find-bar #find-counter { white-space: nowrap; min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; font-size: 12px; color: var(--hl-accent-text); }
+    #slim-find-bar .find-options { flex-wrap: wrap; margin-top: 4px; gap: 8px; }
+    #slim-find-bar label { display: inline-flex; gap: 4px; align-items: center; min-height: 32px; font-size: 12px; cursor: pointer; }
+    #slim-find-bar input[type=checkbox] { accent-color: var(--hl-focus); width: 16px; height: 16px; margin: 0; }
+    #slim-find-bar #find-add { margin-left: auto; padding: 5px 8px; background: var(--hl-surface); font-size: 12px; }
+    #slim-find-bar #find-status { margin: 2px 0 0; min-height: 17px; color: var(--hl-muted); font-size: 12px; }
+    @media (max-width: 600px) { #slim-find-bar button, #slim-find-bar label { min-height: 44px; } #slim-find-bar #find-query { font-size: 16px; } #slim-find-bar .find-row > button { min-width: 36px; } }
+    @media (forced-colors: active) { #slim-find-bar { border-color: CanvasText; scrollbar-color: auto; } #slim-find-bar :focus-visible { outline-color: Highlight; } }
+
 `;
 GM_addStyle(UI_CSS);

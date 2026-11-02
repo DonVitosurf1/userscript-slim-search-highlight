@@ -66,6 +66,18 @@ With automatic search transfer enabled, `hl_cross_terms` contains `{terms, times
 
 These records are valid for ten minutes; expiry stops their use, rather than guaranteeing immediate deletion from userscript storage. Automatic capture is disabled by the search-transfer option. Unknown handoff versions are not overwritten. The same destination uses its latest captured context; cross-tab writes are not transactional. Search caches are separate from `hl_keywords` and `hl_page_annotations`, and are not included in saved-page JSON export. No query words are appended to result links or sent to a service by the script.
 
+## Finder and website search
+
+`hl_find_shortcut` uses the same validated modifier/key object as the marking shortcut; default is `{ "key":"f", "ctrl":true, "shift":true, "alt":false, "meta":false }`, and `null` disables it. Failed writes retain the previous setting. Finder query, preview ranges, counter and options are memory-only, separate from page records and history. Existing marking/panel bindings win conflicts.
+
+`hl_site_search_origins` contains `{version:1, origins:[{origin,generation}]}` with at most 128 exact HTTP(S) origins (maximum 512 characters each). Each new opt-in gets a generation; disabling/re-enabling does not resurrect old handoffs. Only the current-origin boolean appears in owned UI.
+
+`hl_site_search_handoffs` contains `{version:1, entries:[{origin,generation,target,terms,timestamp,query?}]}`. Targets are same-origin HTTP(S) URLs without fragments (maximum 8192 characters); twelve entries/five-minute use TTL. Query input is bounded to 4096 characters, 64 terms and 256 characters per term. Expiry restricts use, not immediate physical deletion. Unknown versions are retained without writes.
+
+For a confirmed GET form with a custom search-field name, optional `query:{name,value}` records only that search control (name≤128, value≤4096); restoration requires the exact action pathname and exact submitted parameter value within the opted-in origin/generation. Other form values are not read. Concurrent manager writes use the latest read/merge/write, without transactional guarantees.
+
+Form submission requires a recent native submit-button/Enter activation, not merely `submit.isTrusted` (JavaScript `requestSubmit()` can create trusted events). Activation tokens contain form identity/time/URL/generation in memory, are consumed once and expire after two seconds; subsequent native editing invalidates them. These caches do not enter keyword/page exports or shared search history. Cross-origin site-search transfer is blocked.
+
 ## Exports
 
 Markdown export contains the current page passages with source URLs. “Quote + URL” copies the current selection in plain text or Markdown. Text-fragment copying falls back to the page URL when unsupported. Exported quotes and full URLs can contain personal information; export/copy is always an explicit action, with no background upload.

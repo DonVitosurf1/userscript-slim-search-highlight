@@ -41,7 +41,7 @@ function updatePosBar() {
 }
 
 const SKIP_SELECTOR = 'script, style, textarea, input, noscript, code, pre, select, option, [contenteditable=""], [contenteditable="true"], [contenteditable="plaintext-only"]';
-const OWN_UI = '#slim-hl-ui, #slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-hl-feedback, #slim-download';
+const OWN_UI = '#slim-hl-ui, #slim-hl-panel, #slim-hl-toggle, #slim-pos-bar, #slim-selection-tools, #slim-hl-feedback, #slim-find-bar, #slim-find-colors, #slim-download';
 const FRAME_BUDGET_MS = 10;
 let matchers = [];
 let ownNodes = new WeakSet(); // Markierungen und Textstücke, die dieses Skript selbst erzeugt hat
@@ -91,6 +91,7 @@ function highlightRoots(roots, done) {
 }
 
 function restartHighlights() {
+    suspendQuickFind();
     highlightGeneration++; isHighlighting = false; refreshQueued = false;
     pendingNodes.clear(); needsFullRefresh = false;
     clearTimeout(debounceTimer); clearTimeout(refreshRetryTimer);
@@ -105,6 +106,7 @@ function afterHighlight() {
     isHighlighting = false;
     navigationCache = null;
     rebuildPageMatches();
+    scheduleQuickFind(0);
     watchPageIdentity();
     updateCounterAndTitle();
     if (uiById('kw-list')) updateKeywordCounts();
@@ -120,6 +122,7 @@ function afterHighlight() {
 
 /** Vollständiger Neuaufbau, nur nötig wenn sich Keywords oder Einstellungen ändern. */
 function refreshHighlights() {
+    suspendQuickFind();
     if (pageIdentity !== location.href) { refreshPageContext(); return; }
     if (!enabled || isBlacklisted()) return;
     if (isSelecting) {

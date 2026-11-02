@@ -28,7 +28,7 @@ This is a bounded native-regex subset, **not** an unrestricted regex engine with
 
 ## Domains and storage
 
-Ordinary domain scopes use normalized hostname equality or a real dot-subdomain boundary. Search capture uses a finite list of official provider domains, rather than matching a provider's name anywhere in the hostname.
+Ordinary domain scopes use normalized hostname equality or a real dot-subdomain boundary. Search-engine capture uses a finite official-provider allowlist. Internal website search is a separate exact-origin opt-in, with same-origin destination matching and generation-scoped handoffs. Form reads require a native submit activation; `isTrusted` alone is insufficient because `requestSubmit()` may generate a trusted submit event. Password/ambiguous forms are rejected, unrelated controls are not read, and no website terms enter shared history.
 
 Saved-page records, global preferences and recent searches remain local GM data. Full URL keys and exports can contain private text or query parameters. Search-handoff TTL limits use, not immediate physical deletion. See the [data format](data-format.md) for retention and concurrency details.
 
@@ -39,3 +39,5 @@ Temporary hiding is a reading control, not a confidentiality boundary: the term 
 `security-ui` tests use Chromium isolated worlds, real closed roots and simulated manager APIs. They cover direct DOM access, native search, native editing/blur, synthetic actions, forged/mutated marks, cross-domain automatic-mark collisions and real export clicks. The normal functional/screenshot fixture uses an explicitly open test root only for inspection; it never overrides `isTrusted`. That adapter is not included in the shipped userscript and is never used by the isolated-world security suite.
 
 Real Tampermonkey/Violentmonkey sandbox and download compatibility still needs manual release verification. No webpage script can guarantee control over hostile page rendering, clickjacking, browser bugs or a compromised userscript manager. Installed updates come from GitHub `main`; repository access controls are part of the trust model.
+
+The finder uses literal queries and private preview state. Closing cancels its jobs and removes only its own native Highlight groups. It never saves query text; adoption and permanent/page saving remain separate explicit actions. Native Ctrl+F remains available.

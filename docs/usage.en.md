@@ -22,6 +22,34 @@ Transfer does not require query parameters in the referrer and does not append w
 
 An unfinished search-field draft does not replace a submitted URL query. The search field is a fallback when the URL has no query. Short words and common stopwords are filtered; this is not a complete Google-operator parser. Automatic search terms do not create permanent keywords or saved page passages. Turning the option off stops new automatic capture and application; explicit `#hl`/`#sjhl` links and history entries explicitly chosen from the userscript manager menu remain independent.
 
+## Quick find
+
+**Ctrl+Shift+F** opens a compact search bar; the **magnifier in the panel header** is the pointer alternative. Existing text selection is used as the query. The shortcut also works from input fields without changing their contents.
+
+- Typing temporarily highlights every occurrence of the literal phrase in visible page text outside editing/code areas. Partial matches are included and matching initially ignores case.
+- **Whole words** and **Aa** (match case) apply only to this finder.
+- The **3 / 17** counter, arrows and **Enter / Shift+Enter** navigate only the current query. A new search brings its first match into view.
+- The input clear button clears immediately. **Escape** or Close removes only the preview and restores focus. Existing selections, search terms and keywords stay intact.
+- **+ Highlight** adopts the text as a temporary page selection using the panel’s page-selection search options; those may differ from the preview options. Only the bookmark action saves a passage for the URL.
+
+Preview text and search history are not persisted. Settings can record, disable or reset the finder shortcut. Existing highlighting/panel assignments take priority on conflicts; the magnifier stays available. Browser or extension shortcuts may take precedence. Native `Ctrl+F` is unchanged.
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-en.png"><img src="../assets/find-light-en.png" width="1200" alt="Website search and an own selection in the panel, with a separate finder showing two preview matches."></picture>
+
+## Internal website search
+
+Enable **Settings → Capture this website’s search** for the current website, with **Automatically capture search terms** also enabled. Each HTTP(S) origin (scheme, hostname and port) is opted in separately, including subdomains.
+
+Common URL parameters such as `q`, `query`, `search`, `s`, `search_query`, `term` and `keywords` are recognized. A confirmed form with an actual search input also supports custom parameter names. Form values are read only after a native submit-button activation or Enter/Space confirmation; typing and JavaScript-only `requestSubmit()` do not capture drafts.
+
+Terms appear with the **Website search** source. Same-origin result links carry them to the destination, including middle-click/new tabs. Cross-origin links receive no website-search terms. Confirmed AJAX searches without a URL change, native GET/POST forms and same-document URL changes are supported.
+
+A new website query replaces its previous query. Own selections on the same URL and permanent keywords stay intact. Turning the option off removes the active website source; a fresh opt-in cannot revive handoffs from the previous permission. A query still present in the current URL can be detected again.
+
+Local manager handoffs last five minutes for new destinations, with twelve entries maximum. Already accepted terms remain on their page. They do not create permanent keywords, saved passages or shared search-history entries. Password forms and ambiguous search forms are ignored.
+
+Limits: custom JavaScript controls without a recognized query URL or confirmed native form activation need a site rule. Arbitrary redirects may break exact destination matching; Wikipedia’s known `/w/index.php` to `/wiki/Title` direct-title route is supported. Closed Shadow DOM, foreign frames and browser PDF views remain outside page search.
+
 ## Color, removal and undo
 
 **On this page** lists transferred search words and your own selections together. **Search** identifies transferred terms, **Selection** your temporary passages, and **Saved selection** remembered page passages. A term from both search and selection appears once with both sources. Its count covers active matches from both engines, counting identical text ranges once. Permanent-only keywords remain in the separate **Keywords** editor.
@@ -103,6 +131,8 @@ If Alt+Shift+P is already assigned to marking, or is recorded for it later, that
 | Key | Action |
 |---|---|
 | Alt+Shift+H | Highlight the selection and further occurrences; configurable default |
+| Ctrl+Shift+F | Open/focus quick find; configurable default |
+| Enter / Shift+Enter in finder | Next/previous preview match |
 | Alt+Shift+P | Open/close the panel unless assigned to marking |
 | Alt+Left / Alt+Right | Previous/next match |
 | Escape | Dismiss selection actions/panel or cancel shortcut recording |

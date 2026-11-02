@@ -1,4 +1,5 @@
 const ICONS = {
+    find: '<circle cx="10" cy="10" r="6"/><path d="m14.5 14.5 6 6"/>',
     save: '<path d="m5 12 4 4L19 6"/>',
     bookmark: '<path d="M6 3h12v18l-6-4-6 4V3Z"/>',
     bookmarked: '<path d="M6 3h12v18l-6-4-6 4V3Z" fill="currentColor"/>',

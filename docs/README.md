@@ -6,6 +6,8 @@
 
 - [Installieren](../README.md#installation) / [Install](../README.en.md#installation)
 - [Auswählen und markieren](usage.de.md#auswählen-und-suchen) / [Select and highlight](usage.en.md#select-and-find)
+- [Schnellsuche](usage.de.md#schnellsuche) / [Quick find](usage.en.md#quick-find)
+- [Website-Suche](usage.de.md#interne-website-suche) / [Website search](usage.en.md#internal-website-search)
 - [Logo und Darstellung](usage.de.md#darstellung-und-öffnen-button) / [Logo and appearance](usage.en.md#appearance-and-open-button)
 - [Tastatur und Panel](usage.de.md#tastatur-und-panel) / [Keyboard and panel](usage.en.md#keyboard-and-panel)
 - [Problemlösungen](usage.de.md#problemlösungen) / [Troubleshooting](usage.en.md#troubleshooting)
@@ -16,6 +18,7 @@
 |---|---|
 | [Bedienung (Deutsch)](usage.de.md) | Auswahl markieren, Navigation, Speicherung, Shortcuts und Export |
 | [Usage (English)](usage.en.md) | Selection, navigation, saving, shortcuts and export |
+| [Entwicklungsaufgaben](roadmap.md) | Umsetzungsstand der Suchfunktionen |
 | [Änderungen / Changelog](../CHANGELOG.md) | Versionsverlauf und Migrationen |
 | [Sicherheit / Security](../SECURITY.md) | Sicherheitsprobleme vertraulich melden |
 | [Designrichtlinie](design/README.md) | Hell/Dunkel, Logo-Kachel, Farbrollen und Gestaltungsregeln |

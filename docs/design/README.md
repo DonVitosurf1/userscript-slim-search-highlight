@@ -66,3 +66,7 @@ Farbe trägt Bedeutung: Markierungsfarben verbinden Text, Farbfeld und Trefferle
 `assets/icon.svg` und `assets/icon-dark.svg` enthalten die Geometrie der hellen und dunklen Logo-Variante. Ihre mit `data-fill`/`data-stroke` benannten Farbrollen werden beim Build aus `src/colors.json` aktualisiert; `npm run check` erkennt veraltete Ausgaben. Farben daher in der JSON-Datei ändern, nicht separat im SVG. Die Funktions-Icons liegen unter `assets/icons/`; ihre Zuordnung steht in `src/manifest.json`. Der Build bettet diese Dateien in das einzelne Userscript ein. Keine separat gepflegten Base64-Kopien und keine externen Icon-Bibliotheken.
 
 Nach Änderungen: `npm run build`, `npm run check`, Browser-Tests und `npm run screenshots`. Logo und Auswahlaktionen im hellen und dunklen Farbschema sowie auf einem schmalen Bildschirm ansehen. Tastaturbedienung, lesbare Namen, Umbruch und unveränderte Funktionen mitprüfen.
+
+## Schnellsuche
+
+Die Lupe im Panelkopf öffnet die eigenständige Suchleiste, ebenso `Strg+Shift+F`. Eingabe/Leeren, feste Trefferanzeige, Pfeile und Schließen stehen kompakt zusammen; Optionen und „+ Markieren“ bilden die zweite Zeile. Die Leiste teilt Hell/Dunkel, Transparenz, Fokus und Farbpalette mit dem Panel. Wenn beide sich horizontal überschneiden, bleibt das Panel unter der Suchleiste erreichbar. Eine Vorschau verändert keine bestehenden Markierungen; die eigentliche Übernahme ist ausdrücklich. Die Lupe bedeutet Seitensuche, das Weltkugel-Symbol weiterhin Websuche.

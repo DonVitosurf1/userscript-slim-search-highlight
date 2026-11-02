@@ -37,6 +37,30 @@ module.exports = ({ SRC, eq, ok }) => {
         return { page, evaluate, click };
     }
     return {
+        async security_ui_website_submit_requires_a_native_user_intent(browser) {
+            const origin='https://hostile.test';
+            const {page,evaluate}=await isolated(browser,true,{hl_site_search_origins:{version:1,origins:[{origin,generation:'enabled'}]}},origin+'/search','<form id="search" onsubmit="event.preventDefault()"><input type="search" name="q" value="Solar"><button>Search</button></form><p>Solar</p>');
+            const before=await evaluate('JSON.stringify(__state)');
+            const trusted=await page.evaluate(()=>{let trusted=false;document.querySelector('form').addEventListener('submit',event=>{trusted=event.isTrusted;});document.querySelector('form').requestSubmit();return trusted;});
+            eq(trusted,true,'Browser requestSubmit creates a trusted event despite no user submit action');
+            eq(await evaluate('JSON.stringify(__state)'),before,'Script-driven submit never captures a draft');
+            eq(await page.locator('.slim-hl').count(),0);
+            await page.locator('#search button').click();await page.waitForSelector('.slim-hl');
+            ok(await evaluate('!!__state.hl_site_search_handoffs?.entries?.length'),'Actual user submission captures the search');
+        },
+        async security_ui_quick_find_requires_native_activation_and_keeps_profiles_private(browser) {
+            const {page,evaluate,click}=await isolated(browser,true,{},'https://hostile.test/','<p id="subject">Visible Visible</p>');
+            const before=await evaluate('JSON.stringify(__state)');
+            await page.evaluate(()=>document.dispatchEvent(new KeyboardEvent('keydown',{key:'F',ctrlKey:true,shiftKey:true,bubbles:true})));
+            await evaluate("__ownerRoot.querySelector('#open-find').click()");
+            eq(await evaluate("!!__ownerRoot.querySelector('#slim-find-bar')"),false,'Synthetic keys/clicks cannot open finder');
+            await click('open-find');await page.keyboard.type('Visible');await page.waitForFunction(()=>CSS.highlights.get('slim-find')?.size===2);
+            eq(await page.evaluate(()=>document.querySelector('#find-query')),null,'Query stays in closed UI');
+            eq(await page.evaluate(()=>window.find('PRIVATE_KEYWORD',true)),false,'Finder does not expose another-domain keyword');
+            await evaluate("__ownerRoot.querySelector('#find-add').click()");eq(await evaluate("__ownerRoot.querySelectorAll('.page-item input[type=color]').length"),0,'Synthetic adoption is blocked');
+            eq(await evaluate('JSON.stringify(__state)'),before,'Preview/synthetic adoption never persist profile data');
+            await page.keyboard.press('Escape');eq(await page.evaluate(()=>CSS.highlights.has('slim-find')),false);
+        },
         async security_ui_term_visibility_rejects_synthetic_private_actions(browser) {
             const {page,evaluate,click}=await isolated(browser,true,{},'https://hostile.test/#hl=Outlook','<p>Outlook</p>');
             await page.waitForSelector('.slim-hl');

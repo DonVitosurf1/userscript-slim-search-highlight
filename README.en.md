@@ -39,11 +39,14 @@ Page passages require a browser with **CSS Custom Highlights**. Without that API
 |---|---|
 | Highlight the selection and every other occurrence | **Alt+Shift+H** · configurable |
 | Open / close the panel | **Alt+Shift+P** |
+| Find on page | **Ctrl+Shift+F** · configurable |
 | Previous / next match | **Alt+Left / Right** |
 
 Hover hints show the available shortcuts. If Alt+Shift+P is already assigned to highlighting, that assignment takes priority. The logo at the screen edge always opens the panel.
 
 ## More features
+
+**Quick find and website search.** Press **Ctrl+Shift+F** or use the panel magnifier to preview all matches on the page. **+ Highlight** adopts the text as a page selection. Settings can enable internal search capture per website. [Usage and limits](docs/usage.en.md#quick-find).
 
 - **Web searches and quotes:** “Search the web” opens a new tab and keeps the reading page open. Copy quotes with their source or links to selected text; export passages as Markdown and saved pages as JSON.
 - **Use your Google search words:** With automatic search-word transfer enabled, opening a result highlights your search terms. Your own selections add to these results; the counter, navigation and position bar show both together.

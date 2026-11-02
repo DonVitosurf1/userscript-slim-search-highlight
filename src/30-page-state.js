@@ -86,7 +86,7 @@ function undoPageChange() {
 }
 function watchPageIdentity() {
     if (pageURLTimer) return;
-    const watch = pageTerms.length || knownSavedPages || hiddenTermKeys.size || getCrossPageTerms().length;
+    const watch = pageTerms.length || knownSavedPages || hiddenTermKeys.size || getCrossPageTerms().length || siteSearchEnabled() || quickFind.open;
     // Keep the lightweight identity check after a termless intermediate route.
     if (watch) pageURLTimer = setInterval(() => {
         if (pageIdentity !== location.href) refreshPageContext();
@@ -154,6 +154,7 @@ function clearPagePaint(cancel = true) {
 }
 function resetPageIdentity() {
     if (pageIdentity === location.href) return;
+    closeQuickFind(true, true);
     pageIdentity = location.href; pageUndo = []; clearPagePaint(); hideSelectionTools(); currentIdx = -1;
     hiddenTermKeys.clear(); automaticTermsSnapshot = null;
     restorePageRecord();

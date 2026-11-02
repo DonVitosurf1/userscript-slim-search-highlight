@@ -81,7 +81,8 @@ function renderPageList() {
         const count = document.createElement('span'); count.className = 'kw-count'; count.textContent = counts.get(entry.key) || 0; count.title = t('countTitle');
         const content = document.createElement('div'); content.className = 'page-label';
         const state = document.createElement('span'); state.className = 'hint page-state';
-        const captions = [t(entry.keyword ? term ? 'sourceBoth' : 'sourceSearch' : term.saved ? 'sourceSavedSelection' : 'sourceSelection')];
+        const site = entry.keyword && automaticTermsSnapshot?.source === 'site' && automaticTermsSnapshot.terms.some(text => termKey(text) === entry.key);
+        const captions = [t(entry.keyword ? term ? site ? 'sourceSiteBoth' : 'sourceBoth' : site ? 'sourceSiteSearch' : 'sourceSearch' : term.saved ? 'sourceSavedSelection' : 'sourceSelection')];
         if (entry.keyword && term?.saved) captions.push(t('pageSavedShort'));
         if (hidden) captions.push(t('termHiddenState'));
         else if (term?.saved && !pageSearchBusy && !(pageCounts.get(term.id) || 0) && enabled) captions.push(t('savedMissing'));
@@ -207,6 +208,7 @@ function shortcutLabel(shortcut = selectionShortcut) {
 }
 
 function renderShortcut() {
+    renderFindShortcut();
     const label = uiById('shortcut-label'); if (label) label.textContent = shortcutLabel();
     const hint = uiById('page-shortcut-hint'); if (hint) hint.textContent = t('shortcutHint', shortcutLabel());
     const record = uiById('record-shortcut'); if (record) record.textContent = t(recordingShortcut ? 'recordingShortcut' : 'recordShortcut');

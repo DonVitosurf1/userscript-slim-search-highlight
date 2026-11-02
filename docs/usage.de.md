@@ -24,6 +24,34 @@ Die Übergabe hängt nicht von Suchparametern im Referrer ab. Es werden keine Su
 
 Ein begonnenes, noch nicht abgeschicktes Suchfeld ersetzt die bereits bestätigte URL-Suchanfrage nicht. Fehlt die Anfrage in der URL, wird das Suchfeld als Fallback gelesen. Die Wortsuche filtert kurze Wörter und gängige Stoppwörter; sie ist kein vollständiger Parser für Google-Suchoperatoren. Die automatische Übernahme erzeugt keine dauerhaften Keywords und keine gespeicherten Seitenpassagen. Sie lässt sich jederzeit abschalten; vorhandene explizite `#hl`-/`#sjhl`-Links und manuell im Userscript-Manager gewählte Verlaufseinträge sind davon unabhängig.
 
+## Schnellsuche
+
+**Strg+Shift+F** öffnet eine kompakte Suchleiste; alternativ die **Lupe im Panelkopf** anklicken. Vorhandene Textauswahl wird übernommen. Der Shortcut funktioniert auch aus Eingabefeldern, ohne deren Inhalt zu ändern.
+
+- Beim Tippen werden alle Vorkommen des zusammenhängenden Suchtexts im sichtbaren Seitentext außerhalb von Eingabe- und Codebereichen vorübergehend markiert. Teiltreffer sind erlaubt; Groß-/Kleinschreibung wird zunächst ignoriert. Sonderzeichen werden wörtlich gesucht.
+- **Ganze Wörter** und **Aa** (Groß-/Kleinschreibung) gelten nur für diese Schnellsuche.
+- Die Anzeige **3 / 17**, Pfeile sowie **Enter / Shift+Enter** bewegen sich nur zwischen den Treffern des aktuellen Suchtexts. Der erste Treffer wird beim Suchen sichtbar gemacht.
+- Das Kreuz im Eingabefeld leert sofort. **Escape** oder Schließen entfernt nur die Suchvorschau und gibt den Fokus zurück. Eigene Markierungen, Suchbegriffe und Keywords bleiben erhalten.
+- **+ Markieren** übernimmt den Text als zunächst temporäre Seitenmarkierung. Dabei gelten die Suchoptionen der Seitenmarkierungen im Panel; diese können von den Vorschauoptionen abweichen. Erst das Lesezeichen speichert eine Passage für die Seite.
+
+Die Vorschau speichert weder den Suchtext noch einen Suchverlauf. Unter Einstellungen lässt sich der Such-Shortcut aufzeichnen, deaktivieren oder zurücksetzen. Bestehende Markieren-/Panel-Belegungen haben bei Konflikten Vorrang; die Lupe bleibt bedienbar. Browser oder Erweiterungen können Tastenkombinationen abfangen. `Strg+F` bleibt die native Browser-Suche.
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find.png"><img src="../assets/find-light.png" width="1200" alt="Website-Suche und eigene Markierung im Panel; darüber die separate Schnellsuche mit zwei Vorschau-Treffern."></picture>
+
+## Interne Website-Suche
+
+Unter **Einstellungen → Website-Suche hier übernehmen** lässt sich die Funktion für die aktuelle Website aktivieren. **Automatisch von Suche übernehmen** muss ebenfalls eingeschaltet sein. Jede HTTP(S)-Origin – Protokoll, Hostname und Port – wird separat freigegeben; auch Subdomains sind getrennt.
+
+Erkannt werden übliche URL-Parameter wie `q`, `query`, `search`, `s`, `search_query`, `term` oder `keywords`. Ein Suchformular kann außerdem über ein echtes Suchfeld erkannt werden, auch mit individuellem Parameternamen. Formularinhalte werden erst nach einem echten Absende-Klick oder Enter/Leertaste am Absende-Button übernommen. Tippen und ein allein per JavaScript ausgelöstes `requestSubmit()` reichen nicht.
+
+Die Suchwörter erscheinen mit Herkunft **Website-Suche**. Beim Öffnen eines Ergebnislinks innerhalb derselben Origin werden sie auf das Ziel übernommen, auch bei Mittelklick oder neuem Tab. Externe Links erhalten keine Website-Suchbegriffe. Bestätigte AJAX-Suchen ohne URL-Wechsel sowie native GET-/POST-Formulare werden unterstützt; geänderte URLs werden auch ohne vollständiges Neuladen erkannt.
+
+Eine neue Website-Suche ersetzt ihre vorherige Anfrage. Bereits vorhandene eigene Markierungen auf derselben URL und dauerhafte Keywords bleiben erhalten. Abschalten entfernt die aktive Website-Suchquelle; nach erneutem Einschalten werden alte Übergaben aus der vorherigen Freigabe nicht wiederhergestellt. Eine noch vorhandene Suchanfrage in der aktuellen URL kann erneut erkannt werden.
+
+Übergaben gelten für neue Zielseiten fünf Minuten und sind auf zwölf Einträge begrenzt. Bereits übernommene Begriffe bleiben auf ihrer Seite erhalten. Sie bleiben lokale Userscript-Manager-Daten; Website-Suchen erzeugen keine dauerhaften Keywords, gespeicherten Passagen oder Einträge im gemeinsamen Suchverlauf. Eingabefelder mit Passwörtern und mehrdeutige Suchformulare werden nicht übernommen.
+
+Grenzen: Individuelle JavaScript-Suchbuttons ohne erkennbaren URL-Suchparameter bzw. bestätigte native Formularaktivierung benötigen eine passende Seitenregel. Beliebige Weiterleitungen können die genaue Zielzuordnung unterbrechen; die bekannte Wikipedia-Weiterleitung von `/w/index.php` zu einem direkten `/wiki/Titel` wird berücksichtigt. Geschlossene Shadow-DOM-Inhalte, fremde Frames und Browser-PDF-Ansichten werden weiterhin nicht durchsucht.
+
 ## Farben, Löschen und Rückgängig
 
 Unter **Auf dieser Seite** stehen Suchbegriffe und eigene Auswahlen in einer gemeinsamen Übersicht. **Suche** kennzeichnet übernommene Suchwörter, **Auswahl** eigene temporäre Markierungen und **Gemerkte Auswahl** gespeicherte Seitenpassagen. Stammt derselbe Begriff aus Suche und Auswahl, erscheint er einmal mit beiden Quellen. Die Trefferzahl zählt aktive Fundstellen aus beiden Suchwegen, identische Textbereiche einmal. Dauerhafte Keywords ohne entsprechende Suchanfrage bleiben im separaten Bereich **Keywords**.
@@ -106,6 +134,8 @@ Ist Alt+Shift+P bereits als eigener Markieren-Shortcut gespeichert oder wird neu
 |---|---|
 | Alt+Shift+H | Auswahl und weitere Vorkommen markieren; einstellbarer Standard |
 | Alt+Shift+P | Panel öffnen/schließen, sofern nicht dem Markieren zugewiesen |
+| Strg+Shift+F | Schnellsuche öffnen/fokussieren; einstellbarer Standard |
+| Enter / Shift+Enter im Suchfeld | Nächster/vorheriger Vorschau-Treffer |
 | Alt+← / Alt+→ | Vorheriger/nächster Treffer |
 | Escape | Auswahlmenü oder Panel schließen; Shortcut-Aufzeichnung abbrechen |
 | Pfeiltasten / Shift+Pfeiltasten | Fokussierten Panelkopf verschieben, mit Shift in größeren Schritten |

@@ -214,3 +214,26 @@ let keywordCounts = {};
 let lastErrors = [];
 let observer = null;
 let kwFilter = '';
+
+Object.assign(I18N.de, {
+    findTitle: 'Auf Seite suchen', findPlaceholder: 'Seite durchsuchen …', findWhole: 'Ganze Wörter', findCase: 'Groß-/Kleinschreibung beachten', findCaseShort: 'Aa',
+    findClear: 'Suchfeld leeren', findAdd: '+ Markieren', findAddHint: 'Als Seitenmarkierung übernehmen (Suchoptionen im Panel)',
+    findEmpty: 'Suchtext eingeben. Enter: weiter · Shift+Enter: zurück', findNoResults: 'Keine Treffer', findDisabled: 'Highlights zum Suchen aktivieren.',
+    findShortcutTitle: 'Shortcut: Auf Seite suchen', findShortcutHint: value => `Auf Seite suchen: ${value}. Die Vorschau endet beim Schließen. „+ Markieren“ übernimmt den Text mit den Suchoptionen der Seitenmarkierungen.`,
+    findShortcutConflict: 'Dieser Shortcut wird bereits für Markieren oder das Panel verwendet. Bitte eine andere Kombination wählen.',
+    findShortcutSaveFailed: 'Der Such-Shortcut konnte nicht gespeichert werden. Die vorherige Einstellung bleibt erhalten.',
+    siteSearchEnabled: 'Website-Suche hier übernehmen', siteSearchHint: 'Nur bestätigte Suchanfragen dieser Website übernehmen und auf ihren Ergebnislinks markieren. Muss pro Website aktiviert werden.',
+    siteSearchSaveFailed: 'Website-Suche konnte nicht gespeichert werden. Die vorherige Einstellung bleibt erhalten.', siteSearchTransferFailed: 'Die Website-Suche konnte nicht für den Ergebnislink übernommen werden.',
+    sourceSiteSearch: 'Website-Suche', sourceSiteBoth: 'Website-Suche + Auswahl'
+});
+Object.assign(I18N.en, {
+    findTitle: 'Find on page', findPlaceholder: 'Find on this page …', findWhole: 'Whole words', findCase: 'Match case', findCaseShort: 'Aa',
+    findClear: 'Clear search', findAdd: '+ Highlight', findAddHint: 'Add a page selection (using the panel search options)',
+    findEmpty: 'Enter text. Enter: next · Shift+Enter: previous', findNoResults: 'No matches', findDisabled: 'Enable highlights to search.',
+    findShortcutTitle: 'Shortcut: Find on page', findShortcutHint: value => `Find on page: ${value}. Closing clears the preview. “+ Highlight” adopts the text using page-selection search options.`,
+    findShortcutConflict: 'This shortcut is already assigned to highlighting or the panel. Choose another combination.',
+    findShortcutSaveFailed: 'The search shortcut could not be saved. The previous setting is retained.',
+    siteSearchEnabled: 'Capture this website’s search', siteSearchHint: 'Capture only submitted searches on this website and highlight their result links. Enable separately for each website.',
+    siteSearchSaveFailed: 'Website search could not be saved. The previous setting is retained.', siteSearchTransferFailed: 'Website search could not be transferred to the result link.',
+    sourceSiteSearch: 'Website search', sourceSiteBoth: 'Website search + selection'
+});
