@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.9.0
+
+- Kombinierte Suchvervollständigung ab drei Zeichen: ein Wortvorschlag erscheint grau im Feld; bei mehreren kommt eine Liste mit bis zu drei Wörtern und Trefferzahlen hinzu. Die erste Ergänzung ist vorausgewählt, ↑/↓ wechseln Liste und graue Vorschau gemeinsam, → oder Klick übernimmt. Enter übernimmt eine aktive Listenauswahl und navigiert anschließend wieder durch die Treffer. Escape blendet zunächst Vorschläge aus, danach schließt es die Schnellsuche.
+- Vorschläge stammen ausschließlich aus dem sichtbaren, bereits durchsuchten Seitentext. Sie berücksichtigen Suchoptionen, Inline-Formatierung und nachgeladene Inhalte, bleiben flüchtig und erzeugen weder Verlauf noch Netzwerkanfragen. Zähler und Vorschläge teilen sich einen Seitentext-Index pro Suchlauf; größere Arbeiten werden unterbrechbar verarbeitet.
+- Unterstützung für IME-Eingabe, zugängliche Wort-/Trefferansagen, helle/dunkle Oberflächen und schmale Ansichten. Bei unveränderter Suchanfrage bleibt der aktuelle Treffer nach einer Seitenaktualisierung erhalten. Dokumentation, Browser-/Sicherheitsregressionen und echte Beispielbilder sind ergänzt.
+
 ## 4.8.1
 
 - Die gewählte helle Variante „Klares Weiß“ ersetzt den Beigestich: weißer Panel-/Logo-Grund und weiße Eingaben, hellgraue Bedienelemente sowie neutrale Trennlinien und Hover-/Druckzustände. Panel, Schnellsuche, Auswahlmenü und lokale Meldungen verwenden die gemeinsamen Tokens.

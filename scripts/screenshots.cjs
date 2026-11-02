@@ -81,6 +81,43 @@ async function captureReadme(browser, source) {
  console.log('Captured README examples in German/English and light/dark in artifacts/screenshots/');
 }
 
+// Captures the shipped combined completion on a local reading fixture.
+async function captureCompletion(browser, source) {
+ const html=fs.readFileSync(path.join(__dirname,'fixtures/completion.html'),'utf8');
+ const results=[];
+ for(const language of ['de','en']) for(const theme of ['light','dark']) for(const width of [1200,390]) for(const state of ['single','multiple']) {
+  const name=`completion-${language}-${theme}-${state}-${width}`;
+  const page=await browser.newPage({viewport:{width,height:800},deviceScaleFactor:2,locale:language==='de'?'de-DE':'en-US'});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  try {
+   await page.route('**/*',r=>r.fulfill({contentType:'text/html; charset=utf-8',body:html}));
+   await page.goto('https://example.test/reading/engineering');
+   await page.evaluate(({language,theme})=>{
+    document.documentElement.lang=language;document.querySelector(`article:not([lang="${language}"])`).remove();
+    for(const node of document.querySelectorAll('[data-de]'))node.textContent=node.dataset[language];
+    const store={hl_keywords:[],hl_auto_search:false,hl_ui_theme:theme,hl_lang:language};
+    window.GM_getValue=(key,fallback)=>structuredClone(store[key]??fallback);window.GM_setValue=(key,value)=>store[key]=structuredClone(value);
+    window.GM_addStyle=css=>{const style=document.createElement('style');style.textContent=css;document.head.append(style)};window.GM_registerMenuCommand=()=>{};
+   },{language,theme});
+   await page.evaluate(require('../tests/helpers/ui-driver.cjs'));await page.addScriptTag({content:source});
+   await page.keyboard.press('Control+Shift+f');
+   await page.locator('#find-query').fill(state==='multiple'?'engin':language==='de'?'entsch':'decis');
+   await page.waitForFunction(()=>document.getElementById('slim-find-bar').getAttribute('aria-busy')==='false'&&!document.getElementById('find-ghost').hidden);
+   const candidates=await page.locator('#find-completion-list [role=option]').count();
+   if(candidates!==(state==='multiple'?3:0)) throw Error(name+': incorrect popup state');
+   const finder=await page.locator('#slim-find-bar').boundingBox();
+   if(!finder||finder.x<0||finder.y<0||finder.x+finder.width>width+1||finder.y+finder.height>801)throw Error(name+': finder outside viewport');
+   if((await page.locator('#find-completion-popup').isVisible())!==(state==='multiple'))throw Error(name+': incorrect candidate count');
+   await page.evaluate(()=>document.fonts.ready);
+   await page.screenshot({path:path.join(output,name+'.png')});
+   await page.locator('#slim-find-bar').screenshot({path:path.join(output,name+'-finder.png')});
+   if(errors.length)throw Error(errors.join('; '));
+   results.push({name,candidates,finder});
+  } finally {await page.close()}
+ }
+ fs.writeFileSync(path.join(output,'completion.json'),JSON.stringify(results,null,2));console.log('Captured actual combined completion in artifacts/screenshots/');
+}
+
 // Captures the live finder and opt-in website source on the local article fixture.
 async function captureSearchFeatures(browser, source) {
  const html=fs.readFileSync(path.join(__dirname,'fixtures/readme.html'),'utf8')+'<style>@media(max-width:700px){header{margin:0 20px}.example{display:none}main{width:auto;margin:150px 20px 0}h1{font-size:30px}}</style>';
@@ -120,6 +157,7 @@ async function captureSearchFeatures(browser, source) {
 (async()=>{
 const browser=await chromium.launch(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{channel:'chromium'}),results=[],errors=[];
 const source=fs.readFileSync(path.resolve(__dirname,'../userscript/slim-search-highlight.user.js'),'utf8');
+if(process.argv.includes('--completion')) {try {await captureCompletion(browser,source)} finally {await browser.close()} return}
 if(process.argv.includes('--search')) {try {await captureSearchFeatures(browser,source)} finally {await browser.close()} return}
 if(process.argv.includes('--readme')) {try {await captureReadme(browser,source)} finally {await browser.close()} return}
 for(const theme of ['dark','light']) for(const [viewport,width,height] of [['desktop',1280,900],['narrow',390,844]]){

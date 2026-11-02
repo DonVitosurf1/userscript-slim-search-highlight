@@ -84,6 +84,7 @@ function setPanelOpen(open, focus = true) {
     if (!panel) return;
     panel.style.display = open ? 'flex' : 'none';
     panelState.open = open;
+    resizeFindSurface();
     const toggle = uiById('slim-hl-toggle');
     toggle?.setAttribute('aria-expanded', String(open));
     if (open) {

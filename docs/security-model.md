@@ -34,6 +34,10 @@ Saved-page records, global preferences and recent searches remain local GM data.
 
 Temporary hiding is a reading control, not a confidentiality boundary: the term remains named in the private overview and may still appear within a different highlighted passage. Only current-page query terms, own passages and applicable keyword colors enter the combined overview; the full history and other-domain profiles remain excluded. The visibility Set is memory-only, trusted row activation is required, and URL changes clear it. Accepted automatic terms stay with their current document identity after the handoff TTL; a different SPA route does not reaccept the original referrer query.
 
+## Local find completion
+
+Quick-find completion reads only the transient visible-text index of the current page. It does not read manager history or other-domain keyword/page records as a dictionary, persist prefixes/candidates, or make network requests. At most 256 distinct matching words of up to 128 UTF-16 code units are considered per generation; three are displayed. Case/whole-word counts share the literal matcher. Candidate labels use text nodes inside the existing private UI and accept only through its trusted activation boundary. Clear, composition, disable, close and URL changes cancel obsolete completion work. These are reading suggestions from page-supplied text, not trusted external facts.
+
 ## Verification and limits
 
 `security-ui` tests use Chromium isolated worlds, real closed roots and simulated manager APIs. They cover direct DOM access, native search, native editing/blur, synthetic actions, forged/mutated marks, cross-domain automatic-mark collisions and real export clicks. The normal functional/screenshot fixture uses an explicitly open test root only for inspection; it never overrides `isTrusted`. That adapter is not included in the shipped userscript and is never used by the isolated-world security suite.

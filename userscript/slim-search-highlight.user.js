@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Slim Search Highlight
 // @namespace    https://github.com/DonVitosurf1/userscript-slim-search-highlight
-// @version      4.8.1
+// @version      4.9.0
 // @author       DonVitosurf1
 // @license      MIT
 // @homepageURL  https://github.com/DonVitosurf1/userscript-slim-search-highlight
@@ -276,6 +276,10 @@
     Object.assign(I18N.de, {
         findTitle: 'Auf Seite suchen', findPlaceholder: 'Seite durchsuchen …', findWhole: 'Ganze Wörter', findCase: 'Groß-/Kleinschreibung beachten', findCaseShort: 'Aa',
         findClear: 'Suchfeld leeren', findAdd: '+ Markieren', findAddHint: 'Als Seitenmarkierung übernehmen (Suchoptionen im Panel)',
+        findComplete: word => `„${word}“ übernehmen (Pfeil rechts)`, findCompletionList: 'Wörter auf dieser Seite',
+        findCompletionCount: count => `${count} Treffer`, findCompletionKeys: '↑ ↓ auswählen · Enter übernehmen · Esc schließen',
+        findCompletionPreview: (word, count) => `Vorschlag: ${word}, ${count}.`,
+        findCompletionSingle: '→ Ergänzung übernehmen', findCompletionMultiple: '→ übernehmen · ↑ ↓ Vorschau wechseln',
         findEmpty: 'Suchtext eingeben. Enter: weiter · Shift+Enter: zurück', findNoResults: 'Keine Treffer', findDisabled: 'Highlights zum Suchen aktivieren.',
         findShortcutTitle: 'Shortcut: Auf Seite suchen', findShortcutHint: value => `Auf Seite suchen: ${value}. Die Vorschau endet beim Schließen. „+ Markieren“ übernimmt den Text mit den Suchoptionen der Seitenmarkierungen.`,
         findShortcutConflict: 'Dieser Shortcut wird bereits für Markieren oder das Panel verwendet. Bitte eine andere Kombination wählen.',
@@ -287,6 +291,10 @@
     Object.assign(I18N.en, {
         findTitle: 'Find on page', findPlaceholder: 'Find on this page …', findWhole: 'Whole words', findCase: 'Match case', findCaseShort: 'Aa',
         findClear: 'Clear search', findAdd: '+ Highlight', findAddHint: 'Add a page selection (using the panel search options)',
+        findComplete: word => `Complete with “${word}” (Right arrow)`, findCompletionList: 'Words on this page',
+        findCompletionCount: count => `${count} ${count === 1 ? 'match' : 'matches'}`, findCompletionKeys: '↑ ↓ select · Enter accept · Esc dismiss',
+        findCompletionPreview: (word, count) => `Suggestion: ${word}, ${count}.`,
+        findCompletionSingle: '→ accept completion', findCompletionMultiple: '→ accept · ↑ ↓ change preview',
         findEmpty: 'Enter text. Enter: next · Shift+Enter: previous', findNoResults: 'No matches', findDisabled: 'Enable highlights to search.',
         findShortcutTitle: 'Shortcut: Find on page', findShortcutHint: value => `Find on page: ${value}. Closing clears the preview. “+ Highlight” adopts the text using page-selection search options.`,
         findShortcutConflict: 'This shortcut is already assigned to highlighting or the panel. Choose another combination.',
@@ -497,12 +505,18 @@
             #slim-hl-panel { border: 1px solid CanvasText; }
             #slim-hl-panel :focus-visible, #slim-hl-toggle:focus-visible { outline-color: Highlight; }
         }
-        #slim-find-bar { all: initial; position: fixed; z-index: 2147483647; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: min(480px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: 8px; border: 1px solid var(--hl-divider); border-radius: 10px; background: var(--hl-bg); color: var(--hl-text); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme); box-sizing: border-box; pointer-events: auto; box-shadow: 0 6px 20px var(--hl-shadow); scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
+        #slim-find-bar { all: initial; position: fixed; z-index: 2147483647; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: min(480px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: visible; color: var(--hl-text); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme); box-sizing: border-box; pointer-events: auto; scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
         #slim-find-bar :where(:not(svg, svg *)) { all: revert; font: inherit; color: inherit; box-sizing: border-box; }
         #slim-find-bar[hidden], #slim-find-bar [hidden] { display: none !important; }
+        #slim-find-bar #find-controls { padding: 8px; border: 1px solid var(--hl-divider); border-radius: 10px; background: var(--hl-bg); box-shadow: 0 6px 20px var(--hl-shadow); }
         #slim-find-bar .find-row, #slim-find-bar .find-options { display: flex; align-items: center; gap: 4px; min-width: 0; }
         #slim-find-bar .find-field { display: flex; align-items: center; flex: 1; min-width: 64px; border: 1px solid var(--hl-border); border-radius: 6px; background: var(--hl-field); }
-        #slim-find-bar #find-query { width: 100%; min-width: 0; border: 0; background: transparent; padding: 7px 8px; color: var(--hl-text); caret-color: var(--hl-focus); outline-offset: -2px; }
+        #slim-find-bar .find-input-stack { position: relative; min-width: 0; flex: 1; }
+        #slim-find-bar #find-query { position: relative; width: 100%; min-width: 0; border: 0; border-radius: 6px; background: transparent; padding: 7px 8px; color: var(--hl-text); caret-color: var(--hl-focus); outline-offset: -2px; }
+        #slim-find-bar #find-ghost { position: absolute; inset: 0; padding: 7px 8px; overflow: hidden; white-space: pre; pointer-events: none; }
+        #slim-find-bar #find-ghost-prefix { color: transparent; }
+        #slim-find-bar #find-ghost-suffix { color: var(--hl-muted); }
+        #slim-find-bar #find-completion-announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
         #slim-find-bar #find-query::placeholder { color: var(--hl-muted); }
         #slim-find-bar button { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-width: 32px; min-height: 36px; padding: 5px; border: 0; border-radius: 6px; color: var(--hl-text); background: transparent; cursor: pointer; }
         #slim-find-bar button:hover:not(:disabled) { background: var(--hl-hover); }
@@ -516,7 +530,19 @@
         #slim-find-bar input[type=checkbox] { accent-color: var(--hl-focus); width: 16px; height: 16px; margin: 0; }
         #slim-find-bar #find-add { margin-left: auto; padding: 5px 8px; background: var(--hl-surface); font-size: 12px; }
         #slim-find-bar #find-status { margin: 2px 0 0; min-height: 17px; color: var(--hl-muted); font-size: 12px; }
-        @media (max-width: 600px) { #slim-find-bar button, #slim-find-bar label { min-height: 44px; } #slim-find-bar #find-query { font-size: 16px; } #slim-find-bar .find-row > button { min-width: 36px; } }
+        #slim-find-bar #find-accept { min-width: 24px; min-height: 28px; padding: 2px; color: var(--hl-muted); }
+        #slim-find-bar #find-accept span { padding: 0 4px; border: 1px solid var(--hl-divider); border-radius: 3px; font-size: 12px; }
+        #slim-find-bar #find-completion-popup { margin: 4px 8px 0; padding: 4px; background: var(--hl-bg); border: 1px solid var(--hl-divider); border-radius: 8px; box-shadow: 0 6px 20px var(--hl-shadow); }
+        #slim-find-bar #find-completion-list { max-height: 160px; overflow: auto; scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
+        #slim-find-bar .find-completion-option { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; padding: 6px 8px; border-radius: 5px; cursor: pointer; }
+        #slim-find-bar .find-completion-option:hover { background: var(--hl-hover); }
+        #slim-find-bar .find-completion-option[aria-selected=true] { background: var(--hl-surface); box-shadow: inset 2px 0 var(--hl-accent); }
+        #slim-find-bar .completion-word { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #slim-find-bar .completion-word strong { font-weight: 650; }
+        #slim-find-bar .completion-count { flex-shrink: 0; font-size: 12px; font-variant-numeric: tabular-nums; color: var(--hl-muted); }
+        #slim-find-bar #find-completion-help { margin: 3px 8px 2px; padding-top: 5px; border-top: 1px solid var(--hl-divider); font-size: 11px; color: var(--hl-muted); }
+        @media (max-width: 600px) { #slim-find-bar button, #slim-find-bar label, #slim-find-bar .find-completion-option { min-height: 44px; } #slim-find-bar #find-query, #slim-find-bar #find-ghost { font-size: 16px; } #slim-find-bar .find-row > button { min-width: 36px; } #slim-find-bar #find-accept { min-height: 36px; } }
+        @media (max-width: 380px) { #slim-find-bar .find-row { flex-wrap: wrap; justify-content: flex-end; } #slim-find-bar .find-field { flex-basis: 100%; } #slim-find-bar #find-counter { margin-right: auto; } }
         @media (forced-colors: active) { #slim-find-bar { border-color: CanvasText; scrollbar-color: auto; } #slim-find-bar :focus-visible { outline-color: Highlight; } }
 
     `;
@@ -922,15 +948,17 @@
         return { text, point };
     }
 
-    function* collectPageMatches(root, terms = pageTerms, options = pageOptions) {
-        const { text, point } = yield* pageTextIndex(root);
+    function pageSearchPattern(text, options) {
+        const escaped = escapeRegExp(text);
+        return new RegExp(options.wholeWords ? '(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])' : escaped, options.caseSensitive ? 'gu' : 'giu');
+    }
+    function* collectPageMatches(root, terms = pageTerms, options = pageOptions, index = null) {
+        const { text, point } = index || (yield* pageTextIndex(root));
         const found = [];
         let operations = 0;
         for (const term of terms) {
             if (!options.includeHidden && termIsHidden(term.text)) continue;
-            const escaped = escapeRegExp(term.text);
-            const pattern = options.wholeWords ? '(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])' : escaped;
-            for (const match of text.matchAll(new RegExp(pattern, options.caseSensitive ? 'gu' : 'giu'))) {
+            for (const match of text.matchAll(pageSearchPattern(term.text, options))) {
                 found.push({ start: match.index, end: match.index + match[0].length, term });
                 if (++operations % 128 === 0) yield;
             }
@@ -1329,13 +1357,135 @@
         positionSelectionTools();
     }
 
+    // Source: src/54-find-completion.js
+    // Completion reads only the transient visible-text index already built by the finder.
+    function* collectFindCompletions(index, query, options) {
+        if (query.length > 128 || [...query].length < 3 || !/^[\p{L}\p{N}_][\p{L}\p{M}\p{N}_’'-]*$/u.test(query)) return [];
+        const prefix = new RegExp('^' + escapeRegExp(query), options.caseSensitive ? 'u' : 'iu');
+        const words = new Map(); let operations = 0;
+        for (const match of index.text.matchAll(/[\p{L}\p{N}_][\p{L}\p{M}\p{N}_]*(?:[’'-][\p{L}\p{N}_][\p{L}\p{M}\p{N}_]*)*/gu)) {
+            const word = match[0];
+            if (word.length > query.length && word.length <= 128 && prefix.test(word)) {
+                const key = options.caseSensitive ? word : word.toLowerCase();
+                const previous = words.get(key);
+                if (previous) previous.frequency++;
+                else if (words.size < 256) words.set(key, { word, frequency: 1 });
+            }
+            if (++operations % 128 === 0) yield;
+        }
+        const items = [...words.values()].sort((a, b) => b.frequency - a.frequency).slice(0, 3);
+        for (const item of items) {
+            item.count = 0;
+            for (const match of index.text.matchAll(pageSearchPattern(item.word, options))) {
+                item.count++;
+                if (++operations % 128 === 0) yield;
+            }
+        }
+        return items;
+    }
+    function* collectQuickFindResults(query, color, options) {
+        const index = yield* pageTextIndex(document.body);
+        const matches = yield* collectPageMatches(null, [{ id: 'find', text: normalizePassage(query), color }], options, index);
+        const completions = quickFind.completionDismissed ? [] : yield* collectFindCompletions(index, query, options);
+        return { matches, completions };
+    }
+    function clearFindCompletion() {
+        quickFind.completions = []; quickFind.completionIndex = -1;
+        renderFindCompletion();
+    }
+    function findCompletionAtCaret() {
+        const input = uiById('find-query');
+        return !!input && input.value === quickFind.query && input.selectionStart === input.value.length && input.selectionEnd === input.value.length;
+    }
+    function resizeFindSurface() {
+        const bar = uiById('slim-find-bar'); if (!bar || bar.hidden) return;
+        const viewport = window.visualViewport;
+        const box = bar.getBoundingClientRect(), panel = uiById('slim-hl-panel');
+        const panelBox = panel && panel.style.display !== 'none' ? panel.getBoundingClientRect() : null;
+        // Panel clamping needs its minimum 80px region plus the 8px separation.
+        const bottomRoom = panelBox && panelBox.left < box.right && panelBox.right > box.left ? 88 : 12;
+        const limit = Math.max(44, (viewport?.offsetTop || 0) + (viewport?.height || innerHeight) - box.top - bottomRoom);
+        bar.style.maxHeight = limit + 'px';
+        bar.style.overflow = bar.scrollHeight > limit ? 'auto' : 'visible';
+        clampPanelPosition(panel);
+    }
+    function renderFindCompletion() {
+        const input = uiById('find-query'), popup = uiById('find-completion-popup'); if (!input || !popup) return;
+        const visible = quickFind.open && enabled && !quickFind.busy && !quickFind.composing && !quickFind.completionDismissed && findCompletionAtCaret();
+        const items = visible ? quickFind.completions : [];
+        const multiple = items.length > 1;
+        const selected = items[quickFind.completionIndex >= 0 ? quickFind.completionIndex : 0];
+        const ghost = uiById('find-ghost'), accept = uiById('find-accept');
+        ghost.hidden = accept.hidden = !selected;
+        uiById('find-ghost-prefix').textContent = input.value;
+        uiById('find-ghost-suffix').textContent = selected ? selected.word.slice(input.value.length) : '';
+        ghost.scrollLeft = input.scrollLeft;
+        if (selected) { accept.title = t('findComplete', selected.word); accept.setAttribute('aria-label', accept.title); }
+        const announcement = uiById('find-completion-announcement');
+        const message = selected ? t('findCompletionPreview', selected.word, t('findCompletionCount', selected.count)) : '';
+        if (announcement && announcement.textContent !== message) announcement.textContent = message;
+        popup.hidden = !multiple;
+        input.setAttribute('aria-expanded', String(multiple)); input.removeAttribute('aria-activedescendant');
+        const list = uiById('find-completion-list'); list.replaceChildren();
+        uiById('find-completion-help').textContent = t('findCompletionKeys');
+        list.setAttribute('aria-label', t('findCompletionList'));
+        if (multiple) for (let i = 0; i < items.length; i++) {
+            const item = items[i], option = document.createElement('div'); option.id = 'find-completion-' + i;
+            option.className = 'find-completion-option'; option.setAttribute('role', 'option');
+            option.setAttribute('aria-selected', String(i === quickFind.completionIndex));
+            const word = document.createElement('span'); word.className = 'completion-word';
+            const prefix = document.createElement('strong'); prefix.textContent = item.word.slice(0, input.value.length);
+            word.append(prefix, document.createTextNode(item.word.slice(input.value.length)));
+            const count = document.createElement('span'); count.className = 'completion-count'; count.textContent = t('findCompletionCount', item.count);
+            option.append(word, count);
+            option.onpointerdown = event => event.preventDefault();
+            option.onclick = () => acceptFindCompletion(i);
+            list.append(option);
+            if (i === quickFind.completionIndex) input.setAttribute('aria-activedescendant', option.id);
+        }
+        if (selected) uiById('find-status').textContent = t(multiple ? 'findCompletionMultiple' : 'findCompletionSingle');
+        resizeFindSurface();
+    }
+    function dismissFindCompletion() {
+        if (!quickFind.completions.length || quickFind.completionDismissed || !findCompletionAtCaret()) return false;
+        quickFind.completionDismissed = true; renderQuickFind(); return true;
+    }
+    function acceptFindCompletion(index = quickFind.completionIndex >= 0 ? quickFind.completionIndex : 0) {
+        if (!quickFind.open || quickFind.busy || quickFind.composing || quickFind.completionDismissed || !enabled || !findCompletionAtCaret()) return;
+        const item = quickFind.completions[index]; if (!item) return;
+        const input = uiById('find-query');
+        quickFind.cursor = null;
+        quickFind.query = input.value = item.word;
+        quickFind.completionDismissed = true;
+        input.focus({ preventScroll: true }); input.setSelectionRange(input.value.length, input.value.length);
+        scheduleQuickFind(0, true);
+    }
+    function handleFindCompletionKey(event) {
+        if (quickFind.completionDismissed || quickFind.busy || !findCompletionAtCaret() || !quickFind.completions.length) return false;
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return false;
+        if (event.key === 'ArrowRight') { event.preventDefault(); acceptFindCompletion(); return true; }
+        if (quickFind.completions.length < 2) return false;
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            quickFind.completionIndex = (quickFind.completionIndex + (event.key === 'ArrowDown' ? 1 : -1) + quickFind.completions.length) % quickFind.completions.length;
+            renderFindCompletion();
+            const bar = uiById('slim-find-bar'), active = uiById('find-completion-' + quickFind.completionIndex);
+            const clip = bar.getBoundingClientRect(), box = active.getBoundingClientRect();
+            if (box.bottom > clip.bottom) bar.scrollTop += box.bottom - clip.bottom + 4;
+            else if (box.top < clip.top) bar.scrollTop -= clip.top - box.top + 4;
+            return true;
+        }
+        if (event.key === 'Enter') { event.preventDefault(); acceptFindCompletion(); return true; }
+        return false;
+    }
+
     // Source: src/55-quick-find.js
     // The finder is a transient preview: it never enters page records or keyword storage.
     const DEFAULT_FIND_SHORTCUT = { key: 'f', ctrl: true, shift: true, alt: false, meta: false };
     const storedFindShortcut = GM_getValue('hl_find_shortcut', DEFAULT_FIND_SHORTCUT);
     let findShortcut = storedFindShortcut === null ? null : validShortcut(storedFindShortcut) ? storedFindShortcut : { ...DEFAULT_FIND_SHORTCUT };
     let recordingFindShortcut = false;
-    const quickFind = { open: false, query: '', wholeWords: false, caseSensitive: false, matches: [], index: -1, generation: 0, timer: null, color: null, busy: false, composing: false, returnFocus: null, scrollPending: false };
+    const quickFind = { open: false, query: '', wholeWords: false, caseSensitive: false, matches: [], index: -1, generation: 0, timer: null, color: null, busy: false, composing: false, returnFocus: null, scrollPending: false, completions: [], completionIndex: -1, completionDismissed: false, cursor: null };
     function findShortcutAvailable() {
         if (!findShortcut) return false;
         const same = other => other && ['key', 'ctrl', 'alt', 'shift', 'meta'].every(key => key === 'key' ? other.key.toLowerCase() === findShortcut.key.toLowerCase() : !!other[key] === !!findShortcut[key]);
@@ -1375,6 +1525,7 @@
     }
     function suspendQuickFind() {
         clearTimeout(quickFind.timer); quickFind.generation++; clearQuickFindPaint(); quickFind.matches = []; quickFind.index = -1;
+        clearFindCompletion();
     }
     function renderQuickFind() {
         const bar = uiById('slim-find-bar'); if (!bar) return;
@@ -1395,11 +1546,13 @@
         uiById('find-add').disabled = quickFind.busy || !count || !enabled;
         bar.setAttribute('aria-busy', String(quickFind.busy));
         uiById('find-status').textContent = !supportsPageHighlights() ? t('highlightUnsupported') : !enabled ? t('findDisabled') : quickFind.busy ? t('searching') : !normalizePassage(quickFind.query) ? t('findEmpty') : !count ? t('findNoResults') : '';
+        renderFindCompletion();
     }
     function paintQuickFindCurrent(scroll = false) {
         globalThis.CSS?.highlights?.delete('slim-find-current');
         const match = quickFind.matches[quickFind.index];
         if (match) {
+            quickFind.cursor = { range: match.range.cloneRange(), index: quickFind.index, key: JSON.stringify([quickFind.query, quickFind.wholeWords, quickFind.caseSensitive]) };
             const active = new Highlight(match.range); active.priority = 101; CSS.highlights.set('slim-find-current', active);
             if (scroll) { const box = match.range.getBoundingClientRect(); window.scrollBy({ top: box.top + box.height / 2 - innerHeight / 2, behavior: 'instant' }); }
         }
@@ -1412,7 +1565,7 @@
     }
     function scheduleQuickFind(delay = 120, scroll = false) {
         quickFind.scrollPending ||= scroll;
-        if (!quickFind.open) return;
+        if (!quickFind.open || quickFind.composing) return;
         suspendQuickFind();
         const query = normalizePassage(quickFind.query), generation = quickFind.generation, identity = location.href;
         quickFind.busy = !!query && enabled && supportsPageHighlights(); renderQuickFind();
@@ -1420,16 +1573,21 @@
         quickFind.timer = setTimeout(() => {
             if (generation !== quickFind.generation || !quickFind.open || identity !== location.href) return;
             if (isHighlighting) { scheduleQuickFind(80); return; }
-            const terms = [{ id: 'find', text: query, color: quickFind.color }];
-            const work = collectPageMatches(document.body, terms, { wholeWords: quickFind.wholeWords, caseSensitive: quickFind.caseSensitive, includeHidden: true });
+            const work = collectQuickFindResults(quickFind.query, quickFind.color, { wholeWords: quickFind.wholeWords, caseSensitive: quickFind.caseSensitive, includeHidden: true });
             const step = () => {
                 if (generation !== quickFind.generation || !quickFind.open || identity !== location.href || !enabled || isBlacklisted()) return;
                 if (isHighlighting) { scheduleQuickFind(80); return; }
                 const deadline = performance.now() + 10; let result;
                 do { result = work.next(); } while (!result.done && performance.now() < deadline);
                 if (!result.done) { requestAnimationFrame(step); return; }
-                quickFind.matches = result.value; quickFind.index = result.value.length ? 0 : -1; quickFind.busy = false;
-                const highlight = new Highlight(); for (const match of result.value) highlight.add(match.range); highlight.priority = 100; CSS.highlights.set('slim-find', highlight);
+                quickFind.matches = result.value.matches; quickFind.index = quickFind.matches.length ? 0 : -1; quickFind.busy = false;
+                const cursor = quickFind.cursor;
+                if (quickFind.matches.length && cursor?.key === JSON.stringify([quickFind.query, quickFind.wholeWords, quickFind.caseSensitive])) {
+                    const same = quickFind.matches.findIndex(match => ['startContainer', 'startOffset', 'endContainer', 'endOffset'].every(key => match.range[key] === cursor.range[key]));
+                    quickFind.index = same >= 0 ? same : Math.min(cursor.index, quickFind.matches.length - 1);
+                }
+                quickFind.completions = result.value.completions; quickFind.completionIndex = quickFind.completions.length > 1 ? 0 : -1;
+                const highlight = new Highlight(); for (const match of quickFind.matches) highlight.add(match.range); highlight.priority = 100; CSS.highlights.set('slim-find', highlight);
                 let style = document.getElementById('slim-find-colors');
                 if (!style) { style = document.createElement('style'); style.id = 'slim-find-colors'; document.head.append(style); }
                 style.textContent = `::highlight(slim-find), ::highlight(slim-find-current) { background-color: ${quickFind.color}; color: ${highlightTextColor(quickFind.color)}; } ::highlight(slim-find-current) { text-decoration: underline; }`;
@@ -1440,7 +1598,7 @@
     }
     function closeQuickFind(restoreFocus = true, reset = false) {
         const bar = uiById('slim-find-bar'), focused = bar?.contains(uiActiveElement());
-        quickFind.open = false; quickFind.scrollPending = false; quickFind.busy = false; quickFind.composing = false; suspendQuickFind();
+        quickFind.open = false; quickFind.scrollPending = false; quickFind.busy = false; quickFind.composing = false; quickFind.cursor = null; suspendQuickFind();
         if (bar) bar.hidden = true;
         if (reset) { quickFind.query = ''; quickFind.color = null; if (uiById('find-query')) uiById('find-query').value = ''; }
         if (focused) {
@@ -1455,25 +1613,35 @@
         let bar = uiById('slim-find-bar');
         if (!bar) {
             bar = document.createElement('section'); bar.id = 'slim-find-bar'; bar.setAttribute('role', 'search');
-            bar.innerHTML = `<div class="find-row"><div class="find-field"><input type="text" id="find-query" autocomplete="off" spellcheck="false"><button type="button" id="find-clear">${icon('close')}</button></div><output id="find-counter" aria-live="polite" aria-atomic="true">0 / 0</output><button type="button" id="find-prev">${icon('prev')}</button><button type="button" id="find-next">${icon('next')}</button><button type="button" id="find-close">${icon('close')}</button></div><div class="find-options"><label><input type="checkbox" id="find-whole"><span id="find-whole-label"></span></label><label id="find-case-label"><input type="checkbox" id="find-case"><span id="find-case-text"></span></label><button type="button" id="find-add"></button></div><p id="find-status" role="status"></p>`;
+            bar.innerHTML = `<div id="find-controls"><div class="find-row"><div class="find-field"><div class="find-input-stack"><div id="find-ghost" aria-hidden="true" hidden><span id="find-ghost-prefix"></span><span id="find-ghost-suffix"></span></div><input type="text" id="find-query" role="combobox" aria-autocomplete="both" aria-controls="find-completion-list" aria-expanded="false" aria-describedby="find-status" autocomplete="off" spellcheck="false"></div><button type="button" id="find-accept" hidden><span aria-hidden="true">→</span></button><button type="button" id="find-clear">${icon('close')}</button></div><output id="find-counter" aria-live="polite" aria-atomic="true">0 / 0</output><button type="button" id="find-prev">${icon('prev')}</button><button type="button" id="find-next">${icon('next')}</button><button type="button" id="find-close">${icon('close')}</button></div><div class="find-options"><label><input type="checkbox" id="find-whole"><span id="find-whole-label"></span></label><label id="find-case-label"><input type="checkbox" id="find-case"><span id="find-case-text"></span></label><button type="button" id="find-add"></button></div><p id="find-status" role="status"></p></div><div id="find-completion-popup" hidden><div id="find-completion-list" role="listbox"></div><p id="find-completion-help"></p></div>`;
             ensureUIRoot().append(bar);
-            bar.querySelector('#find-query').oninput = event => { quickFind.query = event.target.value; if (!quickFind.composing) scheduleQuickFind(120, true); };
-            bar.oncompositionstart = () => { quickFind.composing = true; };
-            bar.oncompositionend = () => { quickFind.composing = false; quickFind.query = uiById('find-query').value; scheduleQuickFind(120, true); };
-            for (const [id, key] of [['find-whole', 'wholeWords'], ['find-case', 'caseSensitive']]) bar.querySelector('#' + id).onchange = event => { quickFind[key] = event.target.checked; scheduleQuickFind(0, true); };
-            bar.querySelector('#find-clear').onclick = () => { quickFind.query = ''; uiById('find-query').value = ''; scheduleQuickFind(0); uiById('find-query').focus(); };
+            const announcement = document.createElement('span'); announcement.id = 'find-completion-announcement';
+            announcement.setAttribute('role', 'status'); announcement.setAttribute('aria-live', 'polite'); announcement.setAttribute('aria-atomic', 'true'); bar.append(announcement);
+            const input = bar.querySelector('#find-query');
+            input.setAttribute('aria-describedby', 'find-status find-completion-announcement');
+            input.oninput = event => { if (quickFind.query !== event.target.value) quickFind.cursor = null; quickFind.query = event.target.value; quickFind.completionDismissed = false; if (!quickFind.composing) scheduleQuickFind(120, true); };
+            input.addEventListener('compositionstart', () => { quickFind.composing = true; suspendQuickFind(); quickFind.busy = false; renderQuickFind(); });
+            input.addEventListener('compositionend', () => { quickFind.composing = false; quickFind.query = input.value; quickFind.completionDismissed = false; scheduleQuickFind(120, true); });
+            for (const type of ['select', 'keyup', 'click', 'scroll']) input.addEventListener(type, renderFindCompletion);
+            bar.querySelector('#find-accept').onpointerdown = event => event.preventDefault();
+            bar.querySelector('#find-accept').onclick = () => acceptFindCompletion();
+            for (const [id, key] of [['find-whole', 'wholeWords'], ['find-case', 'caseSensitive']]) bar.querySelector('#' + id).onchange = event => { quickFind[key] = event.target.checked; quickFind.cursor = null; quickFind.completionDismissed = false; scheduleQuickFind(0, true); };
+            bar.querySelector('#find-clear').onclick = () => { quickFind.query = ''; quickFind.cursor = null; quickFind.completionDismissed = false; uiById('find-query').value = ''; scheduleQuickFind(0); uiById('find-query').focus(); };
             bar.querySelector('#find-close').onclick = () => closeQuickFind();
             bar.querySelector('#find-prev').onclick = () => navigateQuickFind(-1); bar.querySelector('#find-next').onclick = () => navigateQuickFind(1);
             bar.querySelector('#find-add').onclick = () => { if (addPageSelection(quickFind.query)) scheduleQuickFind(0); };
             bar.onkeydown = event => {
                 if (event.isComposing || quickFind.composing) return;
-                if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeQuickFind(); }
-                else if (event.key === 'Enter' && event.target.id === 'find-query') { event.preventDefault(); navigateQuickFind(event.shiftKey ? -1 : 1); }
+                if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); if (!dismissFindCompletion()) closeQuickFind(); }
+                else if (event.target.id === 'find-query') {
+                    if (handleFindCompletionKey(event)) return;
+                    if (event.key === 'Enter') { event.preventDefault(); navigateQuickFind(event.shiftKey ? -1 : 1); }
+                }
             };
         }
-        if (!quickFind.open) { quickFind.returnFocus = uiActiveElement(); quickFind.color = chooseHighlightColor([...pageTerms, ...getActiveKeywords(true)].map(term => term.color)); }
+        if (!quickFind.open) { quickFind.returnFocus = uiActiveElement(); quickFind.completionDismissed = false; quickFind.color = chooseHighlightColor([...pageTerms, ...getActiveKeywords(true)].map(term => term.color)); }
         quickFind.open = true; bar.hidden = false;
-        if (selected) { quickFind.query = normalizePassage(selected.text); getSelection()?.removeAllRanges(); }
+        if (selected) { quickFind.query = normalizePassage(selected.text); quickFind.cursor = null; getSelection()?.removeAllRanges(); }
         uiById('find-query').value = quickFind.query; uiById('find-whole').checked = quickFind.wholeWords; uiById('find-case').checked = quickFind.caseSensitive;
         applyAppearance(); renderQuickFind(); watchPageIdentity(); scheduleQuickFind(0, true);
         uiById('find-query').focus({ preventScroll: true }); uiById('find-query').select();
@@ -2513,6 +2681,7 @@
         if (!panel) return;
         panel.style.display = open ? 'flex' : 'none';
         panelState.open = open;
+        resizeFindSurface();
         const toggle = uiById('slim-hl-toggle');
         toggle?.setAttribute('aria-expanded', String(open));
         if (open) {
@@ -3061,7 +3230,7 @@
             let resizeTimer;
             new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(updatePosBar, 200); }).observe(document.documentElement);
         }
-        const reposition = () => { clampPanelPosition(uiById('slim-hl-panel')); hideSelectionTools(); };
+        const reposition = () => { resizeFindSurface(); clampPanelPosition(uiById('slim-hl-panel')); hideSelectionTools(); };
         window.addEventListener('resize', reposition);
         window.visualViewport?.addEventListener('resize', reposition);
         window.visualViewport?.addEventListener('scroll', reposition);

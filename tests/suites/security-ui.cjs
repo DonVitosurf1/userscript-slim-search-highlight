@@ -37,6 +37,21 @@ module.exports = ({ SRC, eq, ok }) => {
         return { page, evaluate, click };
     }
     return {
+        async security_ui_find_completion_keeps_profiles_private_and_rejects_synthetic_acceptance(browser) {
+            const {page,evaluate,click}=await isolated(browser,true,{},'https://hostile.test/','<p>Visible Visibility Visor</p>');
+            const before=await evaluate('JSON.stringify(__state)');
+            await click('open-find');await page.keyboard.type('Vis');
+            await page.waitForFunction(()=>CSS.highlights.get('slim-find')?.size===3);
+            eq(await evaluate("__ownerRoot.querySelectorAll('#find-completion-list [role=option]').length"),3);
+            await evaluate("__ownerRoot.querySelector('#find-completion-0').click();__ownerRoot.querySelector('#find-accept').click()");
+            eq(await evaluate("__ownerRoot.querySelector('#find-query').value"),'Vis','Synthetic completion activation is blocked');
+            await click('find-accept');eq(await evaluate("__ownerRoot.querySelector('#find-query').value"),'Visible');
+            await page.keyboard.press('Control+A');await page.keyboard.type('PRIVATE');await page.waitForTimeout(250);
+            eq(await evaluate("__ownerRoot.querySelector('#find-ghost').hidden"),true,'No other-domain/history dictionary');
+            eq(await evaluate("__ownerRoot.querySelector('#find-completion-popup').hidden"),true);
+            eq(await evaluate('JSON.stringify(__state)'),before,'Completion never persists profile data');
+            eq(await page.evaluate(()=>window.__stolenRoot),null,'Page cannot acquire the private suggestion root');
+        },
         async security_ui_website_submit_requires_a_native_user_intent(browser) {
             const origin='https://hostile.test';
             const {page,evaluate}=await isolated(browser,true,{hl_site_search_origins:{version:1,origins:[{origin,generation:'enabled'}]}},origin+'/search','<form id="search" onsubmit="event.preventDefault()"><input type="search" name="q" value="Solar"><button>Search</button></form><p>Solar</p>');

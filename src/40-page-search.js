@@ -95,15 +95,17 @@ function* pageTextIndex(root = document.body) {
     return { text, point };
 }
 
-function* collectPageMatches(root, terms = pageTerms, options = pageOptions) {
-    const { text, point } = yield* pageTextIndex(root);
+function pageSearchPattern(text, options) {
+    const escaped = escapeRegExp(text);
+    return new RegExp(options.wholeWords ? '(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])' : escaped, options.caseSensitive ? 'gu' : 'giu');
+}
+function* collectPageMatches(root, terms = pageTerms, options = pageOptions, index = null) {
+    const { text, point } = index || (yield* pageTextIndex(root));
     const found = [];
     let operations = 0;
     for (const term of terms) {
         if (!options.includeHidden && termIsHidden(term.text)) continue;
-        const escaped = escapeRegExp(term.text);
-        const pattern = options.wholeWords ? '(?<![\\p{L}\\p{N}_])' + escaped + '(?![\\p{L}\\p{N}_])' : escaped;
-        for (const match of text.matchAll(new RegExp(pattern, options.caseSensitive ? 'gu' : 'giu'))) {
+        for (const match of text.matchAll(pageSearchPattern(term.text, options))) {
             found.push({ start: match.index, end: match.index + match[0].length, term });
             if (++operations % 128 === 0) yield;
         }

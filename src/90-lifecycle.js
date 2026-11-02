@@ -97,7 +97,7 @@ function init() {
         let resizeTimer;
         new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(updatePosBar, 200); }).observe(document.documentElement);
     }
-    const reposition = () => { clampPanelPosition(uiById('slim-hl-panel')); hideSelectionTools(); };
+    const reposition = () => { resizeFindSurface(); clampPanelPosition(uiById('slim-hl-panel')); hideSelectionTools(); };
     window.addEventListener('resize', reposition);
     window.visualViewport?.addEventListener('resize', reposition);
     window.visualViewport?.addEventListener('scroll', reposition);

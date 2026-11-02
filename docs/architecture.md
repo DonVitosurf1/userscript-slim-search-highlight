@@ -18,6 +18,7 @@ Slim Search Highlight has no production dependencies and installs as one userscr
 | `src/30-page-state.js` | Page records, undo, explicit storage and search options |
 | `src/40-page-search.js` | Rendered-text index, normalized offset mapping, range collection and painting |
 | `src/50-page-ui-sharing.js` | Page list, selection actions, clipboard and local exports |
+| `src/54-find-completion.js` | Bounded local word discovery/counting, combined completion UI, acceptance and keyboard handling |
 | `src/55-quick-find.js` | Transient finder, configurable shortcut, private bar, cancellation and native preview groups |
 | `src/62-site-search.js` | Opted-in exact-origin search capture, submit intent, bounded same-origin handoffs |
 | `src/60-keywords.js` | Keyword preferences, search-query capture/handoff, matchers and owned DOM writes |
@@ -93,6 +94,12 @@ SPA URL monitoring remains active while current page terms or known saved page r
 ## Finder and site-search integration
 
 `collectPageMatches(root, terms, options)` shares the visible-text index and literal matching seam with page passages. Defaults preserve the existing page behavior; finder options enable case-sensitive/whole-word preview without changing page options or hidden-term state. The finder owns separate `slim-find`/`slim-find-current` groups, generation/URL cancellation and its own counter. Preview never calls save; adoption explicitly delegates to `addPageSelection`. Input is debounced 120ms, work yields after a 10ms frame budget, clear/close cancels immediately, and host changes trigger a fresh preview. Keyword wrapper refresh suspends previews and schedules them again after DOM work commits.
+
+The optional fourth `collectPageMatches` argument accepts an existing index. `collectQuickFindResults` builds that index once, collects current query ranges, then derives a maximum of three completions from up to 256 matching distinct words of at most 128 UTF-16 code units. Discovery and counts yield every 128 operations. `pageSearchPattern` supplies the same literal case/whole-word semantics to ranges and displayed counts. Candidates are frequency-ranked, with stable document-order ties. The index and dictionary live only in the current generator; published items hold public page words/counts, never manager history or unrelated profiles.
+
+Completion owns separate candidate/selection/dismissal state. Gray suffixes are decorative, with a localized live description; the input uses combobox/both semantics and a hidden or expanded listbox. Text uses DOM text nodes. Right accepts only at an unselected end caret; Up/Down update a multiple-candidate preview, Enter accepts an active list or navigates, and Escape dismisses completion before closing. IME composition cancels pending work and resumes after completion. Clear, URL changes, close and disable invalidate the generation and erase the completion UI. Same-query result publication retains an equivalent live range, falling back to the nearest previous result index when necessary.
+
+The finder wraps its control surface and optional list as one bounded nonmodal region. Short viewports scroll that region; otherwise the two surfaces retain their separate shadows. Panel avoidance reserves their combined height. Theme/opacity remain owned by the finder, including its list.
 
 Finder and panel share the closed UI root, theme/transparency tokens and trusted shortcut routing. A narrow/overlapping panel reserves space below the bar; temporary avoidance does not overwrite a custom anchor. Locale recreation remaps an owned return-focus target. The finder shortcut works from editable fields; marking/panel shortcuts keep their existing editing guards.
 

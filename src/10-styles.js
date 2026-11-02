@@ -198,12 +198,18 @@ const UI_CSS = `
         #slim-hl-panel { border: 1px solid CanvasText; }
         #slim-hl-panel :focus-visible, #slim-hl-toggle:focus-visible { outline-color: Highlight; }
     }
-    #slim-find-bar { all: initial; position: fixed; z-index: 2147483647; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: min(480px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: 8px; border: 1px solid var(--hl-divider); border-radius: 10px; background: var(--hl-bg); color: var(--hl-text); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme); box-sizing: border-box; pointer-events: auto; box-shadow: 0 6px 20px var(--hl-shadow); scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
+    #slim-find-bar { all: initial; position: fixed; z-index: 2147483647; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: min(480px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: visible; color: var(--hl-text); font: 14px/1.45 system-ui, sans-serif; color-scheme: var(--hl-scheme); box-sizing: border-box; pointer-events: auto; scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
     #slim-find-bar :where(:not(svg, svg *)) { all: revert; font: inherit; color: inherit; box-sizing: border-box; }
     #slim-find-bar[hidden], #slim-find-bar [hidden] { display: none !important; }
+    #slim-find-bar #find-controls { padding: 8px; border: 1px solid var(--hl-divider); border-radius: 10px; background: var(--hl-bg); box-shadow: 0 6px 20px var(--hl-shadow); }
     #slim-find-bar .find-row, #slim-find-bar .find-options { display: flex; align-items: center; gap: 4px; min-width: 0; }
     #slim-find-bar .find-field { display: flex; align-items: center; flex: 1; min-width: 64px; border: 1px solid var(--hl-border); border-radius: 6px; background: var(--hl-field); }
-    #slim-find-bar #find-query { width: 100%; min-width: 0; border: 0; background: transparent; padding: 7px 8px; color: var(--hl-text); caret-color: var(--hl-focus); outline-offset: -2px; }
+    #slim-find-bar .find-input-stack { position: relative; min-width: 0; flex: 1; }
+    #slim-find-bar #find-query { position: relative; width: 100%; min-width: 0; border: 0; border-radius: 6px; background: transparent; padding: 7px 8px; color: var(--hl-text); caret-color: var(--hl-focus); outline-offset: -2px; }
+    #slim-find-bar #find-ghost { position: absolute; inset: 0; padding: 7px 8px; overflow: hidden; white-space: pre; pointer-events: none; }
+    #slim-find-bar #find-ghost-prefix { color: transparent; }
+    #slim-find-bar #find-ghost-suffix { color: var(--hl-muted); }
+    #slim-find-bar #find-completion-announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     #slim-find-bar #find-query::placeholder { color: var(--hl-muted); }
     #slim-find-bar button { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-width: 32px; min-height: 36px; padding: 5px; border: 0; border-radius: 6px; color: var(--hl-text); background: transparent; cursor: pointer; }
     #slim-find-bar button:hover:not(:disabled) { background: var(--hl-hover); }
@@ -217,7 +223,19 @@ const UI_CSS = `
     #slim-find-bar input[type=checkbox] { accent-color: var(--hl-focus); width: 16px; height: 16px; margin: 0; }
     #slim-find-bar #find-add { margin-left: auto; padding: 5px 8px; background: var(--hl-surface); font-size: 12px; }
     #slim-find-bar #find-status { margin: 2px 0 0; min-height: 17px; color: var(--hl-muted); font-size: 12px; }
-    @media (max-width: 600px) { #slim-find-bar button, #slim-find-bar label { min-height: 44px; } #slim-find-bar #find-query { font-size: 16px; } #slim-find-bar .find-row > button { min-width: 36px; } }
+    #slim-find-bar #find-accept { min-width: 24px; min-height: 28px; padding: 2px; color: var(--hl-muted); }
+    #slim-find-bar #find-accept span { padding: 0 4px; border: 1px solid var(--hl-divider); border-radius: 3px; font-size: 12px; }
+    #slim-find-bar #find-completion-popup { margin: 4px 8px 0; padding: 4px; background: var(--hl-bg); border: 1px solid var(--hl-divider); border-radius: 8px; box-shadow: 0 6px 20px var(--hl-shadow); }
+    #slim-find-bar #find-completion-list { max-height: 160px; overflow: auto; scrollbar-color: var(--hl-scroll-thumb) var(--hl-field); scrollbar-width: thin; }
+    #slim-find-bar .find-completion-option { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; padding: 6px 8px; border-radius: 5px; cursor: pointer; }
+    #slim-find-bar .find-completion-option:hover { background: var(--hl-hover); }
+    #slim-find-bar .find-completion-option[aria-selected=true] { background: var(--hl-surface); box-shadow: inset 2px 0 var(--hl-accent); }
+    #slim-find-bar .completion-word { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #slim-find-bar .completion-word strong { font-weight: 650; }
+    #slim-find-bar .completion-count { flex-shrink: 0; font-size: 12px; font-variant-numeric: tabular-nums; color: var(--hl-muted); }
+    #slim-find-bar #find-completion-help { margin: 3px 8px 2px; padding-top: 5px; border-top: 1px solid var(--hl-divider); font-size: 11px; color: var(--hl-muted); }
+    @media (max-width: 600px) { #slim-find-bar button, #slim-find-bar label, #slim-find-bar .find-completion-option { min-height: 44px; } #slim-find-bar #find-query, #slim-find-bar #find-ghost { font-size: 16px; } #slim-find-bar .find-row > button { min-width: 36px; } #slim-find-bar #find-accept { min-height: 36px; } }
+    @media (max-width: 380px) { #slim-find-bar .find-row { flex-wrap: wrap; justify-content: flex-end; } #slim-find-bar .find-field { flex-basis: 100%; } #slim-find-bar #find-counter { margin-right: auto; } }
     @media (forced-colors: active) { #slim-find-bar { border-color: CanvasText; scrollbar-color: auto; } #slim-find-bar :focus-visible { outline-color: Highlight; } }
 
 `;

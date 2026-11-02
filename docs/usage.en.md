@@ -28,17 +28,29 @@ An unfinished search-field draft does not replace a submitted URL query. The sea
 
 - Typing temporarily highlights every occurrence of the literal phrase in visible page text outside editing/code areas. Partial matches are included and matching initially ignores case.
 - **Whole words** and **Aa** (match case) apply only to this finder.
-- The **3 / 17** counter, arrows and **Enter / Shift+Enter** navigate only the current query. A new search brings its first match into view.
-- The input clear button clears immediately. **Escape** or Close removes only the preview and restores focus. Existing selections, search terms and keywords stay intact.
+- The **3 / 17** counter, arrows and **Enter / Shift+Enter** navigate the current query. An active suggestion list uses Enter to accept a word first; subsequent Enter presses navigate again. A new search brings its first match into view; refreshing the same query preserves the current occurrence where possible.
+- The input clear button clears immediately. **Escape** first dismisses any completion suggestions; another Escape or Close removes the preview and restores focus. Existing selections, search terms and keywords stay intact.
 - **+ Highlight** adopts the text as a temporary page selection using the panel’s page-selection search options; those may differ from the preview options. Only the bookmark action saves a passage for the URL.
 
 Preview text and search history are not persisted. Settings can record, disable or reset the finder shortcut. Existing highlighting/panel assignments take priority on conflicts; the magnifier stays available. Browser or extension shortcuts may take precedence. Native `Ctrl+F` is unchanged.
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-en.png"><img src="../assets/find-light-en.png" width="1200" alt="Website search and an own selection in the panel, with a separate finder showing two preview matches."></picture>
+### Search completion
+
+After **three characters of a single word**, the finder suggests words from visible page text. One candidate appears as a gray inline suffix. Multiple candidates also open a list of up to three words with match counts; the first is selected. Frequent words come first, with document order breaking ties.
+
+- **Up / Down** change both the selected list word and its inline preview.
+- **Right arrow at the end of the input**, the small arrow button or clicking a list word accepts the suggestion. **Enter** accepts the active list selection; without a list it navigates matches. **Tab** keeps normal focus navigation.
+- **Escape** dismisses suggestions while retaining typed text. Moving the caret or selecting text inside the input hides completion until the caret returns to the end. Completion is suspended during IME composition.
+
+Gray text changes neither the query nor its highlights until accepted. Counts follow **Whole words/Match case**: partial matching can count “Engine” inside “Engineering”. Phrases and special characters remain literal searches but receive no word completion. Each run considers at most 256 distinct matching words of up to 128 UTF-16 code units; nothing is persisted. Saved keyword lists/history, hidden text, editing fields and code are not suggestion sources.
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-completion-en.png"><img src="../assets/find-completion-light-en.png" width="1200" alt="The finder previews Engineering after engin and lists three candidate words with match counts."></picture>
 
 ## Internal website search
 
 Enable **Settings → Capture this website’s search** for the current website, with **Automatically capture search terms** also enabled. Each HTTP(S) origin (scheme, hostname and port) is opted in separately, including subdomains.
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-en.png"><img src="../assets/find-light-en.png" width="1200" alt="Website search and an own selection in the panel, with a separate finder showing two preview matches."></picture>
 
 Common URL parameters such as `q`, `query`, `search`, `s`, `search_query`, `term` and `keywords` are recognized. A confirmed form with an actual search input also supports custom parameter names. Form values are read only after a native submit-button activation or Enter/Space confirmation; typing and JavaScript-only `requestSubmit()` do not capture drafts.
 

@@ -218,6 +218,10 @@ let kwFilter = '';
 Object.assign(I18N.de, {
     findTitle: 'Auf Seite suchen', findPlaceholder: 'Seite durchsuchen …', findWhole: 'Ganze Wörter', findCase: 'Groß-/Kleinschreibung beachten', findCaseShort: 'Aa',
     findClear: 'Suchfeld leeren', findAdd: '+ Markieren', findAddHint: 'Als Seitenmarkierung übernehmen (Suchoptionen im Panel)',
+    findComplete: word => `„${word}“ übernehmen (Pfeil rechts)`, findCompletionList: 'Wörter auf dieser Seite',
+    findCompletionCount: count => `${count} Treffer`, findCompletionKeys: '↑ ↓ auswählen · Enter übernehmen · Esc schließen',
+    findCompletionPreview: (word, count) => `Vorschlag: ${word}, ${count}.`,
+    findCompletionSingle: '→ Ergänzung übernehmen', findCompletionMultiple: '→ übernehmen · ↑ ↓ Vorschau wechseln',
     findEmpty: 'Suchtext eingeben. Enter: weiter · Shift+Enter: zurück', findNoResults: 'Keine Treffer', findDisabled: 'Highlights zum Suchen aktivieren.',
     findShortcutTitle: 'Shortcut: Auf Seite suchen', findShortcutHint: value => `Auf Seite suchen: ${value}. Die Vorschau endet beim Schließen. „+ Markieren“ übernimmt den Text mit den Suchoptionen der Seitenmarkierungen.`,
     findShortcutConflict: 'Dieser Shortcut wird bereits für Markieren oder das Panel verwendet. Bitte eine andere Kombination wählen.',
@@ -229,6 +233,10 @@ Object.assign(I18N.de, {
 Object.assign(I18N.en, {
     findTitle: 'Find on page', findPlaceholder: 'Find on this page …', findWhole: 'Whole words', findCase: 'Match case', findCaseShort: 'Aa',
     findClear: 'Clear search', findAdd: '+ Highlight', findAddHint: 'Add a page selection (using the panel search options)',
+    findComplete: word => `Complete with “${word}” (Right arrow)`, findCompletionList: 'Words on this page',
+    findCompletionCount: count => `${count} ${count === 1 ? 'match' : 'matches'}`, findCompletionKeys: '↑ ↓ select · Enter accept · Esc dismiss',
+    findCompletionPreview: (word, count) => `Suggestion: ${word}, ${count}.`,
+    findCompletionSingle: '→ accept completion', findCompletionMultiple: '→ accept · ↑ ↓ change preview',
     findEmpty: 'Enter text. Enter: next · Shift+Enter: previous', findNoResults: 'No matches', findDisabled: 'Enable highlights to search.',
     findShortcutTitle: 'Shortcut: Find on page', findShortcutHint: value => `Find on page: ${value}. Closing clears the preview. “+ Highlight” adopts the text using page-selection search options.`,
     findShortcutConflict: 'This shortcut is already assigned to highlighting or the panel. Choose another combination.',

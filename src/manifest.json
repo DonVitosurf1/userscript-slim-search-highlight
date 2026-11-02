@@ -12,6 +12,7 @@
     "30-page-state.js",
     "40-page-search.js",
     "50-page-ui-sharing.js",
+    "54-find-completion.js",
     "55-quick-find.js",
     "60-keywords.js",
     "62-site-search.js",

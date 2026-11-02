@@ -46,7 +46,7 @@ Hover hints show the available shortcuts. If Alt+Shift+P is already assigned to 
 
 ## More features
 
-**Quick find and website search.** Press **Ctrl+Shift+F** or use the panel magnifier to preview all matches on the page. **+ Highlight** adopts the text as a page selection. Settings can enable internal search capture per website. [Usage and limits](docs/usage.en.md#quick-find).
+**Quick find and website search.** Press **Ctrl+Shift+F** or use the panel magnifier to preview all matches on the page. After three characters, local page words appear as a gray inline completion; multiple candidates also open a list with match counts. **+ Highlight** adopts the text as a page selection. Settings can enable internal search capture per website. [Usage and limits](docs/usage.en.md#quick-find).
 
 - **Web searches and quotes:** “Search the web” opens a new tab and keeps the reading page open. Copy quotes with their source or links to selected text; export passages as Markdown and saved pages as JSON.
 - **Use your Google search words:** With automatic search-word transfer enabled, opening a result highlights your search terms. Your own selections add to these results; the counter, navigation and position bar show both together.

@@ -30,17 +30,29 @@ Ein begonnenes, noch nicht abgeschicktes Suchfeld ersetzt die bereits bestätigt
 
 - Beim Tippen werden alle Vorkommen des zusammenhängenden Suchtexts im sichtbaren Seitentext außerhalb von Eingabe- und Codebereichen vorübergehend markiert. Teiltreffer sind erlaubt; Groß-/Kleinschreibung wird zunächst ignoriert. Sonderzeichen werden wörtlich gesucht.
 - **Ganze Wörter** und **Aa** (Groß-/Kleinschreibung) gelten nur für diese Schnellsuche.
-- Die Anzeige **3 / 17**, Pfeile sowie **Enter / Shift+Enter** bewegen sich nur zwischen den Treffern des aktuellen Suchtexts. Der erste Treffer wird beim Suchen sichtbar gemacht.
-- Das Kreuz im Eingabefeld leert sofort. **Escape** oder Schließen entfernt nur die Suchvorschau und gibt den Fokus zurück. Eigene Markierungen, Suchbegriffe und Keywords bleiben erhalten.
+- Die Anzeige **3 / 17**, Pfeile sowie **Enter / Shift+Enter** bewegen sich zwischen den Treffern des aktuellen Suchtexts. Eine aktive Vorschlagsliste verwendet Enter zunächst zur Übernahme; danach navigiert Enter wieder. Der erste Treffer wird bei einer neuen Suche sichtbar gemacht; eine Aktualisierung derselben Suche behält den aktuellen Treffer möglichst bei.
+- Das Kreuz im Eingabefeld leert sofort. **Escape** blendet zuerst vorhandene Vervollständigungen aus; ein weiteres Escape oder Schließen entfernt die Suchvorschau und gibt den Fokus zurück. Eigene Markierungen, Suchbegriffe und Keywords bleiben erhalten.
 - **+ Markieren** übernimmt den Text als zunächst temporäre Seitenmarkierung. Dabei gelten die Suchoptionen der Seitenmarkierungen im Panel; diese können von den Vorschauoptionen abweichen. Erst das Lesezeichen speichert eine Passage für die Seite.
 
 Die Vorschau speichert weder den Suchtext noch einen Suchverlauf. Unter Einstellungen lässt sich der Such-Shortcut aufzeichnen, deaktivieren oder zurücksetzen. Bestehende Markieren-/Panel-Belegungen haben bei Konflikten Vorrang; die Lupe bleibt bedienbar. Browser oder Erweiterungen können Tastenkombinationen abfangen. `Strg+F` bleibt die native Browser-Suche.
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find.png"><img src="../assets/find-light.png" width="1200" alt="Website-Suche und eigene Markierung im Panel; darüber die separate Schnellsuche mit zwei Vorschau-Treffern."></picture>
+### Suchvervollständigung
+
+Ab **drei Zeichen eines einzelnen Worts** bietet die Schnellsuche passende Wörter aus dem sichtbaren Seitentext an. Ein Vorschlag ergänzt den Text grau im Feld. Bei mehreren erscheinen zusätzlich bis zu drei Wörter mit Trefferzahlen; der erste ist vorausgewählt. Häufig vorkommende Wörter stehen zuerst, bei gleicher Häufigkeit gilt die Seitenreihenfolge.
+
+- **↑ / ↓** wechseln die Listenauswahl und die graue Ergänzung gemeinsam.
+- **→ am Ende der Eingabe**, der kleine Pfeil im Feld oder ein Klick auf ein Listenwort übernimmt den Vorschlag. **Enter** übernimmt die aktive Listenauswahl; ohne Liste navigiert es wie bisher. **Tab** wechselt weiterhin den Fokus.
+- **Escape** verwirft die Vorschläge und behält deine Eingabe. Verschieben der Schreibmarke oder Auswählen innerhalb der Eingabe blendet Ergänzungen aus, bis die Schreibmarke wieder am Ende steht. Während einer IME-Eingabe werden keine Vorschläge übernommen.
+
+Die graue Ergänzung verändert weder Eingabe noch Markierungen vor der Übernahme. Die Trefferzahlen entsprechen **Ganze Wörter/Aa**: Ohne „Ganze Wörter“ kann beispielsweise „Engine“ auch innerhalb von „Engineering“ vorkommen. Phrasen und Sonderzeichen bleiben wörtlich suchbar, bekommen aber keine Wortvervollständigung. Pro Suchlauf werden höchstens 256 verschiedene passende Wörter mit maximal 128 UTF-16-Codeeinheiten berücksichtigt; gespeichert wird nichts. Gespeicherte Keywordlisten, Verlauf, unsichtbare Texte, Eingaben und Code sind keine Vorschlagsquellen.
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-completion.png"><img src="../assets/find-completion-light.png" width="1200" alt="Die Schnellsuche ergänzt engin grau zu Engineering und zeigt drei Wortvorschläge mit Trefferzahlen."></picture>
 
 ## Interne Website-Suche
 
 Unter **Einstellungen → Website-Suche hier übernehmen** lässt sich die Funktion für die aktuelle Website aktivieren. **Automatisch von Suche übernehmen** muss ebenfalls eingeschaltet sein. Jede HTTP(S)-Origin – Protokoll, Hostname und Port – wird separat freigegeben; auch Subdomains sind getrennt.
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find.png"><img src="../assets/find-light.png" width="1200" alt="Website-Suche und eigene Markierung im Panel; darüber die separate Schnellsuche mit zwei Vorschau-Treffern."></picture>
 
 Erkannt werden übliche URL-Parameter wie `q`, `query`, `search`, `s`, `search_query`, `term` oder `keywords`. Ein Suchformular kann außerdem über ein echtes Suchfeld erkannt werden, auch mit individuellem Parameternamen. Formularinhalte werden erst nach einem echten Absende-Klick oder Enter/Leertaste am Absende-Button übernommen. Tippen und ein allein per JavaScript ausgelöstes `requestSubmit()` reichen nicht.
 
