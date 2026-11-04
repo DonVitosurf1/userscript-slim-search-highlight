@@ -24,7 +24,7 @@ An unfinished search-field draft does not replace a submitted URL query. The sea
 
 ## Quick find
 
-**Ctrl+Shift+F** opens a compact search bar; the **magnifier in the panel header** is the pointer alternative. Existing text selection is used as the query. The shortcut also works from input fields without changing their contents.
+**Ctrl+Shift+F** opens a compact search bar; the **magnifier in the panel header** is the pointer alternative. Existing text selection is used as the query. The shortcut also works from input fields without changing their contents. The bar stays at the top-center of the visible browser viewport, including after scrolling. Search covers the entire page, including text above and below the current viewport. A new search brings its first match into view, which may move you up the page.
 
 - Typing temporarily highlights every occurrence of the literal phrase in visible page text outside editing/code areas. Partial matches are included and matching initially ignores case.
 - **Whole words** and **Aa** (match case) apply only to this finder.
@@ -36,7 +36,7 @@ Preview text and search history are not persisted. Settings can record, disable 
 
 ### Search completion
 
-After **three characters of a single word**, the finder suggests words from visible page text. One candidate appears as a gray inline suffix. Multiple candidates also open a list of up to three words with match counts; the first is selected. Frequent words come first, with document order breaking ties.
+After **three characters of a single word**, the finder suggests words from visible page text. One candidate appears as a gray inline suffix. Multiple candidates also open a list of up to three words with match counts; the first is selected. Frequent words come first, with document order breaking ties. One suggested word can occur several times; a single inline completion does not mean there is only one matching passage.
 
 - **Up / Down** change both the selected list word and its inline preview.
 - **Right arrow at the end of the input**, the small arrow button or clicking a list word accepts the suggestion. **Enter** accepts the active list selection; without a list it navigates matches. **Tab** keeps normal focus navigation.
@@ -44,7 +44,13 @@ After **three characters of a single word**, the finder suggests words from visi
 
 Gray text changes neither the query nor its highlights until accepted. Counts follow **Whole words/Match case**: partial matching can count “Engine” inside “Engineering”. Phrases and special characters remain literal searches but receive no word completion. Each run considers at most 256 distinct matching words of up to 128 UTF-16 code units; nothing is persisted. Saved keyword lists/history, hidden text, editing fields and code are not suggestion sources.
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-completion-en.png"><img src="../assets/find-completion-light-en.png" width="1200" alt="The finder previews Engineering after engin and lists three candidate words with match counts."></picture>
+<table>
+  <thead><tr><th align="left">One word suggestion</th><th align="left">Multiple word suggestions</th></tr></thead>
+  <tbody><tr>
+    <td valign="top" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-completion-single-en.png"><img src="../assets/find-completion-single-light-en.png" width="480" alt="decis receives a gray inline completion to decisions, without opening a list."></picture></td>
+    <td valign="top" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-completion-en.png"><img src="../assets/find-completion-light-en.png" width="480" alt="engin receives a gray Engineering completion; a list shows Engineering, Engine and Engineers with match counts."></picture></td>
+  </tr></tbody>
+</table>
 
 ## Internal website search
 

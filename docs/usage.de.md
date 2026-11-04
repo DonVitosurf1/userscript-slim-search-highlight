@@ -26,7 +26,7 @@ Ein begonnenes, noch nicht abgeschicktes Suchfeld ersetzt die bereits bestätigt
 
 ## Schnellsuche
 
-**Strg+Shift+F** öffnet eine kompakte Suchleiste; alternativ die **Lupe im Panelkopf** anklicken. Vorhandene Textauswahl wird übernommen. Der Shortcut funktioniert auch aus Eingabefeldern, ohne deren Inhalt zu ändern.
+**Strg+Shift+F** öffnet eine kompakte Suchleiste; alternativ die **Lupe im Panelkopf** anklicken. Vorhandene Textauswahl wird übernommen. Der Shortcut funktioniert auch aus Eingabefeldern, ohne deren Inhalt zu ändern. Die Leiste sitzt oben mittig im aktuell sichtbaren Browserbereich und bleibt dort auch nach dem Scrollen. Durchsucht wird der Text der gesamten Seite, einschließlich der Bereiche oberhalb und unterhalb des aktuellen Fensterausschnitts. Eine neue Suche springt zum ersten Treffer; dieser kann weiter oben liegen.
 
 - Beim Tippen werden alle Vorkommen des zusammenhängenden Suchtexts im sichtbaren Seitentext außerhalb von Eingabe- und Codebereichen vorübergehend markiert. Teiltreffer sind erlaubt; Groß-/Kleinschreibung wird zunächst ignoriert. Sonderzeichen werden wörtlich gesucht.
 - **Ganze Wörter** und **Aa** (Groß-/Kleinschreibung) gelten nur für diese Schnellsuche.
@@ -38,7 +38,7 @@ Die Vorschau speichert weder den Suchtext noch einen Suchverlauf. Unter Einstell
 
 ### Suchvervollständigung
 
-Ab **drei Zeichen eines einzelnen Worts** bietet die Schnellsuche passende Wörter aus dem sichtbaren Seitentext an. Ein Vorschlag ergänzt den Text grau im Feld. Bei mehreren erscheinen zusätzlich bis zu drei Wörter mit Trefferzahlen; der erste ist vorausgewählt. Häufig vorkommende Wörter stehen zuerst, bei gleicher Häufigkeit gilt die Seitenreihenfolge.
+Ab **drei Zeichen eines einzelnen Worts** bietet die Schnellsuche passende Wörter aus dem sichtbaren Seitentext an. Ein Vorschlag ergänzt den Text grau im Feld. Bei mehreren erscheinen zusätzlich bis zu drei Wörter mit Trefferzahlen; der erste ist vorausgewählt. Häufig vorkommende Wörter stehen zuerst, bei gleicher Häufigkeit gilt die Seitenreihenfolge. Ein Wortvorschlag kann mehrere Treffer haben; eine einzelne graue Ergänzung bedeutet daher nicht unbedingt nur eine Fundstelle.
 
 - **↑ / ↓** wechseln die Listenauswahl und die graue Ergänzung gemeinsam.
 - **→ am Ende der Eingabe**, der kleine Pfeil im Feld oder ein Klick auf ein Listenwort übernimmt den Vorschlag. **Enter** übernimmt die aktive Listenauswahl; ohne Liste navigiert es wie bisher. **Tab** wechselt weiterhin den Fokus.
@@ -46,7 +46,13 @@ Ab **drei Zeichen eines einzelnen Worts** bietet die Schnellsuche passende Wört
 
 Die graue Ergänzung verändert weder Eingabe noch Markierungen vor der Übernahme. Die Trefferzahlen entsprechen **Ganze Wörter/Aa**: Ohne „Ganze Wörter“ kann beispielsweise „Engine“ auch innerhalb von „Engineering“ vorkommen. Phrasen und Sonderzeichen bleiben wörtlich suchbar, bekommen aber keine Wortvervollständigung. Pro Suchlauf werden höchstens 256 verschiedene passende Wörter mit maximal 128 UTF-16-Codeeinheiten berücksichtigt; gespeichert wird nichts. Gespeicherte Keywordlisten, Verlauf, unsichtbare Texte, Eingaben und Code sind keine Vorschlagsquellen.
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-completion.png"><img src="../assets/find-completion-light.png" width="1200" alt="Die Schnellsuche ergänzt engin grau zu Engineering und zeigt drei Wortvorschläge mit Trefferzahlen."></picture>
+<table>
+  <thead><tr><th align="left">Ein Wortvorschlag</th><th align="left">Mehrere Wortvorschläge</th></tr></thead>
+  <tbody><tr>
+    <td valign="top" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-completion-single.png"><img src="../assets/find-completion-single-light.png" width="480" alt="entsch wird im Suchfeld grau zu Entscheidungen ergänzt. Es erscheint keine Liste."></picture></td>
+    <td valign="top" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="../assets/find-completion.png"><img src="../assets/find-completion-light.png" width="480" alt="engin wird grau zu Engineering ergänzt; darunter stehen Engineering, Engine und Engineers mit Trefferzahlen."></picture></td>
+  </tr></tbody>
+</table>
 
 ## Interne Website-Suche
 
